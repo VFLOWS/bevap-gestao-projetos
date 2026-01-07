@@ -155,24 +155,103 @@
                     </div>
                     <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Dados da Solicitação</h2>
                 </div>
-                <div class="space-y-5">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
-                        <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="space-y-6">
+                    <!-- Dados Básicos -->
+                    <div class="space-y-5 p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Dados Básicos</h3>
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
-                            <p class="text-gray-800">Tecnologia da Informação</p>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
+                            <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
+                                <p class="text-gray-800">Tecnologia da Informação</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
+                                <p class="text-gray-800">1001-TI</p>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
-                            <p class="text-gray-800">1001-TI</p>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
+                            <p class="text-gray-800">Diretoria TI</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Objetivo do Projeto</label>
+                            <p class="text-gray-800">Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso às aplicações corporativas.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Problema/Oportunidade</label>
+                            <p class="text-gray-800">Atualmente, os usuários precisam gerenciar múltiplas senhas para diferentes sistemas, o que gera sobrecarga para o suporte e riscos de segurança. A implementação do SSO (Single Sign-On) simplificará o acesso e fortalecerá as políticas de segurança.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Benefícios Esperados</label>
+                            <p class="text-gray-800">Melhoria na segurança com políticas de senha centralizadas, redução de chamados de suporte relacionados a senhas e aumento da produtividade dos colaboradores com acesso simplificado.</p>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
-                        <p class="text-gray-800">Diretoria TI</p>
+                    <!-- Escopo -->
+                    <div class="space-y-5 p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Escopo</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Escopo Inicial</label>
+                            <p class="text-gray-800">Integração do SSO com os principais sistemas da empresa: ERP, CRM e portal do colaborador. Inclui a configuração do provedor de identidade e a criação de documentação para usuários e administradores.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Fora de Escopo</label>
+                            <p class="text-gray-800">A integração com sistemas legados ou de terceiros que não suportam SAML/OAuth não está incluída nesta fase. A migração de contas de usuário não utilizadas também está fora de escopo.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Dependências</label>
+                            <p class="text-gray-800">Disponibilidade da equipe de infraestrutura para configuração de servidores e rede. Licenciamento do provedor de identidade a ser adquirido pela área de compras.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Riscos Iniciais</label>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+                                    <span>Atraso na aquisição das licenças do provedor de identidade.</span>
+                                </div>
+                                 <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+                                    <span>Incompatibilidade de algum sistema crítico com o protocolo de SSO escolhido.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Stakeholders</label>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Diretoria TI</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Equipe de Segurança</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Gerentes de Departamento</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Anexos -->
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Anexos</h3>
+                        <div class="space-y-3">
+                            <a href="#" class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-sm">proposta-sso.pdf</div>
+                                        <div class="text-xs text-gray-500">2.4 MB</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-download text-gray-500"></i>
+                            </a>
+                             <a href="#" class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-file-image text-blue-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-sm">arquitetura-sistemas.png</div>
+                                        <div class="text-xs text-gray-500">800 KB</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-download text-gray-500"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
