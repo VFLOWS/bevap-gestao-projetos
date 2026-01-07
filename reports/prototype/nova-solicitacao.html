@@ -67,23 +67,25 @@
 <main id="main-content" class="pt-32 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     
     <div id="stepper" class="mb-8">
-        <div class="flex items-center justify-between max-w-4xl mx-auto">
+        <div class="flex items-center max-w-4xl mx-auto">
+            <!-- Step 1 -->
             <div class="flex-1 flex flex-col items-center relative">
-                <div class="w-10 h-10 rounded-full bg-bevap-green text-white flex items-center justify-center font-semibold z-10 shadow-lg">
-                    <i class="fa-solid fa-check"></i>
-                </div>
-                <span class="text-xs mt-2 font-medium text-bevap-green">Dados Básicos</span>
-                <div class="absolute top-5 left-1/2 w-full h-1 bg-bevap-green" style="transform: translateY(-50%);"></div>
+                <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-semibold z-10">1</div>
+                <span class="text-xs mt-2 font-medium text-gray-500">Dados Básicos</span>
+                <div class="line-right absolute top-5 left-1/2 w-1/2 h-1 bg-gray-300 z-0"></div>
             </div>
+            <!-- Step 2 -->
             <div class="flex-1 flex flex-col items-center relative">
                 <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-semibold z-10">2</div>
                 <span class="text-xs mt-2 font-medium text-gray-500">Escopo</span>
-                <div class="absolute top-5 left-0 w-full h-1 bg-gray-300" style="transform: translateY(-50%);"></div>
+                <div class="line-left absolute top-5 right-1/2 w-1/2 h-1 bg-gray-300 z-0"></div>
+                <div class="line-right absolute top-5 left-1/2 w-1/2 h-1 bg-gray-300 z-0"></div>
             </div>
+            <!-- Step 3 -->
             <div class="flex-1 flex flex-col items-center relative">
                 <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-semibold z-10">3</div>
                 <span class="text-xs mt-2 font-medium text-gray-500">Anexos & Envio</span>
-                <div class="absolute top-5 left-0 w-1/2 h-1 bg-gray-300" style="transform: translateY(-50%);"></div>
+                <div class="line-left absolute top-5 right-1/2 w-1/2 h-1 bg-gray-300 z-0"></div>
             </div>
         </div>
     </div>
@@ -496,33 +498,46 @@ function prevStep(step) {
 }
 
 function updateStepper() {
-    const stepper = document.getElementById('stepper');
-    const steps = stepper.querySelectorAll('.flex-1');
+    const steps = document.querySelectorAll('#stepper .flex-1');
     
     steps.forEach((step, index) => {
         const stepNumber = index + 1;
-        const circle = step.querySelector('div:first-child');
+        const circle = step.querySelector('.w-10');
         const text = step.querySelector('span');
-        const line = step.querySelector('.absolute');
-        
+        const lineLeft = step.querySelector('.line-left');
+        const lineRight = step.querySelector('.line-right');
+
         if (stepNumber < currentStep) {
-            circle.className = 'w-10 h-10 rounded-full bg-bevap-green text-white flex items-center justify-center font-semibold z-10 shadow-lg';
+            // Completed step
+            circle.classList.remove('bg-gray-300', 'text-gray-600');
+            circle.classList.add('bg-bevap-green', 'text-white', 'shadow-lg');
             circle.innerHTML = '<i class="fa-solid fa-check"></i>';
-            text.className = 'text-xs mt-2 font-medium text-bevap-green';
-            if (line) line.className = 'absolute top-5 left-0 w-full h-1 bg-bevap-green';
+            text.classList.remove('text-gray-500');
+            text.classList.add('text-bevap-green', 'font-medium');
+            if (lineLeft) lineLeft.classList.add('bg-bevap-green');
+            if (lineRight) lineRight.classList.add('bg-bevap-green');
         } else if (stepNumber === currentStep) {
-            circle.className = 'w-10 h-10 rounded-full bg-bevap-green text-white flex items-center justify-center font-semibold z-10 shadow-lg';
-            circle.textContent = stepNumber;
-            text.className = 'text-xs mt-2 font-medium text-bevap-green';
-            if (line) line.className = 'absolute top-5 left-0 w-full h-1 bg-gray-300';
+            // Active step
+            circle.classList.remove('bg-gray-300', 'text-gray-600');
+            circle.classList.add('bg-bevap-green', 'text-white', 'shadow-lg');
+            circle.innerHTML = `${stepNumber}`;
+            text.classList.remove('text-gray-500');
+            text.classList.add('text-bevap-green', 'font-medium');
+            if (lineLeft) lineLeft.classList.add('bg-bevap-green');
+            if (lineRight) lineRight.classList.remove('bg-bevap-green');
         } else {
-            circle.className = 'w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-semibold z-10';
-            circle.textContent = stepNumber;
-            text.className = 'text-xs mt-2 font-medium text-gray-500';
-            if (line) line.className = 'absolute top-5 left-0 w-full h-1 bg-gray-300';
+            // Future step
+            circle.classList.remove('bg-bevap-green', 'text-white', 'shadow-lg');
+            circle.classList.add('bg-gray-300', 'text-gray-600');
+            circle.innerHTML = `${stepNumber}`;
+            text.classList.remove('text-bevap-green', 'font-medium');
+            text.classList.add('text-gray-500');
+            if (lineLeft) lineLeft.classList.remove('bg-bevap-green');
+            if (lineRight) lineRight.classList.remove('bg-bevap-green');
         }
     });
-}
+}   
+
 
 function toggleFornecedor() {
     const fornecedorSection = document.getElementById('fornecedor-section');
