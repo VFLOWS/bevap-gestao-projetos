@@ -302,6 +302,19 @@ Use os widgets existentes como template, seguindo a estrutura:
 - `widget.js` - Lógica JavaScript ES5
 - Importar recursos compartilhados
 
+### ⚠️ Notas de Produção
+
+**Alertas e Prompts**: Os widgets atualmente utilizam `alert()` e `prompt()` do JavaScript para feedback rápido durante o desenvolvimento. Para produção, recomenda-se:
+- Substituir por modais customizados do Fluig ou biblioteca de UI
+- Implementar sistema de notificações toast
+- Adicionar sanitização de dados com `BevapUtils.escapeHtml()` em todos os inputs de usuário
+
+**Integração com Fluig**:
+- Substituir dados mockados por chamadas a datasets reais
+- Implementar validações server-side
+- Configurar permissões de acesso por perfil
+- Integrar com workflows existentes
+
 ## 📱 Compatibilidade
 
 - **Navegadores**: Chrome, Firefox, Safari, Edge (versões modernas)
