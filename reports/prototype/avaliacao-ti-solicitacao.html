@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de TI da Solicitação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#0B2E4A',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-inter">
+
+<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
+                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
+                    </div>
+                    <span class="text-white font-montserrat font-bold text-xl hidden sm:block">BEVAP</span>
+                </div>
+                <div class="h-8 w-px bg-gray-400 hidden md:block"></div>
+                <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">Avaliação de TI</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="text-white hover:text-bevap-gold transition-colors">
+                    <i class="fa-regular fa-bell text-xl"></i>
+                </button>
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="pb-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Portfólio</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">PRJ-2024-001</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <span class="text-bevap-gold font-medium">Avaliação TI</span>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main id="main-content" class="pt-32 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Seção de Avaliação de TI -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Parecer da Avaliação de TI</h2>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Viabilidade Técnica <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
+                                <input type="radio" name="viabilidade" value="viavel" class="sr-only peer">
+                                <div class="peer-checked:border-bevap-green peer-checked:bg-green-50 absolute inset-0 rounded-lg border-2"></div>
+                                <div class="relative flex items-center">
+                                    <i class="fa-solid fa-check-circle text-bevap-green text-xl mr-3"></i>
+                                    <span class="font-semibold text-gray-900">Viável</span>
+                                </div>
+                            </label>
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-gold transition-all">
+                                <input type="radio" name="viabilidade" value="ressalvas" class="sr-only peer">
+                                <div class="peer-checked:border-bevap-gold peer-checked:bg-yellow-50 absolute inset-0 rounded-lg border-2"></div>
+                                <div class="relative flex items-center">
+                                    <i class="fa-solid fa-triangle-exclamation text-bevap-gold text-xl mr-3"></i>
+                                    <span class="font-semibold text-gray-900">Viável com Ressalvas</span>
+                                </div>
+                            </label>
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-red-500 transition-all">
+                                <input type="radio" name="viabilidade" value="inviavel" class="sr-only peer">
+                                <div class="peer-checked:border-red-500 peer-checked:bg-red-50 absolute inset-0 rounded-lg border-2"></div>
+                                <div class="relative flex items-center">
+                                    <i class="fa-solid fa-times-circle text-red-500 text-xl mr-3"></i>
+                                    <span class="font-semibold text-gray-900">Inviável</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Parecer Técnico <span class="text-red-500">*</span></label>
+                        <textarea rows="4" placeholder="Descreva a análise técnica, pontos de atenção, ressalvas e a justificativa para a viabilidade..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" required></textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Estimativa de Esforço (horas)</label>
+                            <input type="number" placeholder="Ex: 120" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Estimativa de Custo (R$)</label>
+                            <input type="number" placeholder="Ex: 25000.00" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                        </div>
+                    </div>
+
+                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Categoria do Projeto (TI)</label>
+                        <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                            <option value="">Selecione uma categoria...</option>
+                            <option value="desenvolvimento">Desenvolvimento Interno</option>
+                            <option value="aquisicao">Aquisição de Software</option>
+                            <option value="infra">Infraestrutura</option>
+                            <option value="seguranca">Segurança da Informação</option>
+                            <option value="outro">Outro</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Recursos/Equipes Necessárias</label>
+                        <textarea rows="3" placeholder="Liste as equipes (ex: Infra, Segurança) ou recursos necessários..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detalhes da Solicitação (Read-only) -->
+            <div class="bg-white rounded-lg shadow-md p-6 opacity-80">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Dados da Solicitação</h2>
+                </div>
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
+                        <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
+                            <p class="text-gray-800">Tecnologia da Informação</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
+                            <p class="text-gray-800">1001-TI</p>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
+                        <p class="text-gray-800">Diretoria TI</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                
+                <div class="bg-white rounded-lg shadow-md p-5">
+                     <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-cogs mr-2 text-bevap-gold"></i>
+                        Ações da Avaliação
+                    </h3>
+                    <div class="space-y-3">
+                        <button class="w-full px-4 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md hover:shadow-lg">
+                            <i class="fa-solid fa-paper-plane mr-2"></i>
+                            Enviar para Comitê
+                        </button>
+                        <button class="w-full px-4 py-2.5 border-2 border-bevap-navy text-bevap-navy rounded-lg font-medium hover:bg-bevap-navy hover:text-white transition-all">
+                            <i class="fa-regular fa-floppy-disk mr-2"></i>
+                            Salvar Parecer
+                        </button>
+                        <button class="w-full px-4 py-2.5 border border-bevap-gold text-bevap-gold rounded-lg font-medium hover:bg-bevap-gold hover:text-white transition-all">
+                            <i class="fa-solid fa-rotate-left mr-2"></i>
+                            Devolver para Solicitante
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-clipboard-list mr-2 text-bevap-gold"></i>
+                        Resumo
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Código</span>
+                            <span class="font-mono font-semibold text-bevap-navy">PRJ-2024-001</span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Prioridade Solicitante</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
+                                <i class="fa-solid fa-star mr-1"></i> Estratégico
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Patrocinador</span>
+                            <span class="font-medium text-gray-900">Diretoria TI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-shoe-prints mr-2 text-bevap-gold"></i>
+                        Status Atual
+                    </h3>
+                    <div class="relative pl-5 border-l-2 border-bevap-green">
+                        <div class="mb-4">
+                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full border-2 border-white shadow"></div>
+                            <p class="font-semibold text-bevap-navy">TI – Avaliar Projeto</p>
+                            <p class="text-xs text-gray-500">Em análise pela equipe de TI.</p>
+                        </div>
+                        <div class="mb-4 opacity-50">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">Aprovação do Comitê</p>
+                        </div>
+                         <div class="opacity-50">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">Em Execução</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>
