@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#0B2E4A',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>window.FontAwesomeConfig = {autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-slate-50 font-inter">
+
+<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy text-white shadow-lg z-50">
+    <div class="px-4 lg:px-6 py-4">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
+                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
+                    </div>
+                    <span class="text-white font-montserrat font-bold text-xl hidden sm:block">BEVAP</span>
+                </div>
+                <div class="h-8 w-px bg-gray-400/50 hidden md:block"></div>
+                <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">Portfólio de Projetos</h1>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:gap-4">
+                <div class="relative flex-1 lg:w-96">
+                    <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-white/60"></i>
+                    <input type="text" placeholder="Buscar por título ou código (ex.: PRJ-2026-014)" class="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-bevap-green focus:bg-white/15" />
+                </div>
+                <div class="flex gap-2">
+                    <button class="flex-1 lg:flex-none bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-2.5 rounded-lg font-medium transition-colors">
+                        <i class="fa-solid fa-plus mr-2"></i>Nova Solicitação
+                    </button>
+                    <button class="flex-1 lg:flex-none bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-lg font-medium transition-colors">
+                        Meus Projetos
+                    </button>
+                    <button class="hidden lg:block bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-lg font-medium transition-colors">
+                        Relatórios
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="pt-32 lg:pt-28 px-4 lg:px-6 pb-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+        <main class="flex-1">
+            <section id="filters-section" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-montserrat font-semibold text-bevap-navy flex items-center">
+                        <i class="fa-solid fa-filter mr-2 text-bevap-green"></i>Filtros
+                    </h2>
+                    <button class="lg:hidden text-bevap-navy">
+                        <i class="fa-solid fa-chevron-down"></i>
+                    </button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
+                        <select class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option>Todos</option>
+                            <option>Aberto</option>
+                            <option>Em Execução</option>
+                            <option>Em Go-Live</option>
+                            <option>Concluído</option>
+                            <option>Cancelado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Prioridade</label>
+                        <select class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option>Todas</option>
+                            <option>Crítico</option>
+                            <option>Estratégico</option>
+                            <option>Operacional</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Tipo</label>
+                        <select class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option>Todos</option>
+                            <option>Interno</option>
+                            <option>Externo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Período</label>
+                        <select class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option>Último mês</option>
+                            <option>Último trimestre</option>
+                            <option>Último ano</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <button class="bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Aplicar Filtros
+                    </button>
+                    <button class="border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Limpar
+                    </button>
+                    <button class="border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        <i class="fa-solid fa-bookmark mr-1"></i>Salvar Visão
+                    </button>
+                </div>
+            </section>
+
+            <section id="kpis-section" class="mb-6">
+                <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-bevap-navy/10 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-folder-open text-bevap-navy text-lg"></i>
+                            </div>
+                            <span class="text-emerald-600 text-xs font-medium flex items-center">
+                                <i class="fa-solid fa-arrow-up mr-1"></i>8%
+                            </span>
+                        </div>
+                        <p class="text-3xl font-montserrat font-bold text-bevap-navy">48</p>
+                        <p class="text-sm text-slate-600 mt-1">Total Projetos</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-bevap-gold/10 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-clock text-bevap-gold text-lg"></i>
+                            </div>
+                            <span class="text-red-600 text-xs font-medium flex items-center">
+                                <i class="fa-solid fa-arrow-up mr-1"></i>12%
+                            </span>
+                        </div>
+                        <p class="text-3xl font-montserrat font-bold text-bevap-navy">6</p>
+                        <p class="text-sm text-slate-600 mt-1">Em Aprovação</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-bevap-green/10 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-spinner text-bevap-green text-lg"></i>
+                            </div>
+                            <span class="text-emerald-600 text-xs font-medium flex items-center">
+                                <i class="fa-solid fa-arrow-up mr-1"></i>5%
+                            </span>
+                        </div>
+                        <p class="text-3xl font-montserrat font-bold text-bevap-navy">24</p>
+                        <p class="text-sm text-slate-600 mt-1">Em Execução</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-rocket text-purple-600 text-lg"></i>
+                            </div>
+                            <span class="text-emerald-600 text-xs font-medium flex items-center">
+                                <i class="fa-solid fa-arrow-down mr-1"></i>3%
+                            </span>
+                        </div>
+                        <p class="text-3xl font-montserrat font-bold text-bevap-navy">3</p>
+                        <p class="text-sm text-slate-600 mt-1">Em Go-Live</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-check-circle text-emerald-600 text-lg"></i>
+                            </div>
+                            <span class="text-emerald-600 text-xs font-medium flex items-center">
+                                <i class="fa-solid fa-arrow-up mr-1"></i>15%
+                            </span>
+                        </div>
+                        <p class="text-3xl font-montserrat font-bold text-bevap-navy">12</p>
+                        <p class="text-sm text-slate-600 mt-1">Concluídos</p>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-times-circle text-red-600 text-lg"></i>
+                            </div>
+                            <span class="text-slate-600 text-xs font-medium flex items-center">
+                                <i class="fa-solid fa-minus mr-1"></i>0%
+                            </span>
+                        </div>
+                        <p class="text-3xl font-montserrat font-bold text-bevap-navy">3</p>
+                        <p class="text-sm text-slate-600 mt-1">Cancelados</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="content-tabs" class="bg-white rounded-xl shadow-sm border border-slate-200">
+                <div class="border-b border-slate-200 px-4">
+                    <nav class="flex space-x-6 overflow-x-auto">
+                        <button class="py-4 px-2 border-b-2 border-bevap-green text-bevap-green font-medium text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-table-columns mr-2"></i>Pipeline
+                        </button>
+                        <button class="py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-chart-bar mr-2"></i>Gráficos
+                        </button>
+                        <button class="py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap">
+                            <i class="fa-solid fa-list mr-2"></i>Tabela
+                        </button>
+                    </nav>
+                </div>
+
+                <div id="pipeline-view" class="p-4 lg:p-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Em Aprovação</h3>
+                                <span class="bg-bevap-gold text-white text-xs font-bold px-2 py-1 rounded-full">6</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <span class="text-xs font-mono text-slate-500">PRJ-2026-018</span>
+                                        <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-medium">Crítico</span>
+                                    </div>
+                                    <h4 class="text-sm font-semibold text-bevap-navy mb-2">Portal RH</h4>
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="bg-bevap-gold/20 text-bevap-gold px-2 py-0.5 rounded font-medium">Externo</span>
+                                        <span class="text-slate-600">Time TI</span>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <span class="text-xs font-mono text-slate-500">PRJ-2026-019</span>
+                                        <span class="bg-bevap-navy/10 text-bevap-navy text-xs px-2 py-0.5 rounded-full font-medium">Estratégico</span>
+                                    </div>
+                                    <h4 class="text-sm font-semibold text-bevap-navy mb-2">Migração Cloud</h4>
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="bg-bevap-green/20 text-bevap-green px-2 py-0.5 rounded font-medium">Interno</span>
+                                        <span class="text-slate-600">Time DevOps</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Em Execução</h3>
+                                <span class="bg-bevap-green text-white text-xs font-bold px-2 py-1 rounded-full">24</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <span class="text-xs font-mono text-slate-500">PRJ-2026-014</span>
+                                        <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-medium">Crítico</span>
+                                    </div>
+                                    <h4 class="text-sm font-semibold text-bevap-navy mb-2">Implantar SSO</h4>
+                                    <div class="flex items-center justify-between text-xs mb-2">
+                                        <span class="bg-bevap-gold/20 text-bevap-gold px-2 py-0.5 rounded font-medium">Externo</span>
+                                        <span class="text-slate-600">Time TI</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mb-1">
+                                        <div class="bg-bevap-green h-1.5 rounded-full" style="width: 62%"></div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-slate-600">
+                                        <span>62% completo</span>
+                                        <span>Validação QA</span>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <span class="text-xs font-mono text-slate-500">PRJ-2026-015</span>
+                                        <span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-medium">Operacional</span>
+                                    </div>
+                                    <h4 class="text-sm font-semibold text-bevap-navy mb-2">Dashboard BI</h4>
+                                    <div class="flex items-center justify-between text-xs mb-2">
+                                        <span class="bg-bevap-green/20 text-bevap-green px-2 py-0.5 rounded font-medium">Interno</span>
+                                        <span class="text-slate-600">Time Analytics</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mb-1">
+                                        <div class="bg-bevap-green h-1.5 rounded-full" style="width: 45%"></div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-slate-600">
+                                        <span>45% completo</span>
+                                        <span>Desenvolvimento</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Em Go-Live</h3>
+                                <span class="bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-full">3</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <span class="text-xs font-mono text-slate-500">PRJ-2026-012</span>
+                                        <span class="bg-bevap-navy/10 text-bevap-navy text-xs px-2 py-0.5 rounded-full font-medium">Estratégico</span>
+                                    </div>
+                                    <h4 class="text-sm font-semibold text-bevap-navy mb-2">CRM Vendas</h4>
+                                    <div class="flex items-center justify-between text-xs mb-2">
+                                        <span class="bg-bevap-gold/20 text-bevap-gold px-2 py-0.5 rounded font-medium">Externo</span>
+                                        <span class="text-slate-600">Time Comercial</span>
+                                    </div>
+                                    <div class="w-full bg-slate-200 rounded-full h-1.5 mb-1">
+                                        <div class="bg-purple-600 h-1.5 rounded-full" style="width: 95%"></div>
+                                    </div>
+                                    <div class="flex justify-between text-xs text-slate-600">
+                                        <span>95% completo</span>
+                                        <span>Homologação</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Concluídos</h3>
+                                <span class="bg-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-full">12</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <span class="text-xs font-mono text-slate-500">PRJ-2025-089</span>
+                                        <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-medium">Crítico</span>
+                                    </div>
+                                    <h4 class="text-sm font-semibold text-bevap-navy mb-2">Backup Automático</h4>
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="bg-bevap-green/20 text-bevap-green px-2 py-0.5 rounded font-medium">Interno</span>
+                                        <span class="text-emerald-600"><i class="fa-solid fa-check mr-1"></i>15/01/2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Cancelados</h3>
+                                <span class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">3</span>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer opacity-60">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <span class="text-xs font-mono text-slate-500">PRJ-2025-078</span>
+                                        <span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-medium">Operacional</span>
+                                    </div>
+                                    <h4 class="text-sm font-semibold text-bevap-navy mb-2">App Mobile</h4>
+                                    <div class="flex items-center justify-between text-xs">
+                                        <span class="bg-bevap-gold/20 text-bevap-gold px-2 py-0.5 rounded font-medium">Externo</span>
+                                        <span class="text-red-600"><i class="fa-solid fa-times mr-1"></i>10/12/2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="timeline-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                    <i class="fa-solid fa-clock-rotate-left mr-2 text-bevap-green"></i>Linha do Tempo
+                </h2>
+                <div class="space-y-4">
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-bevap-green/10 rounded-full flex items-center justify-center">
+                                <i class="fa-solid fa-rocket text-bevap-green"></i>
+                            </div>
+                            <div class="w-0.5 h-full bg-slate-200 mt-2"></div>
+                        </div>
+                        <div class="flex-1 pb-4">
+                            <div class="flex items-start justify-between mb-1">
+                                <h4 class="font-semibold text-bevap-navy">Go-Live realizado</h4>
+                                <span class="text-xs text-slate-500">Há 2 horas</span>
+                            </div>
+                            <p class="text-sm text-slate-600">PRJ-2026-012 • CRM Vendas entrou em produção</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-bevap-gold/10 rounded-full flex items-center justify-center">
+                                <i class="fa-solid fa-check text-bevap-gold"></i>
+                            </div>
+                            <div class="w-0.5 h-full bg-slate-200 mt-2"></div>
+                        </div>
+                        <div class="flex-1 pb-4">
+                            <div class="flex items-start justify-between mb-1">
+                                <h4 class="font-semibold text-bevap-navy">Aprovação concedida</h4>
+                                <span class="text-xs text-slate-500">Há 5 horas</span>
+                            </div>
+                            <p class="text-sm text-slate-600">PRJ-2026-014 • Implantar SSO aprovado pelo Comitê</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4">
+                        <div class="flex flex-col items-center">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                <i class="fa-solid fa-plus text-blue-600"></i>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-start justify-between mb-1">
+                                <h4 class="font-semibold text-bevap-navy">Nova solicitação</h4>
+                                <span class="text-xs text-slate-500">Ontem</span>
+                            </div>
+                            <p class="text-sm text-slate-600">PRJ-2026-019 • Migração Cloud criado</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="templates-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                    <i class="fa-solid fa-file-lines mr-2 text-bevap-green"></i>Templates & Recursos BEVAP
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-file-contract text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Solicitação</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-clipboard-list text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Plano do Projeto</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-vial text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Plano de Testes</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-rocket text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Go-Live</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-flag-checkered text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Encerramento</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-lightbulb text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Lições Aprendidas</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-book text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Políticas</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-question-circle text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Ajuda</span>
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <aside id="pendencies-sidebar" class="lg:w-80 shrink-0">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sticky top-32">
+                <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                    <i class="fa-solid fa-bell mr-2 text-bevap-gold"></i>Minhas Pendências
+                </h2>
+
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-semibold text-bevap-navy">Aprovações Pendentes</h3>
+                            <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">4</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="bg-slate-50 rounded-lg p-3 border-l-4 border-bevap-gold">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-xs font-mono text-slate-500">PRJ-2026-018</span>
+                                    <span class="text-xs text-red-600 font-medium">Urgente</span>
+                                </div>
+                                <p class="text-sm font-medium text-bevap-navy mb-2">Portal RH</p>
+                                <p class="text-xs text-slate-600 mb-3">Aguardando aprovação TI</p>
+                                <button class="w-full bg-bevap-green hover:bg-bevap-green/90 text-white text-sm py-2 rounded-lg font-medium transition-colors">
+                                    Avaliar Agora
+                                </button>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-lg p-3 border-l-4 border-bevap-navy">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-xs font-mono text-slate-500">PRJ-2026-017</span>
+                                    <span class="text-xs text-slate-600">Normal</span>
+                                </div>
+                                <p class="text-sm font-medium text-bevap-navy mb-2">API Gateway</p>
+                                <p class="text-xs text-slate-600 mb-3">Aguardando aprovação Comitê</p>
+                                <button class="w-full bg-bevap-green hover:bg-bevap-green/90 text-white text-sm py-2 rounded-lg font-medium transition-colors">
+                                    Aprovar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-semibold text-bevap-navy">Minhas Atividades</h3>
+                            <span class="bg-bevap-green/20 text-bevap-green text-xs font-bold px-2 py-1 rounded-full">7</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <p class="text-sm font-medium text-bevap-navy mb-1">Validação QA - SSO</p>
+                                <p class="text-xs text-slate-600 mb-2">Vence em 2 dias</p>
+                                <div class="w-full bg-slate-200 rounded-full h-1.5">
+                                    <div class="bg-bevap-green h-1.5 rounded-full" style="width: 75%"></div>
+                                </div>
+                            </div>
+
+                            <div class="bg-slate-50 rounded-lg p-3">
+                                <p class="text-sm font-medium text-bevap-navy mb-1">Documentação Técnica</p>
+                                <p class="text-xs text-slate-600 mb-2">Vence hoje</p>
+                                <div class="w-full bg-slate-200 rounded-full h-1.5">
+                                    <div class="bg-bevap-gold h-1.5 rounded-full" style="width: 40%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-semibold text-bevap-navy">Correções Requeridas</h3>
+                            <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">2</span>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="bg-red-50 rounded-lg p-3 border-l-4 border-red-500">
+                                <div class="flex items-start justify-between mb-2">
+                                    <span class="text-xs font-mono text-slate-500">PRJ-2026-015</span>
+                                </div>
+                                <p class="text-sm font-medium text-bevap-navy mb-2">Dashboard BI</p>
+                                <p class="text-xs text-red-700 mb-3">Ajustes solicitados pelo TI</p>
+                                <button class="w-full bg-red-600 hover:bg-red-700 text-white text-sm py-2 rounded-lg font-medium transition-colors">
+                                    Corrigir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="w-full mt-4 border border-bevap-green text-bevap-green hover:bg-bevap-green hover:text-white text-sm py-2.5 rounded-lg font-medium transition-all">
+                    Ver Todas Pendências
+                </button>
+            </div>
+        </aside>
+    </div>
+</div>
+
+</body>
+</html>
