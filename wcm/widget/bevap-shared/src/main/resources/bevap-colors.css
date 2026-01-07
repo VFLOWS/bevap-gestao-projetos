@@ -1,0 +1,54 @@
+/**
+ * BEVAP Brand Colors and Shared Styles
+ * Primary Green: #1C8C5D
+ * Dark Blue: #0B2E4A
+ * Yellow: #F1B434
+ * Fonts: Montserrat (headings), Inter (body)
+ */
+
+:root {
+    --bevap-primary: #1C8C5D;
+    --bevap-dark: #0B2E4A;
+    --bevap-accent: #F1B434;
+    --bevap-primary-hover: #17784e;
+    --bevap-dark-hover: #082037;
+    --bevap-accent-hover: #d9a02d;
+}
+
+/* Custom Tailwind-style utilities for BEVAP colors */
+.bg-bevap-primary { background-color: var(--bevap-primary) !important; }
+.bg-bevap-dark { background-color: var(--bevap-dark) !important; }
+.bg-bevap-accent { background-color: var(--bevap-accent) !important; }
+
+.text-bevap-primary { color: var(--bevap-primary) !important; }
+.text-bevap-dark { color: var(--bevap-dark) !important; }
+.text-bevap-accent { color: var(--bevap-accent) !important; }
+
+.border-bevap-primary { border-color: var(--bevap-primary) !important; }
+.border-bevap-dark { border-color: var(--bevap-dark) !important; }
+.border-bevap-accent { border-color: var(--bevap-accent) !important; }
+
+/* Hover states */
+.hover\:bg-bevap-primary:hover { background-color: var(--bevap-primary-hover) !important; }
+.hover\:bg-bevap-dark:hover { background-color: var(--bevap-dark-hover) !important; }
+.hover\:bg-bevap-accent:hover { background-color: var(--bevap-accent-hover) !important; }
+
+/* Loading spinner */
+.bevap-spinner {
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--bevap-primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* Accessibility focus styles */
+.focus-bevap:focus {
+    outline: 2px solid var(--bevap-primary);
+    outline-offset: 2px;
+}
