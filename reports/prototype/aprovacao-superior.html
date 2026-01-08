@@ -284,19 +284,45 @@
                         <i class="fa-solid fa-shoe-prints mr-2 text-bevap-gold"></i>
                         Etapas do Fluxo
                     </h3>
-                    <div class="relative pl-5 border-l-2 border-bevap-green">
-                        <div class="mb-4">
-                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full border-2 border-white shadow"></div>
+                    <div class="relative pl-5 border-l-2 border-gray-200">
+                        <!-- Etapa Atual -->
+                        <div class="mb-6">
+                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full border-2 border-white shadow animate-pulse"></div>
                             <p class="font-semibold text-bevap-navy">Aprovação Superior Imediato</p>
                             <p class="text-xs text-gray-500">Pendente de análise pelo gestor da área.</p>
                         </div>
-                        <div class="mb-4 opacity-50">
+                        <!-- Próximas Etapas -->
+                        <div class="mb-6 opacity-60">
                              <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
                             <p class="font-semibold text-gray-600">TI - Avaliar Projeto</p>
                         </div>
-                         <div class="opacity-50">
+                         <div class="mb-6 opacity-60">
                              <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
                             <p class="font-semibold text-gray-600">TI - Triagem Técnica</p>
+                        </div>
+                         <div class="mb-6 opacity-60">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">Aprovação Comitê - Interno</p>
+                        </div>
+                         <div class="mb-6 opacity-60">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">TI - Anexar Proposta Comercial - Externo</p>
+                        </div>
+                         <div class="mb-6 opacity-60">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">Solicitante - Aprovar Proposta - Externo</p>
+                        </div>
+                         <div class="mb-6 opacity-60">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">Gerente - Aprovar Custo do Projeto - Externo</p>
+                        </div>
+                         <div class="mb-6 opacity-60">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">Aprovação Comitê - Externo</p>
+                        </div>
+                         <div class="opacity-60">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">Compras - Realizar Contratação - Externo</p>
                         </div>
                     </div>
                 </div>
@@ -355,6 +381,20 @@
 </div>
 
 <script>
+    function showModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.remove('hidden');
+        }
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (modal) {
+            modal.classList.add('hidden');
+        }
+    }
+
     function showToast(message, type = 'success') {
         const container = document.getElementById('toast-container');
         
@@ -394,8 +434,25 @@
         }, 4000);
     }
 
+    function showApproveModal() {
+        showModal('modal-approve');
+    }
+
+    function showReturnModal() {
+        showModal('modal-return');
+    }
+
     function showRejectModal() {
-//... existing code...
+        showModal('modal-reject');
+    }
+
+    function handleReject() {
+        const comments = document.getElementById('reject-comments').value;
+        if (!comments.trim()) {
+            showToast('Para reprovar a solicitação, a justificativa é obrigatória.', 'warning');
+            return;
+        }
+        console.log('Solicitação Reprovada com os seguintes comentários:', comments);
         // Aqui iria a lógica para enviar os dados para o backend
         closeModal('modal-reject');
         showToast('Solicitação reprovada com sucesso!', 'error');

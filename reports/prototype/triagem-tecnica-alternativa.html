@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Projetos – Triagem Técnica (Alternativa)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#0B2E4A',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-inter">
+
+<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
+                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
+                    </div>
+                    <span class="text-white font-montserrat font-bold text-xl hidden sm:block">BEVAP</span>
+                </div>
+                <div class="h-8 w-px bg-gray-400 hidden md:block"></div>
+                <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">Triagem Técnica (Alternativa)</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="text-white hover:text-bevap-gold transition-colors">
+                    <i class="fa-regular fa-bell text-xl"></i>
+                </button>
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Analista de Portfólio" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="pb-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Minhas Pendências</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <span class="text-bevap-gold font-medium">Triagem PRJ-2026-017</span>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main id="main-content" class="pt-32 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Triagem Técnica (Formulário) -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-sitemap"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Dados da Triagem Técnica</h2>
+                </div>
+                <div class="space-y-6">
+                    <div class="p-4 border rounded-lg space-y-4">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy">Classificação e Planejamento</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Classificação do Projeto <span class="text-red-500">*</span></label>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
+                                    <input type="radio" name="classificacao" value="projeto" class="sr-only peer">
+                                    <div class="peer-checked:border-bevap-green peer-checked:bg-green-50 absolute inset-0 rounded-lg border-2"></div>
+                                    <div class="relative flex items-center"><i class="fa-solid fa-folder-tree text-bevap-green text-xl mr-3"></i><span class="font-semibold text-gray-900">Projeto</span></div>
+                                </label>
+                                <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-gold transition-all">
+                                    <input type="radio" name="classificacao" value="melhoria" class="sr-only peer">
+                                    <div class="peer-checked:border-bevap-gold peer-checked:bg-yellow-50 absolute inset-0 rounded-lg border-2"></div>
+                                    <div class="relative flex items-center"><i class="fa-solid fa-rocket text-bevap-gold text-xl mr-3"></i><span class="font-semibold text-gray-900">Melhoria</span></div>
+                                </label>
+                                <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all">
+                                    <input type="radio" name="classificacao" value="servico" class="sr-only peer">
+                                    <div class="peer-checked:border-blue-500 peer-checked:bg-blue-50 absolute inset-0 rounded-lg border-2"></div>
+                                    <div class="relative flex items-center"><i class="fa-solid fa-headset text-blue-500 text-xl mr-3"></i><span class="font-semibold text-gray-900">Serviço</span></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Gerente de Projeto de TI <span class="text-red-500">*</span></label>
+                            <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                                <option value="">Selecione um gerente...</option>
+                                <option value="gp1">Ana Silva</option>
+                                <option value="gp2">Carlos Oliveira</option>
+                                <option value="gp3">Mariana Costa</option>
+                            </select>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Data de Início Prevista</label>
+                                <input type="date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Data de Fim Prevista</label>
+                                <input type="date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 border rounded-lg space-y-4">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy">Análise Estratégica e de Risco</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade (TI) <span class="text-red-500">*</span></label>
+                                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                                    <option value="">Selecione a prioridade...</option>
+                                    <option value="critica">Crítica</option>
+                                    <option value="alta">Alta</option>
+                                    <option value="media">Média</option>
+                                    <option value="baixa">Baixa</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nível de Risco (Inicial) <span class="text-red-500">*</span></label>
+                                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                                    <option value="">Selecione o risco...</option>
+                                    <option value="alto">Alto</option>
+                                    <option value="medio">Médio</option>
+                                    <option value="baixo">Baixo</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Alinhamento Estratégico <span class="text-red-500">*</span></label>
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center"><input type="radio" name="alinhamento" class="mr-2"> Sim</label>
+                                <label class="flex items-center"><input type="radio" name="alinhamento" class="mr-2"> Não</label>
+                            </div>
+                        </div>
+                         <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Justificativa do Alinhamento/Risco</label>
+                            <textarea rows="3" placeholder="Justifique o alinhamento estratégico e os principais riscos identificados." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Observações Gerais da Triagem</label>
+                        <textarea rows="3" placeholder="Adicione outras observações relevantes sobre a triagem." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seções Read-only -->
+            <div class="bg-white rounded-lg shadow-md p-6 opacity-80">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Informações de Apoio</h2>
+                <div class="space-y-4">
+                    <details class="p-4 border rounded-lg">
+                        <summary class="font-semibold cursor-pointer">Parecer da Avaliação de TI</summary>
+                        <div class="mt-4 space-y-4 text-sm">
+                            <p><strong>Viabilidade:</strong> <span class="text-bevap-green font-semibold">Viável</span></p>
+                            <p><strong>Parecer:</strong> A solução de SSO é tecnicamente viável e se alinha com a arquitetura de sistemas atual.</p>
+                            <p><strong>Custo Estimado:</strong> R$ 55.000,00</p>
+                            <p><strong>Esforço Estimado:</strong> 240 horas</p>
+                        </div>
+                    </details>
+                    <details class="p-4 border rounded-lg">
+                        <summary class="font-semibold cursor-pointer">Dados da Solicitação Original</summary>
+                         <div class="mt-4 space-y-4 text-sm">
+                            <p><strong>Título:</strong> Implantar SSO corporativo</p>
+                            <p><strong>Objetivo:</strong> Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso.</p>
+                        </div>
+                    </details>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                
+                <div class="bg-white rounded-lg shadow-md p-5">
+                     <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-cogs mr-2 text-bevap-gold"></i>
+                        Ações da Triagem
+                    </h3>
+                    <div class="space-y-3">
+                        <button class="w-full px-4 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center">
+                            <i class="fa-solid fa-paper-plane mr-2"></i>
+                            Enviar para Comitê
+                        </button>
+                        <button class="w-full px-4 py-2.5 border-2 border-bevap-navy text-bevap-navy rounded-lg font-medium hover:bg-bevap-navy hover:text-white transition-all">
+                            <i class="fa-regular fa-floppy-disk mr-2"></i>
+                            Salvar Rascunho
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-shoe-prints mr-2 text-bevap-gold"></i>
+                        Etapas do Fluxo
+                    </h3>
+                    <div class="relative pl-5 border-l-2 border-gray-200">
+                        <div class="mb-6">
+                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full flex items-center justify-center"><i class="fa-solid fa-check text-white text-xs"></i></div>
+                            <p class="font-semibold text-gray-500">Aprovação Superior</p>
+                        </div>
+                        <div class="mb-6">
+                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full flex items-center justify-center"><i class="fa-solid fa-check text-white text-xs"></i></div>
+                            <p class="font-semibold text-gray-500">TI - Avaliar Projeto</p>
+                        </div>
+                        <div class="mb-6">
+                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full border-2 border-white shadow animate-pulse"></div>
+                            <p class="font-semibold text-bevap-navy">TI - Triagem Técnica</p>
+                        </div>
+                         <div class="mb-6 opacity-60">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">Aprovação Comitê - Interno</p>
+                        </div>
+                         <div class="opacity-60">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">Finalização</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

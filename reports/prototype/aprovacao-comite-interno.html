@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Projetos – Aprovação Comitê Interno</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#0B2E4A',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-inter">
+
+<div id="toast-container" class="fixed top-5 right-5 z-[100] space-y-3"></div>
+
+<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
+                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
+                    </div>
+                    <span class="text-white font-montserrat font-bold text-xl hidden sm:block">BEVAP</span>
+                </div>
+                <div class="h-8 w-px bg-gray-400 hidden md:block"></div>
+                <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">Aprovação do Comitê Interno</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="text-white hover:text-bevap-gold transition-colors">
+                    <i class="fa-regular fa-bell text-xl"></i>
+                </button>
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" alt="Diretor" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="pb-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Minhas Pendências</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <span class="text-bevap-gold font-medium">Aprovar PRJ-2026-017</span>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main id="main-content" class="pt-32 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Decisão do Comitê (Formulário) -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-gavel"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Decisão do Comitê</h2>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <label for="decision-comments" class="block text-sm font-medium text-gray-700 mb-2">Observações e Justificativa da Decisão <span class="text-red-500">*</span></label>
+                        <textarea id="decision-comments" rows="5" placeholder="Descreva a justificativa para a aprovação, reprovação ou devolução do projeto. Esta informação será registrada no histórico." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dados da Triagem Técnica (Read-only) -->
+            <div class="bg-white rounded-lg shadow-md p-6 opacity-80">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-sitemap"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Dados da Triagem Técnica</h2>
+                </div>
+                <div class="space-y-6 text-sm">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block font-medium text-gray-500 mb-1">Classificação</label>
+                            <p class="text-gray-800 font-semibold">Projeto</p>
+                        </div>
+                        <div>
+                            <label class="block font-medium text-gray-500 mb-1">Complexidade</label>
+                            <p class="text-gray-800 font-semibold">Alta</p>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-500 mb-1">Gerente de Projeto de TI</label>
+                        <p class="text-gray-800">Ana Silva</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block font-medium text-gray-500 mb-1">Data de Início Prevista</label>
+                            <p class="text-gray-800">15/02/2026</p>
+                        </div>
+                        <div>
+                            <label class="block font-medium text-gray-500 mb-1">Data de Fim Prevista</label>
+                            <p class="text-gray-800">15/07/2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parecer de TI (Read-only) -->
+            <div class="bg-white rounded-lg shadow-md p-6 opacity-80">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Parecer da Avaliação de TI</h2>
+                </div>
+                <div class="space-y-6 text-sm">
+                    <div>
+                        <label class="block font-medium text-gray-500 mb-1">Viabilidade Técnica</label>
+                        <p class="text-gray-800 font-semibold text-bevap-green">Viável</p>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-500 mb-1">Parecer Técnico</label>
+                        <p class="text-gray-800 bg-gray-50 p-3 rounded-md">A solução de SSO é tecnicamente viável e se alinha com a arquitetura de sistemas atual.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detalhes da Solicitação (Read-only) -->
+            <div class="bg-white rounded-lg shadow-md p-6 opacity-80">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Dados da Solicitação</h2>
+                </div>
+                <div class="space-y-6 text-sm">
+                    <div>
+                        <label class="block font-medium text-gray-500 mb-1">Título do Projeto</label>
+                        <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
+                    </div>
+                    <div>
+                        <label class="block font-medium text-gray-500 mb-1">Objetivo do Projeto</label>
+                        <p class="text-gray-800">Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                
+                <div class="bg-white rounded-lg shadow-md p-5">
+                     <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-cogs mr-2 text-bevap-gold"></i>
+                        Ações do Comitê
+                    </h3>
+                    <div class="space-y-3">
+                        <button class="w-full px-4 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center">
+                            <i class="fa-solid fa-check mr-2"></i>
+                            Aprovar Projeto
+                        </button>
+                        <button class="w-full px-4 py-2.5 border-2 border-bevap-gold text-bevap-gold rounded-lg font-medium hover:bg-bevap-gold hover:text-white transition-all flex items-center justify-center">
+                            <i class="fa-solid fa-rotate-left mr-2"></i>
+                            Devolver para Análise
+                        </button>
+                        <button class="w-full px-4 py-2.5 border-2 border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-500 hover:text-white transition-all flex items-center justify-center">
+                            <i class="fa-solid fa-times mr-2"></i>
+                            Reprovar Projeto
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-clipboard-list mr-2 text-bevap-gold"></i>
+                        Resumo da Solicitação
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Código</span>
+                            <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-017</span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Custo Estimado (TI)</span>
+                            <span class="font-semibold text-gray-900">R$ 55.000,00</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Status</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800 font-medium">
+                                <i class="fa-solid fa-gavel mr-1"></i> Em Aprovação (Comitê)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-shoe-prints mr-2 text-bevap-gold"></i>
+                        Etapas do Fluxo
+                    </h3>
+                    <div class="relative pl-5 border-l-2 border-gray-200">
+                        <!-- Etapas Concluídas -->
+                        <div class="mb-6">
+                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full flex items-center justify-center"><i class="fa-solid fa-check text-white text-xs"></i></div>
+                            <p class="font-semibold text-gray-500">Aprovação Superior</p>
+                        </div>
+                        <div class="mb-6">
+                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full flex items-center justify-center"><i class="fa-solid fa-check text-white text-xs"></i></div>
+                            <p class="font-semibold text-gray-500">TI - Avaliar Projeto</p>
+                        </div>
+                        <div class="mb-6">
+                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full flex items-center justify-center"><i class="fa-solid fa-check text-white text-xs"></i></div>
+                            <p class="font-semibold text-gray-500">TI - Triagem Técnica</p>
+                        </div>
+                        <!-- Etapa Atual -->
+                        <div class="mb-6">
+                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full border-2 border-white shadow animate-pulse"></div>
+                            <p class="font-semibold text-bevap-navy">Aprovação Comitê - Interno</p>
+                            <p class="text-xs text-gray-500">Pendente de decisão do comitê.</p>
+                        </div>
+                        <!-- Próximas Etapas -->
+                         <div class="opacity-60">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">Compras - Realizar Contratação</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>
