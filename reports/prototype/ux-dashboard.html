@@ -36,10 +36,10 @@
     <div class="px-4 lg:px-6 py-4">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
+                <a href="ux-dashboard.html" class="flex items-center space-x-3">
                     <img class="h-10 w-auto" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/e6e8813b52-911a03e394b3616a198d.png" alt="BEVAP company logo, modern, professional, navy and green colors" />
                     <h1 class="text-xl lg:text-2xl font-montserrat font-semibold">Portfólio de Projetos</h1>
-                </div>
+                </a>
                 <button class="lg:hidden text-white">
                     <i class="fa-solid fa-bars text-xl"></i>
                 </button>
@@ -51,9 +51,9 @@
                     <input type="text" placeholder="Buscar por título ou código (ex.: PRJ-2026-014)" class="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-bevap-green focus:bg-white/15" />
                 </div>
                 <div class="flex gap-2">
-                    <button class="flex-1 lg:flex-none bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-2.5 rounded-lg font-medium transition-colors">
+                    <a href="nova-solicitacao.html" class="flex-1 lg:flex-none bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-2.5 rounded-lg font-medium transition-colors inline-flex items-center">
                         <i class="fa-solid fa-plus mr-2"></i>Nova Solicitação
-                    </button>
+                    </a>
                     <button class="flex-1 lg:flex-none bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-lg font-medium transition-colors">
                         Meus Projetos
                     </button>
@@ -474,6 +474,46 @@
                         <i class="fa-solid fa-question-circle text-bevap-navy text-2xl mb-2"></i>
                         <span class="text-sm font-medium text-bevap-navy text-center">Ajuda</span>
                     </button>
+                </div>
+            </section>
+
+            <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                    <i class="fa-solid fa-flask-vial mr-2 text-bevap-green"></i>Simulação de Telas (Protótipo)
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <a href="ux-aprovacao-comite.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-users-viewfinder text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovação Comitê</span>
+                    </a>
+                    <a href="ux-aprovacao-gcc.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-user-check text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovação GCC</span>
+                    </a>
+                    <a href="ux-aprovar-projeto.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-thumbs-up text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovar Projeto</span>
+                    </a>
+                    <a href="ux-avaliar-projeto.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-clipboard-check text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Avaliar Projeto</span>
+                    </a>
+                    <a href="ux-compras-realizar-contratacao.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-shopping-cart text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Realizar Contratação</span>
+                    </a>
+                    <a href="ux-proposta-comercial.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-file-invoice-dollar text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Proposta Comercial</span>
+                    </a>
+                    <a href="ux-solicitante-aprovar-proposta-comercial.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-user-plus text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovar Proposta</span>
+                    </a>
+                    <a href="ux-triagem-tecnica.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-cogs text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Triagem Técnica</span>
+                    </a>
                 </div>
             </section>
         </main>

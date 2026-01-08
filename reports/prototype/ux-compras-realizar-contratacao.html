@@ -45,7 +45,7 @@
                 <div class="h-8 w-px bg-gray-400"></div>
                 <h1 class="text-white font-montserrat font-semibold text-lg">Compras â€“ Realizar ContrataÃ§Ã£o</h1>
             </div>
-            <div class="flex items-center space-x-3">
+            <a href="ux-dashboard.html" class="flex items-center space-x-3">
                 <button class="text-white hover:text-bevap-gold transition-colors">
                     <i class="fa-regular fa-bell text-xl"></i>
                 </button>
@@ -515,6 +515,49 @@
             </div>
         </aside>
     </div>
+            <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                    <i class="fa-solid fa-flask-vial mr-2 text-bevap-green"></i>Simulação de Telas (Protótipo)
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <a href="ux-dashboard.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-tachometer-alt text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Dashboard</span>
+                    </a>
+                    <a href="ux-aprovacao-comite.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-users-viewfinder text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovação Comitê</span>
+                    </a>
+                    <a href="ux-aprovacao-gcc.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-user-check text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovação GCC</span>
+                    </a>
+                    <a href="ux-aprovar-projeto.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-thumbs-up text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovar Projeto</span>
+                    </a>
+                    <a href="ux-avaliar-projeto.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-clipboard-check text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Avaliar Projeto</span>
+                    </a>
+                    <a href="ux-compras-realizar-contratacao.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-shopping-cart text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Realizar Contratação</span>
+                    </a>
+                    <a href="ux-proposta-comercial.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-file-invoice-dollar text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Proposta Comercial</span>
+                    </a>
+                    <a href="ux-solicitante-aprovar-proposta-comercial.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-user-plus text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovar Proposta</span>
+                    </a>
+                    <a href="ux-triagem-tecnica.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-cogs text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Triagem Técnica</span>
+                    </a>
+                </div>
+            </section>
 </main>
 
 <footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
@@ -525,7 +568,7 @@
                 Salvar Rascunho
             </button>
             
-            <div class="flex items-center space-x-3">
+            <a href="ux-dashboard.html" class="flex items-center space-x-3">
                 <button onclick="openCancelModal()" class="px-6 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors">
                     <i class="fa-solid fa-times-circle mr-2"></i>
                     Cancelar Processo
@@ -785,3 +828,4 @@ function showToast(type, message) {
 </script>
 </body>
 </html>
+
