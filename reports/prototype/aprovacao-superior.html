@@ -56,63 +56,99 @@
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
                 <a href="#" class="text-gray-300 hover:text-white transition-colors">Minhas Pendências</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-                <span class="text-bevap-gold font-medium">Aprovar Solicitação</span>
+                <span class="text-bevap-gold font-medium">Aprovar Solicitação PRJ-2026-017</span>
             </nav>
         </div>
     </div>
 </header>
 
-<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+<main id="main-content" class="pt-32 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <div id="content-section" class="lg:col-span-2">
+        <div class="lg:col-span-2 space-y-6">
             
-            <div id="solicitation-details" class="bg-white rounded-lg shadow-md p-6 space-y-6">
-                <div>
-                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Objetivo do Projeto</h3>
-                    <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">Desenvolver um portal centralizado para os colaboradores acessarem informações pessoais, benefícios, documentos e serviços de RH de forma integrada e intuitiva.</p>
+            <!-- Seção de Análise do Gestor -->
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-user-tie"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Análise do Gestor</h2>
                 </div>
 
-                <div>
-                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Problema/Oportunidade</h3>
-                    <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">Atualmente os colaboradores precisam acessar múltiplos sistemas para consultar informações básicas, gerando ineficiência e frustração. Um portal único melhorará a experiência e reduzirá demandas ao RH.</p>
-                </div>
-
-                <div>
-                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Benefícios Esperados</h3>
-                    <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">Redução de 40% nas consultas ao RH, melhoria na satisfação dos colaboradores, centralização de informações e facilidade de acesso a serviços.</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-6">
                     <div>
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo</h3>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <ul class="text-sm text-gray-700 space-y-1">
-                                <li>• Dashboard personalizado</li>
-                                <li>• Consulta de holerites</li>
-                                <li>• Solicitação de benefícios</li>
-                                <li>• Download de documentos</li>
-                                <li>• Integração com sistemas RH</li>
-                            </ul>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Parecer sobre a Solicitação <span class="text-red-500">*</span></label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
+                                <input type="radio" name="parecer" value="aprovar" class="sr-only peer">
+                                <div class="peer-checked:border-bevap-green peer-checked:bg-green-50 absolute inset-0 rounded-lg border-2"></div>
+                                <div class="relative flex items-center">
+                                    <i class="fa-solid fa-check-circle text-bevap-green text-xl mr-3"></i>
+                                    <span class="font-semibold text-gray-900">Aprovar</span>
+                                </div>
+                            </label>
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-gold transition-all">
+                                <input type="radio" name="parecer" value="correcao" class="sr-only peer">
+                                <div class="peer-checked:border-bevap-gold peer-checked:bg-yellow-50 absolute inset-0 rounded-lg border-2"></div>
+                                <div class="relative flex items-center">
+                                    <i class="fa-solid fa-rotate-left text-bevap-gold text-xl mr-3"></i>
+                                    <span class="font-semibold text-gray-900">Solicitar Correção</span>
+                                </div>
+                            </label>
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-red-500 transition-all">
+                                <input type="radio" name="parecer" value="reprovar" class="sr-only peer">
+                                <div class="peer-checked:border-red-500 peer-checked:bg-red-50 absolute inset-0 rounded-lg border-2"></div>
+                                <div class="relative flex items-center">
+                                    <i class="fa-solid fa-times-circle text-red-500 text-xl mr-3"></i>
+                                    <span class="font-semibold text-gray-900">Reprovar</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="approval-comments" class="block text-sm font-medium text-gray-700 mb-2">Observações</label>
+                        <textarea id="approval-comments" rows="4" placeholder="Adicione aqui suas observações. Este campo é opcional para aprovação, mas obrigatório para reprovação ou solicitação de correção." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detalhes da Solicitação (Read-only) -->
+            <div class="bg-white rounded-lg shadow-md p-6 opacity-80">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Dados da Solicitação</h2>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
+                        <p class="text-lg font-semibold text-gray-800">Portal do Colaborador</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Solicitante</label>
+                            <p class="text-gray-800">Mariana Oliveira</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
+                            <p class="text-gray-800">Recursos Humanos</p>
                         </div>
                     </div>
                     <div>
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Fora de Escopo</h3>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <ul class="text-sm text-gray-700 space-y-1">
-                                <li>• Módulo de avaliação</li>
-                                <li>• Sistema de ponto</li>
-                                <li>• App móvel nativo</li>
-                            </ul>
-                        </div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Objetivo do Projeto</label>
+                        <p class="text-gray-800 bg-gray-50 p-3 rounded-md">Desenvolver um portal centralizado para os colaboradores acessarem informações pessoais, benefícios, documentos e serviços de RH de forma integrada e intuitiva.</p>
                     </div>
-                </div>
-
-                <div>
-                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Anexos</h3>
-                    <div class="space-y-2">
-                        <a href="#" class="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Benefícios Esperados</label>
+                        <p class="text-gray-800 bg-gray-50 p-3 rounded-md">Redução de 40% nas consultas ao RH, melhoria na satisfação dos colaboradores, centralização de informações e facilidade de acesso a serviços.</p>
+                    </div>
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Anexos</h3>
+                        <a href="#" class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
                             <div class="flex items-center">
                                 <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
                                 <div>
@@ -124,39 +160,43 @@
                         </a>
                     </div>
                 </div>
-
-                <div class="pt-6 border-t">
-                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Observações da Aprovação</h3>
-                    <textarea id="approval-comments" rows="4" placeholder="Adicione aqui suas observações sobre a aprovação ou reprovação desta solicitação..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
-                </div>
             </div>
+
         </div>
 
-        <div id="sidebar-summary" class="lg:col-span-1">
-            <div class="sticky top-32 space-y-4">
+        <div class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
                 
-                <div id="project-summary" class="bg-white rounded-lg shadow-md p-5">
+                <div class="bg-white rounded-lg shadow-md p-5">
+                     <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-cogs mr-2 text-bevap-gold"></i>
+                        Ações
+                    </h3>
+                    <div class="space-y-3">
+                        <button onclick="showApproveModal()" class="w-full px-4 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center">
+                            <i class="fa-solid fa-check mr-2"></i>
+                            Aprovar e Encaminhar
+                        </button>
+                        <button onclick="showReturnModal()" class="w-full px-4 py-2.5 border-2 border-bevap-gold text-bevap-gold rounded-lg font-medium hover:bg-bevap-gold hover:text-white transition-all flex items-center justify-center">
+                            <i class="fa-solid fa-rotate-left mr-2"></i>
+                            Devolver para Correção
+                        </button>
+                        <button onclick="showRejectModal()" class="w-full px-4 py-2.5 border-2 border-red-500 text-red-500 rounded-lg font-medium hover:bg-red-500 hover:text-white transition-all flex items-center justify-center">
+                            <i class="fa-solid fa-times mr-2"></i>
+                            Reprovar Solicitação
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-5">
                     <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
-                        <i class="fa-solid fa-file-signature mr-2 text-bevap-gold"></i>
+                        <i class="fa-solid fa-clipboard-list mr-2 text-bevap-gold"></i>
                         Resumo da Solicitação
                     </h3>
-                    
                     <div class="space-y-3 text-sm">
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Código</span>
                             <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-017</span>
-                        </div>
-                        <div class="pb-2 border-b">
-                            <span class="text-gray-600">Título</span>
-                            <p class="font-medium text-gray-900 mt-1">Portal do Colaborador</p>
-                        </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Solicitante</span>
-                            <span class="font-medium text-gray-900">Mariana Oliveira</span>
-                        </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Área</span>
-                            <span class="font-medium text-gray-900">Recursos Humanos</span>
                         </div>
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Data da Solicitação</span>
@@ -171,49 +211,38 @@
                     </div>
                 </div>
 
-                <div id="estimatives-summary" class="bg-white rounded-lg shadow-md p-5">
-                    <h3 class="font-montserrat font-bold text-sm text-bevap-navy mb-3 flex items-center">
-                        <i class="fa-solid fa-chart-line mr-2 text-bevap-gold"></i>
-                        Estimativas Iniciais
+                <div class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-shoe-prints mr-2 text-bevap-gold"></i>
+                        Etapas do Fluxo
                     </h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-gray-600">Custo Estimado</span>
-                            <span class="font-semibold text-bevap-navy">R$ 120.000,00</span>
+                    <div class="relative pl-5 border-l-2 border-bevap-green">
+                        <div class="mb-4">
+                            <div class="absolute -left-2.5 top-1 w-4 h-4 bg-bevap-green rounded-full border-2 border-white shadow"></div>
+                            <p class="font-semibold text-bevap-navy">Aprovação Superior Imediato</p>
+                            <p class="text-xs text-gray-500">Pendente de análise pelo gestor da área.</p>
                         </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-gray-600">Prazo Estimado</span>
-                            <span class="font-semibold text-bevap-navy">8 semanas</span>
+                        <div class="mb-4 opacity-50">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">TI - Avaliar Projeto</p>
                         </div>
-                        <div class="flex items-center justify-between text-sm">
-                            <span class="text-gray-600">Esforço Estimado</span>
-                            <span class="font-semibold text-bevap-navy">480 horas</span>
+                         <div class="opacity-50">
+                             <div class="absolute -left-2.5 top-1 w-4 h-4 bg-gray-300 rounded-full"></div>
+                            <p class="font-semibold text-gray-600">TI - Triagem Técnica</p>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </main>
 
-<footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex items-center justify-end space-x-3">
-            <button onclick="showRejectModal()" class="px-6 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all shadow-md">
-                <i class="fa-solid fa-times mr-2"></i> Reprovar
-            </button>
-            <button onclick="showApproveModal()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
-                <i class="fa-solid fa-check mr-2"></i> Aprovar
-            </button>
-        </div>
-    </div>
-</footer>
-
 <!-- Modal Reprovar -->
 <div id="modal-reject" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
         <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Reprovar Solicitação</h3>
-        <p class="text-sm text-gray-600 mb-4">Tem certeza de que deseja reprovar esta solicitação? A justificativa será registrada nas observações.</p>
+        <p class="text-sm text-gray-600 mb-4">Tem certeza de que deseja reprovar esta solicitação? A justificativa informada no campo de observações é obrigatória.</p>
         <div class="flex justify-end space-x-3">
             <button onclick="closeModal('modal-reject')" class="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
             <button onclick="handleReject()" class="px-5 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">Confirmar Reprovação</button>
@@ -229,17 +258,42 @@
         <div class="flex justify-end space-x-3">
             <button onclick="closeModal('modal-approve')" class="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
             <button onclick="handleApprove()" class="px-5 py-2 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700">Confirmar Aprovação</button>
+ !-- Modal Devolver para Correção -->
+<div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correção</h3>
+        <p class="text-sm text-gray-600 mb-4">Tem certeza de que deseja devolver esta solicitação para correção? A justificativa informada no campo de observações é obrigatória.</p>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeModal('modal-return')" class="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
+            <button onclick="handleReturn()" class="px-5 py-2 text-sm font-medium text-white bg-bevap-gold rounded-lg hover:bg-yellow-600">Confirmar Devolução</button>
         </div>
     </div>
 </div>
 
 <script>
     function showRejectModal() {
+        const comments = document.getElementById('approval-comments').value;
+        if (!comments.trim()) {
+            alert('Para reprovar a solicitação, o campo de observações é obrigatório.');
+            return;
+        }
+        document.querySelector('input[name="parecer"][value="reprovar"]').checked = true;
         document.getElementById('modal-reject').classList.remove('hidden');
     }
 
     function showApproveModal() {
+        document.querySelector('input[name="parecer"][value="aprovar"]').checked = true;
         document.getElementById('modal-approve').classList.remove('hidden');
+    }
+
+    function showReturnModal() {
+        const comments = document.getElementById('approval-comments').value;
+        if (!comments.trim()) {
+            alert('Para devolver a solicitação para correção, o campo de observações é obrigatório.');
+            return;
+        }
+        document.querySelector('input[name="parecer"][value="correcao"]').checked = true;
+        document.getElementById('modal-return').classList.remove('hidden');
     }
 
     function closeModal(modalId) {
@@ -256,6 +310,18 @@
 
     function handleApprove() {
         const comments = document.getElementById('approval-comments').value;
+        console.log('Solicitação Aprovada com os seguintes comentários:', comments);
+        // Aqui iria a lógica para enviar os dados para o backend
+        closeModal('modal-approve');
+        alert('Solicitação aprovada e encaminhada para TI!');
+    }
+
+    function handleReturn() {
+        const comments = document.getElementById('approval-comments').value;
+        console.log('Solicitação devolvida para correção com os seguintes comentários:', comments);
+        // Aqui iria a lógica para enviar os dados para o backend
+        closeModal('modal-return');
+        alert('Solicitação devolvida para correçãol-comments').value;
         console.log('Solicitação Aprovada com os seguintes comentários:', comments);
         // Aqui iria a lógica para enviar os dados para o backend
         closeModal('modal-approve');
