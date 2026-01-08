@@ -144,92 +144,8 @@
                     </button>
                 </div>
                 
-                <div id="wbs-container" class="space-y-4">
-                    <div class="wbs-item border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <h4 class="font-semibold text-bevap-navy">1. Descoberta e Análise</h4>
-                            <div class="flex items-center space-x-2">
-                                <button class="text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
-                                    <i class="fa-solid fa-grip-vertical"></i>
-                                </button>
-                                <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Responsável</label>
-                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                                    <option>Ana Costa</option>
-                                    <option>TechPartners</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
-                                <input type="number" value="40" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Duração (dias)</label>
-                                <input type="number" value="5" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Dependências</label>
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Aprovação</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <label class="block text-sm text-gray-600 mb-1">Observações</label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Levantamento de requisitos e análise de integração..."></textarea>
-                        </div>
-                        <button onclick="addSubtask(this)" class="mt-3 text-bevap-green text-sm hover:underline">
-                            <i class="fa-solid fa-plus mr-1"></i>
-                            Adicionar Subtarefa
-                        </button>
-                    </div>
-                    
-                    <div class="wbs-item border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <h4 class="font-semibold text-bevap-navy">2. Implementação SSO</h4>
-                            <div class="flex items-center space-x-2">
-                                <button onclick="moveUp(this)" class="text-gray-400 hover:text-gray-600">
-                                    <i class="fa-solid fa-chevron-up"></i>
-                                </button>
-                                <button class="text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
-                                    <i class="fa-solid fa-grip-vertical
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Responsável</label>
-                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                                    <option>TechPartners</option>
-                                    <option>Ana Costa</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
-                                <input type="number" value="160" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Duração (dias)</label>
-                                <input type="number" value="20" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Dependências</label>
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Descoberta</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <label class="block text-sm text-gray-600 mb-1">Observações</label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Configuração do SSO e integração com AD..."></textarea>
-                        </div>
-                    </div>
+                <div id="wbs-list" class="space-y-4">
+                    <!-- Fases e subtarefas serão inseridas aqui dinamicamente -->
                 </div>
             </div>
 
@@ -446,7 +362,7 @@
                                         <td class="px-3 py-2 text-center border-r">T
                                         <td class="px-3 py-2 text-center border-r">TI</td>
                                         <td class="px-3 py-2 text-center border-r">GP</td>
-                                        <td class="px-3 py-2 text-center border-r">Seg.</td>
+                                        <td class="px-3 py-2 text-center">Seg.</td>
                                         <td class="px-3 py-2 text-center">Sol.</td>
                                     </tr>
                                 </tbody>
@@ -684,7 +600,244 @@
     </div>
 </footer>
 
+<div id="toast-container" class="fixed top-5 right-5 z-[100] space-y-2">
+    <!-- Toasts serão adicionados aqui dinamicamente -->
+</div>
+
+<div id="confirmation-modal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center z-[99] hidden">
+    <div class="bg-white rounded-lg shadow-xl p-6 w-full max-w-md mx-auto">
+        <h3 id="modal-title" class="text-lg font-montserrat font-bold text-bevap-navy mb-4">Confirmar Ação</h3>
+        <p id="modal-message" class="text-gray-700 mb-6">Você tem certeza que deseja realizar esta ação?</p>
+        <div class="flex justify-end space-x-3">
+            <button id="modal-cancel-btn" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button id="modal-confirm-btn" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+
 <script>
+    // Estado inicial dos dados da EAP/WBS
+    let wbsData = [
+        {
+            id: 1,
+            name: '1. Descoberta e Análise',
+            responsible: 'Ana Costa',
+            effort: 40,
+            duration: 5,
+            dependencies: 'Aprovação',
+            notes: 'Levantamento de requisitos e análise de integração...',
+            subtasks: []
+        },
+        {
+            id: 2,
+            name: '2. Implementação SSO',
+            responsible: 'TechPartners',
+            effort: 160,
+            duration: 20,
+            dependencies: 'Descoberta',
+            notes: 'Configuração do SSO e integração com AD...',
+            subtasks: []
+        }
+    ];
+
+    let sortableInstances = []; // Array para armazenar as instâncias do Sortable
+
+    // Função para renderizar toda a estrutura da EAP/WBS
+    function renderWBS() {
+        // Destruir instâncias antigas do Sortable para evitar duplicatas
+        sortableInstances.forEach(instance => instance.destroy());
+        sortableInstances = []; // Limpar o array
+
+        const wbsList = document.getElementById('wbs-list');
+        wbsList.innerHTML = ''; // Limpa a lista antes de re-renderizar
+
+        wbsData.forEach((phase, phaseIndex) => {
+            const phaseNumber = phaseIndex + 1;
+            
+            const phaseElement = document.createElement('li');
+            phaseElement.className = 'mb-4';
+            phaseElement.dataset.id = phase.id;
+
+            let subtasksHTML = '';
+            if (phase.subtasks && phase.subtasks.length > 0) {
+                subtasksHTML = `
+                    <div class="ml-10">
+                        <ul class="subtask-list" data-phase-id="${phase.id}">
+                            ${phase.subtasks.map((subtask, subtaskIndex) => getSubtaskHTML(phase.id, phaseNumber, subtask, subtaskIndex)).join('')}
+                        </ul>
+                    </div>`;
+            }
+
+            phaseElement.innerHTML = `
+                <div class="flex items-center bg-gray-200 p-2 rounded-lg">
+                    <i class="fas fa-grip-vertical text-gray-500 mr-3 cursor-move"></i>
+                    <div class="flex-grow">
+                        <input type="text" value="${phaseNumber}. ${phase.name}" onchange="updatePhaseName(${phase.id}, this.value.substring(this.value.indexOf(' ') + 1))" class="text-lg font-bold text-gray-800 bg-transparent border-none focus:ring-0 focus:outline-none w-full">
+                    </div>
+                    <button onclick="addSubtask(${phase.id})" class="text-blue-500 hover:text-blue-700 mr-2"><i class="fas fa-plus"></i></button>
+                    <button onclick="removePhase(${phase.id})" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                </div>
+                ${subtasksHTML}
+            `;
+            wbsList.appendChild(phaseElement);
+        });
+
+        initSortable(); // Re-inicializa o Sortable na nova estrutura do DOM
+    }
+
+    function getSubtaskHTML(phaseId, phaseNumber, subtask, subtaskIndex) {
+        const subtaskNumber = `${phaseNumber}.${subtaskIndex + 1}`;
+        return `
+            <li class="flex items-center bg-gray-100 p-2 rounded-lg mt-2" data-id="${subtask.id}">
+                <i class="fas fa-grip-vertical text-gray-400 mr-3 cursor-move"></i>
+                <div class="flex-grow">
+                     <input type="text" value="${subtaskNumber}. ${subtask.name}" onchange="updateSubtaskName(${phaseId}, ${subtask.id}, this.value.substring(this.value.indexOf(' ') + 1))" class="text-md font-semibold text-gray-700 bg-transparent border-none focus:ring-0 focus:outline-none w-full">
+                </div>
+                <button onclick="removeSubtask(${phaseId}, ${subtask.id})" class="text-red-500 hover:text-red-700"><i class="fas fa-times"></i></button>
+            </li>
+        `;
+    }
+
+    function initSortable() {
+        const wbsList = document.getElementById('wbs-list');
+        // Inicializa o Sortable para a lista principal de fases
+        const phasesSortable = new Sortable(wbsList, {
+            group: 'phases',
+            handle: '.fa-grip-vertical',
+            animation: 150,
+            ghostClass: 'blue-background-class',
+            onEnd: function (evt) {
+                // Reordena o array wbsData
+                const [movedPhase] = wbsData.splice(evt.oldIndex, 1);
+                wbsData.splice(evt.newIndex, 0, movedPhase);
+
+                // Re-renderiza para atualizar a numeração e a UI
+                renderWBS();
+                showToast('Ordem das fases atualizada!', 'info');
+            }
+        });
+        sortableInstances.push(phasesSortable); // Adiciona a instância ao array
+
+        // Inicializa o Sortable para as subtarefas de cada fase
+        document.querySelectorAll('.subtask-list').forEach(list => {
+            const subtasksSortable = new Sortable(list, {
+                group: `subtasks-${list.dataset.phaseId}`,
+                animation: 150,
+                handle: '.handle-subtask',
+                ghostClass: 'bg-blue-100',
+                onEnd: (evt) => {
+                    const subtaskEl = evt.item;
+                    const toPhaseEl = evt.to;
+                    const fromPhaseEl = evt.from;
+
+                    const subtaskId = parseInt(subtaskEl.dataset.id);
+                    const toPhaseId = parseInt(toPhaseEl.dataset.phaseId);
+                    const fromPhaseId = parseInt(fromPhaseEl.dataset.phaseId);
+
+                    // Encontra the fase de origem e a subtarefa
+                    const fromPhase = wbsData.find(p => p.id === fromPhaseId);
+                    const subtaskIndex = fromPhase.subtasks.findIndex(s => s.id === subtaskId);
+                    
+                    // Remove a subtarefa da fase de origem
+                    const [movedSubtask] = fromPhase.subtasks.splice(subtaskIndex, 1);
+
+                    // Encontra a fase de destino e insere a subtarefa na nova posição
+                    const toPhase = wbsData.find(p => p.id === toPhaseId);
+                    toPhase.subtasks.splice(evt.newIndex, 0, movedSubtask);
+
+                    // Re-renderiza tudo para atualizar a numeração
+                    renderWBS(); 
+                    showToast('Ordem das subtarefas atualizada!', 'info');
+                }
+            });
+            sortableInstances.push(subtasksSortable); // Adiciona a instância ao array
+        });
+    }
+
+    // Funções para manipular os dados e re-renderizar
+
+    function updatePhaseName(phaseId, newName) {
+        const phase = wbsData.find(p => p.id === phaseId);
+        if (phase) {
+            phase.name = newName;
+            showToast('Nome da fase atualizado!', 'success');
+            renderWBS(); // Re-renderiza para mostrar o nome atualizado corretamente
+        }
+    }
+
+    function updateSubtaskName(phaseId, subtaskId, newName) {
+        const phase = wbsData.find(p => p.id === phaseId);
+        if (phase) {
+            const subtask = phase.subtasks.find(s => s.id === subtaskId);
+            if (subtask) {
+                subtask.name = newName;
+                showToast('Nome da subtarefa atualizado!', 'success');
+                renderWBS(); // Re-renderiza para mostrar o nome atualizado corretamente
+            }
+        }
+    }
+
+    function addPhase() {
+        const newPhaseId = wbsData.length > 0 ? Math.max(...wbsData.map(p => p.id)) + 1 : 1;
+        wbsData.push({
+            id: newPhaseId,
+            name: `${wbsData.length + 1}. Nova Fase`,
+            responsible: 'Ana Costa',
+            effort: 0,
+            duration: 0,
+            dependencies: '',
+            notes: '',
+            subtasks: []
+        });
+        renderWBS(); // Re-renderiza a lista completa
+        showToast('Nova fase adicionada com sucesso!', 'success');
+    }
+
+    function removePhase(phaseId) {
+        showConfirmationModal(
+            'Remover Fase',
+            'Você tem certeza que deseja remover esta Fase e todas as suas subtarefas?',
+            () => {
+                wbsData = wbsData.filter(p => p.id !== phaseId);
+                renderWBS(); // Re-renderiza a lista completa
+                showToast('Fase removida com sucesso!', 'success');
+            }
+        );
+    }
+
+    function addSubtask(phaseId) {
+        const phase = wbsData.find(p => p.id === phaseId);
+        if (phase) {
+            const newSubtaskId = phase.subtasks.length > 0 ? Math.max(...phase.subtasks.map(s => s.id)) + 1 : 1;
+            phase.subtasks.push({
+                id: newSubtaskId,
+                name: `Nova Subtarefa`
+            });
+            renderWBS(); // Re-renderiza a lista completa para adicionar a nova subtarefa
+            showToast('Subtarefa adicionada com sucesso!', 'success');
+        }
+    }
+
+    function removeSubtask(phaseId, subtaskId) {
+        showConfirmationModal(
+            'Remover Subtarefa',
+            'Você tem certeza que deseja remover esta subtarefa?',
+            () => {
+                const phase = wbsData.find(p => p.id === phaseId);
+                if (phase) {
+                    phase.subtasks = phase.subtasks.filter(s => s.id !== subtaskId);
+                    renderWBS(); // Re-renderiza a lista completa
+                    showToast('Subtarefa removida com sucesso!', 'success');
+                }
+            }
+        );
+    }
+
+    // Funções de navegação do stepper (sem alterações)
     function previousStep() {
         const currentStep = document.getElementById('current-step');
         const step = parseInt(currentStep.textContent.replace(/[^0-9]/g, ''));
@@ -721,59 +874,7 @@
         }
     }
     
-    function addPhase() {
-        const container = document.getElementById('wbs-container');
-        const phase = document.createElement('div');
-        phase.className = 'wbs-item border border-gray-200 rounded-lg p-4';
-        
-        phase.innerHTML = `
-            <div class="flex items-center justify-between mb-3">
-                <input type="text" value="Nova Fase" class="font-semibold text-bevap-navy w-full border-b-2 border-gray-200 focus:border-bevap-green focus:outline-none" placeholder="Nome da Fase">
-                <div class="flex items-center space-x-2">
-                    <button onclick="moveUp(this)" class="text-gray-400 hover:text-gray-600">
-                        <i class="fa-solid fa-chevron-up"></i>
-                    </button>
-                    <button class="text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
-                        <i class="fa-solid fa-grip-vertical
-                    </button>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Responsável</label>
-                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                        <option>Ana Costa</option>
-                        <option>TechPartners</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
-                    <input type="number" value="40" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Duração (dias)</label>
-                    <input type="number" value="5" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Dependências</label>
-                    <div class="flex flex-wrap gap-1">
-                        <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Aprovação</span>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-3">
-                <label class="block text-sm text-gray-600 mb-1">Observações</label>
-                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Levantamento de requisitos e análise de integração..."></textarea>
-            </div>
-            <button onclick="addSubtask(this)" class="mt-3 text-bevap-green text-sm hover:underline">
-                <i class="fa-solid fa-plus mr-1"></i>
-                Adicionar Subtarefa
-            </button>
-        `;
-        
-        container.appendChild(phase);
-    }
-    
+    // Funções de exemplo (sem alterações)
     function addMilestone() {
         const container = document.querySelector('table tbody');
         const milestone = document.createElement('tr');
@@ -838,68 +939,6 @@
         container.appendChild(dependency);
     }
     
-    function addSubtask() {
-        const container = document.querySelector('div.wbs-item');
-        const subtask = document.createElement('div');
-        subtask.className = 'wbs-item border border-gray-200 rounded-lg p-4';
-        
-        subtask.innerHTML = `
-            <div class="flex items-center justify-between mb-3">
-                <h4 class="font-semibold text-bevap-navy">Nova Subtarefa</h4>
-                <div class="flex items-center space-x-2">
-                    <button onclick="moveUp(this)" class="text-gray-400 hover:text-gray-600">
-                        <i class="fa-solid fa-chevron-up"></i>
-                    </button>
-                    <button onclick="moveDown(this)" class="text-gray-400 hover:text-gray-600">
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                    <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Responsável</label>
-                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                        <option>Ana Costa</option>
-                        <option>TechPartners</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
-                    <input type="number" value="40" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Duração (dias)</label>
-                    <input type="number" value="5" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Dependências</label>
-                    <div class="flex flex-wrap gap-1">
-                        <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Aprovação</span>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-3">
-                <label class="block text-sm text-gray-600 mb-1">Observações</label>
-                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Levantamento de requisitos e análise de integração..."></textarea>
-            </div>
-            <button onclick="addSubtask(this)" class="mt-3 text-bevap-green text-sm hover:underline">
-                <i class="fa-solid fa-plus mr-1"></i>
-                Adicionar Subtarefa
-            </button>
-        `;
-        
-        container.appendChild(subtask);
-    }
-    
-    function moveUp(element) {
-        const parent = element.closest('div.wbs-item');
-        const index = Array.from(parent.parentElement.children).indexOf(parent);
-        
-    }
-    
     function removeMilestone(element) {
         if (confirm('Tem certeza que deseja remover este Marco?')) {
             element.closest('tr').remove();
@@ -927,14 +966,94 @@
             alert('Cancelado com sucesso!');
         }
     }
+
+    // --- NOVO: Funções de Modal e Toast ---
+
+    let confirmCallback = null;
+
+    const modal = document.getElementById('confirmation-modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalMessage = document.getElementById('modal-message');
+    const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+    const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+    function showConfirmationModal(title, message, onConfirm) {
+        modalTitle.textContent = title;
+        modalMessage.textContent = message;
+        confirmCallback = onConfirm;
+        modal.classList.remove('hidden');
+    }
+
+    function hideConfirmationModal() {
+        modal.classList.add('hidden');
+        confirmCallback = null;
+    }
+
+    modalConfirmBtn.addEventListener('click', () => {
+        if (confirmCallback) {
+            confirmCallback();
+        }
+        hideConfirmationModal();
+    });
+
+    modalCancelBtn.addEventListener('click', () => {
+        hideConfirmationModal();
+    });
+
+    function showToast(message, type = 'success') {
+        const toastContainer = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        
+        const bgColor = type === 'success' ? 'bg-bevap-green' : 'bg-red-600';
+        const icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+
+        toast.className = `flex items-center p-4 text-white ${bgColor} rounded-lg shadow-lg animate-fade-in-right`;
+        toast.innerHTML = `
+            <i class="fa-solid ${icon} mr-3 text-xl"></i>
+            <span>${message}</span>
+        `;
+        
+        toastContainer.appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add('animate-fade-out-right');
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+
+
+    // Inicializa a renderização quando o DOM estiver pronto
+    document.addEventListener('DOMContentLoaded', (event) => {
+        renderWBS();
+    });
 </script>
+<style>
+    @keyframes fade-in-right {
+        from {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+    @keyframes fade-out-right {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    }
+    .animate-fade-in-right {
+        animation: fade-in-right 0.5s ease-out forwards;
+    }
+    .animate-fade-out-right {
+        animation: fade-out-right 0.5s ease-in forwards;
+    }
+</style>
 </body>
 </html>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const wbsContainer = document.getElementById('wbs-container');
-        new Sortable(wbsContainer, {
-            animation: 150,
-            handle: '.cursor-grab', // handle for moving items
-            ghostClass: 'bg-blue-100'
-        });
-    });

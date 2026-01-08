@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Execução de Atividades</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#0B2E4A',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-inter">
+
+<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
+    <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
+                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
+                    </div>
+                    <span class="text-white font-montserrat font-bold text-xl">BEVAP</span>
+                </div>
+                <div class="h-8 w-px bg-gray-400"></div>
+                <h1 class="text-white font-montserrat font-semibold text-lg">Execução de Atividades por Fase</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="openNewActivity()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium text-sm">
+                    <i class="fa-solid fa-plus mr-2"></i>Nova Atividade
+                </button>
+                <button onclick="openPhaseModal()" class="px-4 py-2 bg-bevap-gold text-bevap-navy rounded-lg hover:bg-yellow-500 transition-colors font-medium text-sm">
+                    <i class="fa-solid fa-info-circle mr-2"></i>Ver Fase
+                </button>
+                <button onclick="goBack()" class="text-white hover:text-bevap-gold transition-colors" title="Voltar">
+                    <i class="fa-solid fa-arrow-left text-xl"></i>
+                </button>
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Usuário" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="pb-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <span class="text-bevap-gold font-medium">Execução</span>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main id="main-content" class="pt-32 pb-8 px-4 sm:px-6 lg:px-8 max-w-full">
+    <div class="grid grid-cols-1 xl:grid-cols-5 gap-6">
+        <aside id="filters-panel" class="xl:col-span-1 bg-white rounded-lg shadow-md p-6 h-fit sticky top-24">
+            <div class="mb-6">
+                <div class="text-sm text-gray-600 mb-2">Projeto</div>
+                <div class="font-mono text-sm font-medium text-bevap-navy">PRJ-2026-014</div>
+                <div class="text-lg font-montserrat font-bold text-bevap-navy">Implantar SSO</div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-3">Fase</label>
+                <div class="grid grid-cols-1 gap-2">
+                    <button onclick="selectPhase('implementacao')" class="phase-btn active px-3 py-2 text-sm rounded-lg border border-bevap-green bg-bevap-green text-white transition-colors">Implementação</button>
+                    <button onclick="selectPhase('qa')" class="phase-btn px-3 py-2 text-sm rounded-lg border border-gray-300 hover:border-bevap-green hover:text-bevap-green transition-colors">QA</button>
+                    <button onclick="selectPhase('golive')" class="phase-btn px-3 py-2 text-sm rounded-lg border border-gray-300 hover:border-bevap-green hover:text-bevap-green transition-colors">Go-Live Prep</button>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Responsável</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                    <option value="">Todos</option>
+                    <option value="ana">Ana Lima</option>
+                    <option value="carlos">Carlos M.</option>
+                    <option value="joao">João Silva</option>
+                </select>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
+                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                    <option value="">Todas</option>
+                    <option value="critico">Crítico</option>
+                    <option value="estrategico">Estratégico</option>
+                    <option value="operacional">Operacional</option>
+                </select>
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Buscar</label>
+                <input type="text" placeholder="Título ou código..." class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+            </div>
+
+            <div class="mb-6">
+                <div class="space-y-2">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="mr-2 text-bevap-green focus:ring-bevap-green">
+                        <span class="text-sm">Com risco</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="mr-2 text-bevap-green focus:ring-bevap-green">
+                        <span class="text-sm">Bloqueadas</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t border-gray-200">
+                <h3 class="font-semibold text-bevap-navy mb-3">KPIs da Fase</h3>
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Ativas</span>
+                        <span class="font-medium text-bevap-navy">8</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Em atraso</span>
+                        <span class="font-medium text-red-600">2</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Em validação</span>
+                        <span class="font-medium text-yellow-600">3</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Concluídas</span>
+                        <span class="font-medium text-green-600">12</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div id="kanban-board" class="xl:col-span-4">
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
+                <div id="backlog-column" class="bg-gray-100 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-gray-700">Backlog</h3>
+                        <span class="text-xs bg-gray-200 px-2 py-1 rounded-full">3</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div onclick="openActivityDrawer('ATV-024')" class="activity-card bg-white rounded-lg p-3 border-l-4 border-gray-400 cursor-pointer hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <div class="text-xs text-gray-500 font-mono">ATV-024</div>
+                                    <div class="text-sm font-medium text-bevap-navy">Documentar processo</div>
+                                </div>
+                                <div class="flex space-x-1 ml-2">
+                                    <button onclick="event.stopPropagation(); moveActivity('ATV-024', 'right')" class="text-gray-400 hover:text-bevap-green">
+                                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" alt="João Silva" class="w-5 h-5 rounded-full">
+                                <span class="text-xs text-gray-600">João Silva</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded">22/02/2026</span>
+                                <div class="flex space-x-2">
+                                    <span><i class="fa-solid fa-paperclip mr-1"></i>2</span>
+                                    <span><i class="fa-solid fa-comment mr-1"></i>1</span>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <div class="flex items-center justify-between text-xs mb-1">
+                                    <span class="text-gray-500">Subtarefas</span>
+                                    <span class="text-gray-500">0/3</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1">
+                                    <div class="bg-gray-400 h-1 rounded-full" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button onclick="openNewActivity()" class="w-full py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-bevap-green hover:text-bevap-green transition-colors text-sm">
+                            <i class="fa-solid fa-plus mr-2"></i>Criar atividade
+                        </button>
+                    </div>
+                </div>
+
+                <div id="execution-column" class="bg-blue-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-blue-700">Em Execução</h3>
+                        <span class="text-xs bg-blue-100 px-2 py-1 rounded-full">2</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div onclick="openActivityDrawer('ATV-023')" class="activity-card bg-white rounded-lg p-3 border-l-4 border-red-400 cursor-pointer hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <div class="text-xs text-gray-500 font-mono">ATV-023</div>
+                                    <div class="text-sm font-medium text-bevap-navy">Configurar SSO</div>
+                                </div>
+                                <div class="flex space-x-1 ml-2">
+                                    <button onclick="event.stopPropagation(); moveActivity('ATV-023', 'left')" class="text-gray-400 hover:text-bevap-green">
+                                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); moveActivity('ATV-023', 'right')" class="text-gray-400 hover:text-bevap-green">
+                                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Ana Lima" class="w-5 h-5 rounded-full">
+                                <span class="text-xs text-gray-600">Ana Lima</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs mb-2">
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded">20/02/2026 (Vencido)</span>
+                                <div class="flex space-x-2 text-gray-500">
+                                    <span><i class="fa-solid fa-paperclip mr-1"></i>3</span>
+                                    <span><i class="fa-solid fa-comment mr-1"></i>5</span>
+                                </div>
+                            </div>
+                            <div class="flex space-x-1 mb-2">
+                                <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Bloqueada</span>
+                            </div>
+                            <div class="mt-2">
+                                <div class="flex items-center justify-between text-xs mb-1">
+                                    <span class="text-gray-500">Subtarefas</span>
+                                    <span class="text-gray-500">3/5</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1">
+                                    <div class="bg-blue-500 h-1 rounded-full" style="width: 60%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div onclick="openActivityDrawer('ATV-031')" class="activity-card bg-white rounded-lg p-3 border-l-4 border-yellow-400 cursor-pointer hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <div class="text-xs text-gray-500 font-mono">ATV-031</div>
+                                    <div class="text-sm font-medium text-bevap-navy">Ajustar mapeamento</div>
+                                </div>
+                                <div class="flex space-x-1 ml-2">
+                                    <button onclick="event.stopPropagation(); moveActivity('ATV-031', 'left')" class="text-gray-400 hover:text-bevap-green">
+                                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); moveActivity('ATV-031', 'right')" class="text-gray-400 hover:text-bevap-green">
+                                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Carlos M." class="w-5 h-5 rounded-full">
+                                <span class="text-xs text-gray-600">Carlos M.</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs mb-2">
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded">25/02/2026</span>
+                                <div class="flex space-x-2 text-gray-500">
+                                    <span><i class="fa-solid fa-paperclip mr-1"></i>1</span>
+                                    <span><i class="fa-solid fa-comment mr-1"></i>2</span>
+                                </div>
+                            </div>
+                            <div class="flex space-x-1 mb-2">
+                                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Risco</span>
+                            </div>
+                            <div class="mt-2">
+                                <div class="flex items-center justify-between text-xs mb-1">
+                                    <span class="text-gray-500">Subtarefas</span>
+                                    <span class="text-gray-500">1/4</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1">
+                                    <div class="bg-yellow-500 h-1 rounded-full" style="width: 25%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="validation-user-column" class="bg-yellow-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-yellow-700">Validação (Solicitante)</h3>
+                        <span class="text-xs bg-yellow-100 px-2 py-1 rounded-full">1</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div onclick="openActivityDrawer('ATV-019')" class="activity-card bg-white rounded-lg p-3 border-l-4 border-yellow-500 cursor-pointer hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <div class="text-xs text-gray-500 font-mono">ATV-019</div>
+                                    <div class="text-sm font-medium text-bevap-navy">Teste integração</div>
+                                </div>
+                                <div class="flex space-x-1 ml-2">
+                                    <button onclick="event.stopPropagation(); moveActivity('ATV-019', 'left')" class="text-gray-400 hover:text-bevap-green">
+                                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                                    </button>
+                                    <button onclick="event.stopPropagation(); moveActivity('ATV-019', 'right')" class="text-gray-400 hover:text-bevap-green">
+                                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Ana Lima" class="w-5 h-5 rounded-full">
+                                <span class="text-xs text-gray-600">Ana Lima</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded">18/02/2026</span>
+                                <div class="flex space-x-2">
+                                    <span><i class="fa-solid fa-paperclip mr-1"></i>4</span>
+                                    <span><i class="fa-solid fa-comment mr-1"></i>3</span>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <div class="flex items-center justify-between text-xs mb-1">
+                                    <span class="text-gray-500">Subtarefas</span>
+                                    <span class="text-gray-500">7/7</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1">
+                                    <div class="bg-green-500 h-1 rounded-full" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="validation-it-column" class="bg-purple-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-purple-700">Validação (TI)</h3>
+                        <span class="text-xs bg-purple-100 px-2 py-1 rounded-full">0</span>
+                    </div>
+                    <div class="text-center text-gray-500 text-sm py-8">
+                        Nenhuma atividade
+                    </div>
+                </div>
+
+                <div id="completed-column" class="bg-green-50 rounded-lg p-4">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-green-700">Concluída</h3>
+                        <span class="text-xs bg-green-100 px-2 py-1 rounded-full">2</span>
+                    </div>
+                    <div class="space-y-3">
+                        <div onclick="openActivityDrawer('ATV-015')" class="activity-card bg-white rounded-lg p-3 border-l-4 border-green-500 cursor-pointer hover:shadow-md transition-shadow">
+                            <div class="flex items-start justify-between mb-2">
+                                <div class="flex-1">
+                                    <div class="text-xs text-gray-500 font-mono">ATV-015</div>
+                                    <div class="text-sm font-medium text-bevap-navy">Setup ambiente</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2 mb-2">
+                                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Carlos M." class="w-5 h-5 rounded-full">
+                                <span class="text-xs text-gray-600">Carlos M.</span>
+                            </div>
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded">Concluído</span>
+                                <div class="flex space-x-2">
+                                    <span><i class="fa-solid fa-paperclip mr-1"></i>2</span>
+                                    <span><i class="fa-solid fa-comment mr-1"></i>1</span>
+                                </div>
+                            </div>
+                            <div class="mt-2">
+                                <div class="flex items-center justify-between text-xs mb-1">
+                                    <span class="text-gray-500">Subtarefas</span>
+                                    <span class="text-gray-500">6/6</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-1">
+                                    <div class="bg-green-500 h-1 rounded-full" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="activity-drawer" class="fixed inset-y-0 right-0 w-full lg:w-1/2 xl:w-1/3 bg-white shadow-xl transform translate-x-full transition-transform z-50 overflow-hidden">
+    <div class="h-full flex flex-col">
+        <div class="flex items-center justify-between p-6 border-b border-gray-200">
+            <div>
+                <div class="text-sm text-gray-500 font-mono">ATV-023</div>
+                <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Configurar SSO</h3>
+                <div class="flex items-center space-x-2 mt-2">
+                    <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Em Execução</span>
+                    <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">Crítico</span>
+                </div>
+            </div>
+            <button onclick="closeActivityDrawer()" class="text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-times text-2xl"></i>
+            </button>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6">
+            <div class="space-y-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green focus:border-transparent" rows="3" placeholder="Configurar integração SSO com Active Directory...">Configurar integração SSO com Active Directory...</textarea>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Responsável</label>
+                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            <option value="ana" selected>Ana Lima</option>
+                            <option value="carlos">Carlos M.</option>
+                            <option value="joao">João Silva</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Prazo</label>
+                        <input type="date" value="2026-02-20" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Critério de Aceite</label>
+                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green focus:border-transparent" rows="2" placeholder="SSO funcionando em ambiente de teste...">SSO funcionando em ambiente de teste...</textarea>
+                </div>
+
+                <div>
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="block text-sm font-medium text-gray-700">Subtarefas</label>
+                        <button onclick="addSubtask()" class="text-bevap-green hover:text-green-700 text-sm">
+                            <i class="fa-solid fa-plus mr-1"></i>Adicionar
+                        </button>
+                    </div>
+                    <div id="subtasks-list" class="space-y-2">
+                        <div class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                            <input type="checkbox" checked class="text-bevap-green focus:ring-bevap-green">
+                            <div class="flex-1">
+                                <input type="text" value="Configurar AD connector" class="w-full border-0 bg-transparent text-sm focus:ring-0">
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-arrow-up text-xs"></i></button>
+                            <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-arrow-down text-xs"></i></button>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg bg-gray-50">
+                            <input type="checkbox" checked class="text-bevap-green focus:ring-bevap-green">
+                            <div class="flex-1">
+                                <input type="text" value="Testar autenticação" class="w-full border-0 bg-transparent text-sm focus:ring-0">
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-arrow-up text-xs"></i></button>
+                            <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-arrow-down text-xs"></i></button>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 border border-gray-200 rounded-lg">
+                            <input type="checkbox" class="text-bevap-green focus:ring-bevap-green">
+                            <div class="flex-1">
+                                <input type="text" value="Documentar configuração" class="w-full border-0 bg-transparent text-sm focus:ring-0">
+                            </div>
+                            <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-arrow-up text-xs"></i></button>
+                            <button class="text-gray-400 hover:text-gray-600"><i class="fa-solid fa-arrow-down text-xs"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-sm font-medium text-gray-700">Risco?</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer" id="risk-toggle">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-bevap-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-500"></div>
+                        </label>
+                    </div>
+                    <div id="risk-fields" class="hidden space-y-3">
+                        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green" rows="2" placeholder="Descrição do risco..."></textarea>
+                        <input type="text" placeholder="Dono do risco" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green">
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <label class="text-sm font-medium text-gray-700">Bloqueada?</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer" id="blocked-toggle">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-bevap-green/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-500"></div>
+                        </label>
+                    </div>
+                    <div id="blocked-fields" class="space-y-3">
+                        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green" rows="2" placeholder="Motivo do bloqueio...">Aguardando liberação do AD pela infra</textarea>
+                        <input type="text" placeholder="Responsável por destravar" value="Time Infra" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green">
+                        <input type="date" value="2026-02-22" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green">
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Anexos</label>
+                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-bevap-green transition-colors cursor-pointer">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-gray-400 mb-2"></i>
+                        <p class="text-sm text-gray-600">Clique ou arraste arquivos aqui</p>
+                    </div>
+                    <div class="mt-3 space-y-2">
+                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
+                            <div class="flex items-center space-x-2">
+                                <i class="fa-solid fa-file-pdf text-red-500"></i>
+                                <span class="text-sm">config-sso.pdf</span>
+                                <span class="text-xs text-gray-500">2.4 MB</span>
+                            </div>
+                            <button class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash text-sm"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200 pt-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-3">Comentários</label>
+                    <div class="space-y-3 mb-4">
+                        <div class="flex space-x-3">
+                            <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" class="w-8 h-8 rounded-full">
+                            <div class="flex-1 bg-gray-50 rounded-lg p-3">
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-sm font-medium text-bevap-navy">Ana Lima</span>
+                                    <span class="text-xs text-gray-500">19/02 14:30</span>
+                                </div>
+                                <p class="text-sm text-gray-700">Aguardando liberação do AD pela equipe de infra.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-bevap-green" rows="2" placeholder="Adicionar comentário..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="border-t border-gray-200 p-6 bg-gray-50">
+            <div class="flex space-x-3">
+                <button onclick="advanceActivity()" class="flex-1 px-4 py-3 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                    <i class="fa-solid fa-arrow-right mr-2"></i>Enviar p/ Validação
+                </button>
+                <button onclick="returnActivity()" class="px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                    <i class="fa-solid fa-undo mr-2"></i>Devolver
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="phase-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4">
+        <div class="flex items-center justify-between p-6 border-b border-gray-200">
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Resumo da Fase: Implementação</h3>
+            <button onclick="closePhaseModal()" class="text-gray-400 hover:text-gray-600">
+                <i class="fa-solid fa-times text-xl"></i>
+            </button>
+        </div>
+        <div class="p-6">
+            <div class="grid grid-cols-2 gap-6 mb-6">
+                <div>
+                    <div class="text-sm text-gray-600 mb-1">Data Prevista</div>
+                    <div class="font-medium text-bevap-navy">01/02/2026 - 28/02/2026</div>
+                </div>
+                <div>
+                    <div class="text-sm text-gray-600 mb-1">Avanço</div>
+                    <div class="flex items-center space-x-3">
+                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                            <div class="bg-bevap-green h-2 rounded-full" style="width: 62%"></div>
+                        </div>
+                        <span class="font-medium text-bevap-navy">62%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid grid-cols-5 gap-3 mb-6">
+                <div class="text-center p-3 bg-gray-50 rounded-lg">
+                    <div class="text-2xl font-bold text-gray-400">3</div>
+                    <div class="text-xs text-gray-600">Backlog</div>
+                </div>
+                <div class="text-center p-3 bg-blue-50 rounded-lg">
+                    <div class="text-2xl font-bold text-blue-600">2</div>
+                    <div class="text-xs text-blue-600">Em Execução</div>
+                </div>
+                <div class="text-center p-3 bg-yellow-50 rounded-lg">
+                    <div class="text-2xl font-bold text-yellow-600">1</div>
+                    <div class="text-xs text-yellow-600">Valid. Solicitante</div>
+                </div>
+                <div class="text-center p-3 bg-purple-50 rounded-lg">
+                    <div class="text-2xl font-bold text-purple-600">0</div>
+                    <div class="text-xs text-purple-600">Valid. TI</div>
+                </div>
+                <div class="text-center p-3 bg-green-50 rounded-lg">
+                    <div class="text-2xl font-bold text-green-600">2</div>
+                    <div class="text-xs text-green-600">Concluída</div>
+                </div>
+            </div>
+            <div>
+                <div class="text-sm font-medium text-gray-700 mb-2">Próximos Marcos</div>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span class="text-sm text-bevap-navy">Validação completa do SSO</span>
+                        <span class="text-sm text-gray-600">28/02/2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-t border-gray-200 p-6 bg-gray-50">
+            <button onclick="closePhaseModal()" class="w-full px-4 py-2 bg-bevap-navy text-white rounded-lg hover:bg-opacity-90 transition-colors font-medium">Fechar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="fixed bottom-6 right-6 bg-bevap-navy text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 transition-transform z-50">
+    <div class="flex items-center space-x-3">
+        <i class="fa-solid fa-check-circle text-bevap-gold"></i>
+        <span id="toast-message">Ação realizada com sucesso!</span>
+    </div>
+</div>
+
+<script>
+function openActivityDrawer(activityId) {
+    var drawer = document.getElementById('activity-drawer');
+    drawer.classList.remove('translate-x-full');
+}
+
+function closeActivityDrawer() {
+    var drawer = document.getElementById('activity-drawer');
+    drawer.classList.add('translate-x-full');
+}
+
+function openPhaseModal() {
+    document.getElementById('phase-modal').classList.remove('hidden');
+}
+
+function closePhaseModal() {
+    document.getElementById('phase-modal').classList.add('hidden');
+}
+
+function showToast(message) {
+    var toast = document.getElementById('toast');
+    document.getElementById('toast-message').textContent = message;
+    toast.classList.remove('translate-y-20');
+    setTimeout(function() {
+        toast.classList.add('translate-y-20');
+    }, 3000);
+}
+
+function selectPhase(phase) {
+    var buttons = document.querySelectorAll('.phase-btn');
+    for (var i = 0; i < buttons.length; i++) {
+        buttons[i].classList.remove('active', 'bg-bevap-green', 'text-white');
+        buttons[i].classList.add('bg-gray-300', 'text-gray-700');
+    }
+    var selectedButton = document.querySelector(`.phase-btn[onclick="selectPhase('${phase}')"]`);
+    selectedButton.classList.add('active', 'bg-bevap-green', 'text-white');
+}
+
+function openNewActivity() {
+    showToast('Nova atividade criada!');
+}
+
+function goBack() {
+    showToast('Voltando...');
+}
+
+function moveActivity(activityId, direction) {
+    showToast(`Atividade ${activityId} movida para ${direction}`);
+}
+
+function addSubtask() {
+    showToast('Subtarefa adicionada!');
+}
+
+function advanceActivity() {
+    showToast('Atividade enviada para validação!');
+}
+
+function returnActivity() {
+    showToast('Atividade devolvida!');
+}
+</script>
+</body>
+</html>
