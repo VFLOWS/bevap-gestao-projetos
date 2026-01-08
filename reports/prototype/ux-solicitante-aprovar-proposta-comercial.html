@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aprovar Proposta Comercial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#0B2E4A',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-inter">
+
+<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
+                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
+                    </div>
+                    <span class="text-white font-montserrat font-bold text-xl">BEVAP</span>
+                </div>
+                <div class="h-8 w-px bg-gray-400"></div>
+                <h1 class="text-white font-montserrat font-semibold text-lg">Aprovar Proposta Comercial</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="text-white hover:text-bevap-gold transition-colors">
+                    <i class="fa-regular fa-bell text-xl"></i>
+                </button>
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Solicitante" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="pb-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Solicitações</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <span class="text-bevap-gold font-medium">Proposta</span>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div id="context-banner" class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start">
+            <i class="fa-solid fa-external-link-alt text-blue-600 mt-0.5 mr-3"></i>
+            <div class="text-sm text-blue-800">
+                <p class="font-medium mb-1">Triagem Técnica: Execução Externa</p>
+                <p>Definido em 15/01/2026 por <strong>Carlos Silva (TI)</strong> - Analise a proposta comercial abaixo e tome sua decisão.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div id="content-section" class="lg:col-span-2">
+            <div id="proposal-card" class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-handshake mr-3 text-bevap-gold"></i>
+                    Proposta do Fornecedor
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Fornecedor</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="font-medium text-gray-900">TechPartners Ltda.</div>
+                            <div class="text-gray-600">CNPJ: 12.345.678/0001-90</div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Contato Principal</h3>
+                        <div class="space-y-1 text-sm">
+                            <div class="font-medium text-gray-900">Ana Souza</div>
+                            <div class="text-gray-600">ana@techpartners.com</div>
+                            <div class="text-gray-600">(11) 99999-8888</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
+                        <div class="text-lg font-bold text-bevap-navy">R$ 128.450,00</div>
+                        <div class="text-xs text-green-600">BRL</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Condição</div>
+                        <div class="text-sm font-medium text-gray-900">30% / 70%</div>
+                        <div class="text-xs text-gray-600">Antecipado / Entrega</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo</div>
+                        <div class="text-lg font-bold text-bevap-navy">8 semanas</div>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Vigência</div>
+                        <div class="text-sm font-medium text-gray-900">30 dias</div>
+                        <div class="text-xs text-gray-600">Até 15/02/2026</div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo Resumido</h3>
+                    <p class="text-gray-700 text-sm leading-relaxed">Atualização completa do sistema ERP incluindo migração de dados, customizações específicas, integração com sistemas existentes, treinamento de usuários e suporte técnico por 3 meses após go-live.</p>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Itens e Serviços</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-2 text-left text-gray-700 font-medium">Descrição</th>
+                                    <th class="px-4 py-2 text-center text-gray-700 font-medium">Qty</th>
+                                    <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-4 py-3">Licenças ERP (módulos financeiro, compras, estoque)</td>
+                                    <td class="px-4 py-3 text-center">1</td>
+                                    <td class="px-4 py-3 text-right font-medium">R$ 75.000,00</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">Customizações e parametrizações</td>
+                                    <td class="px-4 py-3 text-center">1</td>
+                                    <td class="px-4 py-3 text-right font-medium">R$ 35.450,00</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">Migração de dados e integração</td>
+                                    <td class="px-4 py-3 text-center">1</td>
+                                    <td class="px-4 py-3 text-right font-medium">R$ 12.000,00</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">Treinamento e suporte</td>
+                                    <td class="px-4 py-3 text-center">1</td>
+                                    <td class="px-4 py-3 text-right font-medium">R$ 6.000,00</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos e Pré-requisitos</h3>
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <ul class="text-sm text-yellow-800 space-y-1">
+                            <li>• Disponibilidade da equipe de TI para validações durante o projeto</li>
+                            <li>• Acesso aos sistemas legados para migração de dados</li>
+                            <li>• Definição de cronograma de treinamentos com RH</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
+                        <i class="fa-solid fa-paperclip mr-2 text-bevap-gold"></i>
+                        Documentos da Proposta
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-sm">Proposta_Comercial_TechPartners.pdf</div>
+                                    <div class="text-xs text-gray-500">2.1 MB</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="previewDocument('proposta')" class="text-bevap-green hover:text-green-700">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                <button onclick="downloadDocument('proposta')" class="text-bevap-navy hover:text-blue-700">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-contract text-blue-500 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-sm">Termos_e_Condicoes.pdf</div>
+                                    <div class="text-xs text-gray-500">456 KB</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="previewDocument('termos')" class="text-bevap-green hover:text-green-700">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                <button onclick="downloadDocument('termos')" class="text-bevap-navy hover:text-blue-700">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-word text-blue-600 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-sm">Escopo_Detalhado_v2.docx</div>
+                                    <div class="text-xs text-gray-500">856 KB</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="previewDocument('escopo')" class="text-bevap-green hover:text-green-700">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
+                                <button onclick="downloadDocument('escopo')" class="text-bevap-navy hover:text-blue-700">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
+                        <i class="fa-solid fa-clipboard-list mr-2 text-bevap-green"></i>
+                        Comentários da TI
+                    </h3>
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p class="text-sm text-blue-800 leading-relaxed">
+                            <strong>Parecer Técnico:</strong> Proposta técnica adequada e fornecedor com boa reputação no mercado. 
+                            Valores dentro do esperado para o escopo apresentado. Recomendo aprovação com atenção aos prazos de treinamento 
+                            que devem ser coordenados com o RH. Cronograma factível considerando a complexidade do projeto.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="feedback-form" class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
+                    Seu Feedback
+                </h2>
+                
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observações / Negociação</label>
+                    <textarea id="feedback-text" rows="4" placeholder="Adicione comentários, sugestões de ajustes ou pontos para negociação..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="flex items-start">
+                        <input type="checkbox" id="agreement-checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
+                        <span class="text-sm text-gray-700">Li e concordo com a proposta comercial apresentada e suas condições gerais *</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div id="sidebar-summary" class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                <div id="project-summary" class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
+                        Resumo do Projeto
+                    </h3>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Código</span>
+                            <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-033</span>
+                        </div>
+                        <div class="pb-2 border-b">
+                            <span class="text-gray-600">Título</span>
+                            <p class="font-medium text-gray-900 mt-1">Atualização ERP</p>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Área</span>
+                            <span class="font-medium text-gray-900">Controladoria</span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Patrocinador</span>
+                            <span class="font-medium text-gray-900">Diretoria Financeira</span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Prioridade</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
+                                <i class="fa-solid fa-star mr-1"></i> Estratégico
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Status</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 font-medium">
+                                <i class="fa-solid fa-clipboard-check mr-1"></i> Aguardando Aprovação
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="comparison-card" class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-balance-scale mr-2 text-bevap-green"></i>
+                        Comparação
+                    </h3>
+                    
+                    <div class="space-y-4 text-sm">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-600">Estimativa Inicial</span>
+                                <span class="font-medium text-gray-900">R$ 120.000,00</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-600">Proposta Atual</span>
+                                <span class="font-bold text-bevap-navy">R$ 128.450,00</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Diferença</span>
+                                <span class="font-medium text-red-600">+R$ 8.450,00</span>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t pt-4">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-600">Prazo Estimado</span>
+                                <span class="font-medium text-gray-900">7 semanas</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-gray-600">Prazo Proposto</span>
+                                <span class="font-bold text-bevap-navy">8 semanas</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600">Diferença</span>
+                                <span class="font-medium text-orange-600">+1 semana</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="progress-status" class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-tasks mr-2 text-bevap-green"></i>
+                        Progresso
+                    </h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Solicitação aprovada</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Análise TI concluída</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Aprovação gerencial</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Triagem técnica (Externo)</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Proposta comercial validada</span>
+                        </div>
+                        <div class="flex items-center text-bevap-gold">
+                            <i class="fa-solid fa-clock mr-2"></i>
+                            <span>Aprovação do solicitante</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center justify-between">
+            <button onclick="saveDraft()" class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
+            </button>
+            <div class="flex items-center space-x-3">
+                <button onclick="openRejectModal()" class="px-6 py-2.5 text-sm font-medium text-red-600 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-colors">
+                    <i class="fa-solid fa-times-circle mr-2"></i> Reprovar
+                </button>
+                <button onclick="openCorrectionModal()" class="px-6 py-2.5 text-sm font-medium text-bevap-navy bg-white border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                    <i class="fa-solid fa-edit mr-2"></i> Solicitar Correções
+                </button>
+                <button onclick="openApproveModal()" class="px-8 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-colors shadow-md">
+                    <i class="fa-solid fa-check mr-2"></i> Aprovar Proposta
+                </button>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div id="approve-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
+        <div class="p-6 border-b">
+            <h3 class="text-xl font-montserrat font-bold text-bevap-green">Confirmar Aprovação</h3>
+        </div>
+        <div class="p-6">
+            <div class="flex items-start mb-4">
+                <i class="fa-solid fa-check-circle text-green-600 text-2xl mt-1 mr-3"></i>
+                <div>
+                    <p class="text-gray-900 font-medium mb-2">Você está aprovando esta proposta comercial:</p>
+                    <ul class="text-sm text-gray-700 space-y-1">
+                        <li>• Fornecedor: TechPartners Ltda.</li>
+                        <li>• Valor: R$ 128.450,00</li>
+                        <li>• Prazo: 8 semanas</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                <p class="text-sm text-green-800">
+                    <strong>Próximo passo:</strong> O projeto será encaminhado para execução e o fornecedor será contatado para início dos trabalhos.
+                </p>
+            </div>
+        </div>
+        <div class="p-6 border-t flex justify-end space-x-3">
+            <button onclick="closeApproveModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Cancelar</button>
+            <button onclick="confirmApproval()" class="px-4 py-2 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-colors">Confirmar Aprovação</button>
+        </div>
+    </div>
+</div>
+
+<div id="correction-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
+        <div class="p-6 border-b">
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Solicitar Correções</h3>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
+                <select id="correction-category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                    <option value="">Selecione...</option>
+                    <option value="preco">Preço elevado</option>
+                    <option value="prazo">Prazo inadequado</option>
+                    <option value="escopo">Ajustes no escopo</option>
+                    <option value="condicoes">Condições de pagamento</option>
+                    <option value="documentos">Documentação incompleta</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Descrição das Correções Necessárias *</label>
+                <textarea id="correction-description" rows="4" placeholder="Descreva as correções ou ajustes que você gostaria de ver na proposta..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+            </div>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <p class="text-sm text-yellow-800">
+                    <i class="fa-solid fa-info-circle mr-2"></i>
+                    A proposta retornará para a TI realizar os ajustes solicitados com o fornecedor.
+                </p>
+            </div>
+        </div>
+        <div class="p-6 border-t flex justify-end space-x-3">
+            <button onclick="closeCorrectionModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Cancelar</button>
+            <button onclick="submitCorrection()" class="px-4 py-2 text-sm font-medium text-white bg-bevap-navy rounded-lg hover:bg-blue-900 transition-colors">Enviar Solicitação</button>
+        </div>
+    </div>
+</div>
+
+<div id="reject-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
+        <div class="p-6 border-b">
+            <h3 class="text-xl font-montserrat font-bold text-red-600">Reprovar Proposta</h3>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Motivo da Reprovação *</label>
+                <select id="reject-category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                    <option value="">Selecione...</option>
+                    <option value="orcamento">Fora do orçamento</option>
+                    <option value="prazo">Prazo incompatível</option>
+                    <option value="escopo">Escopo inadequado</option>
+                    <option value="fornecedor">Fornecedor não aprovado</option>
+                    <option value="prioridade">Mudança de prioridade</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Justificativa *</label>
+                <textarea id="reject-justification" rows="4" placeholder="Explique os motivos da reprovação desta proposta..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"></textarea>
+            </div>
+            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p class="text-sm text-red-800">
+                    <i class="fa-solid fa-exclamation-triangle mr-2"></i>
+                    <strong>Atenção:</strong> Todos os stakeholders (TI, Patrocinador, Superior Imediato) serão notificados sobre a reprovação.
+                </p>
+            </div>
+        </div>
+        <div class="p-6 border-t flex justify-end space-x-3">
+            <button onclick="closeRejectModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">Cancelar</button>
+            <button onclick="confirmRejection()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors">Confirmar Reprovação</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="hidden fixed top-20 right-4 bg-white shadow-xl rounded-lg p-4 z-50 max-w-md border-l-4">
+    <div class="flex items-start">
+        <i id="toast-icon" class="text-2xl mr-3 mt-0.5"></i>
+        <div class="flex-1">
+            <p id="toast-title" class="font-semibold text-gray-900"></p>
+            <p id="toast-message" class="text-sm text-gray-600 mt-1"></p>
+        </div>
+        <button onclick="closeToast()" class="text-gray-400 hover:text-gray-600 ml-4">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+</div>
+
+<script>
+function previewDocument(docType) {
+    showToast('info', 'Visualizar Documento', `Abrindo preview do documento ${docType}...`);
+}
+
+function downloadDocument(docType) {
+    showToast('success', 'Download Iniciado', `Download do documento ${docType} em andamento.`);
+}
+
+function saveDraft() {
+    showToast('success', 'Rascunho Salvo', 'Suas alterações foram salvas com sucesso.');
+}
+
+function openApproveModal() {
+    const checkbox = document.getElementById('agreement-checkbox');
+    if (!checkbox.checked) {
+        showToast('error', 'Ação Necessária', 'Você precisa concordar com os termos da proposta antes de aprovar.');
+        return;
+    }
+    document.getElementById('approve-modal').classList.remove('hidden');
+}
+
+function closeApproveModal() {
+    document.getElementById('approve-modal').classList.add('hidden');
+}
+
+function confirmApproval() {
+    closeApproveModal();
+    showToast('success', 'Proposta Aprovada!', 'A proposta foi aprovada e encaminhada para execução. O fornecedor será contatado em breve.');
+    setTimeout(() => {
+        window.location.href = '#';
+    }, 2000);
+}
+
+function openCorrectionModal() {
+    document.getElementById('correction-modal').classList.remove('hidden');
+}
+
+function closeCorrectionModal() {
+    document.getElementById('correction-modal').classList.add('hidden');
+}
+
+function submitCorrection() {
+    const category = document.getElementById('correction-category').value;
+    const description = document.getElementById('correction-description').value;
+    
+    if (!category || !description.trim()) {
+        showToast('error', 'Campos Obrigatórios', 'Preencha a categoria e a descrição das correções.');
+        return;
+    }
+    
+    closeCorrectionModal();
+    showToast('success', 'Correções Solicitadas', 'Sua solicitação foi enviada para a TI realizar os ajustes necessários.');
+    setTimeout(() => {
+        window.location.href = '#';
+    }, 2000);
+}
+
+function openRejectModal() {
+    document.getElementById('reject-modal').classList.remove('hidden');
+}
+
+function closeRejectModal() {
+    document.getElementById('reject-modal').classList.add('hidden');
+}
+
+function confirmRejection() {
+    const category = document.getElementById('reject-category').value;
+    const justification = document.getElementById('reject-justification').value;
+    
+    if (!category || !justification.trim()) {
+        showToast('error', 'Campos Obrigatórios', 'Preencha o motivo e a justificativa da reprovação.');
+        return;
+    }
+    
+    closeRejectModal();
+    showToast('error', 'Proposta Reprovada', 'A proposta foi reprovada e todos os stakeholders foram notificados.');
+    setTimeout(() => {
+        window.location.href = '#';
+    }, 2000);
+}
+
+function showToast(type, title, message) {
+    const toast = document.getElementById('toast');
+    const icon = document.getElementById('toast-icon');
+    const titleEl = document.getElementById('toast-title');
+    const messageEl = document.getElementById('toast-message');
+    
+    const types = {
+        success: { icon: 'fa-check-circle', color: 'border-green-500 text-green-600' },
+        error: { icon: 'fa-times-circle', color: 'border-red-500 text-red-600' },
+        info: { icon: 'fa-info-circle', color: 'border-blue-500 text-blue-600' }
+    };
+    
+    icon.className = `fa-solid ${types[type].icon} ${types[type].color} text-2xl mr-3 mt-0.5`;
+    toast.className = `fixed top-20 right-4 bg-white shadow-xl rounded-lg p-4 z-50 max-w-md border-l-4 ${types[type].color}`;
+    titleEl.textContent = title;
+    messageEl.textContent = message;
+    
+    toast.classList.remove('hidden');
+    
+    setTimeout(() => {
+        closeToast();
+    }, 5000);
+}
+
+function closeToast() {
+    document.getElementById('toast').classList.add('hidden');
+}
+
+window.addEventListener('click', function(e) {
+    if (e.target.classList.contains('bg-opacity-50')) {
+        closeApproveModal();
+        closeCorrectionModal();
+        closeRejectModal();
+    }
+});
+</script>
+
+</body>
+</html>

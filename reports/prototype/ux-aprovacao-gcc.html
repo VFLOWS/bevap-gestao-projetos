@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GCC – Aprovar Custo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#0B2E4A',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-inter">
+
+<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
+                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
+                    </div>
+                    <span class="text-white font-montserrat font-bold text-xl">BEVAP</span>
+                </div>
+                <div class="h-8 w-px bg-gray-400"></div>
+                <h1 class="text-white font-montserrat font-semibold text-lg">GCC – Aprovar Custo</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="text-white hover:text-bevap-gold transition-colors">
+                    <i class="fa-regular fa-bell text-xl"></i>
+                </button>
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" alt="GCC" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="pb-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Solicitações</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Proposta</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <span class="text-bevap-gold font-medium">GCC</span>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div id="content-section" class="lg:col-span-2">
+            <div id="financial-panel" class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-dollar-sign mr-3 text-bevap-gold"></i>
+                    Painel Financeiro
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Proposta Comercial</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Fornecedor:</span>
+                                <span class="font-medium text-gray-900">TechInfra Solutions</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Nº Proposta:</span>
+                                <span class="font-mono font-medium text-gray-900">PROP-2026-0417</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Vigência:</span>
+                                <span class="font-medium text-gray-900">45 dias</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Valores e Prazo</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Valor Total:</span>
+                                <span class="font-bold text-bevap-navy text-lg">R$ 428.900,00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Condição:</span>
+                                <span class="font-medium text-gray-900">30/60/90</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600">Prazo:</span>
+                                <span class="font-medium text-gray-900">10 semanas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Estrutura de Custo</h3>
+                        <button onclick="toggleCostTable()" class="text-bevap-green hover:text-green-700 text-sm font-medium">
+                            <i id="toggle-icon" class="fa-solid fa-chevron-up mr-1"></i>
+                            <span id="toggle-text">Recolher</span>
+                        </button>
+                    </div>
+                    <div id="cost-table" class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left text-gray-700 font-medium">Item</th>
+                                    <th class="px-4 py-3 text-center text-gray-700 font-medium">Qty</th>
+                                    <th class="px-4 py-3 text-right text-gray-700 font-medium">Valor Unit.</th>
+                                    <th class="px-4 py-3 text-right text-gray-700 font-medium">Impostos</th>
+                                    <th class="px-4 py-3 text-right text-gray-700 font-medium">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr>
+                                    <td class="px-4 py-3">Servidores de alta disponibilidade</td>
+                                    <td class="px-4 py-3 text-center">4</td>
+                                    <td class="px-4 py-3 text-right">R$ 65.000,00</td>
+                                    <td class="px-4 py-3 text-right text-gray-600">R$ 14.300,00</td>
+                                    <td class="px-4 py-3 text-right font-medium">R$ 274.300,00</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">Storage SAN enterprise</td>
+                                    <td class="px-4 py-3 text-center">2</td>
+                                    <td class="px-4 py-3 text-right">R$ 45.000,00</td>
+                                    <td class="px-4 py-3 text-right text-gray-600">R$ 9.900,00</td>
+                                    <td class="px-4 py-3 text-right font-medium">R$ 99.900,00</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">Switches core redundantes</td>
+                                    <td class="px-4 py-3 text-center">2</td>
+                                    <td class="px-4 py-3 text-right">R$ 18.500,00</td>
+                                    <td class="px-4 py-3 text-right text-gray-600">R$ 4.070,00</td>
+                                    <td class="px-4 py-3 text-right font-medium">R$ 41.070,00</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">Instalação e configuração</td>
+                                    <td class="px-4 py-3 text-center">1</td>
+                                    <td class="px-4 py-3 text-right">R$ 8.500,00</td>
+                                    <td class="px-4 py-3 text-right text-gray-600">R$ 1.530,00</td>
+                                    <td class="px-4 py-3 text-right font-medium">R$ 10.030,00</td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3">Licenças de software e suporte</td>
+                                    <td class="px-4 py-3 text-center">1</td>
+                                    <td class="px-4 py-3 text-right">R$ 3.200,00</td>
+                                    <td class="px-4 py-3 text-right text-gray-600">R$ 400,00</td>
+                                    <td class="px-4 py-3 text-right font-medium">R$ 3.600,00</td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-gray-50 font-semibold">
+                                <tr>
+                                    <td colspan="4" class="px-4 py-3 text-right text-gray-700">Total Geral:</td>
+                                    <td class="px-4 py-3 text-right text-bevap-navy text-lg">R$ 428.900,00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                            Natureza do Custo *
+                            <i class="fa-solid fa-info-circle text-gray-400 ml-2 cursor-help" title="Defina se o investimento será CAPEX (bens duráveis) ou OPEX (despesas operacionais)"></i>
+                        </label>
+                        <div class="space-y-3">
+                            <label class="flex items-center p-4 border-2 border-bevap-green bg-green-50 rounded-lg cursor-pointer">
+                                <input type="radio" name="cost-nature" value="capex" checked class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green mr-3">
+                                <div class="flex-1">
+                                    <span class="font-medium text-gray-900">CAPEX</span>
+                                    <span class="text-sm text-gray-600 ml-2">80%</span>
+                                    <input type="number" value="80" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
+                                    <span class="text-sm text-gray-600">%</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green hover:bg-green-50 transition-colors">
+                                <input type="radio" name="cost-nature" value="opex" class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green mr-3">
+                                <div class="flex-1">
+                                    <span class="font-medium text-gray-900">OPEX</span>
+                                    <span class="text-sm text-gray-600 ml-2">20%</span>
+                                    <input type="number" value="20" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
+                                    <span class="text-sm text-gray-600">%</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Centro de Custo *</label>
+                        <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
+                            <option value="">Selecione...</option>
+                            <option value="ti-infra" selected>TI-INFRA - Infraestrutura TI</option>
+                            <option value="ti-dev">TI-DEV - Desenvolvimento</option>
+                            <option value="ti-seg">TI-SEG - Segurança da Informação</option>
+                            <option value="ti-suporte">TI-SUPORTE - Suporte Técnico</option>
+                        </select>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Conta Contábil *</label>
+                        <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
+                            <option value="">Selecione...</option>
+                            <option value="1.2.3.01" selected>1.2.3.01 - Equipamentos de TI</option>
+                            <option value="1.2.3.02">1.2.3.02 - Software e Licenças</option>
+                            <option value="3.1.2.01">3.1.2.01 - Serviços de Terceiros</option>
+                        </select>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Competência *</label>
+                        <input type="month" value="2026-02" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <h3 class="text-sm font-medium text-blue-900 mb-3 flex items-center">
+                        <i class="fa-solid fa-chart-line mr-2"></i>
+                        Análise Comparativa
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-blue-800">Estimativa Inicial:</span>
+                                <span class="font-medium text-blue-900">R$ 400.000,00</span>
+                            </div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-blue-800">Proposta Atual:</span>
+                                <span class="font-bold text-bevap-navy">R$ 428.900,00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-blue-800">Diferença:</span>
+                                <span class="font-medium text-orange-600">+R$ 28.900,00 (+7,2%)</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-blue-800">Saldo CC TI-INFRA:</span>
+                                <span class="font-medium text-blue-900">R$ 600.000,00</span>
+                            </div>
+                            <div class="flex justify-between mb-1">
+                                <span class="text-blue-800">Após Aprovação:</span>
+                                <span class="font-bold text-bevap-green">R$ 171.100,00</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-blue-800">Status:</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
+                                    <i class="fa-solid fa-check-circle mr-1"></i> Saldo Suficiente
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observações do GCC</label>
+                    <textarea id="gcc-observations" rows="3" placeholder="Adicione observações sobre a aprovação do custo, rateios, condições especiais..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+                </div>
+            </div>
+
+            <div id="compliance-section" class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-clipboard-check mr-3 text-bevap-green"></i>
+                    Checklist de Conformidade
+                </h2>
+                <div class="space-y-3">
+                    <label class="flex items-start">
+                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
+                        <span class="text-sm text-gray-700">Escopo claro e detalhado</span>
+                    </label>
+                    <label class="flex items-start">
+                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
+                        <span class="text-sm text-gray-700">Impostos e encargos discriminados</span>
+                    </label>
+                    <label class="flex items-start">
+                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
+                        <span class="text-sm text-gray-700">Vigência da proposta adequada</span>
+                    </label>
+                    <label class="flex items-start">
+                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
+                        <span class="text-sm text-gray-700">Cláusulas de SLA e garantia presentes</span>
+                    </label>
+                    <label class="flex items-start">
+                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
+                        <span class="text-sm text-gray-700">Aprovação do gestor solicitante confirmada</span>
+                    </label>
+                    <label class="flex items-start">
+                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
+                        <span class="text-sm text-gray-700">Todos os anexos obrigatórios presentes</span>
+                    </label>
+                </div>
+            </div>
+
+            <div id="attachments-section" class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-paperclip mr-3 text-bevap-gold"></i>
+                    Documentos Anexos
+                </h2>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                            <div>
+                                <div class="font-medium text-sm">Proposta_TechInfra_DC.pdf</div>
+                                <div class="text-xs text-gray-500">3.2 MB</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="previewDocument('proposta')" class="text-bevap-green hover:text-green-700">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button onclick="downloadDocument('proposta')" class="text-bevap-navy hover:text-blue-700">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-file-contract text-blue-500 text-xl mr-3"></i>
+                            <div>
+                                <div class="font-medium text-sm">Termos_Contratuais.pdf</div>
+                                <div class="text-xs text-gray-500">678 KB</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="previewDocument('termos')" class="text-bevap-green hover:text-green-700">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button onclick="downloadDocument('termos')" class="text-bevap-navy hover:text-blue-700">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-file-word text-blue-600 text-xl mr-3"></i>
+                            <div>
+                                <div class="font-medium text-sm">Escopo_Tecnico_Detalhado.docx</div>
+                                <div class="text-xs text-gray-500">1.1 MB</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="previewDocument('escopo')" class="text-bevap-green hover:text-green-700">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button onclick="downloadDocument('escopo')" class="text-bevap-navy hover:text-blue-700">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-file-excel text-green-600 text-xl mr-3"></i>
+                            <div>
+                                <div class="font-medium text-sm">Planilha_Orcamentaria.xlsx</div>
+                                <div class="text-xs text-gray-500">234 KB</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="previewDocument('planilha')" class="text-bevap-green hover:text-green-700">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                            <button onclick="downloadDocument('planilha')" class="text-bevap-navy hover:text-blue-700">
+                                <i class="fa-solid fa-download"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sidebar-summary" class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                <div id="project-summary" class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
+                        Resumo do Projeto
+                    </h3>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Código</span>
+                            <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-041</span>
+                        </div>
+                        <div class="pb-2 border-b">
+                            <span class="text-gray-600">Título</span>
+                            <p class="font-medium text-gray-900 mt-1">Modernização Data Center</p>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Área</span>
+                            <span class="font-medium text-gray-900">TI Infraestrutura</span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Patrocinador</span>
+                            <span class="font-medium text-gray-900">CTO</span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Prioridade</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-red-100 text-red-800 font-medium">
+                                <i class="fa-solid fa-fire mr-1"></i> Crítico
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Tipo</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800 font-medium">
+                                <i class="fa-solid fa-external-link-alt mr-1"></i> Externo
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Status</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800 font-medium">
+                                <i class="fa-solid fa-hourglass-half mr-1"></i> Aguardando GCC
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t space-y-2">
+                        <a href="#" class="flex items-center text-sm text-bevap-green hover:text-green-700 transition-colors">
+                            <i class="fa-solid fa-paperclip mr-2"></i>
+                            Ver anexos
+                        </a>
+                        <a href="#" onclick="showTimeline()" class="flex items-center text-sm text-bevap-green hover:text-green-700 transition-colors">
+                            <i class="fa-solid fa-clock-rotate-left mr-2"></i>
+                            Linha do tempo
+                        </a>
+                    </div>
+                </div>
+
+                <div id="quick-stats" class="bg-gradient-to-br from-bevap-navy to-blue-900 rounded-lg shadow-md p-5 text-white">
+                    <h3 class="font-montserrat font-bold text-base mb-4 flex items-center">
+                        <i class="fa-solid fa-chart-pie mr-2 text-bevap-gold"></i>
+                        Impacto Financeiro
+                    </h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="text-xs text-blue-200 mb-1">Valor da Proposta</div>
+                            <div class="text-2xl font-bold">R$ 428.900</div>
+                        </div>
+                        <div class="h-px bg-blue-700"></div>
+                        <div>
+                            <div class="text-xs text-blue-200 mb-1">Saldo Disponível CC</div>
+                            <div class="text-xl font-semibold text-bevap-gold">R$ 600.000</div>
+                        </div>
+                        <div class="h-px bg-blue-700"></div>
+                        <div>
+                            <div class="text-xs text-blue-200 mb-1">Saldo Após Aprovação</div>
+                            <div class="text-xl font-semibold text-green-300">R$ 171.100</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer id="footer-actions" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center justify-between">
+            <button onclick="saveDraft()" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                <i class="fa-solid fa-floppy-disk mr-2"></i>
+                Salvar rascunho
+            </button>
+            <div class="flex items-center space-x-3">
+                <button onclick="openRejectModal()" class="px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                    <i class="fa-solid fa-times-circle mr-2"></i>
+                    Reprovar
+                </button>
+                <button onclick="openReturnModal()" class="px-6 py-2.5 border-2 border-bevap-navy text-bevap-navy rounded-lg hover:bg-bevap-navy hover:text-white transition-colors font-medium">
+                    <i class="fa-solid fa-arrow-rotate-left mr-2"></i>
+                    Devolver para Correção
+                </button>
+                <button onclick="openApproveModal()" class="px-8 py-2.5 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-md">
+                    <i class="fa-solid fa-check-circle mr-2"></i>
+                    Aprovar Custo
+                </button>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div id="approve-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fa-solid fa-check-circle text-bevap-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovação</h3>
+        </div>
+        <p class="text-gray-700 mb-6">Você está aprovando o custo de <strong>R$ 428.900,00</strong> para o projeto <strong>PRJ-2026-041 • Modernização Data Center</strong>.</p>
+        <p class="text-sm text-gray-600 mb-6">O projeto será encaminhado para a próxima etapa do processo.</p>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeApproveModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button onclick="confirmApprove()" class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                Confirmar Aprovação
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="return-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fa-solid fa-arrow-rotate-left text-yellow-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Devolver para Correção</h3>
+        </div>
+        <p class="text-gray-700 mb-4">Informe o motivo da devolução:</p>
+        <select id="return-reason" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
+            <option value="">Selecione uma categoria...</option>
+            <option value="cc-incorreto">Centro de custo incorreto</option>
+            <option value="doc-faltante">Documento faltante</option>
+            <option value="valor-divergente">Valor divergente</option>
+            <option value="info-incompleta">Informação incompleta</option>
+            <option value="outro">Outro motivo</option>
+        </select>
+        <textarea id="return-description" rows="4" placeholder="Descreva detalhadamente o que precisa ser corrigido..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none mb-4"></textarea>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeReturnModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button onclick="confirmReturn()" class="px-6 py-2 bg-bevap-navy text-white rounded-lg hover:bg-blue-900 transition-colors font-medium">
+                Devolver
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="reject-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fa-solid fa-times-circle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Reprovar Custo</h3>
+        </div>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+            <p class="text-sm text-red-800">⚠️ Esta ação não pode ser desfeita. Todos os stakeholders serão notificados.</p>
+        </div>
+        <p class="text-gray-700 mb-4">Categoria da reprovação:</p>
+        <select id="reject-category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
+            <option value="">Selecione...</option>
+            <option value="orcamento-insuficiente">Orçamento insuficiente</option>
+            <option value="nao-aprovado-diretoria">Não aprovado pela diretoria</option>
+            <option value="custo-beneficio">Relação custo-benefício inadequada</option>
+            <option value="prioridade-baixa">Prioridade baixa no momento</option>
+            <option value="outro">Outro motivo</option>
+        </select>
+        <textarea id="reject-justification" rows="4" placeholder="Justifique detalhadamente a reprovação..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none mb-4"></textarea>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeRejectModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button onclick="confirmReject()" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                Confirmar Reprovação
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="hidden fixed top-20 right-4 bg-white rounded-lg shadow-lg p-4 z-50 max-w-sm border-l-4">
+    <div class="flex items-center">
+        <i id="toast-icon" class="text-2xl mr-3"></i>
+        <div>
+            <div id="toast-title" class="font-semibold text-gray-900"></div>
+            <div id="toast-message" class="text-sm text-gray-600"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleCostTable() {
+    const table = document.getElementById('cost-table');
+    const icon = document.getElementById('toggle-icon');
+    const text = document.getElementById('toggle-text');
+    
+    if (table.classList.contains('hidden')) {
+        table.classList.remove('hidden');
+        icon.className = 'fa-solid fa-chevron-up mr-1';
+        text.textContent = 'Recolher';
+    } else {
+        table.classList.add('hidden');
+        icon.className = 'fa-solid fa-chevron-down mr-1';
+        text.textContent = 'Expandir';
+    }
+}
+
+function openApproveModal() {
+    document.getElementById('approve-modal').classList.remove('hidden');
+}
+
+function closeApproveModal() {
+    document.getElementById('approve-modal').classList.add('hidden');
+}
+
+function openReturnModal() {
+    document.getElementById('return-modal').classList.remove('hidden');
+}
+
+function closeReturnModal() {
+    document.getElementById('return-modal').classList.add('hidden');
+}
+
+function openRejectModal() {
+    document.getElementById('reject-modal').classList.remove('hidden');
+}
+
+function closeRejectModal() {
+    document.getElementById('reject-modal').classList.add('hidden');
+}
+
+function confirmApprove() {
+    closeApproveModal();
+    showToast('success', 'Custo Aprovado!', 'O projeto foi encaminhado para a próxima etapa.');
+}
+
+function confirmReturn() {
+    const reason = document.getElementById('return-reason').value;
+    const description = document.getElementById('return-description').value;
+    
+    if (!reason || !description.trim()) {
+        showToast('error', 'Campos obrigatórios', 'Preencha a categoria e descrição.');
+        return;
+    }
+    
+    closeReturnModal();
+    showToast('info', 'Devolvido para Correção', 'O solicitante foi notificado.');
+}
+
+function confirmReject() {
+    const category = document.getElementById('reject-category').value;
+    const justification = document.getElementById('reject-justification').value;
+    
+    if (!category || !justification.trim()) {
+        showToast('error', 'Campos obrigatórios', 'Preencha a categoria e justificativa.');
+        return;
+    }
+    
+    closeRejectModal();
+    showToast('error', 'Custo Reprovado', 'Todos os stakeholders foram notificados.');
+}
+
+function saveDraft() {
+    showToast('success', 'Rascunho Salvo', 'Suas alterações foram salvas com sucesso.');
+}
+
+function showToast(type, title, message) {
+    const toast = document.getElementById('toast');
+    const icon = document.getElementById('toast-icon');
+    const toastTitle = document.getElementById('toast-title');
+    const toastMessage = document.getElementById('toast-message');
+    
+    toast.classList.remove('border-green-500', 'border-red-500', 'border-blue-500', 'border-yellow-500');
+    
+    if (type === 'success') {
+        icon.className = 'fa-solid fa-check-circle text-green-500 text-2xl mr-3';
+        toast.classList.add('border-green-500');
+    } else if (type === 'error') {
+        icon.className = 'fa-solid fa-times-circle text-red-500 text-2xl mr-3';
+        toast.classList.add('border-red-500');
+    } else if (type === 'info') {
+        icon.className = 'fa-solid fa-info-circle text-blue-500 text-2xl mr-3';
+        toast.classList.add('border-blue-500');
+    } else if (type === 'warning') {
+        icon.className = 'fa-solid fa-exclamation-triangle text-yellow-500 text-2xl mr-3';
+        toast.classList.add('border-yellow-500');
+    }
+    
+    toastTitle.textContent = title;
+    toastMessage.textContent = message;
+    toast.classList.remove('hidden');
+    
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 5000);
+}
+
+// Funções para manipulação de documentos
+function previewDocument(type) {
+    alert(`Visualizando documento: ${type}`);
+}
+
+function downloadDocument(type) {
+    alert(`Baixando documento: ${type}`);
+}
+
+// Funções para manipulação de timeline
+function showTimeline() {
+    alert('Linha do tempo não implementada');
+}
+
+// Funções para manipulação de anexos
+function showAttachments() {
+    alert('Anexos não implementados');
+}
+</script>
+
+</body>
+</html>

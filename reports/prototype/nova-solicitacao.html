@@ -54,7 +54,7 @@
         </div>
         <div class="pb-3">
             <nav class="flex items-center space-x-2 text-sm">
-                <a href="#" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
                 <a href="#" class="text-gray-300 hover:text-white transition-colors">Portfólio</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
@@ -607,12 +607,11 @@ function submitForm() {
 }
 
 function closeModal() {
-    document.getElementById('success-modal').classList.add('hidden');
-    window.location.reload();
+    window.location.href = 'dashboard.html';
 }
 
 function viewRequest() {
-    alert('Redirecionando para visualização da solicitação...');
+    window.location.href = 'detalhamento-solicitacao.html';
 }
 
 window.addEventListener('load', function() {

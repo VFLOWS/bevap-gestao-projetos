@@ -35,15 +35,14 @@
 <header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy text-white shadow-lg z-50">
     <div class="px-4 lg:px-6 py-4">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-            <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2">
-                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
-                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
-                    </div>
-                    <span class="text-white font-montserrat font-bold text-xl hidden sm:block">BEVAP</span>
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img class="h-10 w-auto" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/e6e8813b52-911a03e394b3616a198d.png" alt="BEVAP company logo, modern, professional, navy and green colors" />
+                    <h1 class="text-xl lg:text-2xl font-montserrat font-semibold">Portfólio de Projetos</h1>
                 </div>
-                <div class="h-8 w-px bg-gray-400/50 hidden md:block"></div>
-                <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">Portfólio de Projetos</h1>
+                <button class="lg:hidden text-white">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
             </div>
             
             <div class="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 lg:gap-4">
@@ -52,9 +51,9 @@
                     <input type="text" placeholder="Buscar por título ou código (ex.: PRJ-2026-014)" class="w-full bg-white/10 border border-white/20 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-bevap-green focus:bg-white/15" />
                 </div>
                 <div class="flex gap-2">
-                    <a href="nova-solicitacao.html" class="flex-1 lg:flex-none bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-2.5 rounded-lg font-medium transition-colors">
+                    <button class="flex-1 lg:flex-none bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-2.5 rounded-lg font-medium transition-colors">
                         <i class="fa-solid fa-plus mr-2"></i>Nova Solicitação
-                    </a>
+                    </button>
                     <button class="flex-1 lg:flex-none bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-lg font-medium transition-colors">
                         Meus Projetos
                     </button>
@@ -217,13 +216,13 @@
             <section id="content-tabs" class="bg-white rounded-xl shadow-sm border border-slate-200">
                 <div class="border-b border-slate-200 px-4">
                     <nav class="flex space-x-6 overflow-x-auto">
-                        <button id="pipeline-tab" class="py-4 px-2 border-b-2 border-bevap-green text-bevap-green font-medium text-sm whitespace-nowrap">
+                        <button class="py-4 px-2 border-b-2 border-bevap-green text-bevap-green font-medium text-sm whitespace-nowrap">
                             <i class="fa-solid fa-table-columns mr-2"></i>Pipeline
                         </button>
-                        <button id="graficos-tab" class="py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap">
+                        <button class="py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap">
                             <i class="fa-solid fa-chart-bar mr-2"></i>Gráficos
                         </button>
-                        <button id="tabela-tab" class="py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap">
+                        <button class="py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap">
                             <i class="fa-solid fa-list mr-2"></i>Tabela
                         </button>
                     </nav>
@@ -382,140 +381,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div id="graficogrid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-4">Projetos por Status</h3>
-                            <canvas id="statusChart"></canvas>
-                        </div>
-                        <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-4">Projetos por Prioridade</h3>
-                            <canvas id="priorityChart"></canvas>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="tabela-view" class="p-4 lg:p-6 hidden">
-                    <div class="overflow-x-auto bg-white rounded-xl shadow-sm border border-slate-200">
-                        <table class="w-full text-sm text-left text-slate-600">
-                            <thead class="text-xs text-slate-700 uppercase bg-slate-50">
-                                <tr>
-                                    <th scope="col" class="px-6 py-3">Projeto</th>
-                                    <th scope="col" class="px-6 py-3">Status</th>
-                                    <th scope="col" class="px-6 py-3">Prioridade</th>
-                                    <th scope="col" class="px-6 py-3">Responsável</th>
-                                    <th scope="col" class="px-6 py-3">Progresso</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="bg-white border-b hover:bg-slate-50">
-                                    <th scope="row" class="px-6 py-4 font-medium text-bevap-navy whitespace-nowrap">
-                                        <div class="font-semibold">Implantar SSO</div>
-                                        <div class="font-mono text-xs text-slate-500">PRJ-2026-014</div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-bevap-green/20 text-bevap-green px-2 py-1 rounded-full text-xs font-medium">Em Execução</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">Crítico</span>
-                                    </td>
-                                    <td class="px-6 py-4">Time TI</td>
-                                    <td class="px-6 py-4">
-                                        <div class="w-full bg-slate-200 rounded-full h-2.5">
-                                            <div class="bg-bevap-green h-2.5 rounded-full" style="width: 62%"></div>
-                                        </div>
-                                        <span class="text-xs text-slate-500 mt-1 block">62%</span>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b hover:bg-slate-50">
-                                    <th scope="row" class="px-6 py-4 font-medium text-bevap-navy whitespace-nowrap">
-                                        <div class="font-semibold">Dashboard BI</div>
-                                        <div class="font-mono text-xs text-slate-500">PRJ-2026-015</div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-bevap-green/20 text-bevap-green px-2 py-1 rounded-full text-xs font-medium">Em Execução</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-slate-100 text-slate-700 px-2 py-1 rounded-full text-xs font-medium">Operacional</span>
-                                    </td>
-                                    <td class="px-6 py-4">Time Analytics</td>
-                                    <td class="px-6 py-4">
-                                        <div class="w-full bg-slate-200 rounded-full h-2.5">
-                                            <div class="bg-bevap-green h-2.5 rounded-full" style="width: 45%"></div>
-                                        </div>
-                                        <span class="text-xs text-slate-500 mt-1 block">45%</span>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b hover:bg-slate-50">
-                                    <th scope="row" class="px-6 py-4 font-medium text-bevap-navy whitespace-nowrap">
-                                        <div class="font-semibold">Portal RH</div>
-                                        <div class="font-mono text-xs text-slate-500">PRJ-2026-018</div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-bevap-gold/20 text-bevap-gold px-2 py-1 rounded-full text-xs font-medium">Em Aprovação</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">Crítico</span>
-                                    </td>
-                                    <td class="px-6 py-4">Time TI</td>
-                                    <td class="px-6 py-4 text-center">-</td>
-                                </tr>
-                                <tr class="bg-white border-b hover:bg-slate-50">
-                                    <th scope="row" class="px-6 py-4 font-medium text-bevap-navy whitespace-nowrap">
-                                        <div class="font-semibold">CRM Vendas</div>
-                                        <div class="font-mono text-xs text-slate-500">PRJ-2026-012</div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-xs font-medium">Em Go-Live</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-bevap-navy/10 text-bevap-navy px-2 py-1 rounded-full text-xs font-medium">Estratégico</span>
-                                    </td>
-                                    <td class="px-6 py-4">Time Comercial</td>
-                                    <td class="px-6 py-4">
-                                        <div class="w-full bg-slate-200 rounded-full h-2.5">
-                                            <div class="bg-purple-600 h-2.5 rounded-full" style="width: 95%"></div>
-                                        </div>
-                                        <span class="text-xs text-slate-500 mt-1 block">95%</span>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white border-b hover:bg-slate-50">
-                                    <th scope="row" class="px-6 py-4 font-medium text-bevap-navy whitespace-nowrap">
-                                        <div class="font-semibold">Backup Automático</div>
-                                        <div class="font-mono text-xs text-slate-500">PRJ-2025-089</div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded-full text-xs font-medium">Concluído</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">Crítico</span>
-                                    </td>
-                                    <td class="px-6 py-4">Time Infra</td>
-                                    <td class="px-6 py-4 text-center">
-                                        <i class="fa-solid fa-check text-emerald-600"></i>
-                                    </td>
-                                </tr>
-                                <tr class="bg-white hover:bg-slate-50">
-                                    <th scope="row" class="px-6 py-4 font-medium text-bevap-navy whitespace-nowrap">
-                                        <div class="font-semibold">App Mobile</div>
-                                        <div class="font-mono text-xs text-slate-500">PRJ-2025-078</div>
-                                    </th>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">Cancelado</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <span class="bg-slate-100 text-slate-700 px-2 py-1 rounded-full text-xs font-medium">Operacional</span>
-                                    </td>
-                                    <td class="px-6 py-4">Time Digital</td>
-                                    <td class="px-6 py-4 text-center">
-                                        <i class="fa-solid fa-times text-red-600"></i>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table
-                        <p class="text-slate-500">Visualização de tabela em desenvolvimento.</p>
-                    </div>
-                </div>
             </section>
 
             <section id="timeline-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
@@ -592,122 +457,28 @@
                     <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
                         <i class="fa-solid fa-rocket text-bevap-navy text-2xl mb-2"></i>
                         <span class="text-sm font-medium text-bevap-navy text-center">Go-Live</span>
-        let chartsInitialized = false;
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-flag-checkered text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Encerramento</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-lightbulb text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Lições Aprendidas</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-book text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Políticas</span>
+                    </button>
+                    <button class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
+                        <i class="fa-solid fa-question-circle text-bevap-navy text-2xl mb-2"></i>
+                        <span class="text-sm font-medium text-bevap-navy text-center">Ajuda</span>
+                    </button>
+                </div>
+            </section>
+        </main>
 
-        tabButtons.forEach((button, index) => {
-            button.addEventListener('click', () => {
-                // Deactivate all tabs
-                tabButtons.forEach(btn => {
-                    btn.classList.remove('border-bevap-green', 'text-bevap-green');
-                    btn.classList.add('border-transparent', 'text-slate-600');
-                });
-
-                // Hide all views
-                tabViews.forEach(view => {
-                    view.classList.add('hidden');
-                });
-
-                // Activate clicked tab
-                button.classList.add('border-bevap-green', 'text-bevap-green');
-                button.classList.remove('border-transparent', 'text-slate-600');
-
-                // Show corresponding view
-                tabViews[index].classList.remove('hidden');
-
-                // Initialize charts only once when the tab is first clicked
-                if (tabs[index].id === 'graficos-tab' && !chartsInitialized) {
-                    initializeCharts();
-                    chartsInitialized = true;
-                }
-            });
-        });
-
-        function initializeCharts() {
-            const bevapColors = {
-                navy: '#0B2E4A',
-                green: '#1C8C5D',
-                gold: '#F1B434',
-                purple: '#6d28d9',
-                emerald: '#059669',
-                red: '#dc2626'
-            };
-
-            // Chart 1: Projetos por Status
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
-            new Chart(statusCtx, {
-                type: 'bar',
-                data: {
-                    labels: ['Em Aprovação', 'Em Execução', 'Em Go-Live', 'Concluídos', 'Cancelados'],
-                    datasets: [{
-                        label: 'Nº de Projetos',
-                        data: [6, 24, 3, 12, 3],
-                        backgroundColor: [
-                            bevapColors.gold,
-                            bevapColors.green,
-                            bevapColors.purple,
-                            bevapColors.emerald,
-                            bevapColors.red
-                        ],
-                        borderColor: [
-                            bevapColors.gold,
-                            bevapColors.green,
-                            bevapColors.purple,
-                            bevapColors.emerald,
-                            bevapColors.red
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-
-            // Chart 2: Projetos por Prioridade
-            const priorityCtx = document.getElementById('priorityChart').getContext('2d');
-            new Chart(priorityCtx, {
-                type: 'pie',
-                data: {
-                    labels: ['Crítico', 'Estratégico', 'Operacional'],
-                    datasets: [{
-                        label: 'Projetos',
-                        data: [3, 2, 2], // Based on visible projects in the table
-                        backgroundColor: [
-                            '#fecaca', // red-200
-                            '#d1fae5', // green-200
-                            '#e0e7ff'  // blue-200
-                        ],
-                        borderColor: [
-                            '#b91c1c', // red-700
-                            '#047857', // green-700
-                            '#4338ca'  // blue-700
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'top',
-                        },
-                        title: {
-                            display: false
-                        }
-                    }
-                }
-            });
-        }ide id="pendencies-sidebar" class="lg:w-80 shrink-0">
+        <aside id="pendencies-sidebar" class="lg:w-80 shrink-0">
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sticky top-32">
                 <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
                     <i class="fa-solid fa-bell mr-2 text-bevap-gold"></i>Minhas Pendências
@@ -797,41 +568,6 @@
         </aside>
     </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const tabs = [
-            { id: 'pipeline-tab', view: 'pipeline-view' },
-            { id: 'graficos-tab', view: 'graficos-view' },
-            { id: 'tabela-tab', view: 'tabela-view' }
-        ];
-
-        const tabButtons = tabs.map(tab => document.getElementById(tab.id));
-        const tabViews = tabs.map(tab => document.getElementById(tab.view));
-
-        tabButtons.forEach((button, index) => {
-            button.addEventListener('click', () => {
-                // Deactivate all tabs
-                tabButtons.forEach(btn => {
-                    btn.classList.remove('border-bevap-green', 'text-bevap-green');
-                    btn.classList.add('border-transparent', 'text-slate-600');
-                });
-
-                // Hide all views
-                tabViews.forEach(view => {
-                    view.classList.add('hidden');
-                });
-
-                // Activate clicked tab
-                button.classList.add('border-bevap-green', 'text-bevap-green');
-                button.classList.remove('border-transparent', 'text-slate-600');
-
-                // Show corresponding view
-                tabViews[index].classList.remove('hidden');
-            });
-        });
-    });
-</script>
 
 </body>
 </html>

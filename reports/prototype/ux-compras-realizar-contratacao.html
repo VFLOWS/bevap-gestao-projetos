@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compras – Realizar Contratação</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#0B2E4A',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434',
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>::-webkit-scrollbar { display: none;}</style>
+</head>
+<body class="bg-gray-50 font-inter">
+
+<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
+                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
+                    </div>
+                    <span class="text-white font-montserrat font-bold text-xl">BEVAP</span>
+                </div>
+                <div class="h-8 w-px bg-gray-400"></div>
+                <h1 class="text-white font-montserrat font-semibold text-lg">Compras – Realizar Contratação</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button class="text-white hover:text-bevap-gold transition-colors">
+                    <i class="fa-regular fa-bell text-xl"></i>
+                </button>
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Compras" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="pb-3">
+            <nav class="flex items-center space-x-2 text-sm">
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Solicitações</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Proposta</a>
+                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+                <span class="text-bevap-gold font-medium">Compras</span>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="mb-6">
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex items-center">
+                <i class="fa-solid fa-info-circle text-blue-600 mr-3"></i>
+                <div>
+                    <div class="font-medium text-blue-900">Projeto Aprovado pelo Comitê</div>
+                    <div class="text-sm text-blue-700">Triagem Técnica: Externo • Aprovações: GCC ✓ • Comitê ✓ • Pronto para contratação</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div id="content-section" class="lg:col-span-2">
+            <div id="tabs-navigation" class="bg-white rounded-lg shadow-md mb-6">
+                <div class="flex border-b border-gray-200">
+                    <button onclick="switchTab('contratacao')" class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50">
+                        <i class="fa-solid fa-file-contract mr-2"></i>
+                        Dados da Contratação
+                    </button>
+                    <button onclick="switchTab('compliance')" class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <i class="fa-solid fa-shield-check mr-2"></i>
+                        Compliance & Documentos
+                    </button>
+                    <button onclick="switchTab('financeiro')" class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
+                        <i class="fa-solid fa-calculator mr-2"></i>
+                        Conferência Financeira
+                    </button>
+                </div>
+            </div>
+
+            <div id="contratacao" class="tab-content bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-file-contract mr-3 text-bevap-gold"></i>
+                    Dados da Contratação
+                </h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Tipo de Contratação *</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <label class="contract-type cursor-pointer">
+                                <input type="radio" name="contract-type" value="pedido" class="hidden" onchange="handleContractType('pedido')" checked>
+                                <div class="border-2 border-bevap-green bg-green-50 rounded-lg p-4 hover:border-green-600 transition-all">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-shopping-cart text-3xl text-bevap-green"></i>
+                                    </div>
+                                    <div class="text-center font-medium text-bevap-green">Pedido</div>
+                                </div>
+                            </label>
+                            <label class="contract-type cursor-pointer">
+                                <input type="radio" name="contract-type" value="contrato" class="hidden" onchange="handleContractType('contrato')">
+                                <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-bevap-green transition-all">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-file-signature text-3xl text-gray-400"></i>
+                                    </div>
+                                    <div class="text-center font-medium text-gray-600">Contrato</div>
+                                </div>
+                            </label>
+                            <label class="contract-type cursor-pointer">
+                                <input type="radio" name="contract-type" value="aditivo" class="hidden" onchange="handleContractType('aditivo')">
+                                <div class="border-2 border-gray-200 rounded-lg p-4 hover:border-bevap-green transition-all">
+                                    <div class="flex items-center justify-center mb-2">
+                                        <i class="fa-solid fa-plus-circle text-3xl text-gray-400"></i>
+                                    </div>
+                                    <div class="text-center font-medium text-gray-600">Aditivo</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nº do Pedido/Contrato *</label>
+                            <input type="text" value="PD-2026-089" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Data de Emissão *</label>
+                            <input type="date" value="2026-01-20" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Início da Vigência *</label>
+                            <input type="date" value="2026-01-25" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Fim da Vigência *</label>
+                            <input type="date" value="2027-01-25" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Condição de Pagamento</label>
+                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                <option value="">Selecione...</option>
+                                <option value="30/60/90" selected>30/60/90 dias</option>
+                                <option value="30">30 dias</option>
+                                <option value="45">45 dias</option>
+                                <option value="60">60 dias</option>
+                                <option value="vista">À vista</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Centro de Custo</label>
+                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                <option value="">Selecione...</option>
+                                <option value="TI-DEV" selected>TI-DEV - Desenvolvimento</option>
+                                <option value="TI-INFRA">TI-INFRA - Infraestrutura</option>
+                                <option value="COMPRAS">COMPRAS - Fornecedores</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Conta Contábil</label>
+                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            <option value="">Selecione...</option>
+                            <option value="6.1.2.01.001" selected>6.1.2.01.001 - Serviços de TI</option>
+                            <option value="6.1.2.01.002">6.1.2.01.002 - Consultoria</option>
+                            <option value="6.1.2.01.003">6.1.2.01.003 - Desenvolvimento</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Escopo Acordado</label>
+                        <textarea rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" placeholder="Descreva o escopo final acordado...">Desenvolvimento completo do Portal do Fornecedor incluindo: módulos de cadastro, acompanhamento de pedidos, comunicação direta, integração com ERP, testes e implantação. Inclui treinamento da equipe e documentação técnica.</textarea>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">SLA/Garantia</label>
+                            <input type="text" value="99,5% disponibilidade / 12 meses garantia" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" placeholder="Ex: 99,5% disponibilidade">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Multas/Rescisão</label>
+                            <input type="text" value="10% multa rescisória / 2% por atraso" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" placeholder="Ex: 10% multa rescisória">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="compliance" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-shield-check mr-3 text-bevap-gold"></i>
+                    Compliance & Documentos
+                </h2>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Checklist de Compliance</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center p-3 border border-green-200 bg-green-50 rounded-lg">
+                                <input type="checkbox" checked class="mr-3 rounded text-bevap-green focus:ring-bevap-green">
+                                <div class="flex-1">
+                                    <div class="font-medium text-green-900">Pessoa Jurídica Regular</div>
+                                    <div class="text-sm text-green-700">CNPJ ativo e situação cadastral regular</div>
+                                </div>
+                                <i class="fa-solid fa-check-circle text-green-600"></i>
+                            </label>
+                            
+                            <label class="flex items-center p-3 border border-green-200 bg-green-50 rounded-lg">
+                                <input type="checkbox" checked class="mr-3 rounded text-bevap-green focus:ring-bevap-green">
+                                <div class="flex-1">
+                                    <div class="font-medium text-green-900">Certidões Negativas</div>
+                                    <div class="text-sm text-green-700">Federal, Estadual, Municipal, FGTS, Trabalhista</div>
+                                </div>
+                                <i class="fa-solid fa-check-circle text-green-600"></i>
+                            </label>
+                            
+                            <label class="flex items-center p-3 border border-green-200 bg-green-50 rounded-lg">
+                                <input type="checkbox" checked class="mr-3 rounded text-bevap-green focus:ring-bevap-green">
+                                <div class="flex-1">
+                                    <div class="font-medium text-green-900">LGPD - Proteção de Dados</div>
+                                    <div class="text-sm text-green-700">Termo de adequação à Lei Geral de Proteção de Dados</div>
+                                </div>
+                                <i class="fa-solid fa-check-circle text-green-600"></i>
+                            </label>
+                            
+                            <label class="flex items-center p-3 border border-yellow-200 bg-yellow-50 rounded-lg">
+                                <input type="checkbox" class="mr-3 rounded text-bevap-green focus:ring-bevap-green">
+                                <div class="flex-1">
+                                    <div class="font-medium text-yellow-900">Análise de Segurança</div>
+                                    <div class="text-sm text-yellow-700">Relatório de segurança da informação aprovado</div>
+                                </div>
+                                <i class="fa-solid fa-exclamation-triangle text-yellow-600"></i>
+                            </label>
+                            
+                            <label class="flex items-center p-3 border border-green-200 bg-green-50 rounded-lg">
+                                <input type="checkbox" checked class="mr-3 rounded text-bevap-green focus:ring-bevap-green">
+                                <div class="flex-1">
+                                    <div class="font-medium text-green-900">Seguro de Responsabilidade</div>
+                                    <div class="text-sm text-green-700">Apólice de seguro para cobertura de danos</div>
+                                </div>
+                                <i class="fa-solid fa-check-circle text-green-600"></i>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Documentos Anexos</h3>
+                        <div class="space-y-4">
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-bevap-green transition-colors cursor-pointer" onclick="uploadDocument()">
+                                <i class="fa-solid fa-upload text-gray-400 text-3xl mb-3"></i>
+                                <div class="text-sm text-gray-600">Clique para anexar documentos ou arraste aqui</div>
+                                <div class="text-xs text-gray-500 mt-1">Contrato/Pedido assinado, Proposta final, Termos/SLA</div>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-pdf text-red-500 text-2xl mr-4"></i>
+                                        <div>
+                                            <div class="font-medium text-green-900">Contrato_Portal_Fornecedor_Assinado.pdf</div>
+                                            <div class="text-sm text-green-700">2.1 MB • Anexado em 20/01/2026</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Obrigatório</span>
+                                        <button class="text-green-600 hover:text-green-800">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-contract text-blue-500 text-2xl mr-4"></i>
+                                        <div>
+                                            <div class="font-medium">Termos_SLA_Portal_Fornecedor.pdf</div>
+                                            <div class="text-sm text-gray-500">1.8 MB • Anexado em 18/01/2026</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">Obrigatório</span>
+                                        <button class="text-bevap-green hover:text-green-700">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-alt text-purple-500 text-2xl mr-4"></i>
+                                        <div>
+                                            <div class="font-medium">Proposta_Final_TechPartners.pdf</div>
+                                            <div class="text-sm text-gray-500">3.2 MB • Anexado em 15/01/2026</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button class="text-bevap-green hover:text-green-700">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                        <button class="text-red-500 hover:text-red-700">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="financeiro" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-calculator mr-3 text-bevap-gold"></i>
+                    Conferência Financeira
+                </h2>
+                
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Valor Final *</label>
+                            <input type="text" value="R$ 128.450,00" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Impostos/Encargos</label>
+                            <input type="text" value="R$ 12.845,00" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Parcelas de Pagamento</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-gray-700 font-medium">Parcela</th>
+                                        <th class="px-4 py-3 text-left text-gray-700 font-medium">Vencimento</th>
+                                        <th class="px-4 py-3 text-right text-gray-700 font-medium">Valor</th>
+                                        <th class="px-4 py-3 text-center text-gray-700 font-medium">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-4 py-3">1ª Parcela</td>
+                                        <td class="px-4 py-3">25/02/2026</td>
+                                        <td class="px-4 py-3 text-right font-medium">R$ 42.816,67</td>
+                                        <td class="px-4 py-3 text-center">
+                                            <button class="text-blue-600 hover:text-blue-800">
+                                                <i class="fa-solid fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3">2ª Parcela</td>
+                                        <td class="px-4 py-3">25/03/2026</td>
+                                        <td class="px-4 py-3 text-right font-medium">R$ 42.816,67</td>
+                                        <td class="px-4 py-3 text-center">
+                                            <button class="text-blue-600 hover:text-blue-800">
+                                                <i class="fa-solid fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3">3ª Parcela</td>
+                                        <td class="px-4 py-3">25/04/2026</td>
+                                        <td class="px-4 py-3 text-right font-medium">R$ 42.816,66</td>
+                                        <td class="px-4 py-3 text-center">
+                                            <button class="text-blue-600 hover:text-blue-800">
+                                                <i class="fa-solid fa-edit"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="bg-gray-50">
+                                    <tr>
+                                        <td colspan="2" class="px-4 py-3 text-right font-semibold">Total:</td>
+                                        <td class="px-4 py-3 text-right font-bold text-bevap-navy">R$ 128.450,00</td>
+                                        <td class="px-4 py-3"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h3 class="text-sm font-medium text-blue-900 mb-3 flex items-center">
+                            <i class="fa-solid fa-chart-line mr-2"></i>
+                            Comparativo vs. Proposta Aprovada
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                            <div>
+                                <div class="text-blue-800 mb-1">Proposta Aprovada:</div>
+                                <div class="font-bold text-blue-900">R$ 290.000,00</div>
+                            </div>
+                            <div>
+                                <div class="text-blue-800 mb-1">Valor Final:</div>
+                                <div class="font-bold text-bevap-navy">R$ 128.450,00</div>
+                            </div>
+                            <div>
+                                <div class="text-blue-800 mb-1">Economia:</div>
+                                <div class="font-bold text-green-600">-R$ 161.550 (-55,7%)</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <aside id="summary-sidebar" class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                <h3 class="text-lg font-montserrat font-bold text-bevap-navy mb-4 flex items-center">
+                    <i class="fa-solid fa-info-circle mr-2 text-bevap-gold"></i>
+                    Resumo do Projeto
+                </h3>
+                
+                <div class="space-y-4">
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase mb-1">Código</div>
+                        <div class="font-bold text-bevap-navy">PRJ-2026-052</div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase mb-1">Título</div>
+                        <div class="font-medium">Portal do Fornecedor</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <div class="text-xs text-gray-500 uppercase mb-1">Área</div>
+                            <div class="text-sm font-medium">Compras</div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500 uppercase mb-1">Patrocinador</div>
+                            <div class="text-sm font-medium">Dir. Compras</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase mb-1">Prioridade</div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                            <i class="fa-solid fa-star mr-1"></i>
+                            Estratégico
+                        </span>
+                    </div>
+                    
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase mb-1">Fornecedor</div>
+                        <div class="font-medium">TechPartners Ltda.</div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase mb-1">Valor</div>
+                        <div class="text-lg font-bold text-bevap-green">R$ 128.450,00</div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase mb-1">Condição de Pagamento</div>
+                        <div class="text-sm font-medium">30/60/90 dias</div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase mb-1">Vigência</div>
+                        <div class="text-sm font-medium">12 meses</div>
+                    </div>
+                    
+                    <div>
+                        <div class="text-xs text-gray-500 uppercase mb-1">Status</div>
+                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <i class="fa-solid fa-clock mr-1"></i>
+                            Aguardando Compras
+                        </span>
+                    </div>
+                    
+                    <div class="pt-4 border-t border-gray-200">
+                        <button class="w-full px-4 py-2 bg-gray-100 text-bevap-navy rounded-lg hover:bg-gray-200 transition-colors mb-2">
+                            <i class="fa-solid fa-paperclip mr-2"></i>
+                            Ver Anexos
+                        </button>
+                        <button class="w-full px-4 py-2 bg-gray-100 text-bevap-navy rounded-lg hover:bg-gray-200 transition-colors">
+                            <i class="fa-solid fa-history mr-2"></i>
+                            Linha do Tempo
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center justify-between">
+            <button onclick="saveDraft()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                <i class="fa-solid fa-save mr-2"></i>
+                Salvar Rascunho
+            </button>
+            
+            <div class="flex items-center space-x-3">
+                <button onclick="openCancelModal()" class="px-6 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                    <i class="fa-solid fa-times-circle mr-2"></i>
+                    Cancelar Processo
+                </button>
+                <button onclick="openReturnModal()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    <i class="fa-solid fa-undo mr-2"></i>
+                    Devolver para Correção
+                </button>
+                <button onclick="openConfirmModal()" class="px-8 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors shadow-md">
+                    <i class="fa-solid fa-check-circle mr-2"></i>
+                    Concluir Contratação
+                </button>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div id="confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+        <div class="p-6">
+            <div class="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mx-auto mb-4">
+                <i class="fa-solid fa-check-circle text-bevap-green text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-center text-bevap-navy mb-2">Concluir Contratação</h3>
+            <p class="text-center text-gray-600 mb-6">Confirma a conclusão da contratação? O projeto será marcado como "Contratado" e encaminhado para Início do Projeto.</p>
+            <div class="flex space-x-3">
+                <button onclick="closeConfirmModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Cancelar</button>
+                <button onclick="confirmContract()" class="flex-1 px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="return-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+        <div class="p-6">
+            <div class="flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mx-auto mb-4">
+                <i class="fa-solid fa-undo text-yellow-600 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-center text-bevap-navy mb-4">Devolver para Correção</h3>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Motivo *</label>
+                <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green">
+                    <option value="">Selecione...</option>
+                    <option value="docs">Documentos incompletos</option>
+                    <option value="valores">Valores incorretos</option>
+                    <option value="prazos">Prazos inadequados</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Descrição *</label>
+                <textarea rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green" placeholder="Descreva o que precisa ser corrigido..."></textarea>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="closeReturnModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Cancelar</button>
+                <button onclick="submitReturn()" class="flex-1 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Devolver</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="cancel-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
+        <div class="p-6">
+            <div class="flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mx-auto mb-4">
+                <i class="fa-solid fa-times-circle text-red-600 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-center text-bevap-navy mb-2">Cancelar Processo</h3>
+            <p class="text-center text-gray-600 mb-4">Esta ação marcará o projeto como "Não Continuidade" e notificará todos os stakeholders.</p>
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
+                <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
+                    <option value="">Selecione...</option>
+                    <option value="orcamento">Orçamento insuficiente</option>
+                    <option value="compliance">Não conformidade</option>
+                    <option value="estrategia">Mudança estratégica</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+            <div class="mb-6">
+                <label class="block text-sm font-medium text-gray-700 mb-2">Justificativa *</label>
+                <textarea rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="Justifique o cancelamento..."></textarea>
+            </div>
+            <div class="flex space-x-3">
+                <button onclick="closeCancelModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Voltar</button>
+                <button onclick="submitCancel()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Cancelar Projeto</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="hidden fixed top-20 right-4 bg-white rounded-lg shadow-xl p-4 z-50 max-w-sm">
+    <div class="flex items-center">
+        <div id="toast-icon" class="mr-3"></div>
+        <div id="toast-message" class="text-sm font-medium"></div>
+    </div>
+</div>
+
+<script>
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+        btn.classList.add('border-transparent', 'text-gray-500');
+    });
+    
+    document.getElementById(tabName).classList.remove('hidden');
+    event.target.closest('.tab-button').classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+    event.target.closest('.tab-button').classList.remove('border-transparent', 'text-gray-500');
+}
+
+function handleContractType(type) {
+    document.querySelectorAll('.contract-type').forEach(el => {
+        const div = el.querySelector('div');
+        const icon = el.querySelector('i');
+        const text = el.querySelector('.text-center');
+        
+        div.classList.remove('border-bevap-green', 'bg-green-50');
+        div.classList.add('border-gray-200');
+        icon.classList.remove('text-bevap-green');
+        icon.classList.add('text-gray-400');
+        text.classList.remove('text-bevap-green');
+        text.classList.add('text-gray-600');
+    });
+    
+    const selected = event.target.closest('.contract-type');
+    const div = selected.querySelector('div');
+    const icon = selected.querySelector('i');
+    const text = selected.querySelector('.text-center');
+    
+    div.classList.add('border-bevap-green', 'bg-green-50');
+    div.classList.remove('border-gray-200');
+    icon.classList.add('text-bevap-green');
+    icon.classList.remove('text-gray-400');
+    text.classList.add('text-bevap-green');
+    text.classList.remove('text-gray-600');
+}
+
+function uploadDocument() {
+    showToast('success', 'Funcionalidade de upload será implementada');
+}
+
+function openConfirmModal() {
+    document.getElementById('confirm-modal').classList.remove('hidden');
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirm-modal').classList.add('hidden');
+}
+
+function confirmContract() {
+    showToast('success', 'Contratação concluída com sucesso!');
+    closeConfirmModal();
+}
+
+function openReturnModal() {
+    document.getElementById('return-modal').classList.remove('hidden');
+}
+
+function closeReturnModal() {
+    document.getElementById('return-modal').classList.add('hidden');
+}
+
+function submitReturn() {
+    showToast('success', 'Projeto devolvido para correção!');
+    closeReturnModal();
+}
+
+function openCancelModal() {
+    document.getElementById('cancel-modal').classList.remove('hidden');
+}
+
+function closeCancelModal() {
+    document.getElementById('cancel-modal').classList.add('hidden');
+}
+
+function submitCancel() {
+    showToast('success', 'Projeto cancelado com sucesso!');
+    closeCancelModal();
+}
+
+function saveDraft() {
+    showToast('success', 'Rascunho salvo com sucesso!');
+}
+
+function showToast(type, message) {
+    const toast = document.getElementById('toast');
+    const icon = document.getElementById('toast-icon');
+    const messageDiv = document.getElementById('toast-message');
+    
+    toast.classList.remove('hidden');
+    icon.className = type === 'success' ? 'fa-solid fa-check-circle text-green-600' : 'fa-solid fa-exclamation-triangle text-red-600';
+    messageDiv.textContent = message;
+    
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 3000);
+}
+
+function openCancelModal() {
+    document.getElementById('cancel-modal').classList.remove('hidden');
+}
+
+function closeCancelModal() {
+    document.getElementById('cancel-modal').classList.add('hidden');
+}
+
+function submitCancel() {
+    showToast('success', 'Projeto cancelado com sucesso!');
+    closeCancelModal();
+}
+
+function openReturnModal() {
+    document.getElementById('return-modal').classList.remove('hidden');
+}
+
+function closeReturnModal() {
+    document.getElementById('return-modal').classList.add('hidden');
+}
+
+function submitReturn() {
+    showToast('success', 'Projeto devolvido para correção!');
+    closeReturnModal();
+}
+
+function openConfirmModal() {
+    document.getElementById('confirm-modal').classList.remove('hidden');
+}
+
+function closeConfirmModal() {
+    document.getElementById('confirm-modal').classList.add('hidden');
+}
+
+function confirmContract() {
+    showToast('success', 'Contratação concluída com sucesso!');
+    closeConfirmModal();
+}
+
+function saveDraft() {
+    showToast('success', 'Rascunho salvo com sucesso!');
+}
+
+function showToast(type, message) {
+    const toast = document.getElementById('toast');
+    const icon = document.getElementById('toast-icon');
+    const messageDiv = document.getElementById('toast-message');
+    
+    toast.classList.remove('hidden');
+    icon.className = type === 'success' ? 'fa-solid fa-check-circle text-green-600' : 'fa-solid fa-exclamation-triangle text-red-600';
+    messageDiv.textContent = message;
+    
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 3000);
+}
+</script>
+</body>
+</html>

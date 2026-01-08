@@ -4,7 +4,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestão de Projetos – Triagem Técnica (Alternativa)</title>
+    <title>Triagem Técnica</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -41,7 +41,7 @@
                     <span class="text-white font-montserrat font-bold text-xl hidden sm:block">BEVAP</span>
                 </div>
                 <div class="h-8 w-px bg-gray-400 hidden md:block"></div>
-                <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">Triagem Técnica (Alternativa)</h1>
+                <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">Triagem Técnica</h1>
             </div>
             <div class="flex items-center space-x-3">
                 <button class="text-white hover:text-bevap-gold transition-colors">
@@ -52,7 +52,7 @@
         </div>
         <div class="pb-3">
             <nav class="flex items-center space-x-2 text-sm">
-                <a href="#" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
                 <a href="#" class="text-gray-300 hover:text-white transition-colors">Minhas Pendências</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
@@ -68,121 +68,371 @@
         
         <div class="lg:col-span-2 space-y-6">
             
-            <!-- Triagem Técnica (Formulário) -->
-            <div class="bg-white rounded-lg shadow-md p-6">
-                <div class="flex items-center mb-6">
-                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
-                        <i class="fa-solid fa-sitemap"></i>
-                    </div>
-                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Dados da Triagem Técnica</h2>
-                </div>
-                <div class="space-y-6">
-                    <div class="p-4 border rounded-lg space-y-4">
-                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy">Classificação e Planejamento</h3>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Classificação do Projeto <span class="text-red-500">*</span></label>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
-                                    <input type="radio" name="classificacao" value="projeto" class="sr-only peer">
-                                    <div class="peer-checked:border-bevap-green peer-checked:bg-green-50 absolute inset-0 rounded-lg border-2"></div>
-                                    <div class="relative flex items-center"><i class="fa-solid fa-folder-tree text-bevap-green text-xl mr-3"></i><span class="font-semibold text-gray-900">Projeto</span></div>
-                                </label>
-                                <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-gold transition-all">
-                                    <input type="radio" name="classificacao" value="melhoria" class="sr-only peer">
-                                    <div class="peer-checked:border-bevap-gold peer-checked:bg-yellow-50 absolute inset-0 rounded-lg border-2"></div>
-                                    <div class="relative flex items-center"><i class="fa-solid fa-rocket text-bevap-gold text-xl mr-3"></i><span class="font-semibold text-gray-900">Melhoria</span></div>
-                                </label>
-                                <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-blue-500 transition-all">
-                                    <input type="radio" name="classificacao" value="servico" class="sr-only peer">
-                                    <div class="peer-checked:border-blue-500 peer-checked:bg-blue-50 absolute inset-0 rounded-lg border-2"></div>
-                                    <div class="relative flex items-center"><i class="fa-solid fa-headset text-blue-500 text-xl mr-3"></i><span class="font-semibold text-gray-900">Serviço</span></div>
-                                </label>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Gerente de Projeto de TI <span class="text-red-500">*</span></label>
-                            <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
-                                <option value="">Selecione um gerente...</option>
-                                <option value="gp1">Ana Silva</option>
-                                <option value="gp2">Carlos Oliveira</option>
-                                <option value="gp3">Mariana Costa</option>
-                            </select>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Data de Início Prevista</label>
-                                <input type="date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Data de Fim Prevista</label>
-                                <input type="date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-4 border rounded-lg space-y-4">
-                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy">Análise Estratégica e de Risco</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Prioridade (TI) <span class="text-red-500">*</span></label>
-                                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
-                                    <option value="">Selecione a prioridade...</option>
-                                    <option value="critica">Crítica</option>
-                                    <option value="alta">Alta</option>
-                                    <option value="media">Média</option>
-                                    <option value="baixa">Baixa</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Nível de Risco (Inicial) <span class="text-red-500">*</span></label>
-                                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
-                                    <option value="">Selecione o risco...</option>
-                                    <option value="alto">Alto</option>
-                                    <option value="medio">Médio</option>
-                                    <option value="baixo">Baixo</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Alinhamento Estratégico <span class="text-red-500">*</span></label>
-                            <div class="flex items-center space-x-4">
-                                <label class="flex items-center"><input type="radio" name="alinhamento" class="mr-2"> Sim</label>
-                                <label class="flex items-center"><input type="radio" name="alinhamento" class="mr-2"> Não</label>
-                            </div>
-                        </div>
-                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Justificativa do Alinhamento/Risco</label>
-                            <textarea rows="3" placeholder="Justifique o alinhamento estratégico e os principais riscos identificados." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Observações Gerais da Triagem</label>
-                        <textarea rows="3" placeholder="Adicione outras observações relevantes sobre a triagem." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+            <div id="alert-banner" class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex items-start">
+                    <i class="fa-solid fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
+                    <div class="text-sm text-blue-800">
+                        <p class="font-medium mb-1">Projeto Aprovado para Execução</p>
+                        <p>Defina se a execução será interna ou externa e complete as informações necessárias para o planejamento.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Seções Read-only -->
+            <div id="triagem-form" class="bg-white rounded-lg shadow-md p-6">
+                
+                <div class="mb-8">
+                    <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                        <i class="fa-solid fa-route mr-3 text-bevap-gold"></i>
+                        Decisão de Execução
+                    </h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="execucao" value="interno" class="sr-only peer" checked>
+                            <div class="p-6 border-2 border-gray-300 rounded-lg peer-checked:border-bevap-green peer-checked:bg-green-50 transition-all">
+                                <div class="text-center">
+                                    <i class="fa-solid fa-users text-4xl text-bevap-green mb-3"></i>
+                                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-2">Execução Interna</h3>
+                                    <p class="text-sm text-gray-600">Equipe interna da BEVAP</p>
+                                </div>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="execucao" value="externo" class="sr-only peer">
+                            <div class="p-6 border-2 border-gray-300 rounded-lg peer-checked:border-bevap-gold peer-checked:bg-yellow-50 transition-all">
+                                <div class="text-center">
+                                    <i class="fa-solid fa-handshake text-4xl text-bevap-gold mb-3"></i>
+                                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-2">Execução Externa</h3>
+                                    <p class="text-sm text-gray-600">Fornecedor/Terceirizado</p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Motivo da Decisão *</h3>
+                    
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                        <select id="motivo-categoria" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            <option value="">Selecione uma categoria</option>
+                            <option value="capacidade">Capacidade da Equipe</option>
+                            <option value="competencia">Competência Técnica</option>
+                            <option value="prazo">Prazo/Urgência</option>
+                            <option value="dependencia">Dependência de Fornecedor</option>
+                            <option value="risco">Risco Alto</option>
+                            <option value="outro">Outro Motivo</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição *</label>
+                        <textarea id="motivo-descricao" rows="3" placeholder="Descreva o motivo da decisão..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Capacidade e Janela</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Disponibilidade da Equipe</label>
+                            <div class="bg-gray-50 p-5 rounded-lg">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-sm text-gray-600">Capacidade disponível</span>
+                                    <span class="text-lg font-bold text-bevap-navy" id="team-capacity-value">75%</span>
+                                </div>
+                                <input type="range" min="0" max="100" value="75" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-bevap-green" oninput="updateTeamCapacity(this.value)">
+                                <div class="flex justify-between text-xs text-gray-500 mt-2">
+                                    <span>0%</span>
+                                    <span>50%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Data Desejada de Início</label>
+                            <input type="date" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Riscos e Dependências</h3>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Adicionar Risco/Dependência</label>
+                            <div class="flex gap-2">
+                                <input type="text" id="risk-input" placeholder="Ex.: Disponibilidade do ambiente de homologação" class="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                <button onclick="addRisk()" class="px-4 py-2.5 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fa-solid fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="risks-list" class="space-y-2">
+                            <div class="flex items-center justify-between bg-yellow-50 border border-yellow-200 px-3 py-2 rounded-lg">
+                                <span class="text-sm text-gray-700">Dependência de atualização do servidor</span>
+                                <button onclick="removeRisk(this)" class="text-red-500 hover:text-red-700">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center justify-between bg-yellow-50 border border-yellow-200 px-3 py-2 rounded-lg">
+                                <span class="text-sm text-gray-700">Validação com área de negócio</span>
+                                <button onclick="removeRisk(this)" class="text-red-500 hover:text-red-700">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="external-section" class="mb-8 hidden">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-building mr-2 text-bevap-gold"></i>
+                        Informações para Execução Externa
+                    </h3>
+                    
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Fornecedor Recomendado</label>
+                                <input type="text" placeholder="Nome do fornecedor ou 'A definir'" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Contratação</label>
+                                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                    <option value="">Selecione</option>
+                                    <option value="licitacao">Licitação</option>
+                                    <option value="dispensa">Dispensa</option>
+                                    <option value="pregao">Pregão</option>
+                                    <option value="contrato-vigente">Contrato Vigente</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Justificativa para Execução Externa *</label>
+                            <textarea rows="3" placeholder="Explique por que a execução deve ser externa..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Anexos de Apoio</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-bevap-green transition-colors">
+                                <i class="fa-solid fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-600 mb-2">Arraste arquivos aqui ou clique para selecionar</p>
+                                <p class="text-xs text-gray-500">Pré-propostas, estudos técnicos, etc. (PDF, DOC, XLS - máx. 10MB)</p>
+                                <input type="file" class="hidden" multiple accept=".pdf,.doc,.docx,.xls,.xlsx">
+                            </div>
+                            
+                            <div id="external-attachments" class="mt-4 space-y-2">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                        <div>
+                                            <div class="font-medium text-sm">Pre_Proposta_Fornecedor_A.pdf</div>
+                                            <div class="text-xs text-gray-500">1.8 MB</div>
+                                        </div>
+                                    </div>
+                                    <button class="text-red-500 hover:text-red-700">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-clipboard-check mr-2 text-bevap-green"></i>
+                        Checklist de Completude
+                    </h3>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3" checked>
+                            <span class="text-sm text-gray-700">Escopo do projeto está claro e detalhado</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3" checked>
+                            <span class="text-sm text-gray-700">Estimativas de custo e prazo registradas</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3" checked>
+                            <span class="text-sm text-gray-700">Anexos essenciais estão presentes</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3">
+                            <span class="text-sm text-gray-700">Decisão de execução documentada</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3">
+                            <span class="text-sm text-gray-700">Riscos e dependências mapeados</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Parecer de TI (Read-only) -->
             <div class="bg-white rounded-lg shadow-md p-6 opacity-80">
-                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Informações de Apoio</h2>
-                <div class="space-y-4">
-                    <details class="p-4 border rounded-lg">
-                        <summary class="font-semibold cursor-pointer">Parecer da Avaliação de TI</summary>
-                        <div class="mt-4 space-y-4 text-sm">
-                            <p><strong>Viabilidade:</strong> <span class="text-bevap-green font-semibold">Viável</span></p>
-                            <p><strong>Parecer:</strong> A solução de SSO é tecnicamente viável e se alinha com a arquitetura de sistemas atual.</p>
-                            <p><strong>Custo Estimado:</strong> R$ 55.000,00</p>
-                            <p><strong>Esforço Estimado:</strong> 240 horas</p>
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-clipboard-check"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Parecer da Avaliação de TI</h2>
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Viabilidade Técnica</label>
+                        <p class="text-gray-800 font-semibold text-bevap-green">Viável</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Parecer Técnico</label>
+                        <p class="text-gray-800 bg-gray-50 p-3 rounded-md">A solução de SSO é tecnicamente viável e se alinha com a arquitetura de sistemas atual. A equipe de infraestrutura confirma a compatibilidade dos servidores. Será necessário adquirir licenças para o provedor de identidade Okta.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Estimativa de Esforço (horas)</label>
+                            <p class="text-gray-800">240 horas</p>
                         </div>
-                    </details>
-                    <details class="p-4 border rounded-lg">
-                        <summary class="font-semibold cursor-pointer">Dados da Solicitação Original</summary>
-                         <div class="mt-4 space-y-4 text-sm">
-                            <p><strong>Título:</strong> Implantar SSO corporativo</p>
-                            <p><strong>Objetivo:</strong> Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso.</p>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Estimativa de Custo (R$)</label>
+                            <p class="text-gray-800">R$ 55.000,00</p>
                         </div>
-                    </details>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Categoria do Projeto (TI)</label>
+                        <p class="text-gray-800">Segurança da Informação</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Recursos/Equipes Necessárias</label>
+                        <p class="text-gray-800">Equipe de Infraestrutura, Equipe de Segurança, Gerente de Projeto de TI.</p>
+                    </div>
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Anexos do Parecer</h3>
+                        <a href="#" class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-excel text-green-500 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-sm">Estimativa_Custos_SSO.xlsx</div>
+                                    <div class="text-xs text-gray-500">450 KB</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-download text-gray-500"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detalhes da Solicitação (Read-only) -->
+            <div class="bg-white rounded-lg shadow-md p-6 opacity-80">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Dados da Solicitação</h2>
+                </div>
+                <div class="space-y-6">
+                    <!-- Dados Básicos -->
+                    <div class="space-y-5 p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Dados Básicos</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
+                            <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
+                                <p class="text-gray-800">Tecnologia da Informação</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
+                                <p class="text-gray-800">1001-TI</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
+                            <p class="text-gray-800">Diretoria TI</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Objetivo do Projeto</label>
+                            <p class="text-gray-800">Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso às aplicações corporativas.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Problema/Oportunidade</label>
+                            <p class="text-gray-800">Atualmente, os usuários precisam gerenciar múltiplas senhas para diferentes sistemas, o que gera sobrecarga para o suporte e riscos de segurança. A implementação do SSO (Single Sign-On) simplificará o acesso e fortalecerá as políticas de segurança.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Benefícios Esperados</label>
+                            <p class="text-gray-800">Melhoria na segurança com políticas de senha centralizadas, redução de chamados de suporte relacionados a senhas e aumento da produtividade dos colaboradores com acesso simplificado.</p>
+                        </div>
+                    </div>
+                    <!-- Escopo -->
+                    <div class="space-y-5 p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Escopo</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Escopo Inicial</label>
+                            <p class="text-gray-800">Integração do SSO com os principais sistemas da empresa: ERP, CRM e portal do colaborador. Inclui a configuração do provedor de identidade e a criação de documentação para usuários e administradores.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Fora de Escopo</label>
+                            <p class="text-gray-800">A integração com sistemas legados ou de terceiros que não suportam SAML/OAuth não está incluída nesta fase. A migração de contas de usuário não utilizadas também está fora de escopo.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Dependências</label>
+                            <p class="text-gray-800">Disponibilidade da equipe de infraestrutura para configuração de servidores e rede. Licenciamento do provedor de identidade a ser adquirido pela área de compras.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Riscos Iniciais</label>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+                                    <span>Atraso na aquisição das licenças do provedor de identidade.</span>
+                                </div>
+                                 <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+                                    <span>Incompatibilidade de algum sistema crítico com o protocolo de SSO escolhido.</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Stakeholders</label>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Diretoria TI</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Equipe de Segurança</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Gerentes de Departamento</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Anexos -->
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Anexos</h3>
+                        <div class="space-y-3">
+                            <a href="#" class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-sm">proposta-sso.pdf</div>
+                                        <div class="text-xs text-gray-500">2.4 MB</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-download text-gray-500"></i>
+                            </a>
+                             <a href="#" class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-file-image text-blue-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-sm">arquitetura-sistemas.png</div>
+                                        <div class="text-xs text-gray-500">800 KB</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-download text-gray-500"></i>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -199,7 +449,7 @@
                     <div class="space-y-3">
                         <button class="w-full px-4 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center">
                             <i class="fa-solid fa-paper-plane mr-2"></i>
-                            Enviar para Comitê
+                            Enviar
                         </button>
                         <button class="w-full px-4 py-2.5 border-2 border-bevap-navy text-bevap-navy rounded-lg font-medium hover:bg-bevap-navy hover:text-white transition-all">
                             <i class="fa-regular fa-floppy-disk mr-2"></i>
