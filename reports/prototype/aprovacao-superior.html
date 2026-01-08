@@ -30,6 +30,8 @@
 </head>
 <body class="bg-gray-50 font-inter">
 
+<div id="toast-container" class="fixed top-5 right-5 z-[100] space-y-3"></div>
+
 <header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
@@ -68,49 +70,53 @@
         
         <div class="lg:col-span-2 space-y-6">
             
-            <!-- Seção de Análise do Gestor -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+            <!-- Parecer de TI (Read-only) -->
+            <div class="bg-white rounded-lg shadow-md p-6 opacity-80">
                 <div class="flex items-center mb-6">
                     <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
-                        <i class="fa-solid fa-user-tie"></i>
+                        <i class="fa-solid fa-clipboard-check"></i>
                     </div>
-                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Análise do Gestor</h2>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Parecer da Avaliação de TI</h2>
                 </div>
-
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Parecer sobre a Solicitação <span class="text-red-500">*</span></label>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
-                                <input type="radio" name="parecer" value="aprovar" class="sr-only peer">
-                                <div class="peer-checked:border-bevap-green peer-checked:bg-green-50 absolute inset-0 rounded-lg border-2"></div>
-                                <div class="relative flex items-center">
-                                    <i class="fa-solid fa-check-circle text-bevap-green text-xl mr-3"></i>
-                                    <span class="font-semibold text-gray-900">Aprovar</span>
-                                </div>
-                            </label>
-                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-gold transition-all">
-                                <input type="radio" name="parecer" value="correcao" class="sr-only peer">
-                                <div class="peer-checked:border-bevap-gold peer-checked:bg-yellow-50 absolute inset-0 rounded-lg border-2"></div>
-                                <div class="relative flex items-center">
-                                    <i class="fa-solid fa-rotate-left text-bevap-gold text-xl mr-3"></i>
-                                    <span class="font-semibold text-gray-900">Solicitar Correção</span>
-                                </div>
-                            </label>
-                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-red-500 transition-all">
-                                <input type="radio" name="parecer" value="reprovar" class="sr-only peer">
-                                <div class="peer-checked:border-red-500 peer-checked:bg-red-50 absolute inset-0 rounded-lg border-2"></div>
-                                <div class="relative flex items-center">
-                                    <i class="fa-solid fa-times-circle text-red-500 text-xl mr-3"></i>
-                                    <span class="font-semibold text-gray-900">Reprovar</span>
-                                </div>
-                            </label>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Viabilidade Técnica</label>
+                        <p class="text-gray-800 font-semibold text-bevap-green">Viável</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Parecer Técnico</label>
+                        <p class="text-gray-800 bg-gray-50 p-3 rounded-md">A solução de SSO é tecnicamente viável e se alinha com a arquitetura de sistemas atual. A equipe de infraestrutura confirma a compatibilidade dos servidores. Será necessário adquirir licenças para o provedor de identidade Okta.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Estimativa de Esforço (horas)</label>
+                            <p class="text-gray-800">240 horas</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Estimativa de Custo (R$)</label>
+                            <p class="text-gray-800">R$ 55.000,00</p>
                         </div>
                     </div>
-
                     <div>
-                        <label for="approval-comments" class="block text-sm font-medium text-gray-700 mb-2">Observações</label>
-                        <textarea id="approval-comments" rows="4" placeholder="Adicione aqui suas observações. Este campo é opcional para aprovação, mas obrigatório para reprovação ou solicitação de correção." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Categoria do Projeto (TI)</label>
+                        <p class="text-gray-800">Segurança da Informação</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Recursos/Equipes Necessárias</label>
+                        <p class="text-gray-800">Equipe de Infraestrutura, Equipe de Segurança, Gerente de Projeto de TI.</p>
+                    </div>
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Anexos do Parecer</h3>
+                        <a href="#" class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-file-excel text-green-500 text-xl mr-3"></i>
+                                <div>
+                                    <div class="font-medium text-sm">Estimativa_Custos_SSO.xlsx</div>
+                                    <div class="text-xs text-gray-500">450 KB</div>
+                                </div>
+                            </div>
+                            <i class="fa-solid fa-download text-gray-500"></i>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -124,40 +130,102 @@
                     <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Dados da Solicitação</h2>
                 </div>
                 <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
-                        <p class="text-lg font-semibold text-gray-800">Portal do Colaborador</p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <!-- Dados Básicos -->
+                    <div class="space-y-5 p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Dados Básicos</h3>
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Solicitante</label>
-                            <p class="text-gray-800">Mariana Oliveira</p>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
+                            <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
+                                <p class="text-gray-800">Tecnologia da Informação</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
+                                <p class="text-gray-800">1001-TI</p>
+                            </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
-                            <p class="text-gray-800">Recursos Humanos</p>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
+                            <p class="text-gray-800">Diretoria TI</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Objetivo do Projeto</label>
+                            <p class="text-gray-800">Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso às aplicações corporativas.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Problema/Oportunidade</label>
+                            <p class="text-gray-800">Atualmente, os usuários precisam gerenciar múltiplas senhas para diferentes sistemas, o que gera sobrecarga para o suporte e riscos de segurança. A implementação do SSO (Single Sign-On) simplificará o acesso e fortalecerá as políticas de segurança.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Benefícios Esperados</label>
+                            <p class="text-gray-800">Melhoria na segurança com políticas de senha centralizadas, redução de chamados de suporte relacionados a senhas e aumento da produtividade dos colaboradores com acesso simplificado.</p>
                         </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Objetivo do Projeto</label>
-                        <p class="text-gray-800 bg-gray-50 p-3 rounded-md">Desenvolver um portal centralizado para os colaboradores acessarem informações pessoais, benefícios, documentos e serviços de RH de forma integrada e intuitiva.</p>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-500 mb-1">Benefícios Esperados</label>
-                        <p class="text-gray-800 bg-gray-50 p-3 rounded-md">Redução de 40% nas consultas ao RH, melhoria na satisfação dos colaboradores, centralização de informações e facilidade de acesso a serviços.</p>
-                    </div>
-                    <div class="p-4 border rounded-lg">
-                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Anexos</h3>
-                        <a href="#" class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
-                            <div class="flex items-center">
-                                <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
-                                <div>
-                                    <div class="font-medium text-sm">Proposta_Portal_RH.pdf</div>
-                                    <div class="text-xs text-gray-500">3.2 MB</div>
+                    <!-- Escopo -->
+                    <div class="space-y-5 p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Escopo</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Escopo Inicial</label>
+                            <p class="text-gray-800">Integração do SSO com os principais sistemas da empresa: ERP, CRM e portal do colaborador. Inclui a configuração do provedor de identidade e a criação de documentação para usuários e administradores.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Fora de Escopo</label>
+                            <p class="text-gray-800">A integração com sistemas legados ou de terceiros que não suportam SAML/OAuth não está incluída nesta fase. A migração de contas de usuário não utilizadas também está fora de escopo.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Dependências</label>
+                            <p class="text-gray-800">Disponibilidade da equipe de infraestrutura para configuração de servidores e rede. Licenciamento do provedor de identidade a ser adquirido pela área de compras.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Riscos Iniciais</label>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+                                    <span>Atraso na aquisição das licenças do provedor de identidade.</span>
+                                </div>
+                                 <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+                                    <span>Incompatibilidade de algum sistema crítico com o protocolo de SSO escolhido.</span>
                                 </div>
                             </div>
-                            <i class="fa-solid fa-download text-gray-500"></i>
-                        </a>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Stakeholders</label>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Diretoria TI</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Equipe de Segurança</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Gerentes de Departamento</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Anexos -->
+                    <div class="p-4 border rounded-lg">
+                        <h3 class="font-montserrat font-semibold text-lg text-bevap-navy mb-3">Anexos</h3>
+                        <div class="space-y-3">
+                            <a href="#" class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-sm">proposta-sso.pdf</div>
+                                        <div class="text-xs text-gray-500">2.4 MB</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-download text-gray-500"></i>
+                            </a>
+                             <a href="#" class="flex items-center justify-between p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-all">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-file-image text-blue-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-sm">arquitetura-sistemas.png</div>
+                                        <div class="text-xs text-gray-500">800 KB</div>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-download text-gray-500"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -242,8 +310,12 @@
 <div id="modal-reject" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
         <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Reprovar Solicitação</h3>
-        <p class="text-sm text-gray-600 mb-4">Tem certeza de que deseja reprovar esta solicitação? A justificativa informada no campo de observações é obrigatória.</p>
-        <div class="flex justify-end space-x-3">
+        <p class="text-sm text-gray-600 mb-4">Tem certeza de que deseja reprovar esta solicitação? A justificativa é obrigatória.</p>
+        <div>
+            <label for="reject-comments" class="block text-sm font-medium text-gray-700 mb-2">Justificativa <span class="text-red-500">*</span></label>
+            <textarea id="reject-comments" rows="4" placeholder="Descreva o motivo da reprovação." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-gold focus:border-transparent transition-all resize-none"></textarea>
+        </div>
+        <div class="flex justify-end space-x-3 mt-5">
             <button onclick="closeModal('modal-reject')" class="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
             <button onclick="handleReject()" class="px-5 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">Confirmar Reprovação</button>
         </div>
@@ -255,15 +327,27 @@
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
         <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Aprovar Solicitação</h3>
         <p class="text-sm text-gray-600 mb-4">Confirma a aprovação desta solicitação? Ela será encaminhada para a análise da equipe de TI.</p>
-        <div class="flex justify-end space-x-3">
+        <div>
+            <label for="approve-comments" class="block text-sm font-medium text-gray-700 mb-2">Observações (Opcional)</label>
+            <textarea id="approve-comments" rows="3" placeholder="Adicione observações, se necessário." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+        </div>
+        <div class="flex justify-end space-x-3 mt-5">
             <button onclick="closeModal('modal-approve')" class="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
             <button onclick="handleApprove()" class="px-5 py-2 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700">Confirmar Aprovação</button>
- !-- Modal Devolver para Correção -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal Devolver para Correção -->
 <div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
         <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correção</h3>
-        <p class="text-sm text-gray-600 mb-4">Tem certeza de que deseja devolver esta solicitação para correção? A justificativa informada no campo de observações é obrigatória.</p>
-        <div class="flex justify-end space-x-3">
+        <p class="text-sm text-gray-600 mb-4">Tem certeza de que deseja devolver esta solicitação para correção? A justificativa é obrigatória.</p>
+        <div>
+            <label for="return-comments" class="block text-sm font-medium text-gray-700 mb-2">Justificativa <span class="text-red-500">*</span></label>
+            <textarea id="return-comments" rows="4" placeholder="Descreva os ajustes necessários." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-gold focus:border-transparent transition-all resize-none"></textarea>
+        </div>
+        <div class="flex justify-end space-x-3 mt-5">
             <button onclick="closeModal('modal-return')" class="px-5 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
             <button onclick="handleReturn()" class="px-5 py-2 text-sm font-medium text-white bg-bevap-gold rounded-lg hover:bg-yellow-600">Confirmar Devolução</button>
         </div>
@@ -271,61 +355,70 @@
 </div>
 
 <script>
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toast-container');
+        
+        const toast = document.createElement('div');
+        
+        const icons = {
+            success: 'fa-check-circle',
+            error: 'fa-times-circle',
+            warning: 'fa-exclamation-triangle'
+        };
+
+        const colors = {
+            success: 'bg-green-500',
+            error: 'bg-red-500',
+            warning: 'bg-yellow-500'
+        };
+
+        toast.className = `flex items-center p-4 text-white rounded-lg shadow-lg transform transition-all duration-300 ease-in-out translate-x-full ${colors[type]}`;
+        toast.innerHTML = `
+            <i class="fa-solid ${icons[type]} text-xl mr-3"></i>
+            <span class="font-medium">${message}</span>
+        `;
+        
+        container.appendChild(toast);
+
+        // Animate in
+        setTimeout(() => {
+            toast.classList.remove('translate-x-full');
+        }, 10);
+
+        // Animate out and remove
+        setTimeout(() => {
+            toast.classList.add('translate-x-full');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
+        }, 4000);
+    }
+
     function showRejectModal() {
-        const comments = document.getElementById('approval-comments').value;
-        if (!comments.trim()) {
-            alert('Para reprovar a solicitação, o campo de observações é obrigatório.');
-            return;
-        }
-        document.querySelector('input[name="parecer"][value="reprovar"]').checked = true;
-        document.getElementById('modal-reject').classList.remove('hidden');
-    }
-
-    function showApproveModal() {
-        document.querySelector('input[name="parecer"][value="aprovar"]').checked = true;
-        document.getElementById('modal-approve').classList.remove('hidden');
-    }
-
-    function showReturnModal() {
-        const comments = document.getElementById('approval-comments').value;
-        if (!comments.trim()) {
-            alert('Para devolver a solicitação para correção, o campo de observações é obrigatório.');
-            return;
-        }
-        document.querySelector('input[name="parecer"][value="correcao"]').checked = true;
-        document.getElementById('modal-return').classList.remove('hidden');
-    }
-
-    function closeModal(modalId) {
-        document.getElementById(modalId).classList.add('hidden');
-    }
-
-    function handleReject() {
-        const comments = document.getElementById('approval-comments').value;
-        console.log('Solicitação Reprovada com os seguintes comentários:', comments);
+//... existing code...
         // Aqui iria a lógica para enviar os dados para o backend
         closeModal('modal-reject');
-        alert('Solicitação reprovada com sucesso!');
+        showToast('Solicitação reprovada com sucesso!', 'error');
     }
 
     function handleApprove() {
-        const comments = document.getElementById('approval-comments').value;
+        const comments = document.getElementById('approve-comments').value;
         console.log('Solicitação Aprovada com os seguintes comentários:', comments);
         // Aqui iria a lógica para enviar os dados para o backend
         closeModal('modal-approve');
-        alert('Solicitação aprovada e encaminhada para TI!');
+        showToast('Solicitação aprovada e encaminhada para TI!');
     }
 
     function handleReturn() {
-        const comments = document.getElementById('approval-comments').value;
+        const comments = document.getElementById('return-comments').value;
+        if (!comments.trim()) {
+            showToast('Para devolver a solicitação, a justificativa é obrigatória.', 'warning');
+            return;
+        }
         console.log('Solicitação devolvida para correção com os seguintes comentários:', comments);
         // Aqui iria a lógica para enviar os dados para o backend
         closeModal('modal-return');
-        alert('Solicitação devolvida para correçãol-comments').value;
-        console.log('Solicitação Aprovada com os seguintes comentários:', comments);
-        // Aqui iria a lógica para enviar os dados para o backend
-        closeModal('modal-approve');
-        alert('Solicitação aprovada e encaminhada para TI!');
+        showToast('Solicitação devolvida para correção com sucesso!', 'warning');
     }
 </script>
 
