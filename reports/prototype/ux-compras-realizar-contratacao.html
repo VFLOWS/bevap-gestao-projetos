@@ -437,80 +437,66 @@
         </div>
 
         <aside id="summary-sidebar" class="lg:col-span-1">
-            <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
-                <h3 class="text-lg font-montserrat font-bold text-bevap-navy mb-4 flex items-center">
-                    <i class="fa-solid fa-info-circle mr-2 text-bevap-gold"></i>
+            <div class="bg-white rounded-lg shadow-md p-5 sticky top-24">
+                <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                    <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
                     Resumo do Projeto
                 </h3>
                 
-                <div class="space-y-4">
-                    <div>
-                        <div class="text-xs text-gray-500 uppercase mb-1">Código</div>
-                        <div class="font-bold text-bevap-navy">PRJ-2026-052</div>
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-center justify-between pb-2 border-b">
+                        <span class="text-gray-600">Código</span>
+                        <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-052</span>
                     </div>
-                    
-                    <div>
-                        <div class="text-xs text-gray-500 uppercase mb-1">Título</div>
-                        <div class="font-medium">Portal do Fornecedor</div>
+                    <div class="pb-2 border-b">
+                        <span class="text-gray-600">Título</span>
+                        <p class="font-medium text-gray-900 mt-1">Portal do Fornecedor</p>
                     </div>
-                    
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <div class="text-xs text-gray-500 uppercase mb-1">Área</div>
-                            <div class="text-sm font-medium">Compras</div>
-                        </div>
-                        <div>
-                            <div class="text-xs text-gray-500 uppercase mb-1">Patrocinador</div>
-                            <div class="text-sm font-medium">Dir. Compras</div>
-                        </div>
+                    <div class="flex items-center justify-between pb-2 border-b">
+                        <span class="text-gray-600">Área</span>
+                        <span class="font-medium text-gray-900">Compras</span>
                     </div>
-                    
-                    <div>
-                        <div class="text-xs text-gray-500 uppercase mb-1">Prioridade</div>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                            <i class="fa-solid fa-star mr-1"></i>
-                            Estratégico
+                    <div class="flex items-center justify-between pb-2 border-b">
+                        <span class="text-gray-600">Patrocinador</span>
+                        <span class="font-medium text-gray-900">Dir. Compras</span>
+                    </div>
+                    <div class="flex items-center justify-between pb-2 border-b">
+                        <span class="text-gray-600">Prioridade</span>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-orange-100 text-orange-800 font-medium">
+                            <i class="fa-solid fa-star mr-1"></i> Estratégico
                         </span>
                     </div>
-                    
-                    <div>
-                        <div class="text-xs text-gray-500 uppercase mb-1">Fornecedor</div>
-                        <div class="font-medium">TechPartners Ltda.</div>
+                    <div class="flex items-center justify-between pb-2 border-b">
+                        <span class="text-gray-600">Fornecedor</span>
+                        <span class="font-medium text-gray-900">TechPartners Ltda.</span>
                     </div>
-                    
-                    <div>
-                        <div class="text-xs text-gray-500 uppercase mb-1">Valor</div>
-                        <div class="text-lg font-bold text-bevap-green">R$ 128.450,00</div>
+                    <div class="flex items-center justify-between pb-2 border-b">
+                        <span class="text-gray-600">Valor</span>
+                        <span class="font-bold text-bevap-green">R$ 128.450,00</span>
                     </div>
-                    
-                    <div>
-                        <div class="text-xs text-gray-500 uppercase mb-1">Condição de Pagamento</div>
-                        <div class="text-sm font-medium">30/60/90 dias</div>
+                    <div class="flex items-center justify-between pb-2 border-b">
+                        <span class="text-gray-600">Pagamento</span>
+                        <span class="font-medium text-gray-900">30/60/90 dias</span>
                     </div>
-                    
-                    <div>
-                        <div class="text-xs text-gray-500 uppercase mb-1">Vigência</div>
-                        <div class="text-sm font-medium">12 meses</div>
+                    <div class="flex items-center justify-between pb-2 border-b">
+                        <span class="text-gray-600">Vigência</span>
+                        <span class="font-medium text-gray-900">12 meses</span>
                     </div>
-                    
-                    <div>
-                        <div class="text-xs text-gray-500 uppercase mb-1">Status</div>
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            <i class="fa-solid fa-clock mr-1"></i>
-                            Aguardando Compras
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-600">Status</span>
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 font-medium">
+                            <i class="fa-solid fa-clock mr-1"></i> Aguardando Compras
                         </span>
                     </div>
-                    
-                    <div class="pt-4 border-t border-gray-200">
-                        <button class="w-full px-4 py-2 bg-gray-100 text-bevap-navy rounded-lg hover:bg-gray-200 transition-colors mb-2">
-                            <i class="fa-solid fa-paperclip mr-2"></i>
-                            Ver Anexos
-                        </button>
-                        <button class="w-full px-4 py-2 bg-gray-100 text-bevap-navy rounded-lg hover:bg-gray-200 transition-colors">
-                            <i class="fa-solid fa-history mr-2"></i>
-                            Linha do Tempo
-                        </button>
-                    </div>
+                </div>
+
+                <div class="mt-4 pt-4 border-t space-y-2">
+                    <button onclick="openTimeline()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
+                    </button>
+                    <button onclick="openAttachments()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
+                        <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos
+                    </button>
                 </div>
             </div>
         </aside>

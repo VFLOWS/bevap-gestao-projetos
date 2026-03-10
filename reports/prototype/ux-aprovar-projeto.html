@@ -356,21 +356,30 @@
                             </h4>
                             <div class="space-y-2 text-sm">
                                 <label class="flex items-center">
-                                    <input type="checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
+                                    <input type="checkbox" class="impacto-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
                                     <span class="text-gray-700">Equipe possui disponibilidade para o projeto</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
+                                    <input type="checkbox" class="impacto-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
                                     <span class="text-gray-700">Recursos necessários estão identificados</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
+                                    <input type="checkbox" class="impacto-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
                                     <span class="text-gray-700">Não há conflitos críticos de agenda</span>
                                 </label>
                                 <label class="flex items-center">
-                                    <input type="checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
+                                    <input type="checkbox" class="impacto-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
                                     <span class="text-gray-700">Projeto alinhado às prioridades da área</span>
                                 </label>
+                            </div>
+                            <div class="mt-6 pt-4 border-t border-yellow-200">
+                                <div class="flex justify-between text-sm mb-2">
+                                    <span class="text-gray-600">Completude do Checklist</span>
+                                    <span id="impacto-checklist-percentage" class="font-semibold text-bevap-navy">0%</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div id="impacto-checklist-progress" class="bg-bevap-green h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -616,6 +625,22 @@ function switchTab(tabName) {
 function updateCapacity(value) {
     document.getElementById('capacity-value').textContent = value + '%';
 }
+
+function updateImpactoChecklistProgress() {
+    const items = document.querySelectorAll('.impacto-checklist-item');
+    const checkedItems = document.querySelectorAll('.impacto-checklist-item:checked');
+    const percentage = items.length ? Math.round((checkedItems.length / items.length) * 100) : 0;
+
+    document.getElementById('impacto-checklist-percentage').textContent = percentage + '%';
+    document.getElementById('impacto-checklist-progress').style.width = percentage + '%';
+}
+
+window.addEventListener('load', function() {
+    document.querySelectorAll('.impacto-checklist-item').forEach(function(item) {
+        item.addEventListener('change', updateImpactoChecklistProgress);
+    });
+    updateImpactoChecklistProgress();
+});
 
 function saveDraft() {
     showToast('Rascunho Salvo', 'Suas alterações foram salvas com sucesso.', 'success');

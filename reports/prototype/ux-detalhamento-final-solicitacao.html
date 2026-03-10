@@ -33,7 +33,7 @@
 <body class="bg-gray-50 font-inter">
 
 <header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2">
@@ -66,35 +66,47 @@
     </div>
 </header>
 
-<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-[85rem] mx-auto">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div id="content-section" class="lg:col-span-2">
             <div id="tabs-navigation" class="bg-white rounded-lg shadow-md mb-6">
-                <div class="flex overflow-x-auto border-b border-gray-200">
-                    <button onclick="switchTab('geral')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50 whitespace-nowrap">
-                        <i class="fa-solid fa-chart-pie mr-2"></i>
-                        Visão Geral
-                    </button>
-                    <button onclick="switchTab('etapas')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                        <i class="fa-solid fa-tasks mr-2"></i>
-                        Etapas & Decisões
-                    </button>
-                    <button onclick="switchTab('documentos')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                        <i class="fa-solid fa-folder-open mr-2"></i>
-                        Documentos
-                    </button>
-                    <button onclick="switchTab('historico')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                        <i class="fa-solid fa-history mr-2"></i>
-                        Histórico
-                    </button>
-                    <button onclick="switchTab('stakeholders')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                        <i class="fa-solid fa-users mr-2"></i>
-                        Stakeholders
-                    </button>
-                    <button onclick="switchTab('indicadores')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                        <i class="fa-solid fa-chart-line mr-2"></i>
-                        Indicadores
-                    </button>
+                <div class="border-b border-gray-200">
+                    <div class="relative">
+                        <div id="tabs-container" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
+                            <button onclick="switchTab('geral')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50 whitespace-nowrap" data-tab="geral">
+                                <i class="fa-solid fa-chart-pie mr-2"></i>Visão Geral
+                            </button>
+                            <button onclick="switchTab('etapas')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap" data-tab="etapas">
+                                <i class="fa-solid fa-tasks mr-2"></i>Etapas & Decisões
+                            </button>
+                            <button onclick="switchTab('documentos')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap" data-tab="documentos">
+                                <i class="fa-solid fa-folder-open mr-2"></i>Documentos
+                            </button>
+                            <button onclick="switchTab('historico')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap" data-tab="historico">
+                                <i class="fa-solid fa-history mr-2"></i>Histórico
+                            </button>
+                            <button onclick="switchTab('stakeholders')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap" data-tab="stakeholders">
+                                <i class="fa-solid fa-users mr-2"></i>Stakeholders
+                            </button>
+                            <button onclick="switchTab('indicadores')" class="tab-button px-4 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap" data-tab="indicadores">
+                                <i class="fa-solid fa-chart-line mr-2"></i>Indicadores
+                            </button>
+                        </div>
+
+                        <button id="tabs-left-arrow" type="button" onclick="scrollTabs('left')" class="absolute left-0 top-0 bottom-0 w-24 rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-start pl-2">
+                            <span class="flex items-center gap-0 text-base leading-none">
+                                <i class="fa-solid fa-chevron-left"></i>
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                        </button>
+
+                        <button id="tabs-right-arrow" type="button" onclick="scrollTabs('right')" class="absolute right-0 top-0 bottom-0 w-24 rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-end pr-2">
+                            <span class="flex items-center gap-0 text-base leading-none">
+                                <i class="fa-solid fa-chevron-right"></i>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -103,95 +115,146 @@
                     <i class="fa-solid fa-chart-pie mr-3 text-bevap-gold"></i>
                     Visão Geral
                 </h2>
-                
+
+                <!-- DADOS BÁSICOS -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
+                            <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
+                                <p class="text-gray-800">Tecnologia da Informação</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
+                                <p class="text-gray-800">1001-TI</p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
+                            <p class="text-gray-800">Diretoria TI</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Objetivo do Projeto</label>
+                            <p class="text-gray-800">Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso às aplicações corporativas.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Problema/Oportunidade</label>
+                            <p class="text-gray-800">Atualmente, os usuários precisam gerenciar múltiplas senhas para diferentes sistemas, o que gera sobrecarga para o suporte e riscos de segurança. A implementação do SSO (Single Sign-On) simplificará o acesso e fortalecerá as políticas de segurança.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Benefícios Esperados</label>
+                            <p class="text-gray-800">Melhoria na segurança com políticas de senha centralizadas, redução de chamados de suporte relacionados a senhas e aumento da produtividade dos colaboradores com acesso simplificado.</p>
+                        </div>
+
+                        <div class="flex items-center">
+                            <i class="fa-solid fa-check-circle text-bevap-green mr-2"></i>
+                            <span class="text-sm text-gray-700 font-medium">Alinhado aos objetivos estratégicos BEVAP</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ESCOPO -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+                    <div class="flex items-center mb-6">
+                        <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                            <i class="fa-solid fa-list-check"></i>
+                        </div>
+                        <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Escopo</h2>
+                    </div>
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Escopo Inicial</label>
+                            <p class="text-gray-800">Integração do SSO com os principais sistemas da empresa: ERP, CRM e portal do colaborador. Inclui a configuração do provedor de identidade e a criação de documentação para usuários e administradores.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Fora de Escopo</label>
+                            <p class="text-gray-800">A integração com sistemas legados ou de terceiros que não suportam SAML/OAuth não está incluída nesta fase. A migração de contas de usuário não utilizadas também está fora de escopo.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-1">Dependências</label>
+                            <p class="text-gray-800">Disponibilidade da equipe de infraestrutura para configuração de servidores e rede. Licenciamento do provedor de identidade a ser adquirido pela área de compras.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Riscos Iniciais</label>
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+                                    <span>Atraso na aquisição das licenças do provedor de identidade.</span>
+                                </div>
+                                <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+                                    <span>Incompatibilidade de algum sistema crítico com o protocolo de SSO escolhido.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-500 mb-2">Stakeholders</label>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Diretoria TI</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Equipe de Segurança</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Gerentes de Departamento</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OBJETIVO E BENEFÍCIOS -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-lg p-6">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
-                            <i class="fa-solid fa-bullseye mr-2 text-blue-600"></i>
+                    <div class="bg-blue-50 border-2 border-blue-200 rounded-lg p-6">
+                        <h3 class="text-lg font-montserrat font-bold text-bevap-navy mb-3 flex items-center">
+                            <i class="fa-solid fa-bullseye text-blue-600 mr-2"></i>
                             Objetivo
                         </h3>
-                        <p class="text-gray-700">Implantar sistema de autenticação única (SSO) corporativo para melhorar a segurança e experiência do usuário, integrando todos os sistemas internos e eliminando múltiplos logins.</p>
+                        <p class="text-gray-800">Implantar sistema de autenticação única (SSO) corporativo para melhorar a segurança e a experiência do usuário, integrando todos os sistemas internos e eliminando múltiplos logins.</p>
                     </div>
-                    
-                    <div class="bg-gradient-to-br from-green-50 to-emerald-100 rounded-lg p-6">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
-                            <i class="fa-solid fa-trophy mr-2 text-green-600"></i>
+
+                    <div class="bg-green-50 border-2 border-green-200 rounded-lg p-6">
+                        <h3 class="text-lg font-montserrat font-bold text-bevap-navy mb-3 flex items-center">
+                            <i class="fa-solid fa-trophy text-green-600 mr-2"></i>
                             Benefícios Esperados
                         </h3>
-                        <ul class="text-gray-700 space-y-1">
-                            <li>• Redução de 80% no tempo de login</li>
-                            <li>• Melhoria na segurança corporativa</li>
-                            <li>• Redução de chamados de TI em 40%</li>
-                            <li>• Compliance com políticas de segurança</li>
+                        <ul class="space-y-2 text-sm text-gray-800">
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1 flex-shrink-0"></i><span>Redução de 80% no tempo de login</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1 flex-shrink-0"></i><span>Melhoria na segurança corporativa</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1 flex-shrink-0"></i><span>Redução de chamados de TI em 40%</span></li>
+                            <li class="flex items-start"><i class="fa-solid fa-check text-green-600 mr-2 mt-1 flex-shrink-0"></i><span>Compliance com políticas de segurança</span></li>
                         </ul>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <div class="bg-white border border-gray-200 rounded-lg p-6">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
-                            <i class="fa-solid fa-check-circle mr-2 text-bevap-green"></i>
-                            Escopo
-                        </h3>
-                        <div class="space-y-3">
-                            <div class="flex items-start">
-                                <i class="fa-solid fa-check text-green-600 mt-1 mr-2"></i>
-                                <span class="text-gray-700">Integração com Active Directory</span>
-                            </div>
-                            <div class="flex items-start">
-                                <i class="fa-solid fa-check text-green-600 mt-1 mr-2"></i>
-                                <span class="text-gray-700">Portal único de acesso</span>
-                            </div>
-                            <div class="flex items-start">
-                                <i class="fa-solid fa-check text-green-600 mt-1 mr-2"></i>
-                                <span class="text-gray-700">Integração com 15 sistemas</span>
-                            </div>
-                            <div class="flex items-start">
-                                <i class="fa-solid fa-check text-green-600 mt-1 mr-2"></i>
-                                <span class="text-gray-700">Treinamento de usuários</span>
-                            </div>
+                <!-- KPIs -->
+                <div class="mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-2">Custo Total</h3>
+                            <div class="text-3xl font-bold text-bevap-green mb-2">R$ 128.450</div>
+                            <div class="text-sm text-yellow-700">∆ vs. estimativa: -R$ 11.550</div>
                         </div>
-                    </div>
-                    
-                    <div class="bg-white border border-gray-200 rounded-lg p-6">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
-                            <i class="fa-solid fa-times-circle mr-2 text-red-600"></i>
-                            Fora de Escopo
-                        </h3>
-                        <div class="space-y-3">
-                            <div class="flex items-start">
-                                <i class="fa-solid fa-times text-red-600 mt-1 mr-2"></i>
-                                <span class="text-gray-700">Sistemas legados antigos</span>
-                            </div>
-                            <div class="flex items-start">
-                                <i class="fa-solid fa-times text-red-600 mt-1 mr-2"></i>
-                                <span class="text-gray-700">Migração de dados históricos</span>
-                            </div>
-                            <div class="flex items-start">
-                                <i class="fa-solid fa-times text-red-600 mt-1 mr-2"></i>
-                                <span class="text-gray-700">Customizações específicas</span>
-                            </div>
+                        
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-2">Prazo</h3>
+                            <div class="text-3xl font-bold text-blue-600 mb-2">8 semanas</div>
+                            <div class="text-sm text-blue-700">Início: 25/01/2026</div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-2">Custo Total</h3>
-                        <div class="text-3xl font-bold text-bevap-green mb-2">R$ 128.450</div>
-                        <div class="text-sm text-yellow-700">∆ vs. estimativa: -R$ 11.550</div>
-                    </div>
-                    
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-2">Prazo</h3>
-                        <div class="text-3xl font-bold text-blue-600 mb-2">8 semanas</div>
-                        <div class="text-sm text-blue-700">Início: 25/01/2026</div>
-                    </div>
-                    
-                    <div class="bg-purple-50 border border-purple-200 rounded-lg p-6">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-2">ROI Esperado</h3>
-                        <div class="text-3xl font-bold text-purple-600 mb-2">180%</div>
-                        <div class="text-sm text-purple-700">Payback: 18 meses</div>
+                        
+                        <div class="bg-purple-50 border border-purple-200 rounded-lg p-6">
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-2">ROI Esperado</h3>
+                            <div class="text-3xl font-bold text-purple-600 mb-2">180%</div>
+                            <div class="text-sm text-purple-700">Payback: 18 meses</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -210,7 +273,7 @@
                                     <i class="fa-solid fa-check-circle text-green-600 mr-3"></i>
                                     <h3 class="text-lg font-montserrat font-semibold text-green-800">Solicitação Inicial</h3>
                                 </div>
-                                <a href="ux-dashboard.html" class="flex items-center space-x-3">
+                                <div class="flex items-center space-x-3">
                                     <span class="text-sm text-green-700">João Silva • 10/01/2026</span>
                                     <i class="fa-solid fa-chevron-down accordion-icon text-green-600"></i>
                                 </div>
@@ -241,14 +304,14 @@
                                     <i class="fa-solid fa-check-circle text-green-600 mr-3"></i>
                                     <h3 class="text-lg font-montserrat font-semibold text-green-800">TI – Avaliar Projeto</h3>
                                 </div>
-                                <a href="ux-dashboard.html" class="flex items-center space-x-3">
+                                <div class="flex items-center space-x-3">
                                     <span class="text-sm text-green-700">Ana Costa • 12/01/2026</span>
                                     <i class="fa-solid fa-chevron-down accordion-icon text-green-600"></i>
                                 </div>
                             </div>
                         </div>
                         <div id="avaliacao-ti" class="accordion-content hidden p-4 border-t border-green-200">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <div class="text-sm text-gray-500 mb-1">Viabilidade Técnica</div>
                                     <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Viável</span>
@@ -258,9 +321,141 @@
                                     <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">Médio</span>
                                 </div>
                             </div>
-                            <div class="mt-4">
+                            <div class="mb-3">
                                 <div class="text-sm text-gray-500 mb-1">Parecer TI</div>
                                 <p class="text-gray-700">Projeto tecnicamente viável. Recomendada solução externa especializada devido à complexidade de integração.</p>
+                            </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <div class="text-sm font-medium text-bevap-navy mb-2">Recomendação de Execução</div>
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-external-link-alt text-blue-600 mr-2"></i>
+                                    <span class="text-sm text-gray-700">Execução Externa - Fornecedor especializado</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-green-200 rounded-lg">
+                        <div class="bg-green-50 p-4 cursor-pointer" onclick="toggleAccordion('impacto-area')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-check-circle text-green-600 mr-3"></i>
+                                    <h3 class="text-lg font-montserrat font-semibold text-green-800">Análise de Impacto na Área</h3>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-sm text-green-700">Carlos Mendes • 13/01/2026</span>
+                                    <i class="fa-solid fa-chevron-down accordion-icon text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="impacto-area" class="accordion-content hidden p-4 border-t border-green-200">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <div class="text-sm text-gray-500 mb-1">Capacidade da Área</div>
+                                    <div class="font-semibold text-bevap-navy">60% disponível</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500 mb-1">Prioridade</div>
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded"><i class="fa-solid fa-star mr-1"></i>Estratégico</span>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">Impacto Esperado</div>
+                                <p class="text-gray-700">Projeto bem estruturado, com impacto positivo esperado na eficiência operacional da área. Recursos alocados para suporte ao fornecedor durante execução.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-green-200 rounded-lg">
+                        <div class="bg-green-50 p-4 cursor-pointer" onclick="toggleAccordion('triagem-ti')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-check-circle text-green-600 mr-3"></i>
+                                    <h3 class="text-lg font-montserrat font-semibold text-green-800">Triagem TI</h3>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-sm text-green-700">Carlos Silva • 15/01/2026</span>
+                                    <i class="fa-solid fa-chevron-down accordion-icon text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="triagem-ti" class="accordion-content hidden p-4 border-t border-green-200">
+                            <div class="bg-bevap-navy text-white rounded-lg p-4 mb-4">
+                                <div class="text-xs uppercase tracking-wider text-white/80 mb-1">Resultado da Triagem</div>
+                                <h4 class="text-lg font-montserrat font-semibold">Decisão: Execução Externa</h4>
+                                <p class="text-sm text-white/90 mt-2">Encaminhamento para TechPartners devido à especialização e disponibilidade.</p>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <div class="text-xs text-gray-500 mb-1">Categoria Principal</div>
+                                    <div class="font-medium text-bevap-navy">Dependência de Fornecedor</div>
+                                </div>
+                                <div class="bg-gray-50 p-3 rounded-lg">
+                                    <div class="text-xs text-gray-500 mb-1">Data Início Desejada</div>
+                                    <div class="font-medium text-bevap-navy">25/01/2026</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-green-200 rounded-lg">
+                        <div class="bg-green-50 p-4 cursor-pointer" onclick="toggleAccordion('proposta-comercial')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-check-circle text-green-600 mr-3"></i>
+                                    <h3 class="text-lg font-montserrat font-semibold text-green-800">Aprovação de Proposta Comercial</h3>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-sm text-green-700">João Silva • 18/01/2026</span>
+                                    <i class="fa-solid fa-chevron-down accordion-icon text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="proposta-comercial" class="accordion-content hidden p-4 border-t border-green-200">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <div class="text-sm text-gray-500 mb-1">Fornecedor</div>
+                                    <div class="font-medium">TechPartners Ltda.</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500 mb-1">Valor Aprovado</div>
+                                    <div class="font-semibold text-bevap-green">R$ 128.450,00</div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="text-sm text-gray-500 mb-1">Feedback do Solicitante</div>
+                                <p class="text-gray-700">Proposta atende às expectativas. Prazo e valores estão dentro do orçamento aprovado. Autorizo início da contratação.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border border-green-200 rounded-lg">
+                        <div class="bg-green-50 p-4 cursor-pointer" onclick="toggleAccordion('contratacao')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-check-circle text-green-600 mr-3"></i>
+                                    <h3 class="text-lg font-montserrat font-semibold text-green-800">Contratação</h3>
+                                </div>
+                                <div class="flex items-center space-x-3">
+                                    <span class="text-sm text-green-700">Compras • 20/01/2026</span>
+                                    <i class="fa-solid fa-chevron-down accordion-icon text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="contratacao" class="accordion-content hidden p-4 border-t border-green-200">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <div class="text-sm text-gray-500 mb-1">Contrato</div>
+                                    <div class="font-medium">CT-2026-089</div>
+                                </div>
+                                <div>
+                                    <div class="text-sm text-gray-500 mb-1">Status</div>
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Assinado</span>
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <div class="text-sm text-gray-500 mb-1">Observação</div>
+                                <p class="text-gray-700">Contrato assinado e processo encaminhado para início da execução.</p>
                             </div>
                         </div>
                     </div>
@@ -272,7 +467,7 @@
                                     <i class="fa-solid fa-clock text-blue-600 mr-3"></i>
                                     <h3 class="text-lg font-montserrat font-semibold text-blue-800">Execução de Atividades</h3>
                                 </div>
-                                <a href="ux-dashboard.html" class="flex items-center space-x-3">
+                                <div class="flex items-center space-x-3">
                                     <span class="text-sm text-blue-700">Em andamento</span>
                                     <i class="fa-solid fa-chevron-down accordion-icon text-blue-600"></i>
                                 </div>
@@ -328,8 +523,10 @@
                         <select class="px-3 py-2 border border-gray-300 rounded-lg text-sm">
                             <option value="">Todas as etapas</option>
                             <option value="solicitacao">Solicitação</option>
+                            <option value="analise">Análise</option>
                             <option value="proposta">Proposta</option>
                             <option value="contrato">Contrato</option>
+                            <option value="execucao">Execução</option>
                         </select>
                     </div>
                 </div>
@@ -350,14 +547,124 @@
                             <tr>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center">
+                                        <i class="fa-solid fa-file-lines text-gray-600 mr-2"></i>
+                                        <span>Solicitacao_SSO_Corporativo.pdf</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">Solicitação</span>
+                                </td>
+                                <td class="px-4 py-3">v1.0</td>
+                                <td class="px-4 py-3">João Silva</td>
+                                <td class="px-4 py-3">10/01/2026</td>
+                                <td class="px-4 py-3 text-center">
+                                    <button onclick="previewDocument()" class="text-blue-600 hover:text-blue-800 mr-2">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <button onclick="downloadDocument()" class="text-green-600 hover:text-green-800">
+                                        <i class="fa-solid fa-download"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-excel text-green-600 mr-2"></i>
+                                        <span>Cronograma_Projeto.xlsx</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-1 bg-gray-100 text-gray-800 text-xs rounded">Solicitação</span>
+                                </td>
+                                <td class="px-4 py-3">v1.0</td>
+                                <td class="px-4 py-3">João Silva</td>
+                                <td class="px-4 py-3">10/01/2026</td>
+                                <td class="px-4 py-3 text-center">
+                                    <button onclick="previewDocument()" class="text-blue-600 hover:text-blue-800 mr-2">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <button onclick="downloadDocument()" class="text-green-600 hover:text-green-800">
+                                        <i class="fa-solid fa-download"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center">
                                         <i class="fa-solid fa-file-pdf text-red-500 mr-2"></i>
-                                        <span>Proposta_SSO_Corporativo.pdf</span>
+                                        <span>Parecer_Tecnico_TI.pdf</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded">Análise</span>
+                                </td>
+                                <td class="px-4 py-3">v1.0</td>
+                                <td class="px-4 py-3">Ana Costa</td>
+                                <td class="px-4 py-3">12/01/2026</td>
+                                <td class="px-4 py-3 text-center">
+                                    <button onclick="previewDocument()" class="text-blue-600 hover:text-blue-800 mr-2">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <button onclick="downloadDocument()" class="text-green-600 hover:text-green-800">
+                                        <i class="fa-solid fa-download"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-pdf text-red-500 mr-2"></i>
+                                        <span>Proposta_Comercial_TechPartners.pdf</span>
                                     </div>
                                 </td>
                                 <td class="px-4 py-3">
                                     <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Proposta</span>
                                 </td>
                                 <td class="px-4 py-3">v2.1</td>
+                                <td class="px-4 py-3">TechPartners</td>
+                                <td class="px-4 py-3">15/01/2026</td>
+                                <td class="px-4 py-3 text-center">
+                                    <button onclick="previewDocument()" class="text-blue-600 hover:text-blue-800 mr-2">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <button onclick="downloadDocument()" class="text-green-600 hover:text-green-800">
+                                        <i class="fa-solid fa-download"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-word text-blue-600 mr-2"></i>
+                                        <span>Escopo_Detalhado_v2.docx</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Proposta</span>
+                                </td>
+                                <td class="px-4 py-3">v2.0</td>
+                                <td class="px-4 py-3">TechPartners</td>
+                                <td class="px-4 py-3">15/01/2026</td>
+                                <td class="px-4 py-3 text-center">
+                                    <button onclick="previewDocument()" class="text-blue-600 hover:text-blue-800 mr-2">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <button onclick="downloadDocument()" class="text-green-600 hover:text-green-800">
+                                        <i class="fa-solid fa-download"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-contract text-blue-500 mr-2"></i>
+                                        <span>Termos_e_Condicoes.pdf</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Proposta</span>
+                                </td>
+                                <td class="px-4 py-3">v1.0</td>
                                 <td class="px-4 py-3">TechPartners</td>
                                 <td class="px-4 py-3">15/01/2026</td>
                                 <td class="px-4 py-3 text-center">
@@ -391,6 +698,28 @@
                                     </button>
                                 </td>
                             </tr>
+                            <tr>
+                                <td class="px-4 py-3">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-code text-orange-500 mr-2"></i>
+                                        <span>Documentacao_Tecnica_v1.pdf</span>
+                                    </div>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="px-2 py-1 bg-indigo-100 text-indigo-800 text-xs rounded">Execução</span>
+                                </td>
+                                <td class="px-4 py-3">v1.0</td>
+                                <td class="px-4 py-3">TechPartners</td>
+                                <td class="px-4 py-3">25/01/2026</td>
+                                <td class="px-4 py-3 text-center">
+                                    <button onclick="previewDocument()" class="text-blue-600 hover:text-blue-800 mr-2">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                    <button onclick="downloadDocument()" class="text-green-600 hover:text-green-800">
+                                        <i class="fa-solid fa-download"></i>
+                                    </button>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -408,11 +737,28 @@
                             <option value="aprovacao">Aprovações</option>
                             <option value="anexo">Anexos</option>
                             <option value="integracao">Integrações</option>
+                            <option value="etapa">Mudanças de Etapa</option>
                         </select>
                     </div>
                 </div>
                 
                 <div class="space-y-4 mb-6">
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-play text-green-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="font-medium text-bevap-navy">Projeto Iniciado</div>
+                                    <div class="text-sm text-gray-500">25/01/2026 08:00</div>
+                                </div>
+                                <p class="text-gray-700 text-sm">Kickoff realizado com TechPartners. Planejamento de sprint inicial concluído.</p>
+                                <div class="text-xs text-gray-500 mt-2">Por: TechPartners</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="flex">
                         <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
                             <i class="fa-solid fa-check text-green-600"></i>
@@ -425,6 +771,22 @@
                                 </div>
                                 <p class="text-gray-700 text-sm">Contrato CT-2026-089 assinado e processo encaminhado para início da execução.</p>
                                 <div class="text-xs text-gray-500 mt-2">Por: Compras</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-thumbs-up text-purple-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="font-medium text-bevap-navy">Proposta Aprovada pelo Solicitante</div>
+                                    <div class="text-sm text-gray-500">18/01/2026 16:45</div>
+                                </div>
+                                <p class="text-gray-700 text-sm">João Silva aprovou a proposta comercial. Feedback: "Proposta atende às expectativas. Valores dentro do orçamento."</p>
+                                <div class="text-xs text-gray-500 mt-2">Por: João Silva</div>
                             </div>
                         </div>
                     </div>
@@ -441,6 +803,70 @@
                                 </div>
                                 <p class="text-gray-700 text-sm">Proposta comercial final anexada ao processo.</p>
                                 <div class="text-xs text-gray-500 mt-2">Por: TI</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-route text-indigo-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="font-medium text-bevap-navy">Triagem TI Concluída</div>
+                                    <div class="text-sm text-gray-500">15/01/2026 11:20</div>
+                                </div>
+                                <p class="text-gray-700 text-sm">Decisão: Execução Externa. Encaminhado para TechPartners para elaboração de proposta.</p>
+                                <div class="text-xs text-gray-500 mt-2">Por: Carlos Silva</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-check-circle text-green-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="font-medium text-bevap-navy">Análise de Impacto Aprovada</div>
+                                    <div class="text-sm text-gray-500">13/01/2026 15:30</div>
+                                </div>
+                                <p class="text-gray-700 text-sm">Gestor Carlos Mendes aprovou análise de impacto. Área tem capacidade para suportar projeto.</p>
+                                <div class="text-xs text-gray-500 mt-2">Por: Carlos Mendes</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-10 h-10 bg-teal-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-microscope text-teal-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="font-medium text-bevap-navy">Avaliação TI Concluída</div>
+                                    <div class="text-sm text-gray-500">12/01/2026 10:00</div>
+                                </div>
+                                <p class="text-gray-700 text-sm">Ana Costa concluiu análise técnica. Parecer: Viável. Recomendação: Execução Externa.</p>
+                                <div class="text-xs text-gray-500 mt-2">Por: Ana Costa</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex">
+                        <div class="flex-shrink-0 w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-4">
+                            <i class="fa-solid fa-file-lines text-gray-600"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="bg-gray-50 rounded-lg p-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="font-medium text-bevap-navy">Solicitação Criada</div>
+                                    <div class="text-sm text-gray-500">10/01/2026 09:30</div>
+                                </div>
+                                <p class="text-gray-700 text-sm">João Silva criou solicitação PRJ-2026-014: Implantar SSO Corporativo.</p>
+                                <div class="text-xs text-gray-500 mt-2">Por: João Silva</div>
                             </div>
                         </div>
                     </div>
@@ -527,42 +953,63 @@
                     Indicadores de Performance
                 </h2>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Lead Time por Etapa</h3>
-                        <div class="space-y-3">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-6 shadow-sm">
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                            <i class="fa-solid fa-clock mr-2 text-blue-600"></i>
+                            Lead Time por Etapa
+                        </h3>
+                        <div class="space-y-4">
                             <div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span>Solicitação → Avaliação TI</span>
-                                    <span class="font-medium">2 dias</span>
+                                <div class="flex items-center justify-between text-sm mb-2">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-arrow-right text-blue-500 mr-2 text-xs"></i>
+                                        <span class="font-medium">Solicitação → Avaliação TI</span>
+                                    </div>
+                                    <span class="font-bold text-blue-700">2 dias</span>
                                 </div>
-                                <div class="w-full bg-blue-200 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full" style="width: 40%"></div>
+                                <div class="w-full bg-blue-200 rounded-full h-2.5">
+                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 40%"></div>
                                 </div>
                             </div>
                             <div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span>Aprovação → Proposta</span>
-                                    <span class="font-medium">3 dias</span>
+                                <div class="flex items-center justify-between text-sm mb-2">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-arrow-right text-blue-500 mr-2 text-xs"></i>
+                                        <span class="font-medium">Aprovação → Proposta</span>
+                                    </div>
+                                    <span class="font-bold text-blue-700">3 dias</span>
                                 </div>
-                                <div class="w-full bg-blue-200 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full" style="width: 60%"></div>
+                                <div class="w-full bg-blue-200 rounded-full h-2.5">
+                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 60%"></div>
                                 </div>
                             </div>
                             <div>
-                                <div class="flex justify-between text-sm mb-1">
-                                    <span>Contratação → Execução</span>
-                                    <span class="font-medium">5 dias</span>
+                                <div class="flex items-center justify-between text-sm mb-2">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-arrow-right text-blue-500 mr-2 text-xs"></i>
+                                        <span class="font-medium">Contratação → Execução</span>
+                                    </div>
+                                    <span class="font-bold text-blue-700">5 dias</span>
                                 </div>
-                                <div class="w-full bg-blue-200 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full" style="width: 100%"></div>
+                                <div class="w-full bg-blue-200 rounded-full h-2.5">
+                                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-2.5 rounded-full transition-all duration-500" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="pt-3 mt-3 border-t border-blue-300">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm font-medium text-gray-700">Tempo Total do Ciclo</span>
+                                    <span class="text-lg font-bold text-bevap-navy">10 dias</span>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Métricas Gerais</h3>
+                    <div class="bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-6 shadow-sm">
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                            <i class="fa-solid fa-gauge-high mr-2 text-green-600"></i>
+                            Métricas Gerais
+                        </h3>
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
                                 <div>
@@ -587,6 +1034,183 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Cards de Indicadores -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white border-2 border-blue-200 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa-solid fa-users text-blue-600 text-xl"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-bevap-navy mb-1">8</div>
+                        <div class="text-xs text-gray-600">Stakeholders Ativos</div>
+                    </div>
+                    
+                    <div class="bg-white border-2 border-purple-200 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa-solid fa-file-alt text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-bevap-navy mb-1">8</div>
+                        <div class="text-xs text-gray-600">Documentos</div>
+                    </div>
+                    
+                    <div class="bg-white border-2 border-orange-200 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa-solid fa-comments text-orange-600 text-xl"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-bevap-navy mb-1">12</div>
+                        <div class="text-xs text-gray-600">Interações</div>
+                    </div>
+                    
+                    <div class="bg-white border-2 border-teal-200 rounded-lg p-4 text-center hover:shadow-md transition-shadow">
+                        <div class="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <i class="fa-solid fa-calendar-check text-teal-600 text-xl"></i>
+                        </div>
+                        <div class="text-2xl font-bold text-bevap-navy mb-1">7</div>
+                        <div class="text-xs text-gray-600">Etapas Concluídas</div>
+                    </div>
+                </div>
+
+                <!-- Performance Financeira -->
+                <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-6 mb-6 border border-purple-200">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-dollar-sign mr-2 text-purple-600"></i>
+                        Performance Financeira
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <div class="text-xs text-gray-600 uppercase tracking-wider mb-2">Orçamento Inicial</div>
+                            <div class="text-2xl font-bold text-gray-700 mb-1">R$ 140.000</div>
+                            <div class="flex items-center text-sm text-gray-600">
+                                <i class="fa-solid fa-info-circle mr-1"></i>
+                                <span>Aprovado</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-600 uppercase tracking-wider mb-2">Valor Contratado</div>
+                            <div class="text-2xl font-bold text-bevap-green mb-1">R$ 128.450</div>
+                            <div class="flex items-center text-sm text-green-600">
+                                <i class="fa-solid fa-arrow-down mr-1"></i>
+                                <span>-8.25% economia</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-600 uppercase tracking-wider mb-2">ROI Esperado</div>
+                            <div class="text-2xl font-bold text-purple-600 mb-1">180%</div>
+                            <div class="flex items-center text-sm text-purple-600">
+                                <i class="fa-solid fa-arrow-trend-up mr-1"></i>
+                                <span>18 meses payback</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline Visual -->
+                <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-timeline mr-2 text-indigo-600"></i>
+                        Linha do Tempo do Projeto
+                    </h3>
+                    <div class="relative">
+                        <div class="absolute left-0 right-0 top-4 h-1 bg-gray-200"></div>
+                        <div class="absolute left-0 top-4 h-1 bg-bevap-green" style="width: 62%"></div>
+                        <div class="relative flex justify-between items-start">
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 rounded-full bg-green-500 border-4 border-white shadow-md flex items-center justify-center z-10">
+                                    <i class="fa-solid fa-check text-white text-xs"></i>
+                                </div>
+                                <div class="text-xs font-medium text-gray-700 mt-2">Início</div>
+                                <div class="text-xs text-gray-500">10/01</div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 rounded-full bg-green-500 border-4 border-white shadow-md flex items-center justify-center z-10">
+                                    <i class="fa-solid fa-check text-white text-xs"></i>
+                                </div>
+                                <div class="text-xs font-medium text-gray-700 mt-2">Aprovação</div>
+                                <div class="text-xs text-gray-500">18/01</div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 rounded-full bg-blue-500 border-4 border-white shadow-md flex items-center justify-center z-10 animate-pulse">
+                                    <i class="fa-solid fa-spinner text-white text-xs"></i>
+                                </div>
+                                <div class="text-xs font-medium text-blue-700 mt-2">Atual</div>
+                                <div class="text-xs text-gray-500">06/03</div>
+                            </div>
+                            <div class="flex flex-col items-center">
+                                <div class="w-8 h-8 rounded-full bg-gray-300 border-4 border-white shadow-md flex items-center justify-center z-10">
+                                    <i class="fa-solid fa-flag text-gray-500 text-xs"></i>
+                                </div>
+                                <div class="text-xs font-medium text-gray-700 mt-2">Entrega</div>
+                                <div class="text-xs text-gray-500">22/03</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabela de Indicadores -->
+                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gradient-to-r from-bevap-navy to-blue-900 text-white">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-sm font-semibold">Indicador</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold">Valor</th>
+                                <th class="px-4 py-3 text-center text-sm font-semibold">Status</th>
+                                <th class="px-4 py-3 text-right text-sm font-semibold">Tendência</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 text-sm font-medium text-gray-900">Satisfação dos Stakeholders</td>
+                                <td class="px-4 py-3 text-center text-sm font-bold text-bevap-navy">9.2/10</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Excelente</span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <span class="text-green-600 font-medium">↗ +0.5</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 text-sm font-medium text-gray-900">Velocidade de Entrega</td>
+                                <td class="px-4 py-3 text-center text-sm font-bold text-bevap-navy">28 pts/sprint</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Ótimo</span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <span class="text-green-600 font-medium">↗ +3</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 text-sm font-medium text-gray-900">Qualidade do Código</td>
+                                <td class="px-4 py-3 text-center text-sm font-bold text-bevap-navy">87%</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Bom</span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <span class="text-blue-600 font-medium">→ 0</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 text-sm font-medium text-gray-900">Aderência ao Prazo</td>
+                                <td class="px-4 py-3 text-center text-sm font-bold text-bevap-navy">100%</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">No prazo</span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <span class="text-green-600 font-medium">✓</span>
+                                </td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 text-sm font-medium text-gray-900">Taxa de Comunicação</td>
+                                <td class="px-4 py-3 text-center text-sm font-bold text-bevap-navy">2.4x/semana</td>
+                                <td class="px-4 py-3 text-center">
+                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">Alta</span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <span class="text-green-600 font-medium">↗ +0.4</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -735,11 +1359,67 @@
 
 <script>
     function switchTab(tabName) {
+        // Esconde todos os conteúdos
         document.querySelectorAll('.tab-content').forEach(content => {
             content.classList.add('hidden');
         });
+        
+        // Remove estilos de todos os botões
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+            btn.classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+        });
+        
+        // Mostra o conteúdo selecionado
         document.getElementById(tabName).classList.remove('hidden');
+        
+        // Aplica estilos ao botão clicado
+        const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
+        if (activeBtn) {
+            activeBtn.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+            activeBtn.classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+        }
     }
+
+    function updateTabsArrows() {
+        const scroller = document.getElementById('tabs-container');
+        const leftArrow = document.getElementById('tabs-left-arrow');
+        const rightArrow = document.getElementById('tabs-right-arrow');
+        if (!scroller || !leftArrow || !rightArrow) return;
+
+        const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+        const hasOverflow = maxScroll > 2;
+        const atStart = scroller.scrollLeft <= 2;
+        const atEnd = scroller.scrollLeft >= maxScroll - 2;
+
+        leftArrow.classList.toggle('opacity-0', !hasOverflow || atStart);
+        leftArrow.classList.toggle('pointer-events-none', !hasOverflow || atStart);
+        rightArrow.classList.toggle('opacity-0', !hasOverflow || atEnd);
+        rightArrow.classList.toggle('pointer-events-none', !hasOverflow || atEnd);
+    }
+
+    function scrollTabs(direction) {
+        const scroller = document.getElementById('tabs-container');
+        if (!scroller) return;
+
+        const target = direction === 'right'
+            ? (scroller.scrollWidth - scroller.clientWidth)
+            : 0;
+
+        scroller.scrollTo({ left: target, behavior: 'smooth' });
+        window.setTimeout(updateTabsArrows, 360);
+    }
+
+    // Inicializar e monitorar setas
+    window.addEventListener('load', () => {
+        updateTabsArrows();
+        const scroller = document.getElementById('tabs-container');
+        if (scroller) {
+            scroller.addEventListener('scroll', updateTabsArrows);
+        }
+    });
+
+    window.addEventListener('resize', updateTabsArrows);
 
     function toggleAccordion(id) {
         const accordion = document.getElementById(id);

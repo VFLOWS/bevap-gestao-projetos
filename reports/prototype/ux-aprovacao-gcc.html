@@ -69,313 +69,658 @@
 <main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div id="content-section" class="lg:col-span-2">
-            <div id="financial-panel" class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-dollar-sign mr-3 text-bevap-gold"></i>
-                    Painel Financeiro
-                </h2>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Proposta Comercial</h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Fornecedor:</span>
-                                <span class="font-medium text-gray-900">TechInfra Solutions</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Nº Proposta:</span>
-                                <span class="font-mono font-medium text-gray-900">PROP-2026-0417</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Vigência:</span>
-                                <span class="font-medium text-gray-900">45 dias</span>
-                            </div>
+            <div id="proposal-form" class="bg-white rounded-lg shadow-md">
+                <div id="form-tabs" class="border-b border-gray-200 mb-6">
+                    <div class="relative">
+                        <div id="form-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
+                            <button type="button" onclick="switchFormTab('solicitacao')" id="tab-solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50 whitespace-nowrap">
+                                <i class="fa-solid fa-file-lines mr-2"></i>Solicitação
+                            </button>
+                            <button type="button" onclick="switchFormTab('analise-ti')" id="tab-analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-microscope mr-2"></i>Análise TI
+                            </button>
+                            <button type="button" onclick="switchFormTab('impacto')" id="tab-impacto" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Área
+                            </button>
+                            <button type="button" onclick="switchFormTab('triagem-ti')" id="tab-triagem-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-route mr-2"></i>Triagem TI
+                            </button>
+                            <button type="button" onclick="switchFormTab('proposta-fornecedor')" id="tab-proposta-fornecedor" class="px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-handshake mr-2"></i>Proposta do Fornecedor
+                            </button>
+                            <button type="button" onclick="switchFormTab('financeiro')" id="tab-financeiro" class="px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-dollar-sign mr-2"></i>Painel Financeiro
+                            </button>
                         </div>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Valores e Prazo</h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Valor Total:</span>
-                                <span class="font-bold text-bevap-navy text-lg">R$ 428.900,00</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Condição:</span>
-                                <span class="font-medium text-gray-900">30/60/90</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-gray-600">Prazo:</span>
-                                <span class="font-medium text-gray-900">10 semanas</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="mb-6">
-                    <div class="flex items-center justify-between mb-3">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Estrutura de Custo</h3>
-                        <button onclick="toggleCostTable()" class="text-bevap-green hover:text-green-700 text-sm font-medium">
-                            <i id="toggle-icon" class="fa-solid fa-chevron-up mr-1"></i>
-                            <span id="toggle-text">Recolher</span>
+                        <button id="form-tabs-left-arrow" type="button" onclick="scrollFormTabs('left')" class="absolute left-0 top-0 bottom-0 w-24 rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-start pl-2">
+                            <span class="flex items-center gap-0 text-base leading-none">
+                                <i class="fa-solid fa-chevron-left"></i>
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                        </button>
+
+                        <button id="form-tabs-right-arrow" type="button" onclick="scrollFormTabs('right')" class="absolute right-0 top-0 bottom-0 w-24 rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-end pr-2">
+                            <span class="flex items-center gap-0 text-base leading-none">
+                                <i class="fa-solid fa-chevron-right"></i>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
                         </button>
                     </div>
-                    <div id="cost-table" class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-gray-700 font-medium">Item</th>
-                                    <th class="px-4 py-3 text-center text-gray-700 font-medium">Qty</th>
-                                    <th class="px-4 py-3 text-right text-gray-700 font-medium">Valor Unit.</th>
-                                    <th class="px-4 py-3 text-right text-gray-700 font-medium">Impostos</th>
-                                    <th class="px-4 py-3 text-right text-gray-700 font-medium">Subtotal</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-4 py-3">Servidores de alta disponibilidade</td>
-                                    <td class="px-4 py-3 text-center">4</td>
-                                    <td class="px-4 py-3 text-right">R$ 65.000,00</td>
-                                    <td class="px-4 py-3 text-right text-gray-600">R$ 14.300,00</td>
-                                    <td class="px-4 py-3 text-right font-medium">R$ 274.300,00</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3">Storage SAN enterprise</td>
-                                    <td class="px-4 py-3 text-center">2</td>
-                                    <td class="px-4 py-3 text-right">R$ 45.000,00</td>
-                                    <td class="px-4 py-3 text-right text-gray-600">R$ 9.900,00</td>
-                                    <td class="px-4 py-3 text-right font-medium">R$ 99.900,00</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3">Switches core redundantes</td>
-                                    <td class="px-4 py-3 text-center">2</td>
-                                    <td class="px-4 py-3 text-right">R$ 18.500,00</td>
-                                    <td class="px-4 py-3 text-right text-gray-600">R$ 4.070,00</td>
-                                    <td class="px-4 py-3 text-right font-medium">R$ 41.070,00</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3">Instalação e configuração</td>
-                                    <td class="px-4 py-3 text-center">1</td>
-                                    <td class="px-4 py-3 text-right">R$ 8.500,00</td>
-                                    <td class="px-4 py-3 text-right text-gray-600">R$ 1.530,00</td>
-                                    <td class="px-4 py-3 text-right font-medium">R$ 10.030,00</td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3">Licenças de software e suporte</td>
-                                    <td class="px-4 py-3 text-center">1</td>
-                                    <td class="px-4 py-3 text-right">R$ 3.200,00</td>
-                                    <td class="px-4 py-3 text-right text-gray-600">R$ 400,00</td>
-                                    <td class="px-4 py-3 text-right font-medium">R$ 3.600,00</td>
-                                </tr>
-                            </tbody>
-                            <tfoot class="bg-gray-50 font-semibold">
-                                <tr>
-                                    <td colspan="4" class="px-4 py-3 text-right text-gray-700">Total Geral:</td>
-                                    <td class="px-4 py-3 text-right text-bevap-navy text-lg">R$ 428.900,00</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                </div>
+
+                <!-- Tab Content: Solicitação -->
+                <div id="tab-content-solicitacao" class="p-6">
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Objetivo do Projeto</h3>
+                            <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">Modernizar a infraestrutura do data center com servidores de alta disponibilidade, storage SAN enterprise e switches redundantes para garantir continuidade operacional e suportar crescimento.</p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Problema/Oportunidade</h3>
+                            <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">Equipamentos atuais com mais de 6 anos, apresentando riscos de disponibilidade e incapacidade de suportar novas demandas. Necessidade de renovação tecnológica para garantir escalabilidade.</p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Benefícios Esperados</h3>
+                            <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">Aumento de 40% na capacidade de processamento, redução de 95% no downtime, alta disponibilidade (99,9%), suporte para crescimento futuro e redução de custos de manutenção.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo</h3>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• 4 Servidores enterprise HA</li>
+                                        <li>• 2 Storage SAN redundante</li>
+                                        <li>• 2 Switches core</li>
+                                        <li>• Instalação e configuração</li>
+                                        <li>• Migração controlada</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Fora de Escopo</h3>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <ul class="text-sm text-gray-700 space-y-1">
+                                        <li>• Migração de aplicações</li>
+                                        <li>• Upgrade de software</li>
+                                        <li>• Rede externa ao DC</li>
+                                        <li>• Serviços cloud</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Estimativas</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-lg text-center">
+                                    <i class="fa-solid fa-dollar-sign text-blue-600 text-xl mb-2"></i>
+                                    <div class="text-2xl font-bold text-blue-600">R$ 429k</div>
+                                    <div class="text-sm text-blue-800">Custo Estimado</div>
+                                </div>
+                                <div class="bg-green-50 p-4 rounded-lg text-center">
+                                    <i class="fa-solid fa-clock text-green-600 text-xl mb-2"></i>
+                                    <div class="text-2xl font-bold text-green-600">10 sem</div>
+                                    <div class="text-sm text-green-800">Prazo</div>
+                                </div>
+                                <div class="bg-purple-50 p-4 rounded-lg text-center">
+                                    <i class="fa-solid fa-users text-purple-600 text-xl mb-2"></i>
+                                    <div class="text-2xl font-bold text-purple-600">160h</div>
+                                    <div class="text-sm text-purple-800">Esforço Interno</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                            Natureza do Custo *
-                            <i class="fa-solid fa-info-circle text-gray-400 ml-2 cursor-help" title="Defina se o investimento será CAPEX (bens duráveis) ou OPEX (despesas operacionais)"></i>
-                        </label>
-                        <div class="space-y-3">
-                            <label class="flex items-center p-4 border-2 border-bevap-green bg-green-50 rounded-lg cursor-pointer">
-                                <input type="radio" name="cost-nature" value="capex" checked class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green mr-3">
-                                <div class="flex-1">
-                                    <span class="font-medium text-gray-900">CAPEX</span>
-                                    <span class="text-sm text-gray-600 ml-2">80%</span>
-                                    <input type="number" value="80" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
-                                    <span class="text-sm text-gray-600">%</span>
-                                </div>
-                            </label>
-                            <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green hover:bg-green-50 transition-colors">
-                                <input type="radio" name="cost-nature" value="opex" class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green mr-3">
-                                <div class="flex-1">
-                                    <span class="font-medium text-gray-900">OPEX</span>
-                                    <span class="text-sm text-gray-600 ml-2">20%</span>
-                                    <input type="number" value="20" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
-                                    <span class="text-sm text-gray-600">%</span>
-                                </div>
-                            </label>
+                <!-- Tab Content: Análise TI -->
+                <div id="tab-content-analise-ti" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <i class="fa-solid fa-check-circle text-bevap-green text-xl mr-2"></i>
+                                <h3 class="font-montserrat font-semibold text-bevap-navy">Parecer TI: Viável e Crítico</h3>
+                            </div>
+                            <p class="text-sm text-gray-700">Projeto tecnicamente necessário e urgente. Infraestrutura atual apresenta riscos operacionais. Especificações adequadas para necessidades atuais e futuras (3-5 anos).</p>
                         </div>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Centro de Custo *</label>
-                        <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
-                            <option value="">Selecione...</option>
-                            <option value="ti-infra" selected>TI-INFRA - Infraestrutura TI</option>
-                            <option value="ti-dev">TI-DEV - Desenvolvimento</option>
-                            <option value="ti-seg">TI-SEG - Segurança da Informação</option>
-                            <option value="ti-suporte">TI-SUPORTE - Suporte Técnico</option>
-                        </select>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Conta Contábil *</label>
-                        <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
-                            <option value="">Selecione...</option>
-                            <option value="1.2.3.01" selected>1.2.3.01 - Equipamentos de TI</option>
-                            <option value="1.2.3.02">1.2.3.02 - Software e Licenças</option>
-                            <option value="3.1.2.01">3.1.2.01 - Serviços de Terceiros</option>
-                        </select>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Competência *</label>
-                        <input type="month" value="2026-02" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Avaliação Técnica</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg space-y-3 text-sm">
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-lightbulb text-bevap-gold mr-3 mt-1"></i>
+                                    <div>
+                                        <div class="font-medium text-gray-900">Alternativas Consideradas</div>
+                                        <p class="text-gray-700 mt-1">Avaliamos Dell, HPE e Cisco. TechInfra selecionada por experiência prévia, suporte local e competitividade comercial.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-chart-simple text-blue-600 mr-3 mt-1"></i>
+                                    <div>
+                                        <div class="font-medium text-gray-900">Esforço Estimado</div>
+                                        <p class="text-gray-700 mt-1">160 horas internas (planejamento, validação e migração controlada) + fornecedor</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos Identificados</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start p-3 bg-red-50 border border-red-200 rounded-lg">
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-red-200 text-red-800 font-medium mr-3">Alto</span>
+                                    <div class="text-sm">
+                                        <div class="font-medium text-gray-900">Janela de Migração Limitada</div>
+                                        <p class="text-gray-700 mt-1">Necessário planejamento detalhado de migração para minimizar impacto operacional.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-yellow-200 text-yellow-800 font-medium mr-3">Médio</span>
+                                    <div class="text-sm">
+                                        <div class="font-medium text-gray-900">Dependência de Fornecedor</div>
+                                        <p class="text-gray-700 mt-1">Atrasos na entrega podem impactar cronograma. Cláusulas de SLA necessárias.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Recomendação de Execução</h3>
+                            <div class="bg-purple-50 border-l-4 border-purple-600 p-4 rounded-r-lg">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-handshake text-purple-600 text-2xl mr-3"></i>
+                                    <div>
+                                        <div class="font-semibold text-bevap-navy">Execução Externa</div>
+                                        <p class="text-sm text-gray-700 mt-1">Projeto requer especialização em hardware enterprise. Fornecedor qualificado reduz riscos e garante garantia estendida.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                    <h3 class="text-sm font-medium text-blue-900 mb-3 flex items-center">
-                        <i class="fa-solid fa-chart-line mr-2"></i>
-                        Análise Comparativa
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-blue-800">Estimativa Inicial:</span>
-                                <span class="font-medium text-blue-900">R$ 400.000,00</span>
+                <!-- Tab Content: Impacto -->
+                <div id="tab-content-impacto" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <p class="text-sm text-blue-800"><i class="fa-solid fa-info-circle mr-2"></i> Avaliação do impacto na área solicitante para priorização e planejamento de recursos.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                <div class="text-xs text-gray-500 mb-1">Capacidade Atual</div>
+                                <div class="text-2xl font-bold text-bevap-navy">70%</div>
+                                <p class="text-xs text-gray-600 mt-2">Equipe TI disponível para acompanhamento e validações técnicas.</p>
                             </div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-blue-800">Proposta Atual:</span>
-                                <span class="font-bold text-bevap-navy">R$ 428.900,00</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-blue-800">Diferença:</span>
-                                <span class="font-medium text-orange-600">+R$ 28.900,00 (+7,2%)</span>
+                            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                <div class="text-xs text-gray-500 mb-3">Prioridade da Área</div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-500 font-medium">Estratégico</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-500 font-medium">Operacional</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-red-100 text-red-800 font-medium">
+                                        <i class="fa-solid fa-fire mr-1"></i> Crítico
+                                    </span>
+                                </div>
+                                <p class="text-xs text-gray-600">Prioridade máxima devido a riscos de disponibilidade dos sistemas atuais.</p>
                             </div>
                         </div>
-                        <div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-blue-800">Saldo CC TI-INFRA:</span>
-                                <span class="font-medium text-blue-900">R$ 600.000,00</span>
+
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-2">Recursos Necessários da Área</h4>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li class="flex items-center"><i class="fa-solid fa-user-group text-bevap-navy mr-2"></i>2 engenheiros de infraestrutura (planejamento e migração)</li>
+                                <li class="flex items-center"><i class="fa-solid fa-clock text-bevap-gold mr-2"></i>Janelas de manutenção programadas (fins de semana)</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3 flex items-center">
+                                <i class="fa-solid fa-comment-dots mr-2 text-bevap-gold"></i>
+                                Observações do CTO
+                            </h4>
+                            <div class="bg-slate-50 border-l-4 border-bevap-green rounded-r-lg p-3">
+                                <p class="text-sm text-gray-700">Projeto essencial para manter operações e competitividade. Equipamentos atuais já ultrapassaram vida útil recomendada. Aprovação urgente necessária.</p>
                             </div>
-                            <div class="flex justify-between mb-1">
-                                <span class="text-blue-800">Após Aprovação:</span>
-                                <span class="font-bold text-bevap-green">R$ 171.100,00</span>
-                            </div>
-                            <div class="flex justify-between">
-                                <span class="text-blue-800">Status:</span>
-                                <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
-                                    <i class="fa-solid fa-check-circle mr-1"></i> Saldo Suficiente
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Triagem TI -->
+                <div id="tab-content-triagem-ti" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-r from-bevap-navy to-[#18486f] text-white rounded-xl p-5 shadow-sm">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <div class="text-xs uppercase tracking-wider text-white/80 mb-1">Resultado da Triagem</div>
+                                    <h3 class="text-xl font-montserrat font-semibold">Decisão: Execução Externa</h3>
+                                    <p class="text-sm text-white/90 mt-2">Projeto requer fornecedor especializado com garantia estendida e suporte técnico dedicado.</p>
+                                </div>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white text-bevap-navy whitespace-nowrap">
+                                    <i class="fa-solid fa-handshake mr-1"></i> Aprovado - Externo
                                 </span>
                             </div>
                         </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                <div class="text-xs text-gray-500 mb-1">Categoria Principal</div>
+                                <div class="font-semibold text-bevap-navy">Projeto de Infraestrutura Crítica</div>
+                                <p class="text-xs text-gray-600 mt-2">Modernização essencial com especialização de fornecedor qualificado.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                    <div class="text-xs text-gray-500 mb-1">Urgência</div>
+                                    <div class="flex items-center gap-2 mt-2">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-red-100 text-red-800 font-medium">
+                                            <i class="fa-solid fa-fire mr-1"></i> Alta
+                                        </span>
+                                    </div>
+                                    <p class="text-xs text-gray-600 mt-2">Equipamentos atuais com riscos de falha. Início imediato recomendado.</p>
+                                </div>
+
+                                <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                    <div class="text-xs text-gray-500 mb-1">Data Desejada de Início</div>
+                                    <div class="font-semibold text-bevap-navy mb-2">15/03/2026</div>
+                                    <p class="text-xs text-gray-600">Alinhado com janela de manutenção trimestral.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3 flex items-center">
+                                <i class="fa-solid fa-comment-dots mr-2 text-bevap-gold"></i>
+                                Comentários da TI
+                            </h4>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <p class="text-sm text-blue-800 leading-relaxed">
+                                    <strong>Parecer Técnico:</strong> Proposta técnica adequada e fornecedor com excelente reputação.
+                                    Valores competitivos para equipamentos de nível enterprise. Recomendo aprovação urgente com atenção ao cronograma de migração.
+                                    Projeto essencial para continuidade operacional.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="mb-6">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Observações do GCC</label>
-                    <textarea id="gcc-observations" rows="3" placeholder="Adicione observações sobre a aprovação do custo, rateios, condições especiais..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
-                </div>
-            </div>
+                <!-- Tab Content: Proposta do Fornecedor -->
+                <div id="tab-content-proposta-fornecedor" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div>
+                            <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                                <i class="fa-solid fa-handshake mr-3 text-bevap-gold"></i>
+                                Proposta do Fornecedor
+                            </h2>
 
-            <div id="compliance-section" class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-clipboard-check mr-3 text-bevap-green"></i>
-                    Checklist de Conformidade
-                </h2>
-                <div class="space-y-3">
-                    <label class="flex items-start">
-                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
-                        <span class="text-sm text-gray-700">Escopo claro e detalhado</span>
-                    </label>
-                    <label class="flex items-start">
-                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
-                        <span class="text-sm text-gray-700">Impostos e encargos discriminados</span>
-                    </label>
-                    <label class="flex items-start">
-                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
-                        <span class="text-sm text-gray-700">Vigência da proposta adequada</span>
-                    </label>
-                    <label class="flex items-start">
-                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
-                        <span class="text-sm text-gray-700">Cláusulas de SLA e garantia presentes</span>
-                    </label>
-                    <label class="flex items-start">
-                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
-                        <span class="text-sm text-gray-700">Aprovação do gestor solicitante confirmada</span>
-                    </label>
-                    <label class="flex items-start">
-                        <input type="checkbox" checked class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
-                        <span class="text-sm text-gray-700">Todos os anexos obrigatórios presentes</span>
-                    </label>
-                </div>
-            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Fornecedor</h3>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="font-medium text-gray-900">TechInfra Solutions</div>
+                                        <div class="text-gray-600">CNPJ: 23.456.789/0001-12</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Contato Principal</h3>
+                                    <div class="space-y-1 text-sm">
+                                        <div class="font-medium text-gray-900">Roberto Mendes</div>
+                                        <div class="text-gray-600">roberto@techinfra.com.br</div>
+                                        <div class="text-gray-600">(11) 3456-7890</div>
+                                    </div>
+                                </div>
+                            </div>
 
-            <div id="attachments-section" class="bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-paperclip mr-3 text-bevap-gold"></i>
-                    Documentos Anexos
-                </h2>
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
-                            <div>
-                                <div class="font-medium text-sm">Proposta_TechInfra_DC.pdf</div>
-                                <div class="text-xs text-gray-500">3.2 MB</div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
+                                    <div class="text-lg font-bold text-bevap-navy">R$ 428.900,00</div>
+                                    <div class="text-xs text-green-600">BRL</div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Condição</div>
+                                    <div class="text-sm font-medium text-gray-900">30/60/90</div>
+                                    <div class="text-xs text-gray-600">Parcelamento</div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo</div>
+                                    <div class="text-lg font-bold text-bevap-navy">10 semanas</div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Vigência</div>
+                                    <div class="text-sm font-medium text-gray-900">45 dias</div>
+                                    <div class="text-xs text-gray-600">Até 20/04/2026</div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="previewDocument('proposta')" class="text-bevap-green hover:text-green-700">
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-                            <button onclick="downloadDocument('proposta')" class="text-bevap-navy hover:text-blue-700">
-                                <i class="fa-solid fa-download"></i>
-                            </button>
+
+                            <div class="mb-6">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo Resumido</h3>
+                                <p class="text-gray-700 text-sm leading-relaxed">Fornecimento, instalação e configuração de 4 servidores enterprise, 2 storages SAN redundantes, 2 switches core, incluindo migração assistida, testes de carga, documentação técnica e treinamento operacional.</p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Itens e Serviços</h3>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-2 text-left text-gray-700 font-medium">Descrição</th>
+                                                <th class="px-4 py-2 text-center text-gray-700 font-medium">Qty</th>
+                                                <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            <tr>
+                                                <td class="px-4 py-3">Servidores Enterprise HA (4 unidades)</td>
+                                                <td class="px-4 py-3 text-center">4</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 260.000,00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3">Storage SAN Redundante (2 unidades)</td>
+                                                <td class="px-4 py-3 text-center">2</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 90.000,00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3">Switches Core (2 unidades)</td>
+                                                <td class="px-4 py-3 text-center">2</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 37.000,00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3">Instalação, configuração e migração</td>
+                                                <td class="px-4 py-3 text-center">1</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 28.500,00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3">Licenças, suporte e garantia (36 meses)</td>
+                                                <td class="px-4 py-3 text-center">1</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 13.400,00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
+                                    <i class="fa-solid fa-paperclip mr-2 text-bevap-gold"></i>
+                                    Documentos da Proposta
+                                </h3>
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                            <div>
+                                                <div class="font-medium text-sm">Proposta_TechInfra_DC.pdf</div>
+                                                <div class="text-xs text-gray-500">3.2 MB</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button onclick="previewDocument('proposta')" class="text-bevap-green hover:text-green-700">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button onclick="downloadDocument('proposta')" class="text-bevap-navy hover:text-blue-700">
+                                                <i class="fa-solid fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fa-solid fa-file-contract text-blue-500 text-xl mr-3"></i>
+                                            <div>
+                                                <div class="font-medium text-sm">Especificacoes_Tecnicas.pdf</div>
+                                                <div class="text-xs text-gray-500">1.8 MB</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button onclick="previewDocument('specs')" class="text-bevap-green hover:text-green-700">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button onclick="downloadDocument('specs')" class="text-bevap-navy hover:text-blue-700">
+                                                <i class="fa-solid fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <h4 class="text-sm font-semibold text-bevap-navy mb-3 flex items-center">
+                                    <i class="fa-solid fa-comment-dots mr-2 text-bevap-gold"></i>
+                                    Feedback da Aprovação Comercial
+                                </h4>
+                                <div class="bg-white border border-green-200 rounded-lg p-4">
+                                    <div class="flex items-center mb-3">
+                                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Solicitante" class="w-9 h-9 rounded-full border-2 border-bevap-gold mr-3">
+                                        <div>
+                                            <div class="font-semibold text-gray-900 text-sm">Carlos Mendes</div>
+                                            <div class="text-xs text-gray-500">Aprovado em 02/03/2026 às 14:35</div>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-green-800 leading-relaxed">
+                                        Proposta muito bem estruturada e alinhada com nossas necessidades. Os valores estão competitivos considerando o escopo e qualidade dos equipamentos. 
+                                        O prazo de 10 semanas é adequado para nossa janela de implementação. Recomendo aprovação, pois a infraestrutura atual já está no limite e este projeto é crítico para a continuidade dos negócios.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fa-solid fa-file-contract text-blue-500 text-xl mr-3"></i>
-                            <div>
-                                <div class="font-medium text-sm">Termos_Contratuais.pdf</div>
-                                <div class="text-xs text-gray-500">678 KB</div>
+                </div>
+
+                <!-- Tab Content: Financeiro (GCC) -->
+                <div id="tab-content-financeiro" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                            <div class="flex items-start">
+                                <i class="fa-solid fa-dollar-sign text-yellow-600 mt-0.5 mr-3"></i>
+                                <div class="text-sm text-yellow-800">
+                                    <p class="font-medium mb-1">Análise Financeira - GCC</p>
+                                    <p>Revise os valores, estrutura de custos e a classificação contábil antes de aprovar.</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="previewDocument('termos')" class="text-bevap-green hover:text-green-700">
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-                            <button onclick="downloadDocument('termos')" class="text-bevap-navy hover:text-blue-700">
-                                <i class="fa-solid fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fa-solid fa-file-word text-blue-600 text-xl mr-3"></i>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <div class="font-medium text-sm">Escopo_Tecnico_Detalhado.docx</div>
-                                <div class="text-xs text-gray-500">1.1 MB</div>
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Proposta Comercial</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Fornecedor:</span>
+                                        <span class="font-medium text-gray-900">TechInfra Solutions</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Nº Proposta:</span>
+                                        <span class="font-mono font-medium text-gray-900">PROP-2026-0417</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Vigência:</span>
+                                        <span class="font-medium text-gray-900">45 dias</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Valores e Prazo</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Valor Total:</span>
+                                        <span class="font-bold text-bevap-navy text-lg">R$ 428.900,00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Condição:</span>
+                                        <span class="font-medium text-gray-900">30/60/90</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-600">Prazo:</span>
+                                        <span class="font-medium text-gray-900">10 semanas</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="previewDocument('escopo')" class="text-bevap-green hover:text-green-700">
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-                            <button onclick="downloadDocument('escopo')" class="text-bevap-navy hover:text-blue-700">
-                                <i class="fa-solid fa-download"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="fa-solid fa-file-excel text-green-600 text-xl mr-3"></i>
-                            <div>
-                                <div class="font-medium text-sm">Planilha_Orcamentaria.xlsx</div>
-                                <div class="text-xs text-gray-500">234 KB</div>
+
+                        <div class="mb-6">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Estrutura de Custo</h3>
+                                <button onclick="toggleCostTable()" class="text-bevap-green hover:text-green-700 text-sm font-medium">
+                                    <i id="toggle-icon" class="fa-solid fa-chevron-up mr-1"></i>
+                                    <span id="toggle-text">Recolher</span>
+                                </button>
+                            </div>
+                            <div id="cost-table" class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-gray-700 font-medium">Item</th>
+                                            <th class="px-4 py-3 text-center text-gray-700 font-medium">Qtd</th>
+                                            <th class="px-4 py-3 text-right text-gray-700 font-medium">Valor Unit.</th>
+                                            <th class="px-4 py-3 text-right text-gray-700 font-medium">Impostos</th>
+                                            <th class="px-4 py-3 text-right text-gray-700 font-medium">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="px-4 py-3">Servidores de alta disponibilidade</td>
+                                            <td class="px-4 py-3 text-center">4</td>
+                                            <td class="px-4 py-3 text-right">R$ 65.000,00</td>
+                                            <td class="px-4 py-3 text-right text-gray-600">R$ 14.300,00</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 274.300,00</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-3">Storage SAN enterprise</td>
+                                            <td class="px-4 py-3 text-center">2</td>
+                                            <td class="px-4 py-3 text-right">R$ 45.000,00</td>
+                                            <td class="px-4 py-3 text-right text-gray-600">R$ 9.900,00</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 99.900,00</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-3">Switches core redundantes</td>
+                                            <td class="px-4 py-3 text-center">2</td>
+                                            <td class="px-4 py-3 text-right">R$ 18.500,00</td>
+                                            <td class="px-4 py-3 text-right text-gray-600">R$ 4.070,00</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 41.070,00</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-3">Instalação e configuração</td>
+                                            <td class="px-4 py-3 text-center">1</td>
+                                            <td class="px-4 py-3 text-right">R$ 8.500,00</td>
+                                            <td class="px-4 py-3 text-right text-gray-600">R$ 1.530,00</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 10.030,00</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-3">Licenças de software e suporte</td>
+                                            <td class="px-4 py-3 text-center">1</td>
+                                            <td class="px-4 py-3 text-right">R$ 3.200,00</td>
+                                            <td class="px-4 py-3 text-right text-gray-600">R$ 400,00</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 3.600,00</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot class="bg-gray-50 font-semibold">
+                                        <tr>
+                                            <td colspan="4" class="px-4 py-3 text-right text-gray-700">Total Geral:</td>
+                                            <td class="px-4 py-3 text-right text-bevap-navy text-lg">R$ 428.900,00</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <button onclick="previewDocument('planilha')" class="text-bevap-green hover:text-green-700">
-                                <i class="fa-solid fa-eye"></i>
-                            </button>
-                            <button onclick="downloadDocument('planilha')" class="text-bevap-navy hover:text-blue-700">
-                                <i class="fa-solid fa-download"></i>
-                            </button>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                                    Natureza do Custo *
+                                    <i class="fa-solid fa-info-circle text-gray-400 ml-2 cursor-help" title="Defina se o investimento será CAPEX (bens duráveis) ou OPEX (despesas operacionais)"></i>
+                                </label>
+                                <div class="space-y-3">
+                                    <label class="flex items-center p-4 border-2 border-bevap-green bg-green-50 rounded-lg cursor-pointer">
+                                        <input type="radio" name="cost-nature" value="capex" checked class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green mr-3">
+                                        <div class="flex-1">
+                                            <span class="font-medium text-gray-900">CAPEX</span>
+                                            <span class="text-sm text-gray-600 ml-2">80%</span>
+                                            <input type="number" value="80" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
+                                            <span class="text-sm text-gray-600">%</span>
+                                        </div>
+                                    </label>
+                                    <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green hover:bg-green-50 transition-colors">
+                                        <input type="radio" name="cost-nature" value="opex" class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green mr-3">
+                                        <div class="flex-1">
+                                            <span class="font-medium text-gray-900">OPEX</span>
+                                            <span class="text-sm text-gray-600 ml-2">20%</span>
+                                            <input type="number" value="20" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
+                                            <span class="text-sm text-gray-600">%</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Centro de Custo *</label>
+                                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
+                                    <option value="">Selecione...</option>
+                                    <option value="ti-infra" selected>TI-INFRA - Infraestrutura TI</option>
+                                    <option value="ti-dev">TI-DEV - Desenvolvimento</option>
+                                    <option value="ti-seg">TI-SEG - Segurança da Informação</option>
+                                    <option value="ti-suporte">TI-SUPORTE - Suporte Técnico</option>
+                                </select>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Conta Contábil *</label>
+                                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
+                                    <option value="">Selecione...</option>
+                                    <option value="1.2.3.01" selected>1.2.3.01 - Equipamentos de TI</option>
+                                    <option value="1.2.3.02">1.2.3.02 - Software e Licenças</option>
+                                    <option value="3.1.2.01">3.1.2.01 - Serviços de Terceiros</option>
+                                </select>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Competência *</label>
+                                <input type="month" value="2026-03" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            </div>
+                        </div>
+
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <h3 class="text-sm font-medium text-blue-900 mb-3 flex items-center">
+                                <i class="fa-solid fa-chart-line mr-2"></i>
+                                Análise Comparativa
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-blue-800">Estimativa Inicial:</span>
+                                        <span class="font-medium text-blue-900">R$ 400.000,00</span>
+                                    </div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-blue-800">Proposta Atual:</span>
+                                        <span class="font-bold text-bevap-navy">R$ 428.900,00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-blue-800">Diferença:</span>
+                                        <span class="font-medium text-orange-600">+R$ 28.900,00 (+7,2%)</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-blue-800">Saldo CC TI-INFRA:</span>
+                                        <span class="font-medium text-blue-900">R$ 600.000,00</span>
+                                    </div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-blue-800">Após Aprovação:</span>
+                                        <span class="font-bold text-bevap-green">R$ 171.100,00</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-blue-800">Status:</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
+                                            <i class="fa-solid fa-check-circle mr-1"></i> Saldo Suficiente
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                                <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
+                                Observações do GCC
+                            </h3>
+
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Observações / Negociação</label>
+                                <textarea id="gcc-observations" rows="4" placeholder="Adicione observações sobre a aprovação do custo, rateios, condições especiais, negociação..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -428,14 +773,12 @@
                     </div>
 
                     <div class="mt-4 pt-4 border-t space-y-2">
-                        <a href="#" class="flex items-center text-sm text-bevap-green hover:text-green-700 transition-colors">
-                            <i class="fa-solid fa-paperclip mr-2"></i>
-                            Ver anexos
-                        </a>
-                        <a href="#" onclick="showTimeline()" class="flex items-center text-sm text-bevap-green hover:text-green-700 transition-colors">
-                            <i class="fa-solid fa-clock-rotate-left mr-2"></i>
-                            Linha do tempo
-                        </a>
+                        <button onclick="showTimeline()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                            <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
+                        </button>
+                        <button onclick="openAttachments()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
+                            <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos
+                        </button>
                     </div>
                 </div>
 
@@ -627,6 +970,61 @@
 </div>
 
 <script>
+function switchFormTab(tabName) {
+    const tabs = ['solicitacao', 'analise-ti', 'impacto', 'triagem-ti', 'proposta-fornecedor', 'financeiro'];
+    tabs.forEach(tab => {
+        document.getElementById('tab-' + tab).classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+        document.getElementById('tab-' + tab).classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+        document.getElementById('tab-content-' + tab).classList.add('hidden');
+    });
+
+    document.getElementById('tab-' + tabName).classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+    document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+    document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+}
+
+function updateFormTabsArrows() {
+    const scroller = document.getElementById('form-tabs-scroll');
+    const leftArrow = document.getElementById('form-tabs-left-arrow');
+    const rightArrow = document.getElementById('form-tabs-right-arrow');
+    if (!scroller || !leftArrow || !rightArrow) return;
+
+    const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+    const hasOverflow = maxScroll > 2;
+    const atStart = scroller.scrollLeft <= 2;
+    const atEnd = scroller.scrollLeft >= maxScroll - 2;
+
+    leftArrow.classList.toggle('opacity-0', !hasOverflow || atStart);
+    leftArrow.classList.toggle('pointer-events-none', !hasOverflow || atStart);
+    rightArrow.classList.toggle('opacity-0', !hasOverflow || atEnd);
+    rightArrow.classList.toggle('pointer-events-none', !hasOverflow || atEnd);
+}
+
+function scrollFormTabs(direction) {
+    const scroller = document.getElementById('form-tabs-scroll');
+    if (!scroller) return;
+
+    const target = direction === 'right'
+        ? (scroller.scrollWidth - scroller.clientWidth)
+        : 0;
+
+    scroller.scrollTo({ left: target, behavior: 'smooth' });
+    window.setTimeout(updateFormTabsArrows, 360);
+}
+
+function switchGccTab(tabName) {
+    const tabs = ['financeiro', 'checklist', 'documentos'];
+    tabs.forEach(tab => {
+        document.getElementById('tab-' + tab).classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+        document.getElementById('tab-' + tab).classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+        document.getElementById('tab-content-' + tab).classList.add('hidden');
+    });
+
+    document.getElementById('tab-' + tabName).classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+    document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+    document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+}
+
 function toggleCostTable() {
     const table = document.getElementById('cost-table');
     const icon = document.getElementById('toggle-icon');
@@ -643,12 +1041,32 @@ function toggleCostTable() {
     }
 }
 
+function previewDocument(docType) {
+    showToast('info', 'Visualizar Documento', `Abrindo preview do documento ${docType}...`);
+}
+
+function downloadDocument(docType) {
+    showToast('success', 'Download Iniciado', `Download do documento ${docType} em andamento.`);
+}
+
+function saveDraft() {
+    showToast('success', 'Rascunho Salvo', 'Suas alterações foram salvas com sucesso.');
+}
+
 function openApproveModal() {
     document.getElementById('approve-modal').classList.remove('hidden');
 }
 
 function closeApproveModal() {
     document.getElementById('approve-modal').classList.add('hidden');
+}
+
+function confirmApprove() {
+    closeApproveModal();
+    showToast('success', 'Custo Aprovado!', 'O custo foi aprovado e o projeto avançará para a próxima etapa.');
+    setTimeout(() => {
+        window.location.href = 'ux-dashboard.html';
+    }, 2000);
 }
 
 function openReturnModal() {
@@ -659,6 +1077,22 @@ function closeReturnModal() {
     document.getElementById('return-modal').classList.add('hidden');
 }
 
+function confirmReturn() {
+    const reason = document.getElementById('return-reason').value;
+    const description = document.getElementById('return-description').value;
+    
+    if (!reason || !description.trim()) {
+        showToast('error', 'Campos Obrigatórios', 'Preencha o motivo e a descrição da devolução.');
+        return;
+    }
+    
+    closeReturnModal();
+    showToast('success', 'Devolvido para Correção', 'O projeto foi devolvido para correção das informações.');
+    setTimeout(() => {
+        window.location.href = 'ux-dashboard.html';
+    }, 2000);
+}
+
 function openRejectModal() {
     document.getElementById('reject-modal').classList.remove('hidden');
 }
@@ -667,90 +1101,58 @@ function closeRejectModal() {
     document.getElementById('reject-modal').classList.add('hidden');
 }
 
-function confirmApprove() {
-    closeApproveModal();
-    showToast('success', 'Custo Aprovado!', 'O projeto foi encaminhado para a próxima etapa.');
-}
-
-function confirmReturn() {
-    const reason = document.getElementById('return-reason').value;
-    const description = document.getElementById('return-description').value;
-    
-    if (!reason || !description.trim()) {
-        showToast('error', 'Campos obrigatórios', 'Preencha a categoria e descrição.');
-        return;
-    }
-    
-    closeReturnModal();
-    showToast('info', 'Devolvido para Correção', 'O solicitante foi notificado.');
-}
-
 function confirmReject() {
     const category = document.getElementById('reject-category').value;
     const justification = document.getElementById('reject-justification').value;
     
     if (!category || !justification.trim()) {
-        showToast('error', 'Campos obrigatórios', 'Preencha a categoria e justificativa.');
+        showToast('error', 'Campos Obrigatórios', 'Preencha a categoria e a justificativa da reprovação.');
         return;
     }
     
     closeRejectModal();
-    showToast('error', 'Custo Reprovado', 'Todos os stakeholders foram notificados.');
-}
-
-function saveDraft() {
-    showToast('success', 'Rascunho Salvo', 'Suas alterações foram salvas com sucesso.');
+    showToast('success', 'Custo Reprovado', 'O custo foi reprovado. Stakeholders serão notificados.');
+    setTimeout(() => {
+        window.location.href = 'ux-dashboard.html';
+    }, 2000);
 }
 
 function showToast(type, title, message) {
     const toast = document.getElementById('toast');
-    const icon = document.getElementById('toast-icon');
+    const toastIcon = document.getElementById('toast-icon');
     const toastTitle = document.getElementById('toast-title');
     const toastMessage = document.getElementById('toast-message');
+
+    const config = {
+        success: { icon: 'fa-solid fa-circle-check', color: 'border-green-500', iconColor: 'text-green-500' },
+        error: { icon: 'fa-solid fa-circle-xmark', color: 'border-red-500', iconColor: 'text-red-500' },
+        info: { icon: 'fa-solid fa-circle-info', color: 'border-blue-500', iconColor: 'text-blue-500' }
+    };
+
+    const style = config[type] || config.info;
     
-    toast.classList.remove('border-green-500', 'border-red-500', 'border-blue-500', 'border-yellow-500');
-    
-    if (type === 'success') {
-        icon.className = 'fa-solid fa-check-circle text-green-500 text-2xl mr-3';
-        toast.classList.add('border-green-500');
-    } else if (type === 'error') {
-        icon.className = 'fa-solid fa-times-circle text-red-500 text-2xl mr-3';
-        toast.classList.add('border-red-500');
-    } else if (type === 'info') {
-        icon.className = 'fa-solid fa-info-circle text-blue-500 text-2xl mr-3';
-        toast.classList.add('border-blue-500');
-    } else if (type === 'warning') {
-        icon.className = 'fa-solid fa-exclamation-triangle text-yellow-500 text-2xl mr-3';
-        toast.classList.add('border-yellow-500');
-    }
-    
+    toast.className = `fixed top-20 right-4 bg-white rounded-lg shadow-lg p-4 z-50 max-w-sm border-l-4 ${style.color}`;
+    toastIcon.className = `${style.icon} text-2xl mr-3 ${style.iconColor}`;
     toastTitle.textContent = title;
     toastMessage.textContent = message;
+
     toast.classList.remove('hidden');
     
     setTimeout(() => {
         toast.classList.add('hidden');
-    }, 5000);
+    }, 4000);
 }
 
-// Funções para manipulação de documentos
-function previewDocument(type) {
-    alert(`Visualizando documento: ${type}`);
-}
+// Initialize arrows on load and scroll
+window.addEventListener('DOMContentLoaded', () => {
+    updateFormTabsArrows();
+    const scroller = document.getElementById('form-tabs-scroll');
+    if (scroller) {
+        scroller.addEventListener('scroll', updateFormTabsArrows);
+    }
+});
 
-function downloadDocument(type) {
-    alert(`Baixando documento: ${type}`);
-}
-
-// Funções para manipulação de timeline
-function showTimeline() {
-    alert('Linha do tempo não implementada');
-}
-
-// Funções para manipulação de anexos
-function showAttachments() {
-    alert('Anexos não implementados');
-}
+window.addEventListener('resize', updateFormTabsArrows);
 </script>
 
 </body>

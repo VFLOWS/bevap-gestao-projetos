@@ -52,13 +52,15 @@
                 <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
             </div>
         </div>
-        <div class="pb-3">
-            <nav class="flex items-center space-x-2 text-sm">
-                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
+    </div>
+    <div class="border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6  h-10 flex items-center">
+            <nav class="flex items-center space-x-2 text-sm leading-none">
+                <a href="ux-dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
                 <a href="#" class="text-gray-300 hover:text-white transition-colors">Portfólio</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-                <span class="text-bevap-gold font-medium">Nova</span>
+                <span class="text-bevap-gold font-medium">Nova Solicitação de Projeto</span>
             </nav>
         </div>
     </div>
@@ -110,7 +112,7 @@
                                 <i class="fa-solid fa-circle-info text-xs"></i>
                             </button>
                         </label>
-                        <input type="text" placeholder="Ex: Implantar SSO corporativo" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" required>
+                        <input type="text" id="titulo" placeholder="Ex: Implantar SSO corporativo" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="titulo" required>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -118,7 +120,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Área/Unidade <span class="text-red-500">*</span>
                             </label>
-                            <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" required>
+                            <select id="area" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="area" required>
                                 <option value="">Selecione...</option>
                                 <option value="ti">Tecnologia da Informação</option>
                                 <option value="rh">Recursos Humanos</option>
@@ -128,8 +130,10 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Centro de Custo</label>
-                            <input type="text" placeholder="Ex: 1001-TI" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Centro de Custo <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="centro-custo" placeholder="Ex: 1001-TI" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="centro-custo" required>
                         </div>
                     </div>
 
@@ -137,30 +141,32 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             Patrocinador <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" placeholder="Ex: Diretoria TI" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" required>
+                        <input type="text" id="patrocinador" placeholder="Ex: Diretoria TI" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="patrocinador" required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             Objetivo do Projeto <span class="text-red-500">*</span>
                         </label>
-                        <textarea rows="3" placeholder="Descreva o que se pretende alcançar com este projeto..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" required></textarea>
+                        <textarea rows="3" id="objetivo" placeholder="Descreva o que se pretende alcançar com este projeto..." class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="objetivo" required></textarea>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             Problema/Oportunidade <span class="text-red-500">*</span>
                         </label>
-                        <textarea rows="3" placeholder="Qual problema será resolvido ou oportunidade explorada?" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" required></textarea>
+                        <textarea rows="3" id="problema" placeholder="Qual problema será resolvido ou oportunidade explorada?" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="problema" required></textarea>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Benefícios Esperados</label>
-                        <textarea rows="3" placeholder="Ex: Melhoria na segurança e experiência do usuário" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Benefícios Esperados <span class="text-red-500">*</span>
+                        </label>
+                        <textarea rows="3" id="beneficios" placeholder="Ex: Melhoria na segurança e experiência do usuário" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="beneficios" required></textarea>
                     </div>
 
                     <div class="flex items-start">
-                        <input type="checkbox" id="alinhamento" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                        <input type="checkbox" id="alinhamento" class="field-input mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" data-field="alinhamento">
                         <label for="alinhamento" class="ml-3 text-sm text-gray-700">
                             <span class="font-medium">Alinhado aos objetivos estratégicos BEVAP</span>
                             <p class="text-gray-500 text-xs mt-1">Este projeto está alinhado com os objetivos estratégicos da organização</p>
@@ -171,7 +177,7 @@
                         <label class="block text-sm font-medium text-gray-700 mb-3">Prioridade</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                             <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
-                                <input type="radio" name="prioridade" value="critico" class="sr-only peer">
+                                <input type="radio" name="prioridade" value="critico" class="field-input sr-only peer" data-field="prioridade">
                                 <div class="peer-checked:border-red-500 peer-checked:bg-red-50 absolute inset-0 rounded-lg border-2"></div>
                                 <div class="relative flex items-center">
                                     <i class="fa-solid fa-circle-exclamation text-red-500 text-xl mr-3"></i>
@@ -182,7 +188,7 @@
                                 </div>
                             </label>
                             <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
-                                <input type="radio" name="prioridade" value="estrategico" class="sr-only peer" checked>
+                                <input type="radio" name="prioridade" value="estrategico" class="field-input sr-only peer" data-field="prioridade" checked>
                                 <div class="peer-checked:border-bevap-green peer-checked:bg-green-50 absolute inset-0 rounded-lg border-2"></div>
                                 <div class="relative flex items-center">
                                     <i class="fa-solid fa-star text-bevap-green text-xl mr-3"></i>
@@ -193,7 +199,7 @@
                                 </div>
                             </label>
                             <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
-                                <input type="radio" name="prioridade" value="operacional" class="sr-only peer">
+                                <input type="radio" name="prioridade" value="operacional" class="field-input sr-only peer" data-field="prioridade">
                                 <div class="peer-checked:border-blue-500 peer-checked:bg-blue-50 absolute inset-0 rounded-lg border-2"></div>
                                 <div class="relative flex items-center">
                                     <i class="fa-solid fa-circle text-blue-500 text-xl mr-3"></i>
@@ -230,17 +236,17 @@
                                 <i class="fa-solid fa-circle-info text-xs"></i>
                             </button>
                         </label>
-                        <textarea rows="4" placeholder="Detalhe o que será entregue neste projeto..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" required></textarea>
+                        <textarea rows="4" id="escopo-inicial" placeholder="Detalhe o que será entregue neste projeto..." class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="escopo-inicial" required></textarea>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Fora de Escopo</label>
-                        <textarea rows="3" placeholder="O que NÃO será incluído neste projeto..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fora de Escopo <span class="text-red-500">*</span></label>
+                        <textarea rows="3" placeholder="O que NÃO será incluído neste projeto..." class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="out-of-scope" required></textarea>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Dependências</label>
-                        <textarea rows="3" placeholder="Quais outros projetos, sistemas ou recursos são necessários?" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Dependências <span class="text-red-500">*</span></label>
+                        <textarea rows="3" placeholder="Quais outros projetos, sistemas ou recursos são necessários?" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="dependencies" required></textarea>
                     </div>
 
                     <div>
@@ -248,7 +254,7 @@
                         <div id="riscos-list" class="space-y-2 mb-3">
                             <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                                 <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
-                                <input type="text" placeholder="Descreva um risco potencial..." class="flex-1 bg-transparent border-none focus:outline-none text-sm">
+                                <input type="text" placeholder="Descreva um risco potencial..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="riscos">
                                 <button class="text-red-500 hover:text-red-700">
                                     <i class="fa-solid fa-times"></i>
                                 </button>
@@ -276,7 +282,7 @@
                             </span>
                         </div>
                         <div class="flex gap-2">
-                            <input type="text" id="stakeholder-input" placeholder="Nome do stakeholder..." class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            <input type="text" id="stakeholder-input" placeholder="Nome do stakeholder..." class="field-input flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" data-field="stakeholders">
                             <button onclick="addStakeholder()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
@@ -329,7 +335,7 @@
 
                     <div class="border-t pt-6">
                         <div class="flex items-start mb-4">
-                            <input type="checkbox" id="declaracao" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" required>
+                            <input type="checkbox" id="declaracao" class="field-input mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" data-field="declaracao" required>
                             <label for="declaracao" class="ml-3 text-sm text-gray-700">
                                 <span class="font-medium">Declaro que as informações fornecidas são verdadeiras <span class="text-red-500">*</span></span>
                                 <p class="text-gray-500 text-xs mt-1">Confirmo que todas as informações prestadas nesta solicitação são precisas e completas</p>
@@ -338,14 +344,17 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Observações Adicionais</label>
-                            <textarea rows="3" placeholder="Alguma informação adicional relevante..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                            <textarea rows="3" id="observacoes" placeholder="Alguma informação adicional relevante..." class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="observacoes"></textarea>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-between mt-8 pt-6 border-t">
-                    <button onclick="prevStep(2)" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all">
-                        <i class="fa-solid fa-arrow-left mr-2"></i> Voltar
+                    <button onclick="cancelForm()" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all">
+                        <i class="fa-solid fa-times mr-2"></i> Cancelar
+                    </button>
+                    <button onclick="submitForm()" class="px-6 py-2.5 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md hover:shadow-lg">
+                        <i class="fa-solid fa-paper-plane mr-2"></i>Enviar para Avaliação TI
                     </button>
                 </div>
             </div>
@@ -391,15 +400,15 @@
                     
                     <div class="space-y-2 text-sm">
                         <div class="flex items-center">
-                            <i class="fa-solid fa-check-circle text-bevap-green mr-2"></i>
-                            <span class="text-gray-700">Dados Básicos</span>
+                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">○</span>
+                            <span class="text-gray-400">Dados Básicos</span>
                         </div>
                         <div class="flex items-center">
-                            <i class="fa-regular fa-circle text-gray-300 mr-2"></i>
+                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">○</span>
                             <span class="text-gray-400">Escopo Definido</span>
                         </div>
                         <div class="flex items-center">
-                            <i class="fa-regular fa-circle text-gray-300 mr-2"></i>
+                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">○</span>
                             <span class="text-gray-400">Anexos & Envio</span>
                         </div>
                     </div>
@@ -407,10 +416,10 @@
                     <div class="mt-4 pt-4 border-t">
                         <div class="flex items-center justify-between text-sm mb-2">
                             <span class="text-gray-600">Completude</span>
-                            <span class="font-semibold text-bevap-navy">25%</span>
+                            <span class="font-semibold text-bevap-navy">0%</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-bevap-green h-2 rounded-full" style="width: 25%"></div>
+                            <div class="bg-bevap-green h-2 rounded-full" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
@@ -424,7 +433,7 @@
                         <i class="fa-solid fa-paper-plane mr-2"></i>
                         Enviar para Avaliação TI
                     </button>
-                    <button class="w-full px-4 py-2.5 border border-gray-300 text-gray-600 rounded-lg font-medium hover:bg-gray-50 transition-all">
+                    <button onclick="cancelForm()" class="w-full px-4 py-2.5 border border-gray-300 text-gray-600 rounded-lg font-medium hover:bg-gray-50 transition-all">
                         <i class="fa-solid fa-times mr-2"></i>
                         Cancelar
                     </button>
@@ -478,14 +487,184 @@
     </div>
 </div>
 
+<div id="validation-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+        <div class="flex items-center mb-6">
+            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-exclamation-circle text-red-600 text-xl"></i>
+            </div>
+            <h2 class="text-2xl font-montserrat font-bold text-bevap-navy ml-4">Campos Obrigatórios</h2>
+        </div>
+        <p class="text-gray-600 mb-4">Por favor, preencha todos os campos obrigatórios marcados com <span class="text-red-500 font-semibold">*</span> antes de enviar sua solicitação.</p>
+        
+        <div id="missing-fields" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <!-- Campos faltantes serão listados aqui -->
+        </div>
+
+        <button onclick="closeValidationModal()" class="w-full px-6 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all">
+            Entendi, vou corrigir
+        </button>
+    </div>
+</div>
+
 <script>
 let currentStep = 1;
+const requiredFields = [
+    'titulo', 'area', 'centro-custo', 'patrocinador', 'objetivo', 'problema', 'beneficios',
+    'escopo-inicial', 'out-of-scope', 'dependencies',
+    'declaracao'
+];
+
+function getRequiredFields() {
+    return {
+        'titulo': 'Título do Projeto',
+        'area': 'Área/Unidade',
+        'centro-custo': 'Centro de Custo',
+        'patrocinador': 'Patrocinador',
+        'objetivo': 'Objetivo do Projeto',
+        'problema': 'Problema/Oportunidade',
+        'beneficios': 'Benefícios Esperados',
+        'escopo-inicial': 'Escopo Inicial',
+        'out-of-scope': 'Fora de Escopo',
+        'dependencies': 'Dependências',
+        'declaracao': 'Declaração'
+    };
+}
+
+function validateForm() {
+    const missingFields = [];
+
+    const requiredFieldsMap = getRequiredFields();
+    requiredFields.forEach((fieldId) => {
+        const field = document.querySelector(`#${fieldId}, [name="${fieldId}"], [data-field="${fieldId}"]`);
+        if (!field) return;
+
+        const isFilled = (field.type === 'checkbox')
+            ? field.checked
+            : String(field.value || '').trim() !== '';
+
+        if (!isFilled) missingFields.push(requiredFieldsMap[fieldId] || fieldId);
+    });
+
+    return missingFields;
+}
+
+function showValidationModal(missingFields) {
+    const modalContent = document.getElementById('missing-fields');
+    modalContent.innerHTML = '';
+    
+    missingFields.forEach((field, index) => {
+        const item = document.createElement('div');
+        item.className = 'flex items-start mb-2 last:mb-0';
+        item.innerHTML = `
+            <i class="fa-solid fa-circle text-red-400 text-xs mt-1.5 mr-2 flex-shrink-0"></i>
+            <span class="text-sm text-red-800">${field}</span>
+        `;
+        modalContent.appendChild(item);
+    });
+    
+    document.getElementById('validation-modal').classList.remove('hidden');
+}
+
+function closeValidationModal() {
+    document.getElementById('validation-modal').classList.add('hidden');
+}
+
+function updateChecklist() {
+    const checklistData = [
+        { id: 'check-1', name: 'Dados Básicos', fields: ['titulo', 'area', 'centro-custo', 'patrocinador', 'objetivo', 'problema', 'beneficios'] },
+        { id: 'check-2', name: 'Escopo Definido', fields: ['escopo-inicial', 'out-of-scope', 'dependencies'] },
+        { id: 'check-3', name: 'Anexos & Envio', fields: ['declaracao'] }
+    ];
+
+    function isFieldFilled(field) {
+        if (!field) return false;
+        if (field.type === 'checkbox') return field.checked;
+        if (field.type === 'radio') {
+            return !!document.querySelector(`input[name="${field.name}"]:checked`);
+        }
+        return String(field.value || '').trim() !== '';
+    }
+
+    const allCompleted = { 1: false, 2: false, 3: false };
+    
+    checklistData.forEach((section, idx) => {
+        const sectionNum = idx + 1;
+        const allFieldsFilled = section.fields.every(fieldId => {
+            const field = document.querySelector(`#${fieldId}, [name="${fieldId}"], [data-field="${fieldId}"]`);
+            return isFieldFilled(field);
+        });
+        
+        if (allFieldsFilled) allCompleted[sectionNum] = true;
+    });
+
+    // Update checklist icons
+    const checklistCard = document.getElementById('checklist-card');
+    if (checklistCard) {
+        const items = checklistCard.querySelectorAll('.space-y-2 > .flex.items-center');
+        items.forEach((item, idx) => {
+            const icon = item.querySelector('.checklist-icon');
+            if (allCompleted[idx + 1]) {
+                icon.textContent = '✓';
+                icon.className = 'checklist-icon text-bevap-green mr-2 font-bold';
+                item.querySelector('span').classList.remove('text-gray-400');
+                item.querySelector('span').classList.add('text-gray-700');
+            } else {
+                icon.textContent = '○';
+                icon.className = 'checklist-icon text-gray-300 mr-2 font-semibold';
+                item.querySelector('span').classList.remove('text-gray-700');
+                item.querySelector('span').classList.add('text-gray-400');
+            }
+        });
+    }
+
+    // Update progress (por campo obrigatório preenchido)
+    const totalRequired = requiredFields.length;
+    const filledRequired = requiredFields.reduce((count, fieldId) => {
+        const field = document.querySelector(`#${fieldId}, [name="${fieldId}"], [data-field="${fieldId}"]`);
+        if (!field) return count;
+
+        const isFilled = (field.type === 'checkbox')
+            ? field.checked
+            : String(field.value || '').trim() !== '';
+
+        return count + (isFilled ? 1 : 0);
+    }, 0);
+    const progressPercent = totalRequired > 0 ? Math.round((filledRequired / totalRequired) * 100) : 0;
+
+    const progressBar = document.querySelector('#checklist-card .mt-4.pt-4.border-t .bg-bevap-green.h-2.rounded-full');
+    const progressLabel = document.querySelector('#checklist-card .mt-4.pt-4.border-t .font-semibold.text-bevap-navy');
+    if (progressBar && progressLabel) {
+        progressBar.style.width = progressPercent + '%';
+        progressLabel.textContent = progressPercent + '%';
+    }
+}
+
+function showSubmitIncompletePopup(missingFields) {
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-20 right-4 bg-white border-l-4 border-red-500 shadow-lg rounded-lg p-4 z-50 animate-slide-in';
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fa-solid fa-triangle-exclamation text-red-500 text-xl mr-3"></i>
+            <div>
+                <p class="font-semibold text-gray-800">Campos obrigatórios pendentes</p>
+                <p class="text-sm text-gray-600">Preencha todos os campos marcados com * para enviar.</p>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
+}
 
 function nextStep(step) {
     document.getElementById('step-' + currentStep).classList.add('hidden');
     document.getElementById('step-' + step).classList.remove('hidden');
     currentStep = step;
     updateStepper();
+    updateChecklist();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -494,6 +673,7 @@ function prevStep(step) {
     document.getElementById('step-' + step).classList.remove('hidden');
     currentStep = step;
     updateStepper();
+    updateChecklist();
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -536,8 +716,7 @@ function updateStepper() {
             if (lineRight) lineRight.classList.remove('bg-bevap-green');
         }
     });
-}   
-
+}
 
 function toggleFornecedor() {
     const fornecedorSection = document.getElementById('fornecedor-section');
@@ -556,12 +735,18 @@ function addRisk() {
     newRisk.className = 'flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg';
     newRisk.innerHTML = `
         <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
-        <input type="text" placeholder="Descreva um risco potencial..." class="flex-1 bg-transparent border-none focus:outline-none text-sm">
+        <input type="text" placeholder="Descreva um risco potencial..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="riscos">
         <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">
             <i class="fa-solid fa-times"></i>
         </button>
     `;
     risksList.appendChild(newRisk);
+
+    const input = newRisk.querySelector('input');
+    if (input) {
+        input.addEventListener('input', updateChecklist);
+        input.addEventListener('change', updateChecklist);
+    }
 }
 
 function addStakeholder() {
@@ -603,19 +788,37 @@ function saveDraft() {
 }
 
 function submitForm() {
+    const missingFields = validateForm();
+    
+    if (missingFields.length > 0) {
+        showSubmitIncompletePopup(missingFields);
+        return;
+    }
+    
     document.getElementById('success-modal').classList.remove('hidden');
 }
 
+function cancelForm() {
+    window.location.href = 'ux-dashboard.html';
+}
+
 function closeModal() {
-    window.location.href = 'dashboard.html';
+    window.location.href = 'ux-dashboard.html';
 }
 
 function viewRequest() {
     window.location.href = 'detalhamento-solicitacao.html';
 }
 
-window.addEventListener('load', function() {
+// Add event listeners to  fields for real-time checklist update
+document.addEventListener('DOMContentLoaded', function() {
     updateStepper();
+    updateChecklist();
+    
+    document.querySelectorAll('.field-input, input[required], textarea[required]').forEach(field => {
+        field.addEventListener('input', updateChecklist);
+        field.addEventListener('change', updateChecklist);
+    });
 });
 </script>
 

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -32,8 +33,362 @@
 </head>
 <body class="bg-slate-50 font-inter">
 
-<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<script>
+    // Filter functionality
+    let chartInstances = {};
+    
+    function applyFilters() {
+        const status = document.getElementById('filterStatus').value;
+        const priority = document.getElementById('filterPriority').value;
+        const type = document.getElementById('filterType').value;
+        
+        // Filter KPI cards
+        document.querySelectorAll('.kpi-card').forEach(card => {
+            let show = true;
+            if (status && card.dataset.status !== status) {
+                show = false;
+            }
+            card.style.display = show ? '' : 'none';
+        });
+        
+        // Filter pipeline cards
+        document.querySelectorAll('.pipeline-card').forEach(card => {
+            let show = true;
+            if (status && card.dataset.status !== status) show = false;
+            if (priority && card.dataset.priority !== priority) show = false;
+            if (type && card.dataset.type !== type) show = false;
+            
+            card.style.display = show ? '' : 'none';
+        });
+
+        // Filter table rows
+        document.querySelectorAll('.table-row').forEach(row => {
+            let show = true;
+            if (status && row.dataset.status !== status) show = false;
+            if (priority && row.dataset.priority !== priority) show = false;
+            if (type && row.dataset.type !== type) show = false;
+            
+            row.style.display = show ? '' : 'none';
+        });
+
+        // Update charts with filtered data
+        updateChartsWithFilters(status, priority, type);
+    }
+    
+    function clearFilters() {
+        document.getElementById('filterStatus').value = '';
+        document.getElementById('filterPriority').value = '';
+        document.getElementById('filterType').value = '';
+        document.getElementById('filterPeriod').value = '';
+        
+        // Show all cards and rows
+        document.querySelectorAll('.kpi-card, .pipeline-card, .table-row').forEach(card => {
+            card.style.display = '';
+        });
+
+        // Reset charts
+        resetCharts();
+    }
+
+    function updateChartsWithFilters(status, priority, type) {
+        // Contar dados filtrados
+        const allRows = document.querySelectorAll('.table-row');
+        let statusCounts = {};
+        let priorityCounts = {};
+        let typeCounts = {};
+
+        allRows.forEach(row => {
+            const rowStatus = row.dataset.status;
+            const rowPriority = row.dataset.priority;
+            const rowType = row.dataset.type;
+            const isVisible = row.style.display !== 'none';
+
+            if (isVisible) {
+                statusCounts[rowStatus] = (statusCounts[rowStatus] || 0) + 1;
+                priorityCounts[rowPriority] = (priorityCounts[rowPriority] || 0) + 1;
+                typeCounts[rowType] = (typeCounts[rowType] || 0) + 1;
+            }
+        });
+
+        // Atualizar gráficos se já estiverem criados
+        if (chartInstances.statusChart) {
+            chartInstances.statusChart.data.datasets[0].data = [
+                statusCounts['approval'] || 0,
+                statusCounts['execution'] || 0,
+                statusCounts['golive'] || 0,
+                statusCounts['completed'] || 0,
+                statusCounts['cancelled'] || 0
+            ];
+            chartInstances.statusChart.update();
+        }
+
+        if (chartInstances.priorityChart) {
+            chartInstances.priorityChart.data.datasets[0].data = [
+                priorityCounts['Crítico'] || 0,
+                priorityCounts['Estratégico'] || 0,
+                priorityCounts['Operacional'] || 0
+            ];
+            chartInstances.priorityChart.update();
+        }
+
+        if (chartInstances.typeChart) {
+            chartInstances.typeChart.data.datasets[0].data = [
+                typeCounts['Interno'] || 0,
+                typeCounts['Externo'] || 0
+            ];
+            chartInstances.typeChart.update();
+        }
+    }
+
+    function resetCharts() {
+        if (chartInstances.statusChart) {
+            chartInstances.statusChart.data.datasets[0].data = [6, 24, 3, 12, 3];
+            chartInstances.statusChart.update();
+        }
+        if (chartInstances.priorityChart) {
+            chartInstances.priorityChart.data.datasets[0].data = [18, 16, 14];
+            chartInstances.priorityChart.update();
+        }
+        if (chartInstances.typeChart) {
+            chartInstances.typeChart.data.datasets[0].data = [21, 27];
+            chartInstances.typeChart.update();
+        }
+    }
+
+    // Tab functionality
+    function switchTab(tabName) {
+        // Hide all views
+        document.getElementById('pipeline-view').classList.add('hidden');
+        document.getElementById('graphics-view').classList.add('hidden');
+        document.getElementById('table-view').classList.add('hidden');
+        
+        // Remove active state from all buttons
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.classList.remove('border-bevap-green', 'text-bevap-green');
+            btn.classList.add('border-transparent', 'text-slate-600');
+        });
+        
+        // Show selected view and update button styling
+        if (tabName === 'pipeline-view') {
+            document.getElementById('pipeline-view').classList.remove('hidden');
+            document.getElementById('tab-pipeline').classList.remove('border-transparent', 'text-slate-600');
+            document.getElementById('tab-pipeline').classList.add('border-bevap-green', 'text-bevap-green');
+        } else if (tabName === 'graphics-view') {
+            document.getElementById('graphics-view').classList.remove('hidden');
+            document.getElementById('tab-graphics').classList.remove('border-transparent', 'text-slate-600');
+            document.getElementById('tab-graphics').classList.add('border-bevap-green', 'text-bevap-green');
+            createCharts();
+        } else if (tabName === 'table-view') {
+            document.getElementById('table-view').classList.remove('hidden');
+            document.getElementById('tab-table').classList.remove('border-transparent', 'text-slate-600');
+            document.getElementById('tab-table').classList.add('border-bevap-green', 'text-bevap-green');
+        }
+    }
+
+    // Create charts
+    function createCharts() {
+        const baseConfig = {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        font: { size: 11, family: "'Inter', sans-serif" },
+                        color: '#475569',
+                        padding: 8,
+                        boxWidth: 10
+                    }
+                },
+                tooltip: {
+                    titleFont: { family: "'Inter', sans-serif" },
+                    bodyFont: { family: "'Inter', sans-serif" },
+                    padding: 8,
+                    titleFontSize: 12
+                }
+            }
+        };
+
+        // Status Chart - Rosca
+        const statusCtx = document.getElementById('statusChart');
+        if (statusCtx && !statusCtx.dataset.initialized) {
+            chartInstances.statusChart = new Chart(statusCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Aprovação', 'Execução', 'Go-Live', 'Concluído', 'Cancelado'],
+                    datasets: [{
+                        data: [6, 24, 3, 12, 3],
+                        backgroundColor: ['#F1B434', '#1C8C5D', '#9333EA', '#10B981', '#EF4444'],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 10, family: "'Inter', sans-serif" },
+                                color: '#64748b',
+                                padding: 6,
+                                boxWidth: 8
+                            }
+                        }
+                    }
+                }
+            });
+            statusCtx.dataset.initialized = true;
+        }
+
+        // Priority Chart - Barra horizontal
+        const priorityCtx = document.getElementById('priorityChart');
+        if (priorityCtx && !priorityCtx.dataset.initialized) {
+            chartInstances.priorityChart = new Chart(priorityCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Crítico', 'Estratégico', 'Operacional'],
+                    datasets: [{
+                        label: 'Quantidade',
+                        data: [18, 16, 14],
+                        backgroundColor: ['#EF4444', '#0B2E4A', '#94A3B8'],
+                        borderRadius: 4,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 20,
+                            ticks: {
+                                color: '#64748b',
+                                font: { size: 10 }
+                            },
+                            grid: {
+                                color: '#e2e8f0'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#64748b',
+                                font: { size: 10 }
+                            }
+                        }
+                    }
+                }
+            });
+            priorityCtx.dataset.initialized = true;
+        }
+
+        // Type Chart - Pizza
+        const typeCtx = document.getElementById('typeChart');
+        if (typeCtx && !typeCtx.dataset.initialized) {
+            chartInstances.typeChart = new Chart(typeCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Interno', 'Externo'],
+                    datasets: [{
+                        data: [21, 27],
+                        backgroundColor: ['#1C8C5D', '#F1B434'],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 10, family: "'Inter', sans-serif" },
+                                color: '#64748b',
+                                padding: 6,
+                                boxWidth: 8
+                            }
+                        }
+                    }
+                }
+            });
+            typeCtx.dataset.initialized = true;
+        }
+
+        // Progress Chart - Radar
+        const progressCtx = document.getElementById('progressChart');
+        if (progressCtx && !progressCtx.dataset.initialized) {
+            new Chart(progressCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['SSO', 'BI', 'CRM', 'Portal', 'Migração'],
+                    datasets: [{
+                        label: '% Conclusão',
+                        data: [62, 45, 95, 0, 0],
+                        borderColor: '#1C8C5D',
+                        backgroundColor: 'rgba(28, 140, 93, 0.1)',
+                        pointBackgroundColor: '#1C8C5D',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        borderWidth: 2,
+                        pointRadius: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                color: '#64748b',
+                                font: { size: 9 },
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            grid: {
+                                color: '#e2e8f0'
+                            }
+                        }
+                    }
+                }
+            });
+            progressCtx.dataset.initialized = true;
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        const applyBtn = document.getElementById('applyFilters');
+        const clearBtn = document.getElementById('clearFilters');
+        
+        if (applyBtn) applyBtn.addEventListener('click', applyFilters);
+        if (clearBtn) clearBtn.addEventListener('click', clearFilters);
+        
+        // Tab event listeners
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', function() {
+                switchTab(this.dataset.tab);
+            });
+        });
+    });
+</script>
+
+<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50 w-full">
+    <div class="w-full px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <div class="flex items-center space-x-4">
                 <div class="flex items-center space-x-2">
@@ -78,47 +433,48 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
-                        <select class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
-                            <option>Todos</option>
-                            <option>Aberto</option>
-                            <option>Em Execução</option>
-                            <option>Em Go-Live</option>
-                            <option>Concluído</option>
-                            <option>Cancelado</option>
+                        <select id="filterStatus" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option value="">Todos</option>
+                            <option value="approval">Aberto</option>
+                            <option value="execution">Em Execução</option>
+                            <option value="golive">Em Go-Live</option>
+                            <option value="completed">Concluído</option>
+                            <option value="cancelled">Cancelado</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">Prioridade</label>
-                        <select class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
-                            <option>Todas</option>
-                            <option>Crítico</option>
-                            <option>Estratégico</option>
-                            <option>Operacional</option>
+                        <select id="filterPriority" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option value="">Todas</option>
+                            <option value="Crítico">Crítico</option>
+                            <option value="Estratégico">Estratégico</option>
+                            <option value="Operacional">Operacional</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">Tipo</label>
-                        <select class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
-                            <option>Todos</option>
-                            <option>Interno</option>
-                            <option>Externo</option>
+                        <select id="filterType" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option value="">Todos</option>
+                            <option value="Interno">Interno</option>
+                            <option value="Externo">Externo</option>
                         </select>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-slate-700 mb-1.5">Período</label>
-                        <select class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
-                            <option>Último mês</option>
-                            <option>Último trimestre</option>
-                            <option>Último ano</option>
+                        <select id="filterPeriod" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option value="">Todos</option>
+                            <option value="month">Último mês</option>
+                            <option value="quarter">Último trimestre</option>
+                            <option value="year">Último ano</option>
                         </select>
                     </div>
                 </div>
                 
                 <div class="flex flex-wrap gap-2 mt-4">
-                    <button class="bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <button id="applyFilters" class="bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                         Aplicar Filtros
                     </button>
-                    <button class="border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                    <button id="clearFilters" class="border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
                         Limpar
                     </button>
                     <button class="border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -129,7 +485,7 @@
 
             <section id="kpis-section" class="mb-6">
                 <div class="grid grid-cols-2 lg:grid-cols-6 gap-4">
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                    <div class="kpi-card bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow" data-status="approval">
                         <div class="flex items-start justify-between mb-2">
                             <div class="w-10 h-10 bg-bevap-navy/10 rounded-lg flex items-center justify-center">
                                 <i class="fa-solid fa-folder-open text-bevap-navy text-lg"></i>
@@ -142,7 +498,7 @@
                         <p class="text-sm text-slate-600 mt-1">Total Projetos</p>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                    <div class="kpi-card bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow" data-status="approval">
                         <div class="flex items-start justify-between mb-2">
                             <div class="w-10 h-10 bg-bevap-gold/10 rounded-lg flex items-center justify-center">
                                 <i class="fa-solid fa-clock text-bevap-gold text-lg"></i>
@@ -155,7 +511,7 @@
                         <p class="text-sm text-slate-600 mt-1">Em Aprovação</p>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                    <div class="kpi-card bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow" data-status="execution">
                         <div class="flex items-start justify-between mb-2">
                             <div class="w-10 h-10 bg-bevap-green/10 rounded-lg flex items-center justify-center">
                                 <i class="fa-solid fa-spinner text-bevap-green text-lg"></i>
@@ -168,7 +524,7 @@
                         <p class="text-sm text-slate-600 mt-1">Em Execução</p>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                    <div class="kpi-card bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow" data-status="golive">
                         <div class="flex items-start justify-between mb-2">
                             <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
                                 <i class="fa-solid fa-rocket text-purple-600 text-lg"></i>
@@ -181,7 +537,7 @@
                         <p class="text-sm text-slate-600 mt-1">Em Go-Live</p>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                    <div class="kpi-card bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow" data-status="completed">
                         <div class="flex items-start justify-between mb-2">
                             <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
                                 <i class="fa-solid fa-check-circle text-emerald-600 text-lg"></i>
@@ -194,7 +550,7 @@
                         <p class="text-sm text-slate-600 mt-1">Concluídos</p>
                     </div>
 
-                    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow">
+                    <div class="kpi-card bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow" data-status="cancelled">
                         <div class="flex items-start justify-between mb-2">
                             <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
                                 <i class="fa-solid fa-times-circle text-red-600 text-lg"></i>
@@ -212,13 +568,13 @@
             <section id="content-tabs" class="bg-white rounded-xl shadow-sm border border-slate-200">
                 <div class="border-b border-slate-200 px-4">
                     <nav class="flex space-x-6 overflow-x-auto">
-                        <button class="py-4 px-2 border-b-2 border-bevap-green text-bevap-green font-medium text-sm whitespace-nowrap">
+                        <button id="tab-pipeline" class="tab-button py-4 px-2 border-b-2 border-bevap-green text-bevap-green font-medium text-sm whitespace-nowrap transition-colors" data-tab="pipeline-view">
                             <i class="fa-solid fa-table-columns mr-2"></i>Pipeline
                         </button>
-                        <button class="py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap">
+                        <button id="tab-graphics" class="tab-button py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap transition-colors" data-tab="graphics-view">
                             <i class="fa-solid fa-chart-bar mr-2"></i>Gráficos
                         </button>
-                        <button class="py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap">
+                        <button id="tab-table" class="tab-button py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap transition-colors" data-tab="table-view">
                             <i class="fa-solid fa-list mr-2"></i>Tabela
                         </button>
                     </nav>
@@ -233,7 +589,7 @@
                             </div>
                             
                             <div class="space-y-3">
-                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                <div class="pipeline-card bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer" data-status="approval" data-priority="Crítico" data-type="Externo">
                                     <div class="flex items-start justify-between mb-2">
                                         <span class="text-xs font-mono text-slate-500">PRJ-2026-018</span>
                                         <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-medium">Crítico</span>
@@ -245,7 +601,7 @@
                                     </div>
                                 </div>
 
-                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                <div class="pipeline-card bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer" data-status="approval" data-priority="Estratégico" data-type="Interno">
                                     <div class="flex items-start justify-between mb-2">
                                         <span class="text-xs font-mono text-slate-500">PRJ-2026-019</span>
                                         <span class="bg-bevap-navy/10 text-bevap-navy text-xs px-2 py-0.5 rounded-full font-medium">Estratégico</span>
@@ -266,7 +622,7 @@
                             </div>
                             
                             <div class="space-y-3">
-                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                <div class="pipeline-card bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer" data-status="execution" data-priority="Crítico" data-type="Externo">
                                     <div class="flex items-start justify-between mb-2">
                                         <span class="text-xs font-mono text-slate-500">PRJ-2026-014</span>
                                         <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-medium">Crítico</span>
@@ -285,7 +641,7 @@
                                     </div>
                                 </div>
 
-                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                <div class="pipeline-card bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer" data-status="execution" data-priority="Operacional" data-type="Interno">
                                     <div class="flex items-start justify-between mb-2">
                                         <span class="text-xs font-mono text-slate-500">PRJ-2026-015</span>
                                         <span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-medium">Operacional</span>
@@ -313,7 +669,7 @@
                             </div>
                             
                             <div class="space-y-3">
-                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                <div class="pipeline-card bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer" data-status="golive" data-priority="Estratégico" data-type="Externo">
                                     <div class="flex items-start justify-between mb-2">
                                         <span class="text-xs font-mono text-slate-500">PRJ-2026-012</span>
                                         <span class="bg-bevap-navy/10 text-bevap-navy text-xs px-2 py-0.5 rounded-full font-medium">Estratégico</span>
@@ -341,7 +697,7 @@
                             </div>
                             
                             <div class="space-y-3">
-                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer">
+                                <div class="pipeline-card bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer" data-status="completed" data-priority="Crítico" data-type="Interno">
                                     <div class="flex items-start justify-between mb-2">
                                         <span class="text-xs font-mono text-slate-500">PRJ-2025-089</span>
                                         <span class="bg-red-100 text-red-700 text-xs px-2 py-0.5 rounded-full font-medium">Crítico</span>
@@ -362,7 +718,7 @@
                             </div>
                             
                             <div class="space-y-3">
-                                <div class="bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer opacity-60">
+                                <div class="pipeline-card bg-white rounded-lg p-3 shadow-sm border border-slate-200 hover:shadow-md transition-shadow cursor-pointer opacity-60" data-status="cancelled" data-priority="Operacional" data-type="Externo">
                                     <div class="flex items-start justify-between mb-2">
                                         <span class="text-xs font-mono text-slate-500">PRJ-2025-078</span>
                                         <span class="bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-full font-medium">Operacional</span>
@@ -375,6 +731,110 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div id="graphics-view" class="p-4 lg:p-6 hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white rounded-lg p-3 border border-slate-200">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3">Status</h4>
+                            <canvas id="statusChart" style="max-height: 200px;"></canvas>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-slate-200">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3">Prioridade</h4>
+                            <canvas id="priorityChart" style="max-height: 200px;"></canvas>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-slate-200">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3">Tipo</h4>
+                            <canvas id="typeChart" style="max-height: 200px;"></canvas>
+                        </div>
+                        <div class="bg-white rounded-lg p-3 border border-slate-200">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3">Progresso</h4>
+                            <canvas id="progressChart" style="max-height: 200px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="table-view" class="p-4 lg:p-6 hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">ID Projeto</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Projeto</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Status</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Prioridade</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Tipo</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Time</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Progresso</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50 table-row" data-status="approval" data-priority="Crítico" data-type="Externo">
+                                    <td class="py-3 px-4 text-slate-600 font-mono">PRJ-2026-018</td>
+                                    <td class="py-3 px-4 font-medium text-bevap-navy">Portal RH</td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-gold/20 text-bevap-gold px-2 py-1 rounded-full text-xs font-medium">Em Aprovação</span></td>
+                                    <td class="py-3 px-4"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-medium">Crítico</span></td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-gold/20 text-bevap-gold px-2 py-1 rounded text-xs font-medium">Externo</span></td>
+                                    <td class="py-3 px-4 text-slate-600">Time TI</td>
+                                    <td class="py-3 px-4"><span class="text-slate-600">-</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50 table-row" data-status="approval" data-priority="Estratégico" data-type="Interno">
+                                    <td class="py-3 px-4 text-slate-600 font-mono">PRJ-2026-019</td>
+                                    <td class="py-3 px-4 font-medium text-bevap-navy">Migração Cloud</td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-gold/20 text-bevap-gold px-2 py-1 rounded-full text-xs font-medium">Em Aprovação</span></td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-navy/10 text-bevap-navy px-2 py-1 rounded text-xs font-medium">Estratégico</span></td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-green/20 text-bevap-green px-2 py-1 rounded text-xs font-medium">Interno</span></td>
+                                    <td class="py-3 px-4 text-slate-600">Time DevOps</td>
+                                    <td class="py-3 px-4"><span class="text-slate-600">-</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50 table-row" data-status="execution" data-priority="Crítico" data-type="Externo">
+                                    <td class="py-3 px-4 text-slate-600 font-mono">PRJ-2026-014</td>
+                                    <td class="py-3 px-4 font-medium text-bevap-navy">Implantar SSO</td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-green/20 text-bevap-green px-2 py-1 rounded-full text-xs font-medium">Em Execução</span></td>
+                                    <td class="py-3 px-4"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-medium">Crítico</span></td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-gold/20 text-bevap-gold px-2 py-1 rounded text-xs font-medium">Externo</span></td>
+                                    <td class="py-3 px-4 text-slate-600">Time TI</td>
+                                    <td class="py-3 px-4"><span class="text-emerald-600 font-medium">62%</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50 table-row" data-status="execution" data-priority="Operacional" data-type="Interno">
+                                    <td class="py-3 px-4 text-slate-600 font-mono">PRJ-2026-015</td>
+                                    <td class="py-3 px-4 font-medium text-bevap-navy">Dashboard BI</td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-green/20 text-bevap-green px-2 py-1 rounded-full text-xs font-medium">Em Execução</span></td>
+                                    <td class="py-3 px-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-medium">Operacional</span></td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-green/20 text-bevap-green px-2 py-1 rounded text-xs font-medium">Interno</span></td>
+                                    <td class="py-3 px-4 text-slate-600">Time Analytics</td>
+                                    <td class="py-3 px-4"><span class="text-emerald-600 font-medium">45%</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50 table-row" data-status="golive" data-priority="Estratégico" data-type="Externo">
+                                    <td class="py-3 px-4 text-slate-600 font-mono">PRJ-2026-012</td>
+                                    <td class="py-3 px-4 font-medium text-bevap-navy">CRM Vendas</td>
+                                    <td class="py-3 px-4"><span class="bg-purple-100 text-purple-700 px-2 py-1 rounded-full text-xs font-medium">Em Go-Live</span></td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-navy/10 text-bevap-navy px-2 py-1 rounded text-xs font-medium">Estratégico</span></td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-gold/20 text-bevap-gold px-2 py-1 rounded text-xs font-medium">Externo</span></td>
+                                    <td class="py-3 px-4 text-slate-600">Time Comercial</td>
+                                    <td class="py-3 px-4"><span class="text-emerald-600 font-medium">95%</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50 table-row" data-status="completed" data-priority="Crítico" data-type="Interno">
+                                    <td class="py-3 px-4 text-slate-600 font-mono">PRJ-2025-089</td>
+                                    <td class="py-3 px-4 font-medium text-bevap-navy">Backup Automático</td>
+                                    <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-700 px-2 py-1 rounded-full text-xs font-medium">Concluído</span></td>
+                                    <td class="py-3 px-4"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-medium">Crítico</span></td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-green/20 text-bevap-green px-2 py-1 rounded text-xs font-medium">Interno</span></td>
+                                    <td class="py-3 px-4 text-slate-600">Time DevOps</td>
+                                    <td class="py-3 px-4"><span class="text-emerald-600 font-medium">100%</span></td>
+                                </tr>
+                                <tr class="border-b border-slate-100 hover:bg-slate-50 table-row" data-status="cancelled" data-priority="Operacional" data-type="Externo">
+                                    <td class="py-3 px-4 text-slate-600 font-mono">PRJ-2025-078</td>
+                                    <td class="py-3 px-4 font-medium text-bevap-navy">App Mobile</td>
+                                    <td class="py-3 px-4"><span class="bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium">Cancelado</span></td>
+                                    <td class="py-3 px-4"><span class="bg-slate-100 text-slate-700 px-2 py-1 rounded text-xs font-medium">Operacional</span></td>
+                                    <td class="py-3 px-4"><span class="bg-bevap-gold/20 text-bevap-gold px-2 py-1 rounded text-xs font-medium">Externo</span></td>
+                                    <td class="py-3 px-4 text-slate-600">Time Mobile</td>
+                                    <td class="py-3 px-4"><span class="text-slate-500">-</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </section>
@@ -515,6 +975,9 @@
         </main>
 
         <aside id="pendencies-sidebar" class="lg:w-80 shrink-0">
+            <a href="nova-solicitacao.html" class="block w-full bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center mb-4">
+                <i class="fa-solid fa-plus mr-2"></i>Nova Solicitação
+            </a>
             <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sticky top-32">
                 <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
                     <i class="fa-solid fa-bell mr-2 text-bevap-gold"></i>Minhas Pendências

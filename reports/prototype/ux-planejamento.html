@@ -74,611 +74,609 @@
 </header>
 
 <main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div class="mb-8">
+        <span id="current-step" class="hidden">Etapa 1</span>
+
+        <div id="stepper" class="mb-2">
+            <div class="mx-auto w-11/12 sm:w-10/12 lg:w-4/5 max-w-5xl flex items-center justify-between">
+                <div class="flex items-center">
+                    <div id="step-indicator-1" class="w-8 h-8 rounded-full bg-bevap-green text-white flex items-center justify-center text-sm font-medium">1</div>
+                    <div id="step-label-1" class="hidden sm:block ml-2 text-sm font-medium text-bevap-green">EAP/WBS</div>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2 rounded">
+                    <div id="progress-1-2" class="h-1 bg-bevap-green rounded" style="width: 35%"></div>
+                </div>
+                <div class="flex items-center">
+                    <div id="step-indicator-2" class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-medium">2</div>
+                    <div id="step-label-2" class="hidden sm:block ml-2 text-sm text-gray-600">Cronograma</div>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2 rounded">
+                    <div id="progress-2-3" class="h-1 bg-bevap-green rounded" style="width: 0%"></div>
+                </div>
+                <div class="flex items-center">
+                    <div id="step-indicator-3" class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-medium">3</div>
+                    <div id="step-label-3" class="hidden sm:block ml-2 text-sm text-gray-600">Riscos</div>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2 rounded">
+                    <div id="progress-3-4" class="h-1 bg-bevap-green rounded" style="width: 0%"></div>
+                </div>
+                <div class="flex items-center">
+                    <div id="step-indicator-4" class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-medium">4</div>
+                    <div id="step-label-4" class="hidden sm:block ml-2 text-sm text-gray-600">RACI</div>
+                </div>
+                <div class="flex-1 h-1 bg-gray-200 mx-2 rounded">
+                    <div id="progress-4-5" class="h-1 bg-bevap-green rounded" style="width: 0%"></div>
+                </div>
+                <div class="flex items-center">
+                    <div id="step-indicator-5" class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-medium">5</div>
+                    <div id="step-label-5" class="hidden sm:block ml-2 text-sm text-gray-600">Documentos</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div id="content-section" class="lg:col-span-2">
-            <div id="stepper" class="bg-white rounded-lg shadow-md mb-6 p-6">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-lg font-montserrat font-bold text-bevap-navy">Plano do Projeto</h2>
-                    <div class="text-sm text-gray-600">
-                        <span id="current-step">Etapa 1</span> de 5
-                    </div>
-                </div>
-                
-                <div class="flex items-center justify-between mb-8">
-                    <div class="flex items-center">
-                        <div id="step-indicator-1" class="w-8 h-8 rounded-full bg-bevap-green text-white flex items-center justify-center text-sm font-medium">1</div>
-                        <div class="hidden sm:block ml-2 text-sm font-medium text-bevap-green">EAP/WBS</div>
-                    </div>
-                    <div class="flex-1 h-1 bg-gray-200 mx-2">
-                        <div id="progress-1-2" class="h-1 bg-bevap-green" style="width: 20%"></div>
-                    </div>
-                    <div class="flex items-center">
-                        <div id="step-indicator-2" class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-medium">2</div>
-                        <div class="hidden sm:block ml-2 text-sm text-gray-600">Cronograma</div>
-                    </div>
-                    <div class="flex-1 h-1 bg-gray-200 mx-2">
-                        <div id="progress-2-3" class="h-1 bg-gray-200"></div>
-                    </div>
-                    <div class="flex items-center">
-                        <div id="step-indicator-3" class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-medium">3</div>
-                        <div class="hidden sm:block ml-2 text-sm text-gray-600">Riscos</div>
-                    </div>
-                    <div class="flex-1 h-1 bg-gray-200 mx-2">
-                        <div id="progress-3-4" class="h-1 bg-gray-200"></div>
-                    </div>
-                    <div class="flex items-center">
-                        <div id="step-indicator-4" class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-medium">4</div>
-                        <div class="hidden sm:block ml-2 text-sm text-gray-600">RACI</div>
-                    </div>
-                    <div class="flex-1 h-1 bg-gray-200 mx-2">
-                        <div id="progress-4-5" class="h-1 bg-gray-200"></div>
-                    </div>
-                    <div class="flex items-center">
-                        <div id="step-indicator-5" class="w-8 h-8 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center text-sm font-medium">5</div>
-                        <div class="hidden sm:block ml-2 text-sm text-gray-600">Documentos</div>
-                    </div>
-                </div>
+            <div id="step-1" class="step-content bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                        <i class="fa-solid fa-sitemap mr-3 text-bevap-gold"></i>
+                        Estrutura Analítica do Projeto (EAP/WBS)
+                    </h3>
 
-                <div class="flex justify-between">
-                    <button id="prev-btn" onclick="previousStep()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50" disabled>
-                        <i class="fa-solid fa-chevron-left mr-2"></i>
-                        Anterior
-                    </button>
-                    <button id="next-btn" onclick="nextStep()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
-                        Próximo
-                        <i class="fa-solid fa-chevron-right ml-2"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div id="step-1" class="step-content bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-sitemap mr-3 text-bevap-gold"></i>
-                    Estrutura Analítica do Projeto (EAP/WBS)
-                </h3>
-                
-                <div class="mb-4">
-                    <button onclick="addPhase()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
-                        <i class="fa-solid fa-plus mr-2"></i>
-                        Adicionar Fase
-                    </button>
-                </div>
-                
-                <div id="wbs-container" class="space-y-4">
-                    <div class="wbs-item border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <h4 class="font-semibold text-bevap-navy">1. Descoberta e Análise</h4>
-                            <div class="flex items-center space-x-2">
-                                <button class="text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
-                                    <i class="fa-solid fa-grip-vertical"></i>
-                                </button>
-                                <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Responsável</label>
-                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                                    <option>Ana Costa</option>
-                                    <option>TechPartners</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
-                                <input type="number" value="40" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Duração (dias)</label>
-                                <input type="number" value="5" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Dependências</label>
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Aprovação</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <label class="block text-sm text-gray-600 mb-1">Observações</label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Levantamento de requisitos e análise de integração..."></textarea>
-                        </div>
-                        <div class="subtask-container ml-6 mt-4 space-y-3">
-                            <!-- Subtasks will be added here -->
-                        </div>
-                        <button onclick="addSubtask(this)" class="mt-3 text-bevap-green text-sm hover:underline">
-                            <i class="fa-solid fa-plus mr-1"></i>
-                            Adicionar Subtarefa
-                        </button>
-                    </div>
-                    
-                    <div class="wbs-item border border-gray-200 rounded-lg p-4">
-                        <div class="flex items-center justify-between mb-3">
-                            <h4 class="font-semibold text-bevap-navy">2. Implementação SSO</h4>
-                            <div class="flex items-center space-x-2">
-                                <button class="text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
-                                    <i class="fa-solid fa-grip-vertical"></i>
-                                </button>
-                                <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Responsável</label>
-                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                                    <option>TechPartners</option>
-                                    <option>Ana Costa</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
-                                <input type="number" value="160" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Duração (dias)</label>
-                                <input type="number" value="20" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm text-gray-600 mb-1">Dependências</label>
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Descoberta</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mt-3">
-                            <label class="block text-sm text-gray-600 mb-1">Observações</label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Configuração do SSO e integração com AD..."></textarea>
-                        </div>
-                        <div class="subtask-container ml-6 mt-4 space-y-3">
-                            <!-- Subtasks will be added here -->
-                        </div>
-                        <button onclick="addSubtask(this)" class="mt-3 text-bevap-green text-sm hover:underline">
-                            <i class="fa-solid fa-plus mr-1"></i>
-                            Adicionar Subtarefa
-                        </buttonclass="mt-3">
-                            <label class="block text-sm text-gray-600 mb-1">Observações</label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Configuração do SSO e integração com AD..."></textarea>
-                        </div>
-                        <div class="subtask-container ml-6 mt-4 space-y-3">
-                            <!-- Subtasks will be added here -->
-                        </div>
-                        <button onclick="addSubtask(this)" class="mt-3 text-bevap-green text-sm hover:underline">
-                            <i class="fa-solid fa-plus mr-1"></i>
-                            Adicionar Subtarefa
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div id="step-2" class="step-content hidden bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-calendar-alt mr-3 text-bevap-gold"></i>
-                    Cronograma & Marcos
-                </h3>
-                
-                <div class="mb-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h4 class="text-lg font-semibold text-bevap-navy">Marcos do Projeto</h4>
-                        <button onclick="addMilestone()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
-                            <i class="fa-solid fa-plus mr-2"></i>
-                            Adicionar Marco
-                        </button>
-                    </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-4 py-3 text-left text-gray-700 font-medium">Marco</th>
-                                    <th class="px-4 py-3 text-left text-gray-700 font-medium">Data</th>
-                                    <th class="px-4 py-3 text-left text-gray-700 font-medium">Critério de Aceite</th>
-                                    <th class="px-4 py-3 text-center text-gray-700 font-medium">Ações</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200">
-                                <tr>
-                                    <td class="px-4 py-3">
-                                        <input type="text" value="Plano Aprovado" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <input type="date" value="2026-02-05" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <input type="text" value="Documentação completa e aprovada" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <button onclick="removeMilestone(this)" class="text-red-400 hover:text-red-600">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="px-4 py-3">
-                                        <input type="text" value="Homologação Concluída" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <input type="date" value="2026-02-28" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <input type="text" value="Testes de integração aprovados" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
-                                    </td>
-                                    <td class="px-4 py-3 text-center">
-                                        <button onclick="removeMilestone(this)" class="text-red-400 hover:text-red-600">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <h4 class="text-lg font-semibold text-bevap-navy mb-3">Linha do Tempo</h4>
-                    <div class="space-y-3">
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-bevap-green rounded-full mr-3"></div>
-                            <div class="flex-1">
-                                <div class="font-medium">Descoberta e Análise</div>
-                                <div class="text-sm text-gray-600">25/01 - 31/01/2026</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
-                            <div class="flex-1">
-                                <div class="font-medium">Implementação SSO</div>
-                                <div class="text-sm text-gray-600">03/02 - 28/02/2026</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
-                            <div class="flex-1">
-                                <div class="font-medium">Testes e Validação</div>
-                                <div class="text-sm text-gray-600">03/03 - 14/03/2026</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="step-3" class="step-content hidden bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-exclamation-triangle mr-3 text-bevap-gold"></i>
-                    Riscos & Dependências
-                </h3>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="text-lg font-semibold text-bevap-navy">Matriz de Riscos</h4>
-                            <button onclick="addRisk()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
-                                <i class="fa-solid fa-plus mr-2"></i>
-                                Adicionar
-                            </button>
-                        </div>
-                        
-                        <div class="space-y-3">
-                            <div class="border border-red-200 rounded-lg p-4 bg-red-50">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h5 class="font-medium text-red-800">Integração SSO com legado</h5>
-                                    <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Alto</span>
-                                </div>
-                                <div class="text-sm text-red-700 mb-2">Probabilidade: Alta | Impacto: Alto</div>
-                                <div class="text-sm text-gray-700 mb-2">
-                                    <strong>Mitigação:</strong> Teste antecipado com sistemas legados
-                                </div>
-                                <div class="text-sm text-gray-700">
-                                    <strong>Plano B:</strong> Implementação gradual por sistema
-                                </div>
-                            </div>
-                            
-                            <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h5 class="font-medium text-yellow-800">Disponibilidade da equipe</h5>
-                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Médio</span>
-                                </div>
-                                <div class="text-sm text-yellow-700 mb-2">Probabilidade: Média | Impacto: Médio</div>
-                                <div class="text-sm text-gray-700 mb-2">
-                                    <strong>Mitigação:</strong> Backup de recursos internos
-                                </div>
-                                <div class="text-sm text-gray-700">
-                                    <strong>Plano B:</strong> Extensão de prazo se necessário
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <h4 class="text-lg font-semibold text-bevap-navy">Dependências Externas</h4>
-                            <button onclick="addDependency()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
-                                <i class="fa-solid fa-plus mr-2"></i>
-                                Adicionar
-                            </button>
-                        </div>
-                        
-                        <div class="space-y-3">
-                            <div class="border border-gray-200 rounded-lg p-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h5 class="font-medium text-bevap-navy">Acesso ao Active Directory</h5>
-                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
-                                        <i class="fa-solid fa-check mr-1"></i>OK
-                                    </span>
-                                </div>
-                                <div class="text-sm text-gray-600">Responsável: TI Infraestrutura</div>
-                            </div>
-                            
-                            <div class="border border-gray-200 rounded-lg p-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h5 class="font-medium text-bevap-navy">Homologação Segurança</h5>
-                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">
-                                        <i class="fa-solid fa-clock mr-1"></i>Pendente
-                                    </span>
-                                </div>
-                                <div class="text-sm text-gray-600">Responsável: Segurança da Informação</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="step-4" class="step-content hidden bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-users mr-3 text-bevap-gold"></i>
-                    RACI & Recursos
-                </h3>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="text-lg font-semibold text-bevap-navy mb-4">Matriz RACI</h4>
-                        
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm border border-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-3 py-2 text-left text-gray-700 font-medium border-r">Fase</th>
-                                        <th class="px-3 py-2 text-center text-gray-700 font-medium border-r">R</th>
-                                        <th class="px-3 py-2 text-center text-gray-700 font-medium border-r">A</th>
-                                        <th class="px-3 py-2 text-center text-gray-700 font-medium border-r">C</th>
-                                        <th class="px-3 py-2 text-center text-gray-700 font-medium">I</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="px-3 py-2 font-medium border-r">Descoberta</td>
-                                        <td class="px-3 py-2 text-center border-r">Ana C.</td>
-                                        <td class="px-3 py-2 text-center border-r">GP</td>
-                                        <td class="px-3 py-2 text-center border-r">Seg.</td>
-                                        <td class="px-3 py-2 text-center">Sol.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-3 py-2 font-medium border-r">Implementação</td>
-                                        <td class="px-3 py-2 text-center border-r">Tech</td>
-                                        <td class="px-3 py-2 text-center border-r">GP</td>
-                                        <td class="px-3 py-2 text-center border-r">TI</td>
-                                        <td class="px-3 py-2 text-center">Sol.</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-3 py-2 font-medium border-r">Testes</td>
-                                        <td class="px-3 py-2 text-center border-r">T
-                                        <td class="px-3 py-2 text-center border-r">TI</td>
-                                        <td class="px-3 py-2 text-center border-r">GP</td>
-                                        <td class="px-3 py-2 text-center border-r">Seg.</td>
-                                        <td class="px-3 py-2 text-center">Sol.</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-lg font-semibold text-bevap-navy mb-4">Alocação de Equipe</h4>
-                        <div class="space-y-3">
-                            <div class="border border-gray-200 rounded-lg p-3">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="font-medium">Ana Costa</span>
-                                    <span class="px-2 py-1 bg-bevap-green text-white text-xs rounded">TI</span>
-                                </div>
+                    <div id="wbs-container" class="space-y-4">
+                        <div class="wbs-item border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
+                            <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+                                <h4 class="font-semibold text-bevap-navy flex items-baseline gap-2">
+                                    <span class="wbs-number text-gray-500">1.</span>
+                                    <span class="wbs-title-text">Descoberta e Análise</span>
+                                </h4>
                                 <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600">Dedicação:</span>
-                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-bevap-green h-2 rounded-full" style="width: 50%"></div>
-                                    </div>
-                                    <span class="text-sm font-medium">50%</span>
+                                    <button class="text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
+                                        <i class="fa-solid fa-grip-vertical"></i>
+                                    </button>
+                                    <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600" title="Remover">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
                                 </div>
                             </div>
-                            <div class="border border-gray-200 rounded-lg p-3">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="font-medium">TechPartners</span>
-                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Fornecedor</span>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600">Dedicação:</span>
-                                    <div class="flex-1 bg-gray-200 rounded-full h-2">
-                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 100%"></div>
-                                    </div>
-                                    <span class="text-sm font-medium">100%</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <h4 class="text-lg font-semibold text-bevap-navy mt-6 mb-4">Plano de Comunicação</h4>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm border border-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-3 py-2 text-left text-gray-700 font-medium">Público</th>
-                                        <th class="px-3 py-2 text-left text-gray-700 font-medium">Canal</th>
-                                        <th class="px-3 py-2 text-left text-gray-700 font-medium">Periodicidade</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="px-3 py-2">Patrocinador</td>
-                                        <td class="px-3 py-2">E-mail</td>
-                                        <td class="px-3 py-2">Semanal</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-3 py-2">Equipe</td>
-                                        <td class="px-3 py-2">Daily</td>
-                                        <td class="px-3 py-2">Diária</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div id="step-5" class="step-content hidden bg-white rounded-lg shadow-md p-6">
-                <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-file-alt mr-3 text-bevap-gold"></i>
-                    Documentos & Revisão
-                </h3>
-                
-                <div class="mb-6">
-                    <h4 class="text-lg font-semibold text-bevap-navy mb-4">Anexar Documentos</h4>
-                    <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-bevap-green transition-colors cursor-pointer">
-                        <i class="fa-solid fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
-                        <p class="text-gray-600 mb-2">Arraste arquivos ou clique para selecionar</p>
-                        <p class="text-sm text-gray-500">PDF, DOC, XLS (máx. 10MB)</p>
-                    </div>
-                    
-                    <div class="mt-4 space-y-2">
-                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                            <div class="flex items-center space-x-3">
-                                <i class="fa-solid fa-file-pdf text-red-500 text-xl"></i>
+                            <div class="p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                                 <div>
-                                    <div class="font-medium text-sm">Plano_Projeto_SSO.pdf</div>
-                                    <div class="text-xs text-gray-500">2.4 MB</div>
+                                    <label class="block text-sm text-gray-600 mb-1">Responsável</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                        <option>Ana Costa</option>
+                                        <option>TechPartners</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
+                                    <input type="number" value="40" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Duração (dias)</label>
+                                    <input type="number" value="5" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Dependências</label>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Aprovação</span>
+                                    </div>
                                 </div>
                             </div>
-                            <button class="text-red-400 hover:text-red-600">
-                                <i class="fa-solid fa-trash"></i>
+
+                                <div class="mt-4">
+                                    <label class="block text-sm text-gray-600 mb-1">Observações</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Descreva detalhes relevantes desta fase..."></textarea>
+                                </div>
+
+                                <div class="subtask-container mt-4 space-y-3"></div>
+                                <button onclick="addSubtask(this)" class="mt-3 inline-flex items-center text-bevap-green text-sm hover:underline">
+                                    <i class="fa-solid fa-plus mr-1"></i>
+                                    Adicionar Subtarefa
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="wbs-item border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
+                            <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+                                <h4 class="font-semibold text-bevap-navy flex items-baseline gap-2">
+                                    <span class="wbs-number text-gray-500">2.</span>
+                                    <span class="wbs-title-text">Implementação SSO</span>
+                                </h4>
+                                <div class="flex items-center space-x-2">
+                                    <button class="text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
+                                        <i class="fa-solid fa-grip-vertical"></i>
+                                    </button>
+                                    <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600" title="Remover">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Responsável</label>
+                                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                        <option>TechPartners</option>
+                                        <option>Ana Costa</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
+                                    <input type="number" value="160" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Duração (dias)</label>
+                                    <input type="number" value="20" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Dependências</label>
+                                    <div class="flex flex-wrap gap-1">
+                                        <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Descoberta</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div class="mt-4">
+                                    <label class="block text-sm text-gray-600 mb-1">Observações</label>
+                                    <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Descreva detalhes relevantes desta fase..."></textarea>
+                                </div>
+
+                                <div class="subtask-container mt-4 space-y-3"></div>
+                                <button onclick="addSubtask(this)" class="mt-3 inline-flex items-center text-bevap-green text-sm hover:underline">
+                                    <i class="fa-solid fa-plus mr-1"></i>
+                                    Adicionar Subtarefa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-gray-200 flex justify-end">
+                        <button onclick="addPhase()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <i class="fa-solid fa-layer-group mr-2"></i>
+                            Nova fase
+                        </button>
+                    </div>
+            </div>
+
+            <div id="step-2" class="step-content hidden bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                        <i class="fa-solid fa-calendar-alt mr-3 text-bevap-gold"></i>
+                        Cronograma & Marcos
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-lg font-semibold text-bevap-navy">Marcos do Projeto</h4>
+                            <button onclick="addMilestone()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                <i class="fa-solid fa-plus mr-2"></i>
+                                Adicionar Marco
                             </button>
                         </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-gray-700 font-medium">Marco</th>
+                                        <th class="px-4 py-3 text-left text-gray-700 font-medium">Data</th>
+                                        <th class="px-4 py-3 text-left text-gray-700 font-medium">Critério de Aceite</th>
+                                        <th class="px-4 py-3 text-center text-gray-700 font-medium">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <tr>
+                                        <td class="px-4 py-3">
+                                            <input type="text" value="Plano Aprovado" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <input type="date" value="2026-02-05" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <input type="text" value="Documentação completa e aprovada" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <button onclick="removeMilestone(this)" class="text-red-400 hover:text-red-600">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="px-4 py-3">
+                                            <input type="text" value="Homologação Concluída" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <input type="date" value="2026-02-28" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            <input type="text" value="Testes de integração aprovados" class="w-full px-3 py-2 border border-gray-300 rounded text-sm">
+                                        </td>
+                                        <td class="px-4 py-3 text-center">
+                                            <button onclick="removeMilestone(this)" class="text-red-400 hover:text-red-600">
+                                                <i class="fa-solid fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <h4 class="text-lg font-semibold text-bevap-navy mb-3">Linha do Tempo</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-bevap-green rounded-full mr-3"></div>
+                                <div class="flex-1">
+                                    <div class="font-medium">Descoberta e Análise</div>
+                                    <div class="text-sm text-gray-600">25/01 - 31/01/2026</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-blue-500 rounded-full mr-3"></div>
+                                <div class="flex-1">
+                                    <div class="font-medium">Implementação SSO</div>
+                                    <div class="text-sm text-gray-600">03/02 - 28/02/2026</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
+                                <div class="flex-1">
+                                    <div class="font-medium">Testes e Validação</div>
+                                    <div class="text-sm text-gray-600">03/03 - 14/03/2026</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="mb-6">
-                    <h4 class="text-lg font-semibold text-bevap-navy mb-4">Checklist de Completude</h4>
-                    <div class="space-y-2">
-                        <label class="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
-                            <input type="checkbox" checked class="w-5 h-5 text-bevap-green rounded">
-                            <span class="text-sm">EAP/WBS definida com responsáveis</span>
-                        </label>
-                        <label class="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
-                            <input type="checkbox" checked class="w-5 h-5 text-bevap-green rounded">
-                            <span class="text-sm">Marcos e cronograma estabelecidos</span>
-                        </label>
-                        <label class="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
-                            <input type="checkbox" checked class="w-5 h-5 text-bevap-green rounded">
-                            <span class="text-sm">Riscos identificados e mitigação definida</span>
-                        </label>
-                        <label class="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
-                            <input type="checkbox" checked class="w-5 h-5 text-bevap-green rounded">
-                            <span class="text-sm">Matriz RACI preenchida</span>
-                        </label>
-                        <label class="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
-                            <input type="checkbox" checked class="w-5 h-5 text-bevap-green rounded">
-                            <span class="text-sm">Plano do Projeto anexado</span>
-                        </label>
+    
+                <div id="step-3" class="step-content hidden bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                        <i class="fa-solid fa-exclamation-triangle mr-3 text-bevap-gold"></i>
+                        Riscos & Dependências
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-bevap-navy">Matriz de Riscos</h4>
+                                <button onclick="addRisk()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fa-solid fa-plus mr-2"></i>
+                                    Adicionar
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="border border-red-200 rounded-lg p-4 bg-red-50">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="font-medium text-red-800">Integração SSO com legado</h5>
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Alto</span>
+                                    </div>
+                                    <div class="text-sm text-red-700 mb-2">Probabilidade: Alta | Impacto: Alto</div>
+                                    <div class="text-sm text-gray-700 mb-2">
+                                        <strong>Mitigação:</strong> Teste antecipado com sistemas legados
+                                    </div>
+                                    <div class="text-sm text-gray-700">
+                                        <strong>Plano B:</strong> Implementação gradual por sistema
+                                    </div>
+                                </div>
+                                
+                                <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="font-medium text-yellow-800">Disponibilidade da equipe</h5>
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Médio</span>
+                                    </div>
+                                    <div class="text-sm text-yellow-700 mb-2">Probabilidade: Média | Impacto: Médio</div>
+                                    <div class="text-sm text-gray-700 mb-2">
+                                        <strong>Mitigação:</strong> Backup de recursos internos
+                                    </div>
+                                    <div class="text-sm text-gray-700">
+                                        <strong>Plano B:</strong> Extensão de prazo se necessário
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-bevap-navy">Dependências Externas</h4>
+                                <button onclick="addDependency()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fa-solid fa-plus mr-2"></i>
+                                    Adicionar
+                                </button>
+                            </div>
+                            
+                            <div class="space-y-3">
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="font-medium text-bevap-navy">Acesso ao Active Directory</h5>
+                                        <span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">
+                                            <i class="fa-solid fa-check mr-1"></i>OK
+                                        </span>
+                                    </div>
+                                    <div class="text-sm text-gray-600">Responsável: TI Infraestrutura</div>
+                                </div>
+                                
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="font-medium text-bevap-navy">Homologação Segurança</h5>
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">
+                                            <i class="fa-solid fa-clock mr-1"></i>Pendente
+                                        </span>
+                                    </div>
+                                    <div class="text-sm text-gray-600">Responsável: Segurança da Informação</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
-                    <h4 class="text-lg font-semibold text-bevap-navy mb-4">Resumo do Plano</h4>
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-bevap-navy">4</div>
-                            <div class="text-sm text-gray-600">Fases</div>
+    
+                <div id="step-4" class="step-content hidden bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                        <i class="fa-solid fa-users mr-3 text-bevap-gold"></i>
+                        RACI & Recursos
+                    </h3>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div>
+                            <h4 class="text-lg font-semibold text-bevap-navy mb-4">Matriz RACI</h4>
+                            
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border border-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-3 py-2 text-left text-gray-700 font-medium border-r">Fase</th>
+                                            <th class="px-3 py-2 text-center text-gray-700 font-medium border-r">R</th>
+                                            <th class="px-3 py-2 text-center text-gray-700 font-medium border-r">A</th>
+                                            <th class="px-3 py-2 text-center text-gray-700 font-medium border-r">C</th>
+                                            <th class="px-3 py-2 text-center text-gray-700 font-medium">I</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="px-3 py-2 font-medium border-r">Descoberta</td>
+                                            <td class="px-3 py-2 text-center border-r">Ana C.</td>
+                                            <td class="px-3 py-2 text-center border-r">GP</td>
+                                            <td class="px-3 py-2 text-center border-r">Seg.</td>
+                                            <td class="px-3 py-2 text-center">Sol.</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-3 py-2 font-medium border-r">Implementação</td>
+                                            <td class="px-3 py-2 text-center border-r">Tech</td>
+                                            <td class="px-3 py-2 text-center border-r">GP</td>
+                                            <td class="px-3 py-2 text-center border-r">TI</td>
+                                            <td class="px-3 py-2 text-center">Sol.</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-3 py-2 font-medium border-r">Testes</td>
+                                            <td class="px-3 py-2 text-center border-r">T
+                                            <td class="px-3 py-2 text-center border-r">TI</td>
+                                            <td class="px-3 py-2 text-center border-r">GP</td>
+                                            <td class="px-3 py-2 text-center border-r">Seg.</td>
+                                            <td class="px-3 py-2 text-center">Sol.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-bevap-navy">280</div>
-                            <div class="text-sm text-gray-600">Horas Esforço</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-bevap-navy">35</div>
-                            <div class="text-sm text-gray-600">Dias Duração</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-3xl font-bold text-red-600">1</div>
-                            <div class="text-sm text-gray-600">Riscos Altos</div>
+                        
+                        <div>
+                            <h4 class="text-lg font-semibold text-bevap-navy mb-4">Alocação de Equipe</h4>
+                            <div class="space-y-3">
+                                <div class="border border-gray-200 rounded-lg p-3">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-medium">Ana Costa</span>
+                                        <span class="px-2 py-1 bg-bevap-green text-white text-xs rounded">TI</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-600">Dedicação:</span>
+                                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-bevap-green h-2 rounded-full" style="width: 50%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium">50%</span>
+                                    </div>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-3">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="font-medium">TechPartners</span>
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Fornecedor</span>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-sm text-gray-600">Dedicação:</span>
+                                        <div class="flex-1 bg-gray-200 rounded-full h-2">
+                                            <div class="bg-blue-500 h-2 rounded-full" style="width: 100%"></div>
+                                        </div>
+                                        <span class="text-sm font-medium">100%</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h4 class="text-lg font-semibold text-bevap-navy mt-6 mb-4">Plano de Comunicação</h4>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border border-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-3 py-2 text-left text-gray-700 font-medium">Público</th>
+                                            <th class="px-3 py-2 text-left text-gray-700 font-medium">Canal</th>
+                                            <th class="px-3 py-2 text-left text-gray-700 font-medium">Periodicidade</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="px-3 py-2">Patrocinador</td>
+                                            <td class="px-3 py-2">E-mail</td>
+                                            <td class="px-3 py-2">Semanal</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-3 py-2">Equipe</td>
+                                            <td class="px-3 py-2">Daily</td>
+                                            <td class="px-3 py-2">Diária</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
+    
+                <div id="step-5" class="step-content hidden bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                        <i class="fa-solid fa-file-alt mr-3 text-bevap-gold"></i>
+                        Documentos & Revisão
+                    </h3>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold text-bevap-navy mb-4">Anexar Documentos</h4>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-bevap-green transition-colors cursor-pointer">
+                            <i class="fa-solid fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-600 mb-2">Arraste arquivos ou clique para selecionar</p>
+                            <p class="text-sm text-gray-500">PDF, DOC, XLS (máx. 10MB)</p>
+                        </div>
+                        
+                        <div class="mt-4 space-y-2">
+                            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-center space-x-3">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-xl"></i>
+                                    <div>
+                                        <div class="font-medium text-sm">Plano_Projeto_SSO.pdf</div>
+                                        <div class="text-xs text-gray-500">2.4 MB</div>
+                                    </div>
+                                </div>
+                                <button class="text-red-400 hover:text-red-600">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold text-bevap-navy mb-4">Checklist de Completude</h4>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" checked class="w-5 h-5 text-bevap-green rounded">
+                                <span class="text-sm">EAP/WBS definida com responsáveis</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" checked class="w-5 h-5 text-bevap-green rounded">
+                                <span class="text-sm">Marcos e cronograma estabelecidos</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" checked class="w-5 h-5 text-bevap-green rounded">
+                                <span class="text-sm">Riscos identificados e mitigação definida</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" checked class="w-5 h-5 text-bevap-green rounded">
+                                <span class="text-sm">Matriz RACI preenchida</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-3 bg-green-50 border border-green-200 rounded-lg cursor-pointer">
+                                <input type="checkbox" checked class="w-5 h-5 text-bevap-green rounded">
+                                <span class="text-sm">Plano do Projeto anexado</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6">
+                        <h4 class="text-lg font-semibold text-bevap-navy mb-4">Resumo do Plano</h4>
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-bevap-navy">4</div>
+                                <div class="text-sm text-gray-600">Fases</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-bevap-navy">280</div>
+                                <div class="text-sm text-gray-600">Horas Esforço</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-bevap-navy">35</div>
+                                <div class="text-sm text-gray-600">Dias Duração</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-3xl font-bold text-red-600">1</div>
+                                <div class="text-sm text-gray-600">Riscos Altos</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <div class="flex justify-between mt-8 pt-6 border-t">
+                <button id="prev-btn" onclick="previousStep()" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all disabled:opacity-50" disabled>
+                    <i class="fa-solid fa-arrow-left mr-2"></i>
+                    Anterior
+                </button>
+                <button id="next-btn" onclick="nextStep()" class="px-6 py-2.5 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:shadow-none">
+                    <span id="next-btn-label">Próximo</span>
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
             </div>
         </div>
 
         <aside id="summary-panel" class="lg:col-span-1">
-            <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
-                <div class="mb-6">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-gray-600">Código</span>
-                        <span class="font-mono text-sm font-medium text-bevap-navy">PRJ-2026-014</span>
+                <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-600">Código</span>
+                            <span class="font-mono text-sm font-medium text-bevap-navy">PRJ-2026-014</span>
+                        </div>
+                        <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-3">Implantar SSO</h2>
+                        
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">Crítico</span>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Externo</span>
+                            <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Planejamento</span>
+                        </div>
+                        
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Responsável TI</span>
+                                <span class="font-medium">Ana Costa</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Patrocinador</span>
+                                <span class="font-medium">Diretoria TI</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Área</span>
+                                <span class="font-medium">TI</span>
+                            </div>
+                        </div>
                     </div>
-                    <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-3">Implantar SSO</h2>
                     
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="px-3 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">Crítico</span>
-                        <span class="px-3 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">Externo</span>
-                        <span class="px-3 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Planejamento</span>
+                    <div class="mb-6 pb-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-600">Progresso do Plano</span>
+                            <span class="text-sm font-bold text-bevap-green">20%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-bevap-green h-2 rounded-full" style="width: 20%"></div>
+                        </div>
                     </div>
                     
-                    <div class="space-y-3 text-sm">
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-600">Responsável TI</span>
-                            <span class="font-medium">Ana Costa</span>
+                    <div class="mb-6 pb-6 border-b border-gray-200">
+                        <h3 class="font-semibold text-bevap-navy mb-3">Datas</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Início Previsto</span>
+                                <span class="font-medium">25/01/2026</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-600">Término Previsto</span>
+                                <span class="font-medium">14/03/2026</span>
+                            </div>
                         </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-600">Patrocinador</span>
-                            <span class="font-medium">Diretoria TI</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-600">Área</span>
-                            <span class="font-medium">TI</span>
+                    </div>
+                    
+                    <div class="bg-bevap-gold bg-opacity-10 rounded-lg p-4 mb-4">
+                        <div class="flex items-start space-x-2">
+                            <i class="fa-solid fa-flag text-bevap-gold mt-1"></i>
+                            <div>
+                                <div class="font-semibold text-bevap-navy text-sm mb-1">Próximo Marco</div>
+                                <div class="text-sm text-gray-700">Plano Aprovado</div>
+                                <div class="text-xs text-gray-600 mt-1">05/02/2026</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
-                <div class="mb-6 pb-6 border-b border-gray-200">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm text-gray-600">Progresso do Plano</span>
-                        <span class="text-sm font-bold text-bevap-green">20%</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-bevap-green h-2 rounded-full" style="width: 20%"></div>
-                    </div>
-                </div>
-                
-                <div class="mb-6 pb-6 border-b border-gray-200">
-                    <h3 class="font-semibold text-bevap-navy mb-3">Datas</h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-600">Início Previsto</span>
-                            <span class="font-medium">25/01/2026</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-600">Término Previsto</span>
-                            <span class="font-medium">14/03/2026</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-bevap-gold bg-opacity-10 rounded-lg p-4 mb-4">
-                    <div class="flex items-start space-x-2">
-                        <i class="fa-solid fa-flag text-bevap-gold mt-1"></i>
-                        <div>
-                            <div class="font-semibold text-bevap-navy text-sm mb-1">Próximo Marco</div>
-                            <div class="text-sm text-gray-700">Plano Aprovado</div>
-                            <div class="text-xs text-gray-600 mt-1">05/02/2026</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </aside>
     </div>
 </main>
@@ -705,59 +703,146 @@
 </footer>
 
 <script>
+    let currentStep = 1;
+    const totalSteps = 5;
+    const stepLabels = {
+        1: 'EAP/WBS',
+        2: 'Cronograma',
+        3: 'Riscos',
+        4: 'RACI',
+        5: 'Documentos'
+    };
+
+    function goToStep(step) {
+        if (step < 1 || step > totalSteps) return;
+        const current = document.getElementById('step-' + currentStep);
+        const next = document.getElementById('step-' + step);
+        if (current) current.classList.add('hidden');
+        if (next) next.classList.remove('hidden');
+        currentStep = step;
+
+        updateStepLabel();
+        updateStepper();
+        updateNavButtons();
+    }
+
     function previousStep() {
-        const currentStep = document.getElementById('current-step');
-        const step = parseInt(currentStep.textContent.replace(/[^0-9]/g, ''));
-        
-        if (step > 1) {
-            currentStep.textContent = `Etapa ${step - 1}`;
-            document.getElementById('step-' + step).classList.add('hidden');
-            document.getElementById('step-' + (step - 1)).classList.remove('hidden');
-            
-            // Atualizar progresso
-            const progress = document.getElementById('progress-1-2');
-            progress.style.width = '20%';
-            
-            document.getElementById('prev-btn').disabled = false;
-            document.getElementById('next-btn').disabled = false;
+        if (currentStep <= 1) return;
+        goToStep(currentStep - 1);
+    }
+
+    function nextStep() {
+        if (currentStep >= totalSteps) return;
+        goToStep(currentStep + 1);
+    }
+
+    function updateStepLabel() {
+        const stepLabel = document.getElementById('current-step');
+        if (stepLabel) stepLabel.textContent = `Etapa ${currentStep}`;
+    }
+
+    function updateNavButtons() {
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const nextLabel = document.getElementById('next-btn-label');
+        if (!prevBtn || !nextBtn) return;
+
+        prevBtn.disabled = currentStep === 1;
+        nextBtn.disabled = currentStep === totalSteps;
+
+        if (nextLabel) {
+            if (currentStep < totalSteps) {
+                nextLabel.textContent = `Próximo: ${stepLabels[currentStep + 1]}`;
+            } else {
+                nextLabel.textContent = 'Concluir';
+            }
         }
     }
-    
-    function nextStep() {
-        const currentStep = document.getElementById('current-step');
-        const step = parseInt(currentStep.textContent.replace(/[^0-9]/g, ''));
-        
-        if (step < 5) {
-            currentStep.textContent = `Etapa ${step + 1}`;
-            document.getElementById('step-' + step).classList.add('hidden');
-            document.getElementById('step-' + (step + 1)).classList.remove('hidden');
-            
-            // Atualizar progresso
-            const progress = document.getElementById('progress-1-2');
-            progress.style.width = '20%';
-            
-            document.getElementById('prev-btn').disabled = false;
-            document.getElementById('next-btn').disabled = false;
+
+    function updateStepper() {
+        const partial = 35;
+
+        for (let i = 1; i <= totalSteps; i++) {
+            const indicator = document.getElementById(`step-indicator-${i}`);
+            const label = document.getElementById(`step-label-${i}`);
+            if (!indicator) continue;
+
+            if (i <= currentStep) {
+                indicator.classList.remove('bg-gray-300', 'text-gray-600');
+                indicator.classList.add('bg-bevap-green', 'text-white');
+                if (label) {
+                    label.classList.remove('text-gray-600');
+                    label.classList.add('text-bevap-green', 'font-medium');
+                }
+            } else {
+                indicator.classList.remove('bg-bevap-green', 'text-white');
+                indicator.classList.add('bg-gray-300', 'text-gray-600');
+                if (label) {
+                    label.classList.remove('text-bevap-green', 'font-medium');
+                    label.classList.add('text-gray-600');
+                }
+            }
+
+            indicator.textContent = String(i);
         }
+
+        const progressMap = {
+            'progress-1-2': 0,
+            'progress-2-3': 0,
+            'progress-3-4': 0,
+            'progress-4-5': 0
+        };
+
+        if (currentStep === 1) {
+            progressMap['progress-1-2'] = partial;
+        } else if (currentStep === 2) {
+            progressMap['progress-1-2'] = 100;
+            progressMap['progress-2-3'] = partial;
+        } else if (currentStep === 3) {
+            progressMap['progress-1-2'] = 100;
+            progressMap['progress-2-3'] = 100;
+            progressMap['progress-3-4'] = partial;
+        } else if (currentStep === 4) {
+            progressMap['progress-1-2'] = 100;
+            progressMap['progress-2-3'] = 100;
+            progressMap['progress-3-4'] = 100;
+            progressMap['progress-4-5'] = partial;
+        } else if (currentStep === 5) {
+            progressMap['progress-1-2'] = 100;
+            progressMap['progress-2-3'] = 100;
+            progressMap['progress-3-4'] = 100;
+            progressMap['progress-4-5'] = 100;
+        }
+
+        Object.entries(progressMap).forEach(([id, width]) => {
+            const bar = document.getElementById(id);
+            if (bar) bar.style.width = `${width}%`;
+        });
     }
     
     function addPhase() {
         const container = document.getElementById('wbs-container');
         const phase = document.createElement('div');
-        phase.className = 'wbs-item border border-gray-200 rounded-lg p-4';
+        phase.className = 'wbs-item border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm';
+
+        const nextNumber = (container?.querySelectorAll('.wbs-item')?.length || 0) + 1;
         
         phase.innerHTML = `
-            <div class="flex items-center justify-between mb-3">
-                <input type="text" value="Nova Fase" class="font-semibold text-bevap-navy w-full border-b-2 border-gray-200 focus:border-bevap-green focus:outline-none" placeholder="Nome da Fase">
-                <div class="flex items-center space-x-2">
-                    <button onclick="moveUp(this)" class="text-gray-400 hover:text-gray-600">
-                        <i class="fa-solid fa-chevron-up"></i>
-                    </button>
+            <div class="flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div class="flex items-baseline gap-2 w-full">
+                    <span class="wbs-number text-gray-500">${nextNumber}.</span>
+                    <input type="text" value="Nova Fase" class="font-semibold text-bevap-navy w-full bg-transparent focus:outline-none" placeholder="Nome da Fase">
+                </div>
+                <div class="flex items-center space-x-2 pl-3">
                     <button class="text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
-                        <i class="fa-solid fa-grip-vertical
+                        <i class="fa-solid fa-grip-vertical"></i>
+                    </button>
+                    <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600" title="Remover">
+                        <i class="fa-solid fa-trash"></i>
                     </button>
                 </div>
             </div>
+            <div class="p-4">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div>
                     <label class="block text-sm text-gray-600 mb-1">Responsável</label>
@@ -781,17 +866,85 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-3">
-                <label class="block text-sm text-gray-600 mb-1">Observações</label>
-                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Levantamento de requisitos e análise de integração..."></textarea>
             </div>
-            <button onclick="addSubtask(this)" class="mt-3 text-bevap-green text-sm hover:underline">
-                <i class="fa-solid fa-plus mr-1"></i>
-                Adicionar Subtarefa
-            </button>
         `;
         
         container.appendChild(phase);
+        updateWbsNumbers();
+    }
+
+    function updateWbsNumbers() {
+        const container = document.getElementById('wbs-container');
+        if (!container) return;
+
+        const items = Array.from(container.querySelectorAll(':scope > .wbs-item'));
+        items.forEach((item, index) => {
+            const numberEl = item.querySelector('.wbs-number');
+            if (numberEl) numberEl.textContent = `${index + 1}.`;
+        });
+    }
+
+    function removeItem(element) {
+        const subtask = element.closest('.wbs-subtask');
+        if (subtask) {
+            if (confirm('Tem certeza que deseja remover esta subtarefa?')) {
+                subtask.remove();
+            }
+            return;
+        }
+
+        const item = element.closest('.wbs-item');
+        if (!item) return;
+        if (confirm('Tem certeza que deseja remover esta fase?')) {
+            item.remove();
+            updateWbsNumbers();
+        }
+    }
+
+    function addSubtask(buttonElement) {
+        const phaseItem = buttonElement.closest('.wbs-item');
+        if (!phaseItem) return;
+
+        const container = phaseItem.querySelector('.subtask-container');
+        if (!container) return;
+
+        const subtaskIndex = container.children.length + 1;
+        const subtask = document.createElement('div');
+        subtask.className = 'wbs-subtask border border-gray-200 rounded-lg bg-gray-50 p-4 ml-4';
+
+        subtask.innerHTML = `
+            <div class="flex items-center justify-between mb-3">
+                <input type="text" value="Subtarefa ${subtaskIndex}" class="font-semibold text-bevap-navy w-full bg-transparent border-b border-gray-200 focus:outline-none focus:border-bevap-green" placeholder="Nome da Subtarefa">
+                <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600 ml-3" title="Remover">
+                    <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Responsável</label>
+                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+                        <option>TechPartners</option>
+                        <option>Ana Costa</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
+                    <input type="number" value="8" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Duração (dias)</label>
+                    <input type="number" value="1" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+                </div>
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">Dependências</label>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-1 bg-white text-gray-700 text-xs rounded border border-gray-200">—</span>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        container.appendChild(subtask);
     }
     
     function addMilestone() {
@@ -858,62 +1011,6 @@
         container.appendChild(dependency);
     }
     
-    function addSubtask() {
-        const container = document.querySelector('div.wbs-item');
-        const subtask = document.createElement('div');
-        subtask.className = 'wbs-item border border-gray-200 rounded-lg p-4';
-        
-        subtask.innerHTML = `
-            <div class="flex items-center justify-between mb-3">
-                <h4 class="font-semibold text-bevap-navy">Nova Subtarefa</h4>
-                <div class="flex items-center space-x-2">
-                    <button onclick="moveUp(this)" class="text-gray-400 hover:text-gray-600">
-                        <i class="fa-solid fa-chevron-up"></i>
-                    </button>
-                    <button onclick="moveDown(this)" class="text-gray-400 hover:text-gray-600">
-                        <i class="fa-solid fa-chevron-down"></i>
-                    </button>
-                    <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Responsável</label>
-                    <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                        <option>Ana Costa</option>
-                        <option>TechPartners</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
-                    <input type="number" value="40" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Duração (dias)</label>
-                    <input type="number" value="5" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-                </div>
-                <div>
-                    <label class="block text-sm text-gray-600 mb-1">Dependências</label>
-                    <div class="flex flex-wrap gap-1">
-                        <span class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded">Aprovação</span>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-3">
-                <label class="block text-sm text-gray-600 mb-1">Observações</label>
-                <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Levantamento de requisitos e análise de integração..."></textarea>
-            </div>
-            <button onclick="addSubtask(this)" class="mt-3 text-bevap-green text-sm hover:underline">
-                <i class="fa-solid fa-plus mr-1"></i>
-                Adicionar Subtarefa
-            </button>
-        `;
-        
-        container.appendChild(subtask);
-    }
-    
     function moveUp(element) {
         const parent = element.closest('div.wbs-item');
         const index = Array.from(parent.parentElement.children).indexOf(parent);
@@ -947,14 +1044,23 @@
             alert('Cancelado com sucesso!');
         }
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const wbsContainer = document.getElementById('wbs-container');
+        if (!wbsContainer) return;
+
+        new Sortable(wbsContainer, {
+            animation: 150,
+            handle: '.cursor-grab',
+            ghostClass: 'bg-blue-100',
+            onEnd: () => updateWbsNumbers()
+        });
+
+        updateWbsNumbers();
+        updateStepLabel();
+        updateStepper();
+        updateNavButtons();
+    });
 </script>
 </body>
 </html>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const wbsContainer = document.getElementById('wbs-container');
-        new Sortable(wbsContainer, {
-            animation: 150,
-            handle: '.cursor-grab', // handle for moving items
-            ghostClass: 'bg-blue-100'
-        });
-    });
