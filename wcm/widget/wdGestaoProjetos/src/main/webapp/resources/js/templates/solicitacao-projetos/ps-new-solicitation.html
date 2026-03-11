@@ -1,0 +1,442 @@
+<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    
+    <div id="stepper" class="mb-8">
+        <div class="flex items-center max-w-4xl mx-auto">
+            <!-- Step 1 -->
+            <div class="flex-1 flex flex-col items-center relative">
+                <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-semibold z-10">1</div>
+                <span class="text-xs mt-2 font-medium text-gray-500">Dados Básicos</span>
+                <div class="line-right absolute top-5 left-1/2 w-1/2 h-1 bg-gray-300 z-0"></div>
+            </div>
+            <!-- Step 2 -->
+            <div class="flex-1 flex flex-col items-center relative">
+                <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-semibold z-10">2</div>
+                <span class="text-xs mt-2 font-medium text-gray-500">Escopo</span>
+                <div class="line-left absolute top-5 right-1/2 w-1/2 h-1 bg-gray-300 z-0"></div>
+                <div class="line-right absolute top-5 left-1/2 w-1/2 h-1 bg-gray-300 z-0"></div>
+            </div>
+            <!-- Step 3 -->
+            <div class="flex-1 flex flex-col items-center relative">
+                <div class="w-10 h-10 rounded-full bg-gray-300 text-gray-600 flex items-center justify-center font-semibold z-10">3</div>
+                <span class="text-xs mt-2 font-medium text-gray-500">Anexos & Envio</span>
+                <div class="line-left absolute top-5 right-1/2 w-1/2 h-1 bg-gray-300 z-0"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div id="form-section" class="lg:col-span-2">
+            
+            <div id="step-1" class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-file-lines"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Dados Básicos</h2>
+                </div>
+
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Título do Projeto <span class="text-red-500">*</span>
+                            <button class="ml-1 text-gray-400 hover:text-gray-600" title="Dê um nome claro e objetivo ao projeto">
+                                <i class="fa-solid fa-circle-info text-xs"></i>
+                            </button>
+                        </label>
+                        <input type="text" id="titulo" placeholder="Ex: Implantar SSO corporativo" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="titulo" required>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Área/Unidade <span class="text-red-500">*</span>
+                            </label>
+                            <select id="area" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="area" required>
+                                <option value="">Selecione...</option>
+                                <option value="ti">Tecnologia da Informação</option>
+                                <option value="rh">Recursos Humanos</option>
+                                <option value="financeiro">Financeiro</option>
+                                <option value="operacoes">Operações</option>
+                                <option value="comercial">Comercial</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Centro de Custo <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="centro-custo" placeholder="Ex: 1001-TI" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="centro-custo" required>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Patrocinador <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="patrocinador" placeholder="Ex: Diretoria TI" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="patrocinador" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Objetivo do Projeto <span class="text-red-500">*</span>
+                        </label>
+                        <textarea rows="3" id="objetivo" placeholder="Descreva o que se pretende alcançar com este projeto..." class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="objetivo" required></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Problema/Oportunidade <span class="text-red-500">*</span>
+                        </label>
+                        <textarea rows="3" id="problema" placeholder="Qual problema será resolvido ou oportunidade explorada?" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="problema" required></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Benefícios Esperados <span class="text-red-500">*</span>
+                        </label>
+                        <textarea rows="3" id="beneficios" placeholder="Ex: Melhoria na segurança e experiência do usuário" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="beneficios" required></textarea>
+                    </div>
+
+                    <div class="flex items-start">
+                        <input type="checkbox" id="alinhamento" class="field-input mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" data-field="alinhamento">
+                        <label for="alinhamento" class="ml-3 text-sm text-gray-700">
+                            <span class="font-medium">Alinhado aos objetivos estratégicos BEVAP</span>
+                            <p class="text-gray-500 text-xs mt-1">Este projeto está alinhado com os objetivos estratégicos da organização</p>
+                        </label>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Prioridade</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
+                                <input type="radio" name="prioridade" value="critico" class="field-input sr-only peer" data-field="prioridade">
+                                <div class="peer-checked:border-red-500 peer-checked:bg-red-50 absolute inset-0 rounded-lg border-2"></div>
+                                <div class="relative flex items-center">
+                                    <i class="fa-solid fa-circle-exclamation text-red-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-semibold text-gray-900">Crítico</div>
+                                        <div class="text-xs text-gray-500">Urgente</div>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
+                                <input type="radio" name="prioridade" value="estrategico" class="field-input sr-only peer" data-field="prioridade" checked>
+                                <div class="peer-checked:border-bevap-green peer-checked:bg-green-50 absolute inset-0 rounded-lg border-2"></div>
+                                <div class="relative flex items-center">
+                                    <i class="fa-solid fa-star text-bevap-green text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-semibold text-gray-900">Estratégico</div>
+                                        <div class="text-xs text-gray-500">Importante</div>
+                                    </div>
+                                </div>
+                            </label>
+                            <label class="relative flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green transition-all">
+                                <input type="radio" name="prioridade" value="operacional" class="field-input sr-only peer" data-field="prioridade">
+                                <div class="peer-checked:border-blue-500 peer-checked:bg-blue-50 absolute inset-0 rounded-lg border-2"></div>
+                                <div class="relative flex items-center">
+                                    <i class="fa-solid fa-circle text-blue-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-semibold text-gray-900">Operacional</div>
+                                        <div class="text-xs text-gray-500">Normal</div>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end mt-8 pt-6 border-t">
+                    <button data-action="next-step" data-step="2" class="px-6 py-2.5 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md hover:shadow-lg">
+                        Próximo: Escopo <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="step-2" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-list-check"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Escopo</h2>
+                </div>
+
+                <div class="space-y-5">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Escopo Inicial <span class="text-red-500">*</span>
+                            <button class="ml-1 text-gray-400 hover:text-gray-600" title="Descreva o que está incluído no projeto">
+                                <i class="fa-solid fa-circle-info text-xs"></i>
+                            </button>
+                        </label>
+                        <textarea rows="4" id="escopo-inicial" placeholder="Detalhe o que será entregue neste projeto..." class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="escopo-inicial" required></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Fora de Escopo <span class="text-red-500">*</span></label>
+                        <textarea rows="3" placeholder="O que NÃO será incluído neste projeto..." class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="out-of-scope" required></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Dependências <span class="text-red-500">*</span></label>
+                        <textarea rows="3" placeholder="Quais outros projetos, sistemas ou recursos são necessários?" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="dependencies" required></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Riscos Iniciais</label>
+                        <div id="riscos-list" class="space-y-2 mb-3">
+                            <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+                                <input type="text" placeholder="Descreva um risco potencial..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="riscos">
+                                <button class="text-red-500 hover:text-red-700">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button data-action="add-risk" class="text-sm text-bevap-green hover:text-green-700 font-medium">
+                            <i class="fa-solid fa-plus mr-1"></i> Adicionar Risco
+                        </button>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Stakeholders</label>
+                        <div class="flex flex-wrap gap-2 mb-3" id="stakeholders-list">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">
+                                Diretoria TI
+                                <button class="ml-2 hover:text-red-300">
+                                    <i class="fa-solid fa-times text-xs"></i>
+                                </button>
+                            </span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">
+                                Equipe de Segurança
+                                <button class="ml-2 hover:text-red-300">
+                                    <i class="fa-solid fa-times text-xs"></i>
+                                </button>
+                            </span>
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="stakeholder-input" placeholder="Nome do stakeholder..." class="field-input flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" data-field="stakeholders">
+                            <button data-action="add-stakeholder" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>  
+
+                <div class="flex justify-between mt-8 pt-6 border-t">
+                    <button data-action="prev-step" data-step="1" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Voltar
+                    </button>
+                    <button data-action="next-step" data-step="3" class="px-6 py-2.5 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md hover:shadow-lg">
+                        Próximo: Anexos & Envio <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="step-3" class="bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+                <div class="flex items-center mb-6">
+                    <div class="w-8 h-8 rounded-full bg-bevap-navy text-white flex items-center justify-center mr-3">
+                        <i class="fa-solid fa-paperclip"></i>
+                    </div>
+                    <h2 class="text-2xl font-montserrat font-bold text-bevap-navy">Anexos & Envio</h2>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-3">Documentos Anexos</label>
+                        <div id="dropzone" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-bevap-green transition-all cursor-pointer bg-gray-50">
+                            <i class="fa-solid fa-cloud-arrow-up text-4xl text-gray-400 mb-3"></i>
+                            <p class="text-gray-600 font-medium mb-1">Arraste arquivos aqui ou clique para selecionar</p>
+                            <p class="text-sm text-gray-500">Proposta, Estudos, Prints (PDF, DOC, XLS, PNG, JPG - Máx. 10MB)</p>
+                        </div>
+
+                        <div id="files-list" class="mt-4 space-y-2">
+                            <div class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-sm">proposta-sso.pdf</div>
+                                        <div class="text-xs text-gray-500">2.4 MB</div>
+                                    </div>
+                                </div>
+                                <button class="text-red-500 hover:text-red-700">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t pt-6">
+                        <div class="flex items-start mb-4">
+                            <input type="checkbox" id="declaracao" class="field-input mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" data-field="declaracao" required>
+                            <label for="declaracao" class="ml-3 text-sm text-gray-700">
+                                <span class="font-medium">Declaro que as informações fornecidas são verdadeiras <span class="text-red-500">*</span></span>
+                                <p class="text-gray-500 text-xs mt-1">Confirmo que todas as informações prestadas nesta solicitação são precisas e completas</p>
+                            </label>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Observações Adicionais</label>
+                            <textarea rows="3" id="observacoes" placeholder="Alguma informação adicional relevante..." class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="observacoes"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-start mt-8 pt-6 border-t">
+                    <button data-action="go-prev-step" class="px-6 py-2.5 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all">
+                        <i class="fa-solid fa-arrow-left mr-2"></i> Voltar
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="sidebar-summary" class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                
+                <div id="summary-card" class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-clipboard-list mr-2 text-bevap-gold"></i>
+                        Resumo da Solicitação
+                    </h3>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Código</span>
+                            <span class="font-mono font-semibold text-bevap-navy">PRJ-2024-001</span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Prioridade</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
+                                <i class="fa-solid fa-star mr-1"></i> Estratégico
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Área</span>
+                            <span class="font-medium text-gray-900">TI</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Patrocinador</span>
+                            <span class="font-medium text-gray-900">Diretoria TI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="checklist-card" class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-tasks mr-2 text-bevap-gold"></i>
+                        Checklist
+                    </h3>
+                    
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center">
+                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">○</span>
+                            <span class="text-gray-400">Dados Básicos</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">○</span>
+                            <span class="text-gray-400">Escopo Definido</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">○</span>
+                            <span class="text-gray-400">Anexos & Envio</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-4 border-t">
+                        <div class="flex items-center justify-between text-sm mb-2">
+                            <span class="text-gray-600">Completude</span>
+                            <span class="font-semibold text-bevap-navy">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-bevap-green h-2 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div class="flex items-start">
+                        <i class="fa-solid fa-lightbulb text-blue-500 mt-1 mr-3"></i>
+                        <div class="text-sm text-blue-800">
+                            <p class="font-medium mb-1">Dica</p>
+                            <p class="text-xs">Preencha todos os campos obrigatórios para enviar sua solicitação. Seus dados são salvos automaticamente.</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center justify-between">
+            <button data-action="save-draft" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
+                <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
+            </button>
+            <div class="flex items-center space-x-3">
+                <button data-action="cancel-form" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
+                    <i class="fa-solid fa-ban mr-2"></i> Cancelar
+                </button>
+                <button data-action="submit-form" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Enviar para Avaliação TI
+                </button>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div id="success-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+        <div class="w-20 h-20 bg-bevap-green rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-check text-white text-4xl"></i>
+        </div>
+        <h2 class="text-3xl font-montserrat font-bold text-bevap-navy mb-3">Solicitação Enviada!</h2>
+        <p class="text-gray-600 mb-6">Sua solicitação foi enviada com sucesso e será avaliada pela equipe de TI.</p>
+        
+        <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+            <div class="flex items-center mb-2">
+                <i class="fa-solid fa-circle-info text-bevap-gold mr-2"></i>
+                <span class="font-semibold text-sm text-gray-700">Próximo Passo</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+                <i class="fa-solid fa-arrow-right text-bevap-green mr-2"></i>
+                <span>TI – Avaliar Projeto</span>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <button data-action="view-request" class="w-full px-6 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md">
+                <i class="fa-solid fa-eye mr-2"></i>
+                Ver Minha Solicitação
+            </button>
+            <button data-action="close-modal" class="w-full px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all">
+                Voltar ao Início
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="validation-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+        <div class="flex items-center mb-6">
+            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-exclamation-circle text-red-600 text-xl"></i>
+            </div>
+            <h2 class="text-2xl font-montserrat font-bold text-bevap-navy ml-4">Campos Obrigatórios</h2>
+        </div>
+        <p class="text-gray-600 mb-4">Por favor, preencha todos os campos obrigatórios marcados com <span class="text-red-500 font-semibold">*</span> antes de enviar sua solicitação.</p>
+        
+        <div id="missing-fields" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <!-- Campos faltantes serão listados aqui -->
+        </div>
+
+        <button data-action="close-validation-modal" class="w-full px-6 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all">
+            Entendi, vou corrigir
+        </button>
+    </div>
+</div>
+
+
