@@ -870,13 +870,34 @@
                 <button onclick="openReturnModal()" class="px-5 py-2.5 text-sm font-medium text-yellow-700 bg-white border border-yellow-300 rounded-lg hover:bg-yellow-50 transition-all">
                     <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
                 </button>
-                <button onclick="sendToNextStep()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
+                <button onclick="openApproveModal()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
                     <i class="fa-solid fa-check mr-2"></i> Aprovar Proposta
                 </button>
             </div>
         </div>
     </div>
 </footer>
+
+<div id="approve-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fa-solid fa-check-circle text-bevap-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovação</h3>
+        </div>
+        <p class="text-gray-700 mb-6">Você está aprovando a proposta comercial para o projeto <strong>PRJ-2026-033 • Implantar SSO corporativo</strong>.</p>
+        <p class="text-sm text-gray-600 mb-6">Ao confirmar, o processo seguirá para <strong>Aprovação do Gerente do Centro de Custo</strong>.</p>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeApproveModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button onclick="confirmApprove()" class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                Confirmar Aprovação
+            </button>
+        </div>
+    </div>
+</div>
 
 <div id="return-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
@@ -911,32 +932,6 @@
             <button onclick="closeDiscontinueModal()" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
             <button onclick="confirmDiscontinue()" class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all">Confirmar</button>
         </div>
-    </div>
-</div>
-
-<div id="modal-send-success" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
-        <div class="w-20 h-20 bg-bevap-green rounded-full flex items-center justify-center mx-auto mb-6">
-            <i class="fa-solid fa-check text-white text-4xl"></i>
-        </div>
-        <h2 class="text-3xl font-montserrat font-bold text-bevap-navy mb-3">Enviado!</h2>
-        <p id="send-success-message" class="text-gray-600 mb-6">Sua decisão foi registrada e o processo seguirá para a próxima etapa.</p>
-
-        <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
-            <div class="flex items-center mb-2">
-                <i class="fa-solid fa-circle-info text-bevap-gold mr-2"></i>
-                <span class="font-semibold text-sm text-gray-700">Próximo Passo</span>
-            </div>
-            <div class="flex items-center text-sm text-gray-600">
-                <i class="fa-solid fa-arrow-right text-bevap-green mr-2"></i>
-                <span id="send-next-step-text">A definir</span>
-            </div>
-        </div>
-
-        <button id="send-next-step-button" onclick="goToNextStepAfterSend()" class="w-full px-6 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md">
-            <i class="fa-solid fa-right-long mr-2"></i>
-            Próximo Passo
-        </button>
     </div>
 </div>
 
@@ -1008,6 +1003,22 @@ function saveDraft() {
     showToast('success', 'Rascunho Salvo', 'Suas alterações foram salvas com sucesso.');
 }
 
+function openApproveModal() {
+    document.getElementById('approve-modal').classList.remove('hidden');
+}
+
+function closeApproveModal() {
+    document.getElementById('approve-modal').classList.add('hidden');
+}
+
+function confirmApprove() {
+    closeApproveModal();
+    showToast('success', 'Proposta Aprovada!', 'Sua aprovação foi registrada e o processo seguirá para a próxima etapa.');
+    setTimeout(() => {
+        window.open('ux-aprovacao-gcc.html', '_blank');
+    }, 1200);
+}
+
 function viewTimeline() {
     showToast('info', 'Linha do Tempo', 'Abrindo histórico de eventos do projeto...');
 }
@@ -1056,22 +1067,6 @@ function confirmDiscontinue() {
     showToast('error', 'Não Continuidade Registrada', 'A não continuidade foi registrada e os stakeholders foram notificados.');
 }
 
-function sendToNextStep() {
-    window.__sendNextStepUrl = 'ux-aprovacao-gcc.html';
-
-    document.getElementById('send-next-step-text').textContent = 'Aprovação do Gerente do Centro de Custo';
-    document.getElementById('send-success-message').textContent = 'Sua aprovação foi registrada e o processo seguirá para a próxima etapa.';
-    document.getElementById('send-next-step-button').innerHTML = '<i class="fa-solid fa-right-long mr-2"></i> Ir para Aprovação';
-
-    document.getElementById('modal-send-success').classList.remove('hidden');
-}
-
-function goToNextStepAfterSend() {
-    document.getElementById('modal-send-success').classList.add('hidden');
-    if (window.__sendNextStepUrl) {
-        window.open(window.__sendNextStepUrl, '_blank');
-    }
-}
 
 function showToast(type, title, message) {
     const toast = document.getElementById('toast');
@@ -1103,9 +1098,9 @@ function closeToast() {
 
 window.addEventListener('click', function(e) {
     if (e.target.classList.contains('bg-opacity-50')) {
+        closeApproveModal();
         closeReturnModal();
         closeDiscontinueModal();
-        document.getElementById('modal-send-success').classList.add('hidden');
     }
 });
 

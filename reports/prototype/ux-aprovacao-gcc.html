@@ -1225,7 +1225,7 @@
             <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovação</h3>
         </div>
         <p class="text-gray-700 mb-6">Você está aprovando o custo de <strong>R$ 428.900,00</strong> para o projeto <strong>PRJ-2026-041 • Modernização Data Center</strong>.</p>
-        <p class="text-sm text-gray-600 mb-6">O projeto será encaminhado para a próxima etapa do processo.</p>
+        <p class="text-sm text-gray-600 mb-6">Ao confirmar, você será direcionado para <strong>Compras</strong> para <strong>realizar a contratação</strong>.</p>
         <div class="flex justify-end space-x-3">
             <button onclick="closeApproveModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 Cancelar
@@ -1404,7 +1404,7 @@ function confirmApprove() {
     closeApproveModal();
     showToast('success', 'Custo Aprovado!', 'O custo foi aprovado e o projeto avançará para a próxima etapa.');
     setTimeout(() => {
-        window.location.href = 'ux-dashboard.html';
+        window.location.href = 'ux-compras-realizar-contratacao.html';
     }, 2000);
 }
 

@@ -54,7 +54,7 @@
         </div>
         <div class="pb-3">
             <nav class="flex items-center space-x-2 text-sm">
-                <a href="#" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <a href="ux-dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
                 <a href="#" class="text-gray-300 hover:text-white transition-colors">Solicitações</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
@@ -81,24 +81,580 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div id="content-section" class="lg:col-span-2">
-            <div id="tabs-navigation" class="bg-white rounded-lg shadow-md mb-6">
-                <div class="flex border-b border-gray-200">
-                    <button onclick="switchTab('contratacao')" class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50">
-                        <i class="fa-solid fa-file-contract mr-2"></i>
-                        Dados da Contratação
-                    </button>
-                    <button onclick="switchTab('compliance')" class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                        <i class="fa-solid fa-shield-check mr-2"></i>
-                        Compliance & Documentos
-                    </button>
-                    <button onclick="switchTab('financeiro')" class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                        <i class="fa-solid fa-calculator mr-2"></i>
-                        Conferência Financeira
-                    </button>
+            <div id="proposal-form" class="bg-white rounded-lg shadow-md mb-6">
+                <div id="form-tabs" class="border-b border-gray-200">
+                    <div class="relative">
+                        <div id="form-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
+                            <button type="button" onclick="switchFormTab('solicitacao')" id="tab-solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-file-lines mr-2"></i>Solicitação
+                            </button>
+                            <button type="button" onclick="switchFormTab('analise-ti')" id="tab-analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-microscope mr-2"></i>Análise TI
+                            </button>
+                            <button type="button" onclick="switchFormTab('impacto')" id="tab-impacto" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Área
+                            </button>
+                            <button type="button" onclick="switchFormTab('triagem-ti')" id="tab-triagem-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-route mr-2"></i>Triagem TI
+                            </button>
+                            <button type="button" onclick="switchFormTab('proposta-fornecedor')" id="tab-proposta-fornecedor" class="px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-handshake mr-2"></i>Proposta do Fornecedor
+                            </button>
+                            <button type="button" onclick="switchFormTab('contratacao')" id="tab-contratacao" class="px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50 whitespace-nowrap">
+                                <i class="fa-solid fa-file-contract mr-2"></i>Dados da Contratação
+                            </button>
+                            <button type="button" onclick="switchFormTab('compliance')" id="tab-compliance" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-shield-check mr-2"></i>Compliance & Documentos
+                            </button>
+                            <button type="button" onclick="switchFormTab('financeiro')" id="tab-financeiro" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-calculator mr-2"></i>Conferência Financeira
+                            </button>
+                        </div>
+
+                        <button id="form-tabs-left-arrow" type="button" onclick="scrollFormTabs('left')" class="absolute left-0 top-0 bottom-0 w-24 rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-start pl-2">
+                            <span class="flex items-center gap-0 text-base leading-none">
+                                <i class="fa-solid fa-chevron-left"></i>
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                        </button>
+
+                        <button id="form-tabs-right-arrow" type="button" onclick="scrollFormTabs('right')" class="absolute right-0 top-0 bottom-0 w-24 rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-end pr-2">
+                            <span class="flex items-center gap-0 text-base leading-none">
+                                <i class="fa-solid fa-chevron-right"></i>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Solicitação -->
+                <div id="tab-content-solicitacao" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-4">Dados Básicos</h3>
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
+                                    <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
+                                        <p class="text-gray-800">Tecnologia da Informação</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
+                                        <p class="text-gray-800">1001-TI</p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
+                                    <p class="text-gray-800">Diretoria TI</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center px-4 py-3 border border-green-200 bg-green-50 rounded-lg">
+                            <i class="fa-solid fa-check-circle text-bevap-green mr-2"></i>
+                            <span class="text-sm text-gray-700 font-medium">Alinhado aos objetivos estratégicos BEVAP</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-bullseye text-bevap-green mr-2"></i>
+                                    <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Objetivo do Projeto</h3>
+                                </div>
+                                <p class="text-sm text-gray-700">Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso às aplicações corporativas.</p>
+                            </div>
+
+                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-circle-exclamation text-bevap-gold mr-2"></i>
+                                    <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Problema/Oportunidade</h3>
+                                </div>
+                                <p class="text-sm text-gray-700">Atualmente, os usuários precisam gerenciar múltiplas senhas para diferentes sistemas, o que gera sobrecarga para o suporte e riscos de segurança. A implementação do SSO (Single Sign-On) simplificará o acesso e fortalecerá as políticas de segurança.</p>
+                            </div>
+
+                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-chart-line text-bevap-green mr-2"></i>
+                                    <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Benefícios Esperados</h3>
+                                </div>
+                                <p class="text-sm text-gray-700">Melhoria na segurança com políticas de senha centralizadas, redução de chamados de suporte relacionados a senhas e aumento da produtividade dos colaboradores com acesso simplificado.</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                                <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Escopo Inicial</h3>
+                                <p class="text-sm text-gray-700">Integração do SSO com os principais sistemas da empresa: ERP, CRM e portal do colaborador. Inclui a configuração do provedor de identidade e a criação de documentação para usuários e administradores.</p>
+                            </div>
+                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                                <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Fora de Escopo</h3>
+                                <p class="text-sm text-gray-700">A integração com sistemas legados ou de terceiros que não suportam SAML/OAuth não está incluída nesta fase. A migração de contas de usuário não utilizadas também está fora de escopo.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Dependências</h3>
+                            <p class="text-sm text-gray-700">Disponibilidade da equipe de infraestrutura para configuração de servidores e rede. Licenciamento do provedor de identidade a ser adquirido pela área de compras.</p>
+                        </div>
+
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Riscos Iniciais</h3>
+                            <div class="space-y-2">
+                                <div class="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
+                                    <span class="text-sm text-gray-700">Atraso na aquisição das licenças do provedor de identidade.</span>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
+                                    <span class="text-sm text-gray-700">Incompatibilidade de algum sistema crítico com o protocolo de SSO escolhido.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Stakeholders</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Diretoria TI</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Equipe de Segurança</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Gerentes de Departamento</span>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Anexos</h3>
+                            <div class="divide-y">
+                                <div class="py-3 flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                        <div>
+                                            <div class="font-medium text-sm text-gray-900">proposta-sso.pdf</div>
+                                            <div class="text-xs text-gray-500">2.4 MB</div>
+                                        </div>
+                                    </div>
+                                    <button onclick="previewDocument('pdf')" class="px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors" title="Visualizar">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                                <div class="py-3 flex items-center justify-between">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-image text-blue-500 text-xl mr-3"></i>
+                                        <div>
+                                            <div class="font-medium text-sm text-gray-900">arquitetura-sistemas.png</div>
+                                            <div class="text-xs text-gray-500">800 KB</div>
+                                        </div>
+                                    </div>
+                                    <button onclick="previewDocument('image')" class="px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors" title="Visualizar">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Análise TI -->
+                <div id="tab-content-analise-ti" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <i class="fa-solid fa-check-circle text-bevap-green text-xl mr-2"></i>
+                                <h3 class="font-montserrat font-semibold text-bevap-navy">Parecer TI: Viável</h3>
+                            </div>
+                            <p class="text-sm text-gray-700">Projeto tecnicamente viável com infraestrutura existente. Integrações podem ser realizadas via APIs REST. Equipe interna possui competência necessária.</p>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Avaliação Técnica</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg space-y-3 text-sm">
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-lightbulb text-bevap-gold mr-3 mt-1"></i>
+                                    <div>
+                                        <div class="font-medium text-gray-900">Alternativas Consideradas</div>
+                                        <p class="text-gray-700 mt-1">Avaliamos ServiceNow e Jira Service Management, mas GLPI oferece melhor custo-benefício e já está implantado.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-chart-simple text-blue-600 mr-3 mt-1"></i>
+                                    <div>
+                                        <div class="font-medium text-gray-900">Esforço Estimado</div>
+                                        <p class="text-gray-700 mt-1">21 pontos de história / 320 horas (2 desenvolvedores full-time por 6 semanas)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos Identificados</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-yellow-200 text-yellow-800 font-medium mr-3">Médio</span>
+                                    <div class="text-sm">
+                                        <div class="font-medium text-gray-900">Disponibilidade de Ambientes</div>
+                                        <p class="text-gray-700 mt-1">Necessário ambiente de homologação dedicado para testes de integração.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start p-3 bg-green-50 border border-green-200 rounded-lg">
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-green-200 text-green-800 font-medium mr-3">Baixo</span>
+                                    <div class="text-sm">
+                                        <div class="font-medium text-gray-900">Complexidade das APIs</div>
+                                        <p class="text-gray-700 mt-1">APIs GLPI são bem documentadas e equipe já possui experiência.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Dependências Técnicas</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <ul class="text-sm text-gray-700 space-y-2">
+                                    <li class="flex items-center">
+                                        <i class="fa-solid fa-server text-bevap-navy mr-2"></i>
+                                        Atualização GLPI para versão 10.x
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fa-solid fa-key text-bevap-navy mr-2"></i>
+                                        Credenciais de integração com Active Directory
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fa-solid fa-database text-bevap-navy mr-2"></i>
+                                        Acesso ao banco de dados de ativos
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Observações do Analista TI</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-700">
+                                <p>Projeto bem estruturado com escopo claro. Recomendo priorização alta devido ao impacto operacional. Sugiro início imediato após aprovação para aproveitar janela de disponibilidade da equipe.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Impacto -->
+                <div id="tab-content-impacto" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <p class="text-sm text-blue-800"><i class="fa-solid fa-info-circle mr-2"></i> Consolidação do impacto para orientar a decisão de execução e priorização da área.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                <div class="text-xs text-gray-500 mb-1">Capacidade Atual</div>
+                                <div class="text-2xl font-bold text-bevap-navy">60%</div>
+                                <p class="text-xs text-gray-600 mt-2">Equipe disponível para absorver novas frentes sem comprometer operação.</p>
+                            </div>
+                            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                <div class="text-xs text-gray-500 mb-3">Prioridade da Área</div>
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
+                                        <i class="fa-solid fa-star mr-1"></i> Estratégico
+                                    </span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-500 font-medium">Operacional</span>
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-500 font-medium">Crítico</span>
+                                </div>
+                                <p class="text-xs text-gray-600">Classificação validada com a liderança da área para execução por fases.</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-2">Recursos Necessários da Área</h4>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li class="flex items-center"><i class="fa-solid fa-user-group text-bevap-navy mr-2"></i>2 analistas funcionais dedicados na fase inicial</li>
+                                <li class="flex items-center"><i class="fa-solid fa-clock text-bevap-gold mr-2"></i>Janela semanal de 4h para validações com usuários-chave</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3 flex items-center">
+                                <i class="fa-solid fa-comment-dots mr-2 text-bevap-gold"></i>
+                                Observações do Gestor
+                            </h4>
+                            <div class="bg-slate-50 border-l-4 border-bevap-green rounded-r-lg p-3 mb-3">
+                                <p class="text-sm text-gray-700">Projeto bem estruturado, com impacto positivo esperado na eficiência operacional da área.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Triagem TI -->
+                <div id="tab-content-triagem-ti" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div class="bg-gradient-to-r from-bevap-navy to-bevap-navy text-white rounded-xl p-5 shadow-sm">
+                            <div class="flex items-start justify-between gap-4">
+                                <div>
+                                    <div class="text-xs uppercase tracking-wider text-white/80 mb-1">Resultado da Triagem</div>
+                                    <h3 class="text-xl font-montserrat font-semibold">Decisão: Execução Externa</h3>
+                                    <p class="text-sm text-white/90 mt-2">Encaminhamento priorizado para fornecedor devido ao equilíbrio entre prazo, risco operacional e disponibilidade interna.</p>
+                                </div>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white text-bevap-navy whitespace-nowrap">
+                                    <i class="fa-solid fa-handshake mr-1"></i> Aprovado na Triagem
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                <div class="text-xs text-gray-500 mb-1">Categoria Principal</div>
+                                <div class="font-semibold text-bevap-navy">Dependência de Fornecedor</div>
+                                <p class="text-xs text-gray-600 mt-2">Especialização requerida para acelerar entrega e reduzir retrabalho.</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                    <div class="text-xs text-gray-500 mb-1">Capacidade Interna Atual</div>
+                                    <div class="flex items-center gap-4 mt-2">
+                                        <div class="relative w-16 h-16 rounded-full" style="background: conic-gradient(#1C8C5D 0deg 270deg, #e5e7eb 270deg 360deg);">
+                                            <div class="absolute inset-2 bg-white rounded-full flex items-center justify-center">
+                                                <span class="text-xs font-bold text-bevap-navy">75%</span>
+                                            </div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="w-full bg-gray-200 rounded-full h-2 mb-1">
+                                                <div class="bg-bevap-green h-2 rounded-full" style="width: 75%"></div>
+                                            </div>
+                                            <p class="text-xs text-gray-600">Disponibilidade parcial da equipe interna.</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white border border-slate-200 rounded-lg p-4">
+                                    <div class="text-xs text-gray-500 mb-1">Data desejada de início</div>
+                                    <div class="font-semibold text-bevap-navy mb-3">15/03/2026</div>
+                                    <div class="relative pt-2">
+                                        <div class="absolute left-2 right-2 top-4 h-1 bg-gray-200 rounded-full"></div>
+                                        <div class="relative flex items-center justify-between text-[10px] text-gray-500">
+                                            <div class="flex flex-col items-center">
+                                                <span class="w-3 h-3 rounded-full bg-gray-300 border border-white shadow"></span>
+                                                <span class="mt-2">Triagem</span>
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="w-4 h-4 rounded-full bg-bevap-gold border-2 border-white shadow"></span>
+                                                <span class="mt-2 font-semibold text-bevap-navy">Inicio</span>
+                                            </div>
+                                            <div class="flex flex-col items-center">
+                                                <span class="w-3 h-3 rounded-full bg-gray-300 border border-white shadow"></span>
+                                                <span class="mt-2">Kickoff</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-2 flex items-center">
+                                <i class="fa-solid fa-shield-halved text-bevap-gold mr-2"></i>
+                                Riscos e Dependencias Monitoradas
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                                <div class="flex items-start bg-white border border-yellow-200 rounded-lg p-3">
+                                    <i class="fa-solid fa-triangle-exclamation text-bevap-gold mr-2 mt-0.5"></i>
+                                    <span class="text-gray-700">Dependencia de atualizacao do servidor antes do kickoff tecnico.</span>
+                                </div>
+                                <div class="flex items-start bg-white border border-yellow-200 rounded-lg p-3">
+                                    <i class="fa-solid fa-triangle-exclamation text-bevap-gold mr-2 mt-0.5"></i>
+                                    <span class="text-gray-700">Validacao com area de negocio para fechamento de escopo contratual.</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Content: Proposta do Fornecedor -->
+                <div id="tab-content-proposta-fornecedor" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div>
+                            <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                                <i class="fa-solid fa-handshake mr-3 text-bevap-gold"></i>
+                                Proposta do Fornecedor
+                            </h2>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Fornecedor</h3>
+                                    <div class="space-y-2 text-sm">
+                                        <div class="font-medium text-gray-900">TechPartners Ltda.</div>
+                                        <div class="text-gray-600">CNPJ: 12.345.678/0001-90</div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Contato Principal</h3>
+                                    <div class="space-y-1 text-sm">
+                                        <div class="font-medium text-gray-900">Ana Souza</div>
+                                        <div class="text-gray-600">ana@techpartners.com</div>
+                                        <div class="text-gray-600">(11) 99999-8888</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
+                                    <div class="text-lg font-bold text-bevap-navy">R$ 128.450,00</div>
+                                    <div class="text-xs text-green-600">BRL</div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Condição</div>
+                                    <div class="text-sm font-medium text-gray-900">30% / 70%</div>
+                                    <div class="text-xs text-gray-600">Antecipado / Entrega</div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo</div>
+                                    <div class="text-lg font-bold text-bevap-navy">8 semanas</div>
+                                </div>
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="text-xs text-gray-500 uppercase tracking-wide">Vigência</div>
+                                    <div class="text-sm font-medium text-gray-900">30 dias</div>
+                                    <div class="text-xs text-gray-600">Até 15/02/2026</div>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo Resumido</h3>
+                                <p class="text-gray-700 text-sm leading-relaxed">Atualização completa do sistema ERP incluindo migração de dados, customizações específicas, integração com sistemas existentes, treinamento de usuários e suporte técnico por 3 meses após go-live.</p>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Itens e Serviços</h3>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-2 text-left text-gray-700 font-medium">Descrição</th>
+                                                <th class="px-4 py-2 text-center text-gray-700 font-medium">Qty</th>
+                                                <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-200">
+                                            <tr>
+                                                <td class="px-4 py-3">Licenças ERP (módulos financeiro, compras, estoque)</td>
+                                                <td class="px-4 py-3 text-center">1</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 75.000,00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3">Customizações e parametrizações</td>
+                                                <td class="px-4 py-3 text-center">1</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 35.450,00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3">Migração de dados e integração</td>
+                                                <td class="px-4 py-3 text-center">1</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 12.000,00</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="px-4 py-3">Treinamento e suporte</td>
+                                                <td class="px-4 py-3 text-center">1</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 6.000,00</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos e Pré-requisitos</h3>
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                    <ul class="text-sm text-yellow-800 space-y-1">
+                                        <li>• Disponibilidade da equipe de TI para validações durante o projeto</li>
+                                        <li>• Acesso aos sistemas legados para migração de dados</li>
+                                        <li>• Definição de cronograma de treinamentos com RH</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
+                                    <i class="fa-solid fa-paperclip mr-2 text-bevap-gold"></i>
+                                    Documentos da Proposta
+                                </h3>
+                                <div class="space-y-2">
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                            <div>
+                                                <div class="font-medium text-sm">Proposta_Comercial_TechPartners.pdf</div>
+                                                <div class="text-xs text-gray-500">2.1 MB</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button onclick="previewDocument('proposta')" class="text-bevap-green hover:text-green-700">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button onclick="downloadDocument('proposta')" class="text-bevap-navy hover:text-blue-700">
+                                                <i class="fa-solid fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fa-solid fa-file-contract text-blue-500 text-xl mr-3"></i>
+                                            <div>
+                                                <div class="font-medium text-sm">Termos_e_Condicoes.pdf</div>
+                                                <div class="text-xs text-gray-500">456 KB</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button onclick="previewDocument('termos')" class="text-bevap-green hover:text-green-700">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button onclick="downloadDocument('termos')" class="text-bevap-navy hover:text-blue-700">
+                                                <i class="fa-solid fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                        <div class="flex items-center">
+                                            <i class="fa-solid fa-file-word text-blue-600 text-xl mr-3"></i>
+                                            <div>
+                                                <div class="font-medium text-sm">Escopo_Detalhado_v2.docx</div>
+                                                <div class="text-xs text-gray-500">856 KB</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center space-x-2">
+                                            <button onclick="previewDocument('escopo')" class="text-bevap-green hover:text-green-700">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </button>
+                                            <button onclick="downloadDocument('escopo')" class="text-bevap-navy hover:text-blue-700">
+                                                <i class="fa-solid fa-download"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <h4 class="text-sm font-semibold text-bevap-navy mb-3 flex items-center">
+                                    <i class="fa-solid fa-comment-dots mr-2 text-bevap-gold"></i>
+                                    Feedback da Aprovação Comercial
+                                </h4>
+                                <div class="bg-white border border-green-200 rounded-lg p-4">
+                                    <div class="flex items-center mb-3">
+                                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Solicitante" class="w-9 h-9 rounded-full border-2 border-bevap-gold mr-3">
+                                        <div>
+                                            <div class="font-semibold text-gray-900 text-sm">Carlos Mendes</div>
+                                            <div class="text-xs text-gray-500">Aprovado em 02/03/2026 às 14:35</div>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm text-green-800 leading-relaxed">
+                                        Proposta muito bem estruturada e alinhada com nossas necessidades. Os valores estão competitivos considerando o escopo e qualidade dos equipamentos. 
+                                        O prazo de 10 semanas é adequado para nossa janela de implementação. Recomendo aprovação, pois a infraestrutura atual já está no limite e este projeto é crítico para a continuidade dos negócios.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div id="contratacao" class="tab-content bg-white rounded-lg shadow-md p-6">
+            <div id="tab-content-contratacao" class="tab-content bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
                     <i class="fa-solid fa-file-contract mr-3 text-bevap-gold"></i>
                     Dados da Contratação
@@ -211,7 +767,7 @@
                 </div>
             </div>
 
-            <div id="compliance" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+            <div id="tab-content-compliance" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
                     <i class="fa-solid fa-shield-check mr-3 text-bevap-gold"></i>
                     Compliance & Documentos
@@ -339,7 +895,7 @@
                 </div>
             </div>
 
-            <div id="financeiro" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+            <div id="tab-content-financeiro" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
                     <i class="fa-solid fa-calculator mr-3 text-bevap-gold"></i>
                     Conferência Financeira
@@ -446,29 +1002,35 @@
                 <div class="space-y-3 text-sm">
                     <div class="flex items-center justify-between pb-2 border-b">
                         <span class="text-gray-600">Código</span>
-                        <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-052</span>
+                        <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-033</span>
                     </div>
                     <div class="pb-2 border-b">
                         <span class="text-gray-600">Título</span>
-                        <p class="font-medium text-gray-900 mt-1">Portal do Fornecedor</p>
+                        <p class="font-medium text-gray-900 mt-1">Implantar SSO corporativo</p>
                     </div>
                     <div class="flex items-center justify-between pb-2 border-b">
                         <span class="text-gray-600">Área</span>
-                        <span class="font-medium text-gray-900">Compras</span>
+                        <span class="font-medium text-gray-900">TI</span>
                     </div>
                     <div class="flex items-center justify-between pb-2 border-b">
                         <span class="text-gray-600">Patrocinador</span>
-                        <span class="font-medium text-gray-900">Dir. Compras</span>
+                        <span class="font-medium text-gray-900">Diretoria TI</span>
                     </div>
                     <div class="flex items-center justify-between pb-2 border-b">
                         <span class="text-gray-600">Prioridade</span>
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-orange-100 text-orange-800 font-medium">
-                            <i class="fa-solid fa-star mr-1"></i> Estratégico
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-red-100 text-red-800 font-medium">
+                            <i class="fa-solid fa-circle-exclamation mr-1"></i> Crítico
                         </span>
                     </div>
                     <div class="flex items-center justify-between pb-2 border-b">
-                        <span class="text-gray-600">Fornecedor</span>
-                        <span class="font-medium text-gray-900">TechPartners Ltda.</span>
+                        <span class="text-gray-600">Tipo</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-purple-100 text-purple-800 font-medium">
+                            <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Externo
+                        </span>
+                    </div>
+                    <div class="pb-2 border-b">
+                        <span class="text-gray-600">Fornecedor Recomendado</span>
+                        <p class="font-medium text-gray-900 mt-1">TechPartners Ltda.</p>
                     </div>
                     <div class="flex items-center justify-between pb-2 border-b">
                         <span class="text-gray-600">Valor</span>
@@ -485,7 +1047,7 @@
                     <div class="flex items-center justify-between">
                         <span class="text-gray-600">Status</span>
                         <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 font-medium">
-                            <i class="fa-solid fa-clock mr-1"></i> Aguardando Compras
+                            <i class="fa-solid fa-clipboard-check mr-1"></i> Aguardando Compras
                         </span>
                     </div>
                 </div>
@@ -501,7 +1063,7 @@
             </div>
         </aside>
     </div>
-            <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <!-- <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
                     <i class="fa-solid fa-flask-vial mr-2 text-bevap-green"></i>Simulação de Telas (Protótipo)
                 </h2>
@@ -543,29 +1105,25 @@
                         <span class="text-sm font-medium text-bevap-navy text-center">Triagem Técnica</span>
                     </a>
                 </div>
-            </section>
+            </section> -->
 </main>
 
-<footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+<footer id="footer-actions" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex items-center justify-between">
-            <button onclick="saveDraft()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                <i class="fa-solid fa-save mr-2"></i>
-                Salvar Rascunho
+            <button onclick="saveDraft()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
+                <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
-            
-            <a href="ux-dashboard.html" class="flex items-center space-x-3">
-                <button onclick="openCancelModal()" class="px-6 py-2 border border-red-300 text-red-600 rounded-lg hover:bg-red-50 transition-colors">
-                    <i class="fa-solid fa-times-circle mr-2"></i>
-                    Cancelar Processo
+
+            <div class="flex items-center space-x-3">
+                <button onclick="openCancelModal()" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
+                    <i class="fa-solid fa-ban mr-2"></i> Cancelar Processo
                 </button>
-                <button onclick="openReturnModal()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                    <i class="fa-solid fa-undo mr-2"></i>
-                    Devolver para Correção
+                <button onclick="openReturnModal()" class="px-5 py-2.5 text-sm font-medium text-yellow-700 bg-white border border-yellow-300 rounded-lg hover:bg-yellow-50 transition-all">
+                    <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
                 </button>
-                <button onclick="openConfirmModal()" class="px-8 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors shadow-md">
-                    <i class="fa-solid fa-check-circle mr-2"></i>
-                    Concluir Contratação
+                <button onclick="openConfirmModal()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
+                    <i class="fa-solid fa-check mr-2"></i> Concluir Contratação
                 </button>
             </div>
         </div>
@@ -573,76 +1131,81 @@
 </footer>
 
 <div id="confirm-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div class="p-6">
-            <div class="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mx-auto mb-4">
-                <i class="fa-solid fa-check-circle text-bevap-green text-3xl"></i>
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex justify-center mb-4">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-check text-bevap-green text-2xl"></i>
             </div>
-            <h3 class="text-xl font-montserrat font-bold text-center text-bevap-navy mb-2">Concluir Contratação</h3>
-            <p class="text-center text-gray-600 mb-6">Confirma a conclusão da contratação? O projeto será marcado como "Contratado" e encaminhado para Início do Projeto.</p>
-            <div class="flex space-x-3">
-                <button onclick="closeConfirmModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Cancelar</button>
-                <button onclick="confirmContract()" class="flex-1 px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700">Confirmar</button>
-            </div>
+        </div>
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy text-center mb-2">Concluir Contratação</h3>
+        <p class="text-gray-600 text-center mb-6">Confirma a conclusão da contratação? O projeto será marcado como "Contratado" e encaminhado para Início do Projeto.</p>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeConfirmModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button onclick="confirmContract()" class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                Confirmar
+            </button>
         </div>
     </div>
 </div>
 
 <div id="return-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div class="p-6">
-            <div class="flex items-center justify-center w-16 h-16 bg-yellow-100 rounded-full mx-auto mb-4">
-                <i class="fa-solid fa-undo text-yellow-600 text-3xl"></i>
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fa-solid fa-arrow-rotate-left text-yellow-600 text-2xl"></i>
             </div>
-            <h3 class="text-xl font-montserrat font-bold text-center text-bevap-navy mb-4">Devolver para Correção</h3>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Motivo *</label>
-                <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green">
-                    <option value="">Selecione...</option>
-                    <option value="docs">Documentos incompletos</option>
-                    <option value="valores">Valores incorretos</option>
-                    <option value="prazos">Prazos inadequados</option>
-                    <option value="outro">Outro</option>
-                </select>
-            </div>
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Descrição *</label>
-                <textarea rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green" placeholder="Descreva o que precisa ser corrigido..."></textarea>
-            </div>
-            <div class="flex space-x-3">
-                <button onclick="closeReturnModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Cancelar</button>
-                <button onclick="submitReturn()" class="flex-1 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700">Devolver</button>
-            </div>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Devolver para Correção</h3>
+        </div>
+        <p class="text-gray-700 mb-4">Informe o motivo da devolução:</p>
+        <select id="return-reason" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
+            <option value="">Selecione uma categoria...</option>
+            <option value="doc-faltante">Documento faltante</option>
+            <option value="valor-divergente">Valor divergente</option>
+            <option value="info-incompleta">Informação incompleta</option>
+            <option value="prazo">Prazo/condições inadequadas</option>
+            <option value="outro">Outro motivo</option>
+        </select>
+        <textarea id="return-description" rows="4" placeholder="Descreva detalhadamente o que precisa ser corrigido..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none mb-4"></textarea>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeReturnModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button onclick="submitReturn()" class="px-6 py-2 bg-bevap-navy text-white rounded-lg hover:bg-blue-900 transition-colors font-medium">
+                Devolver
+            </button>
         </div>
     </div>
 </div>
 
 <div id="cancel-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full">
-        <div class="p-6">
-            <div class="flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mx-auto mb-4">
-                <i class="fa-solid fa-times-circle text-red-600 text-3xl"></i>
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fa-solid fa-times-circle text-red-600 text-2xl"></i>
             </div>
-            <h3 class="text-xl font-montserrat font-bold text-center text-bevap-navy mb-2">Cancelar Processo</h3>
-            <p class="text-center text-gray-600 mb-4">Esta ação marcará o projeto como "Não Continuidade" e notificará todos os stakeholders.</p>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
-                <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500">
-                    <option value="">Selecione...</option>
-                    <option value="orcamento">Orçamento insuficiente</option>
-                    <option value="compliance">Não conformidade</option>
-                    <option value="estrategia">Mudança estratégica</option>
-                    <option value="outro">Outro</option>
-                </select>
-            </div>
-            <div class="mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Justificativa *</label>
-                <textarea rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500" placeholder="Justifique o cancelamento..."></textarea>
-            </div>
-            <div class="flex space-x-3">
-                <button onclick="closeCancelModal()" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">Voltar</button>
-                <button onclick="submitCancel()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">Cancelar Projeto</button>
-            </div>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Cancelar Processo</h3>
+        </div>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+            <p class="text-sm text-red-800">⚠️ Esta ação não pode ser desfeita. Todos os stakeholders serão notificados.</p>
+        </div>
+        <p class="text-gray-700 mb-4">Categoria do cancelamento:</p>
+        <select id="cancel-category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
+            <option value="">Selecione...</option>
+            <option value="orcamento">Orçamento insuficiente</option>
+            <option value="compliance">Não conformidade</option>
+            <option value="estrategia">Mudança estratégica</option>
+            <option value="outro">Outro</option>
+        </select>
+        <textarea id="cancel-justification" rows="4" placeholder="Justifique detalhadamente o cancelamento..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none mb-4"></textarea>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeCancelModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button onclick="submitCancel()" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                Confirmar Cancelamento
+            </button>
         </div>
     </div>
 </div>
@@ -655,6 +1218,56 @@
 </div>
 
 <script>
+function switchFormTab(tabName) {
+    const tabs = ['solicitacao', 'analise-ti', 'impacto', 'triagem-ti', 'proposta-fornecedor', 'contratacao', 'compliance', 'financeiro'];
+    tabs.forEach(tab => {
+        document.getElementById('tab-' + tab).classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+        document.getElementById('tab-' + tab).classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+        document.getElementById('tab-content-' + tab).classList.add('hidden');
+    });
+
+    document.getElementById('tab-' + tabName).classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+    document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+    document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+}
+
+function updateFormTabsArrows() {
+    const scroller = document.getElementById('form-tabs-scroll');
+    const leftArrow = document.getElementById('form-tabs-left-arrow');
+    const rightArrow = document.getElementById('form-tabs-right-arrow');
+    if (!scroller || !leftArrow || !rightArrow) return;
+
+    const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+    const hasOverflow = maxScroll > 2;
+    const atStart = scroller.scrollLeft <= 2;
+    const atEnd = scroller.scrollLeft >= maxScroll - 2;
+
+    leftArrow.classList.toggle('opacity-0', !hasOverflow || atStart);
+    leftArrow.classList.toggle('pointer-events-none', !hasOverflow || atStart);
+    rightArrow.classList.toggle('opacity-0', !hasOverflow || atEnd);
+    rightArrow.classList.toggle('pointer-events-none', !hasOverflow || atEnd);
+}
+
+function scrollFormTabs(direction) {
+    const scroller = document.getElementById('form-tabs-scroll');
+    if (!scroller) return;
+
+    const target = direction === 'right'
+        ? (scroller.scrollWidth - scroller.clientWidth)
+        : 0;
+
+    scroller.scrollTo({ left: target, behavior: 'smooth' });
+    window.setTimeout(updateFormTabsArrows, 360);
+}
+
+function previewDocument(docType) {
+    showToast('success', `Abrindo preview do documento ${docType}...`);
+}
+
+function downloadDocument(docType) {
+    showToast('success', `Download do documento ${docType} em andamento.`);
+}
+
 function switchTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
     document.querySelectorAll('.tab-button').forEach(btn => {
@@ -755,62 +1368,15 @@ function showToast(type, message) {
     }, 3000);
 }
 
-function openCancelModal() {
-    document.getElementById('cancel-modal').classList.remove('hidden');
-}
+window.addEventListener('DOMContentLoaded', () => {
+    updateFormTabsArrows();
+    const scroller = document.getElementById('form-tabs-scroll');
+    if (scroller) {
+        scroller.addEventListener('scroll', updateFormTabsArrows);
+    }
+});
 
-function closeCancelModal() {
-    document.getElementById('cancel-modal').classList.add('hidden');
-}
-
-function submitCancel() {
-    showToast('success', 'Projeto cancelado com sucesso!');
-    closeCancelModal();
-}
-
-function openReturnModal() {
-    document.getElementById('return-modal').classList.remove('hidden');
-}
-
-function closeReturnModal() {
-    document.getElementById('return-modal').classList.add('hidden');
-}
-
-function submitReturn() {
-    showToast('success', 'Projeto devolvido para correção!');
-    closeReturnModal();
-}
-
-function openConfirmModal() {
-    document.getElementById('confirm-modal').classList.remove('hidden');
-}
-
-function closeConfirmModal() {
-    document.getElementById('confirm-modal').classList.add('hidden');
-}
-
-function confirmContract() {
-    showToast('success', 'Contratação concluída com sucesso!');
-    closeConfirmModal();
-}
-
-function saveDraft() {
-    showToast('success', 'Rascunho salvo com sucesso!');
-}
-
-function showToast(type, message) {
-    const toast = document.getElementById('toast');
-    const icon = document.getElementById('toast-icon');
-    const messageDiv = document.getElementById('toast-message');
-    
-    toast.classList.remove('hidden');
-    icon.className = type === 'success' ? 'fa-solid fa-check-circle text-green-600' : 'fa-solid fa-exclamation-triangle text-red-600';
-    messageDiv.textContent = message;
-    
-    setTimeout(() => {
-        toast.classList.add('hidden');
-    }, 3000);
-}
+window.addEventListener('resize', updateFormTabsArrows);
 </script>
 </body>
 </html>
