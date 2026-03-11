@@ -68,38 +68,378 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div id="content-section" class="lg:col-span-2">
             <div id="tabs-navigation" class="bg-white rounded-lg shadow-md mb-6">
-                <div class="flex border-b border-gray-200">
-                    <button onclick="switchTab('business-case')" class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50">
-                        <i class="fa-solid fa-briefcase mr-2"></i>
-                        Business Case
-                    </button>
-                    <button onclick="switchTab('risk-compliance')" class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                        <i class="fa-solid fa-shield-alt mr-2"></i>
-                        Risco & Compliance
-                    </button>
-                    <button onclick="switchTab('cost-budget')" class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                        <i class="fa-solid fa-dollar-sign mr-2"></i>
-                        Custo & Orçamento
-                    </button>
-                    <button onclick="switchTab('documents')" class="tab-button px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-                        <i class="fa-solid fa-file-alt mr-2"></i>
-                        Documentos
-                    </button>
+                <div class="border-b border-gray-200">
+                    <div class="relative">
+                        <div id="form-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
+                            <button type="button" onclick="switchTab('solicitacao')" id="tab-solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50 whitespace-nowrap">
+                                <i class="fa-solid fa-file-lines mr-2"></i>Solicitação
+                            </button>
+                            <button type="button" onclick="switchTab('analise-ti')" id="tab-analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                                <i class="fa-solid fa-microscope mr-2"></i>Análise TI
+                            </button>
+                            <button type="button" onclick="switchTab('impacto')" id="tab-impacto" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                                <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Área
+                            </button>
+                            <button type="button" onclick="switchTab('triagem-ti')" id="tab-triagem-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                                <i class="fa-solid fa-route mr-2"></i>Triagem TI
+                            </button>
+                            <button type="button" onclick="switchTab('business-case')" id="tab-business-case" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                                <i class="fa-solid fa-briefcase mr-2"></i>Business Case
+                            </button>
+                            <button type="button" onclick="switchTab('risk-compliance')" id="tab-risk-compliance" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                                <i class="fa-solid fa-shield-alt mr-2"></i>Risco & Compliance
+                            </button>
+                            <button type="button" onclick="switchTab('documents')" id="tab-documents" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                                <i class="fa-solid fa-file-alt mr-2"></i>Documentos
+                            </button>
+                        </div>
+
+                        <button id="form-tabs-left-arrow" type="button" onclick="scrollFormTabs('left')" class="absolute left-0 top-0 bottom-0 w-24 rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-start pl-2">
+                            <span class="flex items-center gap-0 text-base leading-none">
+                                <i class="fa-solid fa-chevron-left"></i>
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                        </button>
+
+                        <button id="form-tabs-right-arrow" type="button" onclick="scrollFormTabs('right')" class="absolute right-0 top-0 bottom-0 w-24 rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-end pr-2">
+                            <span class="flex items-center gap-0 text-base leading-none">
+                                <i class="fa-solid fa-chevron-right"></i>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <div id="business-case" class="tab-content bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-briefcase mr-3 text-bevap-gold"></i>
-                    Business Case
-                </h2>
-                
+            <div id="tab-content-solicitacao" class="tab-content bg-white rounded-lg shadow-md p-6">
                 <div class="space-y-6">
-                    <div>
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Objetivo do Projeto</h3>
-                        <p class="text-gray-700 leading-relaxed">Desenvolver e implementar um portal web integrado para gestão de fornecedores, permitindo autoatendimento, acompanhamento de pedidos e comunicação direta com equipes de compras. O portal visa modernizar os processos de relacionamento com fornecedores e reduzir a carga operacional das equipes internas.</p>
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                        <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-4">Dados Básicos</h3>
+                        <div class="space-y-5">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
+                                <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
+                                    <p class="text-gray-800">Tecnologia da Informação</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
+                                    <p class="text-gray-800">1001-TI</p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
+                                <p class="text-gray-800">Diretoria TI</p>
+                            </div>
+                        </div>
                     </div>
-                    
+
+                    <div class="flex items-center px-4 py-3 border border-green-200 bg-green-50 rounded-lg">
+                        <i class="fa-solid fa-check-circle text-bevap-green mr-2"></i>
+                        <span class="text-sm text-gray-700 font-medium">Alinhado aos objetivos estratégicos BEVAP</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <i class="fa-solid fa-bullseye text-bevap-green mr-2"></i>
+                                <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Objetivo do Projeto</h3>
+                            </div>
+                            <p class="text-sm text-gray-700">Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso às aplicações corporativas.</p>
+                        </div>
+
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <i class="fa-solid fa-circle-exclamation text-bevap-gold mr-2"></i>
+                                <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Problema/Oportunidade</h3>
+                            </div>
+                            <p class="text-sm text-gray-700">Atualmente, os usuários precisam gerenciar múltiplas senhas para diferentes sistemas, o que gera sobrecarga para o suporte e riscos de segurança. A implementação do SSO (Single Sign-On) simplificará o acesso e fortalecerá as políticas de segurança.</p>
+                        </div>
+
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <div class="flex items-center mb-2">
+                                <i class="fa-solid fa-chart-line text-bevap-green mr-2"></i>
+                                <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Benefícios Esperados</h3>
+                            </div>
+                            <p class="text-sm text-gray-700">Melhoria na segurança com políticas de senha centralizadas, redução de chamados de suporte relacionados a senhas e aumento da produtividade dos colaboradores com acesso simplificado.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Escopo Inicial</h3>
+                            <p class="text-sm text-gray-700">Integração do SSO com os principais sistemas da empresa: ERP, CRM e portal do colaborador. Inclui a configuração do provedor de identidade e a criação de documentação para usuários e administradores.</p>
+                        </div>
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Fora de Escopo</h3>
+                            <p class="text-sm text-gray-700">A integração com sistemas legados ou de terceiros que não suportam SAML/OAuth não está incluída nesta fase. A migração de contas de usuário não utilizadas também está fora de escopo.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                        <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Dependências</h3>
+                        <p class="text-sm text-gray-700">Disponibilidade da equipe de infraestrutura para configuração de servidores e rede. Licenciamento do provedor de identidade a ser adquirido pela área de compras.</p>
+                    </div>
+
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                        <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Riscos Iniciais</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
+                                <span class="text-sm text-gray-700">Atraso na aquisição das licenças do provedor de identidade.</span>
+                            </div>
+                            <div class="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
+                                <span class="text-sm text-gray-700">Incompatibilidade de algum sistema crítico com o protocolo de SSO escolhido.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                        <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Stakeholders</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Diretoria TI</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Equipe de Segurança</span>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Gerentes de Departamento</span>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                        <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Anexos</h3>
+                        <div class="divide-y">
+                            <div class="py-3 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-sm text-gray-900">proposta-sso.pdf</div>
+                                        <div class="text-xs text-gray-500">2.4 MB</div>
+                                    </div>
+                                </div>
+                                <button onclick="viewAttachment('pdf')" class="px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors" title="Baixar">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                            </div>
+                            <div class="py-3 flex items-center justify-between">
+                                <div class="flex items-center">
+                                    <i class="fa-solid fa-file-image text-blue-500 text-xl mr-3"></i>
+                                    <div>
+                                        <div class="font-medium text-sm text-gray-900">arquitetura-sistemas.png</div>
+                                        <div class="text-xs text-gray-500">800 KB</div>
+                                    </div>
+                                </div>
+                                <button onclick="viewAttachment('image')" class="px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors" title="Baixar">
+                                    <i class="fa-solid fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-analise-ti" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                <div class="space-y-6">
+                    <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <div class="flex items-center mb-2">
+                            <i class="fa-solid fa-check-circle text-bevap-green text-xl mr-2"></i>
+                            <h3 class="font-montserrat font-semibold text-bevap-navy">Parecer TI: Viável</h3>
+                        </div>
+                        <p class="text-sm text-gray-700">Projeto tecnicamente viável com infraestrutura existente. Integrações podem ser realizadas via APIs REST. Equipe interna possui competência necessária.</p>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Avaliação Técnica</h3>
+                        <div class="bg-gray-50 p-4 rounded-lg space-y-3 text-sm">
+                            <div class="flex items-start">
+                                <i class="fa-solid fa-lightbulb text-bevap-gold mr-3 mt-1"></i>
+                                <div>
+                                    <div class="font-medium text-gray-900">Alternativas Consideradas</div>
+                                    <p class="text-gray-700 mt-1">Avaliamos ServiceNow e Jira Service Management, mas GLPI oferece melhor custo-benefício e já está implantado.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fa-solid fa-chart-simple text-blue-600 mr-3 mt-1"></i>
+                                <div>
+                                    <div class="font-medium text-gray-900">Esforço Estimado</div>
+                                    <p class="text-gray-700 mt-1">21 pontos de história / 320 horas (2 desenvolvedores full-time por 6 semanas)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos Identificados</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-start p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-yellow-200 text-yellow-800 font-medium mr-3">Médio</span>
+                                <div class="text-sm">
+                                    <div class="font-medium text-gray-900">Disponibilidade de Ambientes</div>
+                                    <p class="text-gray-700 mt-1">Necessário ambiente de homologação dedicado para testes de integração.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-start p-3 bg-green-50 border border-green-200 rounded-lg">
+                                <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-green-200 text-green-800 font-medium mr-3">Baixo</span>
+                                <div class="text-sm">
+                                    <div class="font-medium text-gray-900">Complexidade das APIs</div>
+                                    <p class="text-gray-700 mt-1">APIs GLPI são bem documentadas e equipe já possui experiência.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Dependências Técnicas</h3>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                <li class="flex items-center">
+                                    <i class="fa-solid fa-server text-bevap-navy mr-2"></i>
+                                    Atualização GLPI para versão 10.x
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fa-solid fa-key text-bevap-navy mr-2"></i>
+                                    Credenciais de integração com Active Directory
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fa-solid fa-database text-bevap-navy mr-2"></i>
+                                    Acesso ao banco de dados de ativos
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Observações do Analista TI</h3>
+                        <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-700">
+                            <p>Projeto bem estruturado com escopo claro. Recomendo priorização alta devido ao impacto operacional. Sugiro início imediato após aprovação para aproveitar janela de disponibilidade da equipe.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-impacto" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                <div class="space-y-6">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <p class="text-sm text-blue-800">
+                            <i class="fa-solid fa-info-circle mr-2"></i>
+                            Consolidação do impacto para orientar a decisão de execução e priorização da área.
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white border border-slate-200 rounded-lg p-4">
+                            <div class="text-xs text-gray-500 mb-1">Capacidade Atual</div>
+                            <div class="text-3xl font-bold text-bevap-navy">60%</div>
+                            <p class="text-sm text-gray-600 mt-2">Equipe disponível para absorver novas frentes sem comprometer operação.</p>
+                        </div>
+                        <div class="bg-white border border-slate-200 rounded-lg p-4">
+                            <div class="text-xs text-gray-500 mb-3">Prioridade da Área</div>
+                            <div class="flex flex-wrap items-center gap-2 mb-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
+                                    <i class="fa-solid fa-star mr-1"></i> Estratégico
+                                </span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-700 font-medium">Operacional</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs bg-gray-100 text-gray-700 font-medium">Crítico</span>
+                            </div>
+                            <p class="text-sm text-gray-600">Classificação validada com a liderança da área para execução por fases.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-lg p-5">
+                        <h4 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Recursos Necessários da Área</h4>
+                        <div class="space-y-2 text-sm text-gray-700">
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-user-group text-bevap-navy mr-2"></i>
+                                <span>2 analistas funcionais dedicados na fase inicial</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa-solid fa-clock text-bevap-gold mr-2"></i>
+                                <span>Janela semanal de 4h para validações com usuários-chave</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-lg p-5">
+                        <h4 class="text-base font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
+                            <i class="fa-solid fa-comment-dots mr-2 text-bevap-gold"></i>
+                            Observações do Gestor
+                        </h4>
+                        <div class="bg-slate-50 border-l-4 border-bevap-green rounded-r-lg p-3">
+                            <p class="text-sm text-gray-700">Projeto bem estruturado, com impacto positivo esperado na eficiência operacional da área.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-triagem-ti" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-route mr-3 text-bevap-gold"></i>
+                    Triagem TI
+                </h2>
+
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-r from-bevap-navy to-blue-900 text-white rounded-xl p-5 shadow-sm">
+                        <div class="flex items-start justify-between gap-4">
+                            <div>
+                                <div class="text-xs uppercase tracking-wider text-white/80 mb-1">Resultado da Triagem</div>
+                                <h3 class="text-xl font-montserrat font-semibold">Decisão: Execução Externa</h3>
+                                <p class="text-sm text-white/90 mt-2">Encaminhamento priorizado para fornecedor devido ao equilíbrio entre prazo, risco operacional e disponibilidade interna.</p>
+                            </div>
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white text-bevap-navy whitespace-nowrap">
+                                <i class="fa-solid fa-handshake mr-1"></i> Aprovado na Triagem
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white border border-slate-200 rounded-lg p-4">
+                            <div class="text-xs text-gray-500 mb-1">Categoria Principal</div>
+                            <div class="font-semibold text-bevap-navy">Dependência de Fornecedor</div>
+                            <p class="text-xs text-gray-600 mt-2">Especialização requerida para acelerar entrega e reduzir retrabalho.</p>
+                        </div>
+
+                        <div class="bg-white border border-slate-200 rounded-lg p-4">
+                            <div class="text-xs text-gray-500 mb-1">Data desejada de início</div>
+                            <div class="font-semibold text-bevap-navy">15/03/2026</div>
+                            <p class="text-xs text-gray-600 mt-2">Planejamento alinhado à janela de execução e disponibilidade do fornecedor.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-lg p-4">
+                        <div class="text-xs text-gray-500 mb-1">Capacidade Interna Atual</div>
+                        <div class="flex items-center justify-between mt-2">
+                            <span class="text-sm font-semibold text-bevap-navy">75%</span>
+                            <span class="text-xs text-gray-600">Disponibilidade parcial da equipe interna</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
+                            <div class="bg-bevap-green h-2 rounded-full" style="width: 75%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <h4 class="text-sm font-semibold text-bevap-navy mb-2 flex items-center">
+                            <i class="fa-solid fa-shield-halved text-bevap-gold mr-2"></i>
+                            Riscos e Dependências Monitoradas
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            <div class="flex items-start bg-white border border-yellow-200 rounded-lg p-3">
+                                <i class="fa-solid fa-triangle-exclamation text-bevap-gold mr-2 mt-0.5"></i>
+                                <span class="text-gray-700">Dependência de atualização do servidor antes do kickoff técnico.</span>
+                            </div>
+                            <div class="flex items-start bg-white border border-yellow-200 rounded-lg p-3">
+                                <i class="fa-solid fa-triangle-exclamation text-bevap-gold mr-2 mt-0.5"></i>
+                                <span class="text-gray-700">Validação com área de negócio para fechamento de escopo contratual.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-business-case" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                <div class="space-y-6">
                     <div>
                         <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Benefícios Esperados</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -165,57 +505,53 @@
                 </div>
             </div>
 
-            <div id="risk-compliance" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-shield-alt mr-3 text-bevap-gold"></i>
-                    Análise de Risco & Compliance
-                </h2>
-                
+            <div id="tab-content-risk-compliance" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
                 <div class="space-y-6">
                     <div>
                         <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Matriz de Risco Geral</h3>
-                        <div class="flex items-center justify-center mb-4">
-                            <div class="inline-flex items-center px-4 py-2 rounded-full bg-yellow-100 border border-yellow-300">
-                                <i class="fa-solid fa-exclamation-triangle text-yellow-600 mr-2"></i>
-                                <span class="font-semibold text-yellow-800">Risco Médio</span>
+                        <div class="border border-gray-200 rounded-lg">
+                            <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full bg-yellow-100 border border-yellow-300 text-yellow-800 text-sm font-semibold">
+                                        <i class="fa-solid fa-triangle-exclamation text-yellow-600 mr-2"></i>Risco Médio
+                                    </span>
+                                    <span class="text-sm text-gray-600">Probabilidade: <span class="font-semibold text-gray-900">Média</span></span>
+                                    <span class="text-sm text-gray-400">•</span>
+                                    <span class="text-sm text-gray-600">Impacto: <span class="font-semibold text-gray-900">Médio</span></span>
+                                </div>
+                                <span class="text-xs text-gray-500">Visão geral</span>
                             </div>
                         </div>
                     </div>
                     
                     <div>
                         <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos Identificados</h3>
-                        <div class="space-y-3">
-                            <div class="border border-red-200 rounded-lg p-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="font-medium text-red-900">Integração com ERP Legacy</h4>
-                                    <span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">Alto</span>
+                        <div class="divide-y divide-gray-200 border border-gray-200 rounded-lg">
+                            <div class="p-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <h4 class="font-medium text-gray-900">Integração com ERP Legacy</h4>
+                                    <span class="inline-flex items-center px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">Alto</span>
                                 </div>
-                                <p class="text-sm text-red-700 mb-2">Complexidade técnica na integração com sistema ERP atual pode gerar atrasos.</p>
-                                <div class="text-xs text-red-600">
-                                    <strong>Mitigação:</strong> Prova de conceito já validada; equipe especializada alocada.
-                                </div>
+                                <p class="text-sm text-gray-700 mt-2">Complexidade técnica na integração com sistema ERP atual pode gerar atrasos.</p>
+                                <p class="text-xs text-gray-600 mt-2"><strong>Mitigação:</strong> Prova de conceito já validada; equipe especializada alocada.</p>
                             </div>
-                            
-                            <div class="border border-yellow-200 rounded-lg p-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="font-medium text-yellow-900">Adoção pelos Fornecedores</h4>
-                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">Médio</span>
+
+                            <div class="p-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <h4 class="font-medium text-gray-900">Adoção pelos Fornecedores</h4>
+                                    <span class="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded">Médio</span>
                                 </div>
-                                <p class="text-sm text-yellow-700 mb-2">Resistência à mudança por parte de fornecedores menos digitalizados.</p>
-                                <div class="text-xs text-yellow-600">
-                                    <strong>Mitigação:</strong> Programa de treinamento e suporte dedicado; rollout gradual.
-                                </div>
+                                <p class="text-sm text-gray-700 mt-2">Resistência à mudança por parte de fornecedores menos digitalizados.</p>
+                                <p class="text-xs text-gray-600 mt-2"><strong>Mitigação:</strong> Programa de treinamento e suporte dedicado; rollout gradual.</p>
                             </div>
-                            
-                            <div class="border border-green-200 rounded-lg p-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <h4 class="font-medium text-green-900">Disponibilidade da Equipe</h4>
-                                    <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Baixo</span>
+
+                            <div class="p-4">
+                                <div class="flex flex-wrap items-center justify-between gap-2">
+                                    <h4 class="font-medium text-gray-900">Disponibilidade da Equipe</h4>
+                                    <span class="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Baixo</span>
                                 </div>
-                                <p class="text-sm text-green-700 mb-2">Possível conflito com outros projetos em andamento.</p>
-                                <div class="text-xs text-green-600">
-                                    <strong>Mitigação:</strong> Recursos já reservados; cronograma validado com gestores.
-                                </div>
+                                <p class="text-sm text-gray-700 mt-2">Possível conflito com outros projetos em andamento.</p>
+                                <p class="text-xs text-gray-600 mt-2"><strong>Mitigação:</strong> Recursos já reservados; cronograma validado com gestores.</p>
                             </div>
                         </div>
                     </div>
@@ -256,112 +592,7 @@
                 </div>
             </div>
 
-            <div id="cost-budget" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
-                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                    <i class="fa-solid fa-dollar-sign mr-3 text-bevap-gold"></i>
-                    Análise de Custo & Orçamento
-                </h2>
-                
-                <div class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="bg-gradient-to-br from-bevap-navy to-blue-900 text-white rounded-lg p-6">
-                            <h3 class="font-montserrat font-semibold mb-4 flex items-center">
-                                <i class="fa-solid fa-calculator mr-2 text-bevap-gold"></i>
-                                Investimento Total
-                            </h3>
-                            <div class="text-3xl font-bold mb-2">R$ 290.000,00</div>
-                            <div class="text-sm text-blue-200">Valor aprovado pelo GCC</div>
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <div>
-                                <h4 class="font-medium text-gray-700 mb-2">Distribuição CAPEX/OPEX</h4>
-                                <div class="space-y-2">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm text-gray-600">CAPEX (70%)</span>
-                                        <span class="font-semibold">R$ 203.000,00</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-bevap-green h-2 rounded-full" style="width: 70%"></div>
-                                    </div>
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-sm text-gray-600">OPEX (30%)</span>
-                                        <span class="font-semibold">R$ 87.000,00</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2">
-                                        <div class="bg-blue-500 h-2 rounded-full" style="width: 30%"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Centros de Custo Envolvidos</h3>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-4 py-3 text-left text-gray-700 font-medium">Centro de Custo</th>
-                                        <th class="px-4 py-3 text-right text-gray-700 font-medium">Valor</th>
-                                        <th class="px-4 py-3 text-right text-gray-700 font-medium">% Total</th>
-                                        <th class="px-4 py-3 text-center text-gray-700 font-medium">Alçada</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="px-4 py-3">TI-DEV - Desenvolvimento</td>
-                                        <td class="px-4 py-3 text-right font-medium">R$ 180.000,00</td>
-                                        <td class="px-4 py-3 text-right">62%</td>
-                                        <td class="px-4 py-3 text-center">
-                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Aprovada</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-3">COMPRAS - Fornecedores</td>
-                                        <td class="px-4 py-3 text-right font-medium">R$ 70.000,00</td>
-                                        <td class="px-4 py-3 text-right">24%</td>
-                                        <td class="px-4 py-3 text-center">
-                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Aprovada</span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-3">TI-INFRA - Infraestrutura</td>
-                                        <td class="px-4 py-3 text-right font-medium">R$ 40.000,00</td>
-                                        <td class="px-4 py-3 text-right">14%</td>
-                                        <td class="px-4 py-3 text-center">
-                                            <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">Aprovada</span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                        <h3 class="text-sm font-medium text-blue-900 mb-3 flex items-center">
-                            <i class="fa-solid fa-chart-bar mr-2"></i>
-                            Comparativo Orçamentário
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                            <div>
-                                <div class="text-blue-800 mb-1">Estimativa Inicial:</div>
-                                <div class="font-bold text-blue-900">R$ 270.000,00</div>
-                            </div>
-                            <div>
-                                <div class="text-blue-800 mb-1">Proposta Final:</div>
-                                <div class="font-bold text-bevap-navy">R$ 290.000,00</div>
-                            </div>
-                            <div>
-                                <div class="text-blue-800 mb-1">Variação:</div>
-                                <div class="font-bold text-orange-600">+R$ 20.000 (+7,4%)</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="documents" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+            <div id="tab-content-documents" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
                 <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
                     <i class="fa-solid fa-file-alt mr-3 text-bevap-gold"></i>
                     Documentos do Projeto
@@ -508,11 +739,23 @@
                                 <label class="block text-xs text-gray-600 mb-1">Data/Hora</label>
                                 <input type="datetime-local" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
                             </div>
-                            <div>
-                                <label class="block text-xs text-gray-600 mb-1">Participantes</label>
-                                <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" placeholder="Ex: João Silva, Maria Santos...">
-                            </div>
                         </div>
+
+                        <div class="mb-3">
+                            <label class="block text-xs text-gray-600 mb-1">Participantes</label>
+                            <div class="flex flex-wrap gap-2 mb-3" id="meeting-participants-list"></div>
+                            <div id="meeting-participant-autocomplete" class="relative">
+                                <div class="flex gap-2">
+                                    <input type="text" id="meeting-participant-input" placeholder="Nome do participante..." autocomplete="off" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
+                                    <button type="button" onclick="addMeetingParticipant()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all" aria-label="Adicionar participante">
+                                        <i class="fa-solid fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div id="meeting-participant-suggestions" class="hidden absolute left-0 right-0 top-full mt-2 bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden max-h-56 overflow-auto z-10"></div>
+                            </div>
+                            <input type="hidden" id="meeting-participants-value" value="">
+                        </div>
+
                         <label class="block text-xs text-gray-600 mb-1">Anotações</label>
                         <textarea rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" placeholder="Principais pontos discutidos na reunião..."></textarea>
                         <div class="mt-3 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-bevap-green transition-colors cursor-pointer">
@@ -525,69 +768,104 @@
         </div>
 
         <aside id="project-summary" class="lg:col-span-1">
-            <div class="bg-white rounded-lg shadow-md p-5 sticky top-36">
-                <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
-                    <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
-                    Resumo do Projeto
-                </h3>
-                
-                <div class="space-y-3 text-sm">
-                    <div class="flex items-center justify-between pb-2 border-b">
-                        <span class="text-gray-600">Código</span>
-                        <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-052</span>
+            <div class="sticky top-36 space-y-4">
+                <div class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
+                        Resumo do Projeto
+                    </h3>
+                    
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Código</span>
+                            <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-014</span>
+                        </div>
+                        <div class="pb-2 border-b">
+                            <span class="text-gray-600">Título</span>
+                            <p class="font-medium text-gray-900 mt-1">Implantar SSO</p>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Solicitante</span>
+                            <span class="font-medium text-gray-900">João Vieira</span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Área</span>
+                            <span class="font-medium text-gray-900">TI</span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Patrocinador</span>
+                            <span class="font-medium text-gray-900">Diretoria TI</span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Prioridade</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
+                                <i class="fa-solid fa-star mr-1"></i> Estratégico
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Tipo</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800 font-medium">
+                                <i class="fa-solid fa-users mr-1"></i> Interno
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Status</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 font-medium">
+                                <i class="fa-solid fa-clipboard-check mr-1"></i> Em Análise - Comitê
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Custo</span>
+                            <span class="font-medium text-gray-900">R$ 290.000</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Prazo</span>
+                            <span class="font-medium text-gray-900">12 semanas</span>
+                        </div>
                     </div>
-                    <div class="pb-2 border-b">
-                        <span class="text-gray-600">Título</span>
-                        <p class="font-medium text-gray-900 mt-1">Portal do Fornecedor</p>
-                    </div>
-                    <div class="flex items-center justify-between pb-2 border-b">
-                        <span class="text-gray-600">Área</span>
-                        <span class="font-medium text-gray-900">Compras</span>
-                    </div>
-                    <div class="flex items-center justify-between pb-2 border-b">
-                        <span class="text-gray-600">Patrocinador</span>
-                        <span class="font-medium text-gray-900">Dir. Compras</span>
-                    </div>
-                    <div class="flex items-center justify-between pb-2 border-b">
-                        <span class="text-gray-600">Prioridade</span>
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800 font-medium">
-                            <i class="fa-solid fa-star mr-1"></i> Estratégico
-                        </span>
-                    </div>
-                    <div class="flex items-center justify-between pb-2 border-b">
-                        <span class="text-gray-600">Tipo</span>
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800 font-medium">
-                            <i class="fa-solid fa-external-link-alt mr-1"></i> Externo
-                        </span>
-                    </div>
-                    <div class="flex items-center justify-between pb-2 border-b">
-                        <span class="text-gray-600">Status</span>
-                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 font-medium">
-                            <i class="fa-solid fa-clipboard-check mr-1"></i> Em Análise - Comitê
-                        </span>
-                    </div>
-                    <div class="flex items-center justify-between pb-2 border-b">
-                        <span class="text-gray-600">Custo</span>
-                        <span class="font-medium text-gray-900">R$ 290.000</span>
-                    </div>
-                    <div class="flex items-center justify-between">
-                        <span class="text-gray-600">Prazo</span>
-                        <span class="font-medium text-gray-900">12 semanas</span>
+
+                    <div class="mt-4 pt-4 border-t space-y-2">
+                        <button onclick="viewTimeline()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                            <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
+                        </button>
+                        <button onclick="viewAttachments()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
+                            <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos (2)
+                        </button>
                     </div>
                 </div>
 
-                <div class="mt-4 pt-4 border-t space-y-2">
-                    <button onclick="openTimeline()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
-                        <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
-                    </button>
-                    <button onclick="openAttachments()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
-                        <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos
-                    </button>
+                <div id="progress-status" class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-tasks mr-2 text-bevap-green"></i>
+                        Progresso
+                    </h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Solicitação aprovada</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Análise TI concluída</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Impacto na área concluído</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Triagem técnica concluída</span>
+                        </div>
+                        <div class="flex items-center text-bevap-gold">
+                            <i class="fa-solid fa-clock mr-2"></i>
+                            <span>Análise do comitê em andamento</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </aside>
     </div>
-            <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <!-- <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
                     <i class="fa-solid fa-flask-vial mr-2 text-bevap-green"></i>Simulação de Telas (Protótipo)
                 </h2>
@@ -629,53 +907,471 @@
                         <span class="text-sm font-medium text-bevap-navy text-center">Triagem Técnica</span>
                     </a>
                 </div>
-            </section>
+            </section> -->
 </main>
 
 <footer id="action-footer" class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex items-center justify-between">
-            <button onclick="saveDraft()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
-                <i class="fa-solid fa-save mr-2"></i>
-                Salvar Rascunho
+            <button onclick="saveDraft()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
+                <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
-            <a href="ux-dashboard.html" class="flex items-center space-x-3">
-                <button onclick="openReturnModal()" class="px-6 py-2 border border-yellow-500 text-yellow-700 rounded-lg hover:bg-yellow-50 transition-colors font-medium">
-                    <i class="fa-solid fa-edit mr-2"></i>
-                    Devolver para Correção
+            <div class="flex items-center space-x-3">
+                <button onclick="showRejectModal()" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
+                    <i class="fa-solid fa-ban mr-2"></i> Reprovar
                 </button>
-                <button onclick="openRejectModal()" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
-                    <i class="fa-solid fa-times-circle mr-2"></i>
-                    Reprovar
+                <button onclick="showReturnModal()" class="px-5 py-2.5 text-sm font-medium text-yellow-700 bg-white border border-yellow-300 rounded-lg hover:bg-yellow-50 transition-all">
+                    <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
                 </button>
-                <button onclick="openApproveModal()" class="px-8 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium shadow-lg">
-                    <i class="fa-solid fa-check-circle mr-2"></i>
-                    Aprovar Projeto
+                <button onclick="confirmCommitteeApproval()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
+                    <i class="fa-solid fa-check mr-2"></i> Aprovar Projeto
                 </button>
             </div>
         </div>
     </div>
 </footer>
 
-<div id="modal-overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div id="modal-content" class="bg-white rounded-lg shadow-xl max-w-md w-full"></div>
+<div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correção</h3>
+        <p class="text-sm text-gray-600 mb-4">Descreva os pontos que precisam ser corrigidos pelo solicitante:</p>
+        <textarea id="return-reason" rows="4" placeholder="Motivo da devolução..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeModal('modal-return')" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+            <button onclick="confirmReturn()" class="px-4 py-2 text-sm text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-all">Devolver</button>
+        </div>
+    </div>
 </div>
 
-<div id="toast-container" class="fixed top-20 right-4 z-50 space-y-2"></div>
+<div id="modal-reject" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Reprovar Projeto</h3>
+        <p class="text-sm text-gray-600 mb-4">Justifique a reprovação do projeto para notificar os stakeholders:</p>
+        <select id="reject-category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
+            <option value="">Selecione a categoria</option>
+            <option value="escopo">Escopo inadequado</option>
+            <option value="custo">Custo elevado</option>
+            <option value="risco">Risco não mitigado</option>
+            <option value="compliance">Questões de compliance</option>
+            <option value="prazo">Prazo inviável</option>
+            <option value="outro">Outro</option>
+        </select>
+        <textarea id="reject-reason" rows="4" placeholder="Descrição detalhada..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+            <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> Os stakeholders serão notificados automaticamente.</p>
+        </div>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeModal('modal-reject')" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+            <button onclick="confirmReject()" class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-approve-success" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+        <div class="w-20 h-20 bg-bevap-green rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-check text-white text-4xl"></i>
+        </div>
+        <h2 class="text-3xl font-montserrat font-bold text-bevap-navy mb-3">Projeto Aprovado!</h2>
+        <p class="text-gray-600 mb-6">O projeto foi encaminhado para a próxima etapa.</p>
+
+        <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+            <div class="flex items-center mb-2">
+                <i class="fa-solid fa-circle-info text-bevap-gold mr-2"></i>
+                <span class="font-semibold text-sm text-gray-700">Próximo Passo</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+                <i class="fa-solid fa-arrow-right text-bevap-green mr-2"></i>
+                <span id="committee-next-step-text">Aprovação GCC</span>
+            </div>
+        </div>
+
+        <button id="committee-next-step-button" onclick="goToNextStepAfterCommittee()" class="w-full px-6 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md">
+            <i class="fa-solid fa-right-long mr-2"></i>
+            Próximo Passo: Aprovação GCC
+        </button>
+    </div>
+</div>
+
+<div id="toast" class="hidden fixed top-20 right-4 z-50 bg-white rounded-lg shadow-xl border-l-4 p-4 max-w-md">
+    <div class="flex items-center">
+        <i id="toast-icon" class="text-2xl mr-3"></i>
+        <div>
+            <p id="toast-title" class="font-semibold text-gray-900"></p>
+            <p id="toast-message" class="text-sm text-gray-600"></p>
+        </div>
+    </div>
+</div>
 
 <script>
+function updateFormTabsArrows() {
+    const scroller = document.getElementById('form-tabs-scroll');
+    const leftArrow = document.getElementById('form-tabs-left-arrow');
+    const rightArrow = document.getElementById('form-tabs-right-arrow');
+    if (!scroller || !leftArrow || !rightArrow) return;
+
+    const maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+    const hasOverflow = maxScroll > 2;
+    const atStart = scroller.scrollLeft <= 2;
+    const atEnd = scroller.scrollLeft >= maxScroll - 2;
+
+    leftArrow.classList.toggle('opacity-0', !hasOverflow || atStart);
+    leftArrow.classList.toggle('pointer-events-none', !hasOverflow || atStart);
+
+    rightArrow.classList.toggle('opacity-0', !hasOverflow || atEnd);
+    rightArrow.classList.toggle('pointer-events-none', !hasOverflow || atEnd);
+}
+
+function scrollFormTabs(direction) {
+    const scroller = document.getElementById('form-tabs-scroll');
+    if (!scroller) return;
+
+    const target = direction === 'right'
+        ? (scroller.scrollWidth - scroller.clientWidth)
+        : 0;
+
+    scroller.scrollTo({ left: target, behavior: 'smooth' });
+    window.setTimeout(updateFormTabsArrows, 360);
+}
+
 function switchTab(tabName) {
     document.querySelectorAll('.tab-content').forEach(function(tab) {
         tab.classList.add('hidden');
     });
-    document.getElementById(tabName).classList.remove('hidden');
-    
-    document.querySelectorAll('#tab-menu button').forEach(function(button) {
-        button.classList.remove('border-bevap-green', 'text-bevap-navy', 'font-semibold');
-        button.classList.add('border-transparent', 'text-gray-600', 'font-medium');
+
+    document.querySelectorAll('#form-tabs-scroll button').forEach(function(button) {
+        button.classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+        button.classList.add('border-transparent', 'text-gray-500');
     });
-    event.currentTarget.classList.add('border-bevap-green', 'text-bevap-navy', 'font-semibold');
-    event.currentTarget.classList.remove('border-transparent', 'text-gray-600', 'font-medium');
+
+    const activeButton = document.getElementById('tab-' + tabName);
+    if (activeButton) {
+        activeButton.classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+        activeButton.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+    }
+
+    const targetContent = document.getElementById('tab-content-' + tabName);
+    if (targetContent) {
+        targetContent.classList.remove('hidden');
+    }
+
+    updateFormTabsArrows();
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const tabsScroller = document.getElementById('form-tabs-scroll');
+    if (tabsScroller) {
+        tabsScroller.addEventListener('scroll', updateFormTabsArrows);
+        window.addEventListener('resize', updateFormTabsArrows);
+        updateFormTabsArrows();
+    }
+
+    switchTab('solicitacao');
+
+    const meetingParticipantInput = document.getElementById('meeting-participant-input');
+    if (meetingParticipantInput) {
+        meetingParticipantInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                addMeetingParticipant();
+            }
+        });
+    }
+
+    setupMeetingParticipantsAutocomplete();
+});
+
+const meetingParticipantsCatalog = [
+    'João Vieira',
+    'Maria Santos',
+    'Carlos Almeida',
+    'Ana Paula',
+    'Bruno Lima',
+    'Fernanda Rocha',
+    'Ricardo Souza',
+    'Patrícia Costa',
+    'Daniel Ferreira',
+    'Juliana Martins',
+    'Marcos Oliveira',
+    'Camila Ribeiro'
+];
+
+function setupMeetingParticipantsAutocomplete() {
+    const wrapper = document.getElementById('meeting-participant-autocomplete');
+    const input = document.getElementById('meeting-participant-input');
+    const suggestions = document.getElementById('meeting-participant-suggestions');
+    if (!wrapper || !input || !suggestions) return;
+
+    function isSuggestionsOpen() {
+        return !suggestions.classList.contains('hidden');
+    }
+
+    function openSuggestions() {
+        renderSuggestions();
+        if (suggestions.children.length > 0) {
+            suggestions.classList.remove('hidden');
+        } else {
+            suggestions.classList.add('hidden');
+        }
+    }
+
+    function closeSuggestions() {
+        suggestions.classList.add('hidden');
+    }
+
+    function getSelectedNamesLower() {
+        const list = document.getElementById('meeting-participants-list');
+        if (!list) return new Set();
+        return new Set(
+            Array.from(list.querySelectorAll('[data-participant-name]'))
+                .map(function (el) { return (el.getAttribute('data-participant-name') || '').toLowerCase(); })
+                .filter(Boolean)
+        );
+    }
+
+    function renderSuggestions() {
+        const query = (input.value || '').trim().toLowerCase();
+        const selected = getSelectedNamesLower();
+        const items = meetingParticipantsCatalog
+            .filter(function (name) {
+                const lower = name.toLowerCase();
+                if (selected.has(lower)) return false;
+                if (!query) return true;
+                return lower.includes(query);
+            })
+            .slice(0, 8);
+
+        if (items.length === 0) {
+            suggestions.innerHTML = '';
+            return;
+        }
+
+        suggestions.innerHTML = items
+            .map(function (name, index) {
+                const divider = index === 0 ? '' : 'border-t border-gray-100';
+                return `
+                    <button type="button" data-suggested-participant="${name.replace(/\"/g, '&quot;')}" class="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 ${divider}">
+                        <i class="fa-solid fa-user text-gray-400 mr-2"></i>${name}
+                    </button>
+                `;
+            })
+            .join('');
+    }
+
+    input.addEventListener('focus', openSuggestions);
+    input.addEventListener('click', openSuggestions);
+    input.addEventListener('input', function () {
+        if (isSuggestionsOpen()) {
+            openSuggestions();
+        }
+    });
+    input.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') {
+            closeSuggestions();
+        }
+    });
+
+    suggestions.addEventListener('click', function (event) {
+        const button = event.target.closest('button[data-suggested-participant]');
+        if (!button) return;
+
+        const name = (button.getAttribute('data-suggested-participant') || '').trim();
+        if (!name) return;
+
+        input.value = name;
+        addMeetingParticipant();
+        openSuggestions();
+    });
+
+    document.addEventListener('click', function (event) {
+        if (!wrapper.contains(event.target)) {
+            closeSuggestions();
+        }
+    });
+}
+
+function syncMeetingParticipantsValue() {
+    const list = document.getElementById('meeting-participants-list');
+    const hidden = document.getElementById('meeting-participants-value');
+    if (!list || !hidden) return;
+
+    const names = Array.from(list.querySelectorAll('[data-participant-name]')).map(function (el) {
+        return el.getAttribute('data-participant-name') || '';
+    }).filter(Boolean);
+
+    hidden.value = names.join(', ');
+}
+
+function addMeetingParticipant() {
+    const input = document.getElementById('meeting-participant-input');
+    const value = (input?.value || '').trim().replace(/\s+/g, ' ');
+    if (!value) return;
+
+    const list = document.getElementById('meeting-participants-list');
+    if (!list) return;
+
+    const alreadyExists = Array.from(list.querySelectorAll('[data-participant-name]')).some(function (el) {
+        return (el.getAttribute('data-participant-name') || '').toLowerCase() === value.toLowerCase();
+    });
+    if (alreadyExists) {
+        input.value = '';
+        input.focus();
+        return;
+    }
+
+    const chip = document.createElement('span');
+    chip.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white';
+    chip.setAttribute('data-participant-name', value);
+    chip.innerHTML = `
+        ${value}
+        <button type="button" onclick="this.parentElement.remove(); syncMeetingParticipantsValue();" class="ml-2 hover:text-red-300" aria-label="Remover participante">
+            <i class="fa-solid fa-times text-xs"></i>
+        </button>
+    `;
+    list.appendChild(chip);
+
+    input.value = '';
+    input.focus();
+    syncMeetingParticipantsValue();
+}
+
+let committeeNextStepUrl = 'ux-aprovacao-gcc.html';
+
+function showModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    modal.classList.remove('hidden');
+}
+
+function closeModal(modalId) {
+    const modal = document.getElementById(modalId);
+    if (!modal) return;
+    modal.classList.add('hidden');
+}
+
+function showReturnModal() {
+    showModal('modal-return');
+    const textarea = document.getElementById('return-reason');
+    if (textarea) textarea.focus();
+}
+
+function showRejectModal() {
+    showModal('modal-reject');
+    const select = document.getElementById('reject-category');
+    if (select) select.focus();
+}
+
+function confirmReturn() {
+    const reason = (document.getElementById('return-reason')?.value || '').trim();
+    if (!reason) {
+        showToast('Atenção', 'Informe o motivo da devolução.', 'warning');
+        return;
+    }
+
+    closeModal('modal-return');
+    document.getElementById('return-reason').value = '';
+    showToast('Devolvido', 'O projeto foi devolvido para correção.', 'success');
+}
+
+function confirmReject() {
+    const category = (document.getElementById('reject-category')?.value || '').trim();
+    const reason = (document.getElementById('reject-reason')?.value || '').trim();
+    if (!category) {
+        showToast('Atenção', 'Selecione a categoria da reprovação.', 'warning');
+        return;
+    }
+    if (!reason) {
+        showToast('Atenção', 'Descreva o motivo da reprovação.', 'warning');
+        return;
+    }
+
+    closeModal('modal-reject');
+    document.getElementById('reject-category').value = '';
+    document.getElementById('reject-reason').value = '';
+    showToast('Reprovado', 'O projeto foi reprovado e os stakeholders serão notificados.', 'error');
+}
+
+function confirmCommitteeApproval() {
+    // No protótipo, sempre segue para GCC.
+    committeeNextStepUrl = 'ux-aprovacao-gcc.html';
+    const nextStepText = document.getElementById('committee-next-step-text');
+    const nextStepButton = document.getElementById('committee-next-step-button');
+
+    if (nextStepText) nextStepText.textContent = 'Aprovação GCC';
+    if (nextStepButton) {
+        nextStepButton.innerHTML = '<i class="fa-solid fa-right-long mr-2"></i>Próximo Passo: Aprovação GCC';
+    }
+
+    showModal('modal-approve-success');
+}
+
+function goToNextStepAfterCommittee() {
+    window.location.href = committeeNextStepUrl;
+}
+
+function saveDraft() {
+    showToast('Rascunho salvo', 'Alterações salvas no protótipo.', 'success');
+}
+
+function viewTimeline() {
+    showToast('Linha do Tempo', 'A visualização completa não está disponível neste protótipo.', 'info');
+}
+
+function viewAttachments() {
+    showToast('Anexos', 'A lista de anexos não está disponível neste protótipo.', 'info');
+}
+
+function viewAttachment(type) {
+    const typeMap = {
+        pdf: 'Business Case (PDF)',
+        image: 'Wireframes (Imagem)',
+    };
+    showToast('Anexo', `Abrindo: ${typeMap[type] || 'Arquivo'}.`, 'info');
+}
+
+function previewDocument(documentKey) {
+    showToast('Documento', `Pré-visualizando: ${documentKey}.`, 'info');
+}
+
+function downloadDocument(documentKey) {
+    showToast('Documento', `Baixando: ${documentKey}.`, 'info');
+}
+
+let toastTimeoutId = null;
+function showToast(title, message, type) {
+    const toast = document.getElementById('toast');
+    if (!toast) return;
+
+    const icon = document.getElementById('toast-icon');
+    const toastTitle = document.getElementById('toast-title');
+    const toastMessage = document.getElementById('toast-message');
+
+    if (toastTitle) toastTitle.textContent = title;
+    if (toastMessage) toastMessage.textContent = message;
+
+    toast.classList.remove('border-bevap-green', 'border-red-500', 'border-yellow-500', 'border-blue-500');
+    if (icon) icon.className = 'text-2xl mr-3';
+
+    if (type === 'success') {
+        toast.classList.add('border-bevap-green');
+        if (icon) icon.classList.add('fa-solid', 'fa-check-circle', 'text-bevap-green');
+    } else if (type === 'error') {
+        toast.classList.add('border-red-500');
+        if (icon) icon.classList.add('fa-solid', 'fa-circle-xmark', 'text-red-500');
+    } else if (type === 'warning') {
+        toast.classList.add('border-yellow-500');
+        if (icon) icon.classList.add('fa-solid', 'fa-triangle-exclamation', 'text-yellow-600');
+    } else {
+        toast.classList.add('border-blue-500');
+        if (icon) icon.classList.add('fa-solid', 'fa-circle-info', 'text-blue-500');
+    }
+
+    toast.classList.remove('hidden');
+
+    if (toastTimeoutId) window.clearTimeout(toastTimeoutId);
+    toastTimeoutId = window.setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 3000);
 }
 </script>
 </body>

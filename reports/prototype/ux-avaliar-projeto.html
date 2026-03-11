@@ -54,7 +54,7 @@
         </div>
         <div class="pb-3">
             <nav class="flex items-center space-x-2 text-sm">
-                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <a href="ux-dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
                 <a href="#" class="text-gray-300 hover:text-white transition-colors">Portfólio</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
@@ -72,12 +72,12 @@
         
         <div id="content-section" class="lg:col-span-2">
             
-            <div id="alert-banner" class="mb-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div id="alert-banner" class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div class="flex items-start">
-                    <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5 mr-3"></i>
-                    <div class="text-sm text-yellow-800">
-                        <p class="font-medium mb-1">Atenção: Informações Incompletas</p>
-                        <p>Alguns documentos de apoio podem estar faltando. Verifique os anexos antes de aprovar.</p>
+                    <i class="fa-solid fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
+                    <div class="text-sm text-blue-800">
+                        <p class="font-medium mb-1">Análise Técnica Pendente</p>
+                        <p>Preencha a avaliação técnica e o checklist para encaminhar o projeto para a próxima etapa.</p>
                     </div>
                 </div>
             </div>
@@ -88,11 +88,11 @@
                         <button onclick="switchTab('solicitacao')" id="tab-solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50">
                             <i class="fa-solid fa-file-lines mr-2"></i>Solicitação
                         </button>
-                        <button onclick="switchTab('analise')" id="tab-analise" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                        <button onclick="switchTab('analise-tecnica')" id="tab-analise-tecnica" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
                             <i class="fa-solid fa-microscope mr-2"></i>Análise Técnica
                         </button>
                         <button onclick="switchTab('checklist')" id="tab-checklist" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-                            <i class="fa-solid fa-tasks mr-2"></i>Checklist
+                            <i class="fa-solid fa-list-check mr-2"></i>Checklist
                         </button>
                     </nav>
                 </div>
@@ -227,89 +227,101 @@
                     </div>
                 </div>
 
-                <div id="tab-content-analise" class="p-6 hidden">
+                <div id="tab-content-analise-tecnica" class="p-6 hidden">
                     <div class="space-y-6">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Viabilidade Técnica</label>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                <label class="relative">
-                                    <input type="radio" name="viabilidade" value="viavel" class="sr-only peer" checked>
-                                    <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-bevap-green peer-checked:bg-green-50 text-center transition-all">
-                                        <i class="fa-solid fa-check-circle text-bevap-green text-2xl mb-2"></i>
-                                        <div class="font-semibold">Viável</div>
-                                    </div>
-                                </label>
-                                <label class="relative">
-                                    <input type="radio" name="viabilidade" value="parcial" class="sr-only peer">
-                                    <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-yellow-500 peer-checked:bg-yellow-50 text-center transition-all">
-                                        <i class="fa-solid fa-exclamation-circle text-yellow-500 text-2xl mb-2"></i>
-                                        <div class="font-semibold">Parcial</div>
-                                    </div>
-                                </label>
-                                <label class="relative">
-                                    <input type="radio" name="viabilidade" value="inviavel" class="sr-only peer">
-                                    <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-red-500 peer-checked:bg-red-50 text-center transition-all">
-                                        <i class="fa-solid fa-times-circle text-red-500 text-2xl mb-2"></i>
-                                        <div class="font-semibold">Inviável</div>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Alternativas Consideradas</label>
-                            <textarea rows="3" placeholder="Descreva outras abordagens técnicas avaliadas..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Esforço Estimado (pontos)</label>
-                            <input type="number" placeholder="Ex: 21" class="w-full md:w-1/3 px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Riscos Identificados</label>
-                            <div id="risks-container" class="space-y-3">
-                                <div class="risk-item grid grid-cols-1 md:grid-cols-12 gap-3 items-start p-3 border border-gray-200 rounded-lg bg-gray-50">
-                                    <div class="md:col-span-3">
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">Nível de Risco</label>
-                                        <select class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all text-sm">
-                                            <option value="baixo">Baixo</option>
-                                            <option value="medio" selected>Médio</option>
-                                            <option value="alto">Alto</option>
-                                        </select>
-                                    </div>
-                                    <div class="md:col-span-8">
-                                        <label class="block text-xs font-medium text-gray-600 mb-1">Descrição do Risco</label>
-                                        <textarea rows="2" placeholder="Descreva o risco técnico identificado..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm"></textarea>
-                                    </div>
-                                    <div class="md:col-span-1 flex md:justify-end md:pt-6">
-                                        <button type="button" onclick="removeRiskItem(this)" class="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors" title="Remover risco">
-                                            <i class="fa-solid fa-trash"></i>
-                                        </button>
+                        <div class="bg-white  rounded-lg">
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Viabilidade Técnica</label>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                        <label class="relative">
+                                            <input type="radio" name="viabilidade" value="viavel" class="sr-only peer" checked>
+                                            <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-bevap-green peer-checked:bg-green-50 text-center transition-all">
+                                                <i class="fa-solid fa-check-circle text-bevap-green text-2xl mb-2"></i>
+                                                <div class="font-semibold">Viável</div>
+                                            </div>
+                                        </label>
+                                        <label class="relative">
+                                            <input type="radio" name="viabilidade" value="parcial" class="sr-only peer">
+                                            <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-bevap-gold peer-checked:bg-yellow-50 text-center transition-all">
+                                                <i class="fa-solid fa-circle-half-stroke text-bevap-gold text-2xl mb-2"></i>
+                                                <div class="font-semibold">Parcial</div>
+                                            </div>
+                                        </label>
+                                        <label class="relative">
+                                            <input type="radio" name="viabilidade" value="inviavel" class="sr-only peer">
+                                            <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-red-500 peer-checked:bg-red-50 text-center transition-all">
+                                                <i class="fa-solid fa-circle-xmark text-red-500 text-2xl mb-2"></i>
+                                                <div class="font-semibold">Inviável</div>
+                                            </div>
+                                        </label>
                                     </div>
                                 </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alternativas Consideradas</label>
+                                    <textarea rows="3" placeholder="Descreva as alternativas avaliadas (soluções, fornecedores, abordagens)..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                                </div>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Esforço Estimado (horas)</label>
+                                        <input type="number" min="0" value="240" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-2">Esforço Estimado (pontos)</label>
+                                        <input type="number" min="0" value="21" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <label class="block text-sm font-medium text-gray-700">Riscos Identificados</label>
+                                        <button type="button" onclick="addRiskItem()" class="inline-flex items-center px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
+                                            <i class="fa-solid fa-plus mr-2"></i>Adicionar risco
+                                        </button>
+                                    </div>
+                                    <div id="risks-container" class="mt-3 space-y-3">
+                                        <div class="risk-item grid grid-cols-1 md:grid-cols-12 gap-3 items-start p-3 border border-gray-200 rounded-lg bg-gray-50">
+                                            <div class="md:col-span-3">
+                                                <label class="block text-xs font-medium text-gray-600 mb-1">Nível de Risco</label>
+                                                <select class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all text-sm">
+                                                    <option value="baixo">Baixo</option>
+                                                    <option value="medio" selected>Médio</option>
+                                                    <option value="alto">Alto</option>
+                                                </select>
+                                            </div>
+                                            <div class="md:col-span-8">
+                                                <label class="block text-xs font-medium text-gray-600 mb-1">Descrição do Risco</label>
+                                                <textarea rows="2" placeholder="Descreva o risco técnico identificado..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm">Necessário aquisição e configuração do provedor de identidade.</textarea>
+                                            </div>
+                                            <div class="md:col-span-1 flex md:justify-end md:pt-6">
+                                                <button type="button" onclick="removeRiskItem(this)" class="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors" title="Remover risco">
+                                                    <i class="fa-solid fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Dependências Técnicas</label>
+                                    <textarea rows="3" placeholder="Liste dependências (acessos, ambientes, integrações, licenças, dados)..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none">Licenciamento do provedor de identidade e disponibilidade da equipe de infraestrutura para configuração.</textarea>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Observações da Análise</label>
+                                    <textarea rows="4" placeholder="Observações gerais do analista de TI..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none">Projeto viável e alinhado à arquitetura atual. Recomenda-se priorização alta devido ao impacto em segurança e produtividade.</textarea>
+                                </div>
                             </div>
-                            <button type="button" onclick="addRiskItem()" class="mt-3 inline-flex items-center px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
-                                <i class="fa-solid fa-plus mr-2"></i> Adicionar risco
-                            </button>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Dependências Técnicas</label>
-                            <textarea rows="3" placeholder="Sistemas, APIs ou recursos necessários..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
-                        </div>
-
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Observações da Análise</label>
-                            <textarea rows="4" placeholder="Comentários adicionais sobre a análise técnica..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
                         </div>
                     </div>
                 </div>
 
                 <div id="tab-content-checklist" class="p-6 hidden">
-                    <div class="space-y-4">
+                    <div class="mb-8 p-0">
                         <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Itens de Verificação</h3>
-                        
+
                         <div class="space-y-3">
                             <label class="flex items-start">
                                 <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
@@ -318,7 +330,7 @@
                                     <p class="text-gray-500 text-xs mt-1">O projeto possui objetivo claro e mensurável</p>
                                 </span>
                             </label>
-                            
+
                             <label class="flex items-start">
                                 <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
                                 <span class="ml-3 text-sm text-gray-700">
@@ -326,7 +338,7 @@
                                     <p class="text-gray-500 text-xs mt-1">Escopo e fora de escopo estão definidos</p>
                                 </span>
                             </label>
-                            
+
                             <label class="flex items-start">
                                 <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
@@ -334,7 +346,7 @@
                                     <p class="text-gray-500 text-xs mt-1">Possui documentos técnicos suficientes</p>
                                 </span>
                             </label>
-                            
+
                             <label class="flex items-start">
                                 <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
                                 <span class="ml-3 text-sm text-gray-700">
@@ -342,7 +354,7 @@
                                     <p class="text-gray-500 text-xs mt-1">Possui patrocinador executivo definido</p>
                                 </span>
                             </label>
-                            
+
                             <label class="flex items-start">
                                 <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
                                 <span class="ml-3 text-sm text-gray-700">
@@ -350,7 +362,7 @@
                                     <p class="text-gray-500 text-xs mt-1">Projeto alinhado aos objetivos BEVAP</p>
                                 </span>
                             </label>
-                            
+
                             <label class="flex items-start">
                                 <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
@@ -358,15 +370,23 @@
                                     <p class="text-gray-500 text-xs mt-1">Equipe e infraestrutura adequadas</p>
                                 </span>
                             </label>
+
+                            <label class="flex items-start">
+                                <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Anexos essenciais presentes</span>
+                                    <p class="text-gray-500 text-xs mt-1">Documentos de apoio necessários foram anexados</p>
+                                </span>
+                            </label>
                         </div>
 
                         <div class="mt-6 pt-4 border-t">
                             <div class="flex items-center justify-between text-sm mb-2">
                                 <span class="text-gray-600">Completude do Checklist</span>
-                                <span class="font-semibold text-bevap-navy" id="checklist-percentage">57%</span>
+                                <span class="font-semibold text-bevap-navy" id="checklist-percentage">0%</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-bevap-green h-2 rounded-full" style="width: 57%" id="checklist-progress"></div>
+                                <div class="bg-bevap-green h-2 rounded-full" style="width: 0%" id="checklist-progress"></div>
                             </div>
                         </div>
                     </div>
@@ -391,6 +411,10 @@
                         <div class="pb-2 border-b">
                             <span class="text-gray-600">Título</span>
                             <p class="font-medium text-gray-900 mt-1">Implantar SSO corporativo</p>
+                        </div>
+                        <div class="flex items-center justify-between pb-2 border-b">
+                            <span class="text-gray-600">Solicitante</span>
+                            <span class="font-medium text-gray-900">João Vieira</span>
                         </div>
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Área</span>
@@ -424,30 +448,26 @@
                     </div>
                 </div>
 
-                <div id="completion-summary" class="bg-white rounded-lg shadow-md p-5">
-                    <h3 class="font-montserrat font-bold text-sm text-bevap-navy mb-3 flex items-center">
-                        <i class="fa-solid fa-check-double mr-2 text-bevap-gold"></i>
-                        Completude
+                <div id="progress-status" class="bg-white rounded-lg shadow-md p-5">
+                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                        <i class="fa-solid fa-tasks mr-2 text-bevap-green"></i>
+                        Progresso
                     </h3>
                     <div class="space-y-2 text-sm">
-                        <div class="flex items-center text-bevap-green">
+                        <div class="flex items-center text-green-600">
                             <i class="fa-solid fa-check-circle mr-2"></i>
-                            <span>Objetivo definido</span>
-                        </div>
-                        <div class="flex items-center text-bevap-green">
-                            <i class="fa-solid fa-check-circle mr-2"></i>
-                            <span>Escopo documentado</span>
+                            <span>Solicitação completa</span>
                         </div>
                         <div class="flex items-center text-yellow-600">
                             <i class="fa-solid fa-exclamation-circle mr-2"></i>
-                            <span>Análise técnica pendente</span>
+                            <span>Análise Técnica pendente</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-            <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <!-- <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
                     <i class="fa-solid fa-flask-vial mr-2 text-bevap-green"></i>Simulação de Telas (Protótipo)
                 </h2>
@@ -489,7 +509,7 @@
                         <span class="text-sm font-medium text-bevap-navy text-center">Triagem Técnica</span>
                     </a>
                 </div>
-            </section>
+            </section> -->
 </main>
 
 <footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
@@ -498,7 +518,7 @@
             <button onclick="saveDraft()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
                 <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
-            <a href="ux-dashboard.html" class="flex items-center space-x-3">
+            <div class="flex items-center space-x-3">
                 <button onclick="showRejectModal()" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
                     <i class="fa-solid fa-ban mr-2"></i> Não Continuidade
                 </button>
@@ -547,6 +567,32 @@
     </div>
 </div>
 
+<div id="modal-approve-success" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+        <div class="w-20 h-20 bg-bevap-green rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-check text-white text-4xl"></i>
+        </div>
+        <h2 class="text-3xl font-montserrat font-bold text-bevap-navy mb-3">Encaminhado para Aprovação!</h2>
+        <p class="text-gray-600 mb-6">O projeto foi encaminhado com sucesso e será enviado para aprovação do superior imediato do solicitante.</p>
+
+        <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+            <div class="flex items-center mb-2">
+                <i class="fa-solid fa-circle-info text-bevap-gold mr-2"></i>
+                <span class="font-semibold text-sm text-gray-700">Próximo Passo</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+                <i class="fa-solid fa-arrow-right text-bevap-green mr-2"></i>
+                <span>Aprovar Projeto</span>
+            </div>
+        </div>
+
+        <button onclick="goToApproveProject()" class="w-full px-6 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md">
+            <i class="fa-solid fa-thumbs-up mr-2"></i>
+            Próximo Passo: Aprovar Projeto
+        </button>
+    </div>
+</div>
+
 <div id="toast" class="hidden fixed top-20 right-4 bg-white shadow-lg rounded-lg p-4 z-50 border-l-4 border-bevap-green">
     <div class="flex items-center">
         <i class="fa-solid fa-check-circle text-bevap-green text-xl mr-3"></i>
@@ -556,15 +602,24 @@
 
 <script>
 function switchTab(tabName) {
-    const tabs = ['solicitacao', 'analise', 'checklist'];
+    const tabs = ['solicitacao', 'analise-tecnica', 'checklist'];
     tabs.forEach(tab => {
-        document.getElementById('tab-' + tab).classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
-        document.getElementById('tab-' + tab).classList.add('border-transparent', 'text-gray-500');
-        document.getElementById('tab-content-' + tab).classList.add('hidden');
+        const tabBtn = document.getElementById('tab-' + tab);
+        const tabContent = document.getElementById('tab-content-' + tab);
+        if (tabBtn) {
+            tabBtn.classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+            tabBtn.classList.add('border-transparent', 'text-gray-500');
+        }
+        if (tabContent) tabContent.classList.add('hidden');
     });
-    document.getElementById('tab-' + tabName).classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
-    document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500');
-    document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+
+    const activeBtn = document.getElementById('tab-' + tabName);
+    const activeContent = document.getElementById('tab-content-' + tabName);
+    if (activeBtn) {
+        activeBtn.classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+        activeBtn.classList.remove('border-transparent', 'text-gray-500');
+    }
+    if (activeContent) activeContent.classList.remove('hidden');
 }
 
 function addRiskItem() {
@@ -635,8 +690,14 @@ function confirmReject() {
 }
 
 function approveProject() {
-    showToast('Projeto aprovado e encaminhado ao superior');
-    setTimeout(() => window.location.href = '#', 2000);
+    const modal = document.getElementById('modal-approve-success');
+    if (modal) modal.classList.remove('hidden');
+}
+
+function goToApproveProject() {
+    window.open('ux-aprovar-projeto.html', '_blank');
+    const modal = document.getElementById('modal-approve-success');
+    if (modal) modal.classList.add('hidden');
 }
 
 function saveDraft() {
@@ -662,16 +723,27 @@ function showAttachments() {
     showToast('Visualizador de anexos em desenvolvimento');
 }
 
-document.querySelectorAll('#tab-content-checklist input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener('change', updateChecklistProgress);
-});
+// Legacy checklist progress (kept for backward-compat if checklist is reintroduced)
+const checklistRoot = document.getElementById('tab-content-checklist');
+if (checklistRoot) {
+    checklistRoot.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateChecklistProgress);
+    });
+    updateChecklistProgress();
+}
 
 function updateChecklistProgress() {
-    const checkboxes = document.querySelectorAll('#tab-content-checklist input[type="checkbox"]');
-    const checked = document.querySelectorAll('#tab-content-checklist input[type="checkbox"]:checked').length;
-    const percentage = Math.round((checked / checkboxes.length) * 100);
-    document.getElementById('checklist-percentage').textContent = percentage + '%';
-    document.getElementById('checklist-progress').style.width = percentage + '%';
+    const root = document.getElementById('tab-content-checklist');
+    if (!root) return;
+
+    const checkboxes = root.querySelectorAll('input[type="checkbox"]');
+    const checked = root.querySelectorAll('input[type="checkbox"]:checked').length;
+    const percentage = checkboxes.length ? Math.round((checked / checkboxes.length) * 100) : 0;
+
+    const percentageEl = document.getElementById('checklist-percentage');
+    if (percentageEl) percentageEl.textContent = percentage + '%';
+    const progressEl = document.getElementById('checklist-progress');
+    if (progressEl) progressEl.style.width = percentage + '%';
 }
 </script>
 

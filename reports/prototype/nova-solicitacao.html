@@ -369,7 +369,7 @@
                     
                     <div class="space-y-3 text-sm">
                         <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Código Provisório</span>
+                            <span class="text-gray-600">Código</span>
                             <span class="font-mono font-semibold text-bevap-navy">PRJ-2024-001</span>
                         </div>
                         <div class="flex items-center justify-between pb-2 border-b">
@@ -794,13 +794,6 @@ function saveDraft() {
 }
 
 function submitForm() {
-    const missingFields = validateForm();
-    
-    if (missingFields.length > 0) {
-        showSubmitIncompletePopup(missingFields);
-        return;
-    }
-    
     document.getElementById('success-modal').classList.remove('hidden');
 }
 

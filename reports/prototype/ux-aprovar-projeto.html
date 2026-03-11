@@ -54,7 +54,7 @@
         </div>
         <div class="pb-3">
             <nav class="flex items-center space-x-2 text-sm">
-                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
+                <a href="ux-dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
                 <a href="#" class="text-gray-300 hover:text-white transition-colors">Portfólio</a>
                 <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
@@ -99,93 +99,127 @@
 
                 <div id="tab-content-solicitacao" class="p-6">
                     <div class="space-y-6">
-                        <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Objetivo do Projeto</h3>
-                            <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">Integrar o sistema GLPI (gestão de TI) com os sistemas internos da BEVAP para centralizar chamados, ativos e relatórios operacionais em uma única plataforma.</p>
-                        </div>
-
-                        <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Problema/Oportunidade</h3>
-                            <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">A gestão de ativos e chamados está fragmentada em múltiplos sistemas, dificultando rastreabilidade, análise de SLA e tomada de decisão. A integração reduzirá retrabalho e aumentará eficiência operacional.</p>
-                        </div>
-
-                        <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Benefícios Esperados</h3>
-                            <p class="text-gray-700 bg-gray-50 p-4 rounded-lg">Redução de 30% no tempo de atendimento, visibilidade completa de ativos, automação de processos, melhoria na governança de TI e relatórios gerenciais integrados.</p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo</h3>
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <ul class="text-sm text-gray-700 space-y-1">
-                                        <li>• Integração GLPI com AD</li>
-                                        <li>• Sincronização de ativos</li>
-                                        <li>• Portal de chamados unificado</li>
-                                        <li>• Dashboards gerenciais</li>
-                                        <li>• Automação de workflows</li>
-                                    </ul>
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-4">Dados Básicos</h3>
+                            <div class="space-y-5">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
+                                    <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
                                 </div>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Fora de Escopo</h3>
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <ul class="text-sm text-gray-700 space-y-1">
-                                        <li>• Customização GLPI core</li>
-                                        <li>• Migração histórica completa</li>
-                                        <li>• App mobile dedicado</li>
-                                        <li>• Integração com fornecedores</li>
-                                    </ul>
+
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
+                                        <p class="text-gray-800">Tecnologia da Informação</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
+                                        <p class="text-gray-800">1001-TI</p>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
+                                    <p class="text-gray-800">Diretoria TI</p>
                                 </div>
                             </div>
                         </div>
 
-                        <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Estimativas</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="bg-blue-50 p-4 rounded-lg text-center">
-                                    <i class="fa-solid fa-dollar-sign text-blue-600 text-xl mb-2"></i>
-                                    <div class="text-2xl font-bold text-blue-600">R$ 80k</div>
-                                    <div class="text-sm text-blue-800">Custo Estimado</div>
+                        <div class="flex items-center px-4 py-3 border border-green-200 bg-green-50 rounded-lg">
+                            <i class="fa-solid fa-check-circle text-bevap-green mr-2"></i>
+                            <span class="text-sm text-gray-700 font-medium">Alinhado aos objetivos estratégicos BEVAP</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-bullseye text-bevap-green mr-2"></i>
+                                    <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Objetivo do Projeto</h3>
                                 </div>
-                                <div class="bg-green-50 p-4 rounded-lg text-center">
-                                    <i class="fa-solid fa-clock text-green-600 text-xl mb-2"></i>
-                                    <div class="text-2xl font-bold text-green-600">6 sem</div>
-                                    <div class="text-sm text-green-800">Prazo</div>
+                                <p class="text-sm text-gray-700">Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso às aplicações corporativas.</p>
+                            </div>
+
+                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-circle-exclamation text-bevap-gold mr-2"></i>
+                                    <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Problema/Oportunidade</h3>
                                 </div>
-                                <div class="bg-purple-50 p-4 rounded-lg text-center">
-                                    <i class="fa-solid fa-users text-purple-600 text-xl mb-2"></i>
-                                    <div class="text-2xl font-bold text-purple-600">320h</div>
-                                    <div class="text-sm text-purple-800">Esforço</div>
+                                <p class="text-sm text-gray-700">Atualmente, os usuários precisam gerenciar múltiplas senhas para diferentes sistemas, o que gera sobrecarga para o suporte e riscos de segurança. A implementação do SSO (Single Sign-On) simplificará o acesso e fortalecerá as políticas de segurança.</p>
+                            </div>
+
+                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-chart-line text-bevap-green mr-2"></i>
+                                    <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Benefícios Esperados</h3>
                                 </div>
+                                <p class="text-sm text-gray-700">Melhoria na segurança com políticas de senha centralizadas, redução de chamados de suporte relacionados a senhas e aumento da produtividade dos colaboradores com acesso simplificado.</p>
                             </div>
                         </div>
 
-                        <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Anexos</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                                <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Escopo Inicial</h3>
+                                <p class="text-sm text-gray-700">Integração do SSO com os principais sistemas da empresa: ERP, CRM e portal do colaborador. Inclui a configuração do provedor de identidade e a criação de documentação para usuários e administradores.</p>
+                            </div>
+                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                                <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Fora de Escopo</h3>
+                                <p class="text-sm text-gray-700">A integração com sistemas legados ou de terceiros que não suportam SAML/OAuth não está incluída nesta fase. A migração de contas de usuário não utilizadas também está fora de escopo.</p>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Dependências</h3>
+                            <p class="text-sm text-gray-700">Disponibilidade da equipe de infraestrutura para configuração de servidores e rede. Licenciamento do provedor de identidade a ser adquirido pela área de compras.</p>
+                        </div>
+
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Riscos Iniciais</h3>
                             <div class="space-y-2">
-                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
+                                    <span class="text-sm text-gray-700">Atraso na aquisição das licenças do provedor de identidade.</span>
+                                </div>
+                                <div class="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
+                                    <span class="text-sm text-gray-700">Incompatibilidade de algum sistema crítico com o protocolo de SSO escolhido.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Stakeholders</h3>
+                            <div class="flex flex-wrap gap-2">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Diretoria TI</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Equipe de Segurança</span>
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Gerentes de Departamento</span>
+                            </div>
+                        </div>
+
+                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Anexos</h3>
+                            <div class="divide-y">
+                                <div class="py-3 flex items-center justify-between">
                                     <div class="flex items-center">
                                         <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
                                         <div>
-                                            <div class="font-medium text-sm">Proposta_Integracao_GLPI.pdf</div>
+                                            <div class="font-medium text-sm text-gray-900">proposta-sso.pdf</div>
                                             <div class="text-xs text-gray-500">2.4 MB</div>
                                         </div>
                                     </div>
-                                    <button onclick="viewAttachment('pdf')" class="text-bevap-green hover:text-green-700">
-                                        <i class="fa-solid fa-eye"></i>
+                                    <button onclick="viewAttachment('pdf')" class="px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors" title="Baixar">
+                                        <i class="fa-solid fa-download"></i>
                                     </button>
                                 </div>
-                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div class="py-3 flex items-center justify-between">
                                     <div class="flex items-center">
-                                        <i class="fa-solid fa-file-excel text-green-600 text-xl mr-3"></i>
+                                        <i class="fa-solid fa-file-image text-blue-500 text-xl mr-3"></i>
                                         <div>
-                                            <div class="font-medium text-sm">Cronograma_Projeto.xlsx</div>
-                                            <div class="text-xs text-gray-500">856 KB</div>
+                                            <div class="font-medium text-sm text-gray-900">arquitetura-sistemas.png</div>
+                                            <div class="text-xs text-gray-500">800 KB</div>
                                         </div>
                                     </div>
-                                    <button onclick="viewAttachment('excel')" class="text-bevap-green hover:text-green-700">
-                                        <i class="fa-solid fa-eye"></i>
+                                    <button onclick="viewAttachment('image')" class="px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors" title="Baixar">
+                                        <i class="fa-solid fa-download"></i>
                                     </button>
                                 </div>
                             </div>
@@ -260,19 +294,6 @@
                                         Acesso ao banco de dados de ativos
                                     </li>
                                 </ul>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Recomendação de Execução</h3>
-                            <div class="bg-bevap-green bg-opacity-10 border-l-4 border-bevap-green p-4 rounded-r-lg">
-                                <div class="flex items-center">
-                                    <i class="fa-solid fa-users text-bevap-green text-2xl mr-3"></i>
-                                    <div>
-                                        <div class="font-semibold text-bevap-navy">Execução Interna</div>
-                                        <p class="text-sm text-gray-700 mt-1">Equipe interna possui conhecimento do GLPI e dos sistemas legados. Execução interna reduz custos e mantém know-how.</p>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -399,11 +420,11 @@
                     <div class="space-y-3 text-sm">
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Código</span>
-                            <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-021</span>
+                            <span class="font-mono font-semibold text-bevap-navy">PRJ-2024-001</span>
                         </div>
                         <div class="pb-2 border-b">
                             <span class="text-gray-600">Título</span>
-                            <p class="font-medium text-gray-900 mt-1">Integração GLPI</p>
+                            <p class="font-medium text-gray-900 mt-1">Implantar SSO corporativo</p>
                         </div>
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Solicitante</span>
@@ -411,7 +432,7 @@
                         </div>
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Área</span>
-                            <span class="font-medium text-gray-900">TI Operações</span>
+                            <span class="font-medium text-gray-900">TI</span>
                         </div>
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Patrocinador</span>
@@ -423,23 +444,6 @@
                                 <i class="fa-solid fa-star mr-1"></i> Estratégico
                             </span>
                         </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Tipo</span>
-                            <span class="font-medium text-gray-900">Interno</span>
-                        </div>
-                        <div class="pb-2 border-b">
-                            <span class="text-gray-600">Estimativas</span>
-                            <div class="mt-2 space-y-1">
-                                <div class="flex justify-between text-xs">
-                                    <span class="text-gray-500">Custo:</span>
-                                    <span class="font-medium">R$ 80k</span>
-                                </div>
-                                <div class="flex justify-between text-xs">
-                                    <span class="text-gray-500">Prazo:</span>
-                                    <span class="font-medium">6 semanas</span>
-                                </div>
-                            </div>
-                        </div>
                         <div class="flex items-center justify-between">
                             <span class="text-gray-600">Status</span>
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 font-medium">
@@ -449,35 +453,31 @@
                     </div>
 
                     <div class="mt-4 pt-4 border-t space-y-2">
-                        <button onclick="viewAttachments()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
-                            <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos
-                        </button>
                         <button onclick="viewTimeline()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
                             <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
+                        </button>
+                        <button onclick="viewAttachments()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
+                            <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos (2)
                         </button>
                     </div>
                 </div>
 
-                <div id="completeness-checklist" class="bg-white rounded-lg shadow-md p-5">
+                <div id="progress-status" class="bg-white rounded-lg shadow-md p-5">
                     <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
-                        <i class="fa-solid fa-check-circle mr-2 text-bevap-green"></i>
-                        Completude
+                        <i class="fa-solid fa-tasks mr-2 text-bevap-green"></i>
+                        Progresso
                     </h3>
                     <div class="space-y-2 text-sm">
                         <div class="flex items-center text-green-600">
                             <i class="fa-solid fa-check-circle mr-2"></i>
-                            <span>Solicitação completa</span>
+                            <span>Solicitação aprovada</span>
                         </div>
                         <div class="flex items-center text-green-600">
                             <i class="fa-solid fa-check-circle mr-2"></i>
                             <span>Análise TI concluída</span>
                         </div>
-                        <div class="flex items-center text-green-600">
-                            <i class="fa-solid fa-check-circle mr-2"></i>
-                            <span>Anexos presentes</span>
-                        </div>
-                        <div class="flex items-center text-gray-400">
-                            <i class="fa-regular fa-circle mr-2"></i>
+                        <div class="flex items-center text-yellow-600">
+                            <i class="fa-solid fa-exclamation-circle mr-2"></i>
                             <span>Impacto na área pendente</span>
                         </div>
                     </div>
@@ -485,7 +485,7 @@
             </div>
         </div>
     </div>
-            <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <!-- <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
                     <i class="fa-solid fa-flask-vial mr-2 text-bevap-green"></i>Simulação de Telas (Protótipo)
                 </h2>
@@ -527,73 +527,90 @@
                         <span class="text-sm font-medium text-bevap-navy text-center">Triagem Técnica</span>
                     </a>
                 </div>
-            </section>
+            </section> -->
 </main>
 
 <footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex items-center justify-between">
-            <button onclick="saveDraft()" class="px-6 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+            <button onclick="saveDraft()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
                 <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
-            <a href="ux-dashboard.html" class="flex items-center space-x-3">
-                <button onclick="openRejectModal()" class="px-6 py-2.5 text-sm font-medium text-red-600 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-colors">
-                    <i class="fa-solid fa-times-circle mr-2"></i> Reprovar
+            <div class="flex items-center space-x-3">
+                <button onclick="showRejectModal()" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
+                    <i class="fa-solid fa-ban mr-2"></i> Reprovar
                 </button>
-                <button onclick="openReturnModal()" class="px-6 py-2.5 text-sm font-medium text-bevap-navy bg-white border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
-                    <i class="fa-solid fa-undo mr-2"></i> Devolver para Correção
+                <button onclick="showReturnModal()" class="px-5 py-2.5 text-sm font-medium text-yellow-700 bg-white border border-yellow-300 rounded-lg hover:bg-yellow-50 transition-all">
+                    <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
                 </button>
-                <button onclick="approveProject()" class="px-8 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-colors shadow-md">
-                    <i class="fa-solid fa-check-circle mr-2"></i> Aprovar
+                <button onclick="approveProject()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
+                    <i class="fa-solid fa-check mr-2"></i> Aprovar
                 </button>
             </div>
         </div>
     </div>
 </footer>
 
-<div id="return-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
-        <div class="p-6 border-b">
-            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Devolver para Correção</h3>
-        </div>
-        <div class="p-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Motivo da Devolução *</label>
-            <textarea id="return-reason" rows="4" placeholder="Descreva o que precisa ser corrigido..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
-        </div>
-        <div class="p-6 border-t flex justify-end space-x-3">
-            <button onclick="closeReturnModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
-            <button onclick="submitReturn()" class="px-4 py-2 text-sm font-medium text-white bg-bevap-navy rounded-lg hover:bg-opacity-90">Confirmar Devolução</button>
+<div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correção</h3>
+        <p class="text-sm text-gray-600 mb-4">Descreva os pontos que precisam ser corrigidos pelo solicitante:</p>
+        <textarea rows="4" placeholder="Motivo da devolução..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeModal('modal-return')" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+            <button onclick="confirmReturn()" class="px-4 py-2 text-sm text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-all">Devolver</button>
         </div>
     </div>
 </div>
 
-<div id="reject-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-lg w-full">
-        <div class="p-6 border-b">
-            <h3 class="text-xl font-montserrat font-bold text-red-600">Reprovar Projeto</h3>
+<div id="modal-reject" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Reprovar Projeto</h3>
+        <p class="text-sm text-gray-600 mb-4">Justifique a reprovação do projeto para notificar os stakeholders:</p>
+        <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
+            <option value="">Selecione a categoria</option>
+            <option value="estrategia">Não alinhado à estratégia</option>
+            <option value="prioridades">Prioridades conflitantes</option>
+            <option value="recursos">Recursos indisponíveis</option>
+            <option value="orcamento">Orçamento/ROI insuficiente</option>
+            <option value="riscos">Risco elevado</option>
+            <option value="escopo">Escopo indefinido</option>
+            <option value="outro">Outro</option>
+        </select>
+        <textarea rows="4" placeholder="Descrição detalhada..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+        <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+            <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> Os stakeholders serão notificados automaticamente.</p>
         </div>
-        <div class="p-6 space-y-4">
-            <div class="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p class="text-sm text-red-800"><i class="fa-solid fa-exclamation-triangle mr-2"></i> Esta ação notificará todos os stakeholders sobre a reprovação.</p>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeModal('modal-reject')" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+            <button onclick="confirmReject()" class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-approve-success" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center">
+        <div class="w-20 h-20 bg-bevap-green rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fa-solid fa-check text-white text-4xl"></i>
+        </div>
+        <h2 class="text-3xl font-montserrat font-bold text-bevap-navy mb-3">Aprovado!</h2>
+        <p class="text-gray-600 mb-6">O projeto foi aprovado e será encaminhado para a TI – Triagem Técnica.</p>
+
+        <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
+            <div class="flex items-center mb-2">
+                <i class="fa-solid fa-circle-info text-bevap-gold mr-2"></i>
+                <span class="font-semibold text-sm text-gray-700">Próximo Passo</span>
             </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
-                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent">
-                    <option>Falta de recursos</option>
-                    <option>Não alinhado à estratégia</option>
-                    <option>Prioridades conflitantes</option>
-                    <option>Outro motivo</option>
-                </select>
-            </div>
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Justificativa *</label>
-                <textarea id="reject-reason" rows="4" placeholder="Explique o motivo da reprovação..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent resize-none"></textarea>
+            <div class="flex items-center text-sm text-gray-600">
+                <i class="fa-solid fa-arrow-right text-bevap-green mr-2"></i>
+                <span>TI – Triagem Técnica</span>
             </div>
         </div>
-        <div class="p-6 border-t flex justify-end space-x-3">
-            <button onclick="closeRejectModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
-            <button onclick="submitReject()" class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700">Confirmar Reprovação</button>
-        </div>
+
+        <button onclick="goToTechnicalTriage()" class="w-full px-6 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all shadow-md">
+            <i class="fa-solid fa-right-long mr-2"></i>
+            Próximo Passo: Triagem Técnica
+        </button>
     </div>
 </div>
 
@@ -647,46 +664,36 @@ function saveDraft() {
 }
 
 function approveProject() {
-    showToast('Projeto Aprovado', 'O projeto foi aprovado e encaminhado para a próxima etapa.', 'success');
-    setTimeout(() => window.location.reload(), 2000);
+    const modal = document.getElementById('modal-approve-success');
+    if (modal) modal.classList.remove('hidden');
 }
 
-function openReturnModal() {
-    document.getElementById('return-modal').classList.remove('hidden');
+function showReturnModal() {
+    document.getElementById('modal-return').classList.remove('hidden');
 }
 
-function closeReturnModal() {
-    document.getElementById('return-modal').classList.add('hidden');
+function showRejectModal() {
+    document.getElementById('modal-reject').classList.remove('hidden');
 }
 
-function submitReturn() {
-    const reason = document.getElementById('return-reason').value;
-    if (!reason.trim()) {
-        alert('Por favor, informe o motivo da devolução.');
-        return;
-    }
-    closeReturnModal();
-    showToast('Projeto Devolvido', 'O projeto foi devolvido ao solicitante para correção.', 'warning');
-    setTimeout(() => window.location.reload(), 2000);
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.add('hidden');
 }
 
-function openRejectModal() {
-    document.getElementById('reject-modal').classList.remove('hidden');
+function confirmReturn() {
+    closeModal('modal-return');
+    showToast('Devolvido', 'O projeto foi devolvido para correção.', 'warning');
 }
 
-function closeRejectModal() {
-    document.getElementById('reject-modal').classList.add('hidden');
-}
-
-function submitReject() {
-    const reason = document.getElementById('reject-reason').value;
-    if (!reason.trim()) {
-        alert('Por favor, informe a justificativa da reprovação.');
-        return;
-    }
-    closeRejectModal();
+function confirmReject() {
+    closeModal('modal-reject');
     showToast('Projeto Reprovado', 'O projeto foi reprovado e os stakeholders foram notificados.', 'error');
-    setTimeout(() => window.location.reload(), 2000);
+}
+
+function goToTechnicalTriage() {
+    window.open('ux-triagem-tecnica.html', '_blank');
+    const modal = document.getElementById('modal-approve-success');
+    if (modal) modal.classList.add('hidden');
 }
 
 function viewAttachments() {
