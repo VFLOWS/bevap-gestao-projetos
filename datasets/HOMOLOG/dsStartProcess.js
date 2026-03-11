@@ -7,25 +7,25 @@ function createDataset(fields, constraints, sortFields) {
     try {
 
         // ===============================
-        // CONFIGURAÇÕES DO PROCESSO
+        // PROCESS CONFIG
         // ===============================
-        var CODUSUARIO   = fields[0];
-        // Processo alvo: Solicitação de Ajuste de Exceção
-        var processId    = fields[1];
+        var CODUSUARIO = fields[0];
+        var processId = fields[1];
         var choosedState = fields[2];
-        var companyId    = fields[3];
+        var companyId = fields[3];
+        var anexos = [];
 
-        var comments     = "Processo iniciado automaticamente";
-        var userId       = CODUSUARIO;
+        var comments = "Processo iniciado automaticamente";
+        var userId = CODUSUARIO;
         var completeTask = true;
-        var managerMode  = false;
+        var managerMode = false;
 
         var colleagueIds = [CODUSUARIO];
 
-        log.warn("DATASET START PROCESS ===> INSTANCIANDO SERVIÇOS");
+        log.warn("DATASET START PROCESS ===> INSTANCIANDO SERVICOS");
 
         // ===============================
-        // INSTANCIAÇÃO DO SERVIÇO
+        // SERVICE INIT
         // ===============================
         var ECMWorkflowEngine = ServiceManager.getService("ECMWorkflowEngineService");
         var serviceLocator = ECMWorkflowEngine.instantiate(
@@ -36,6 +36,15 @@ function createDataset(fields, constraints, sortFields) {
         var serviceObj = ECMWorkflowEngine.instantiate(
             "net.java.dev.jaxb.array.ObjectFactory"
         );
+        var workflowObjFactory = null;
+
+        try {
+            workflowObjFactory = ECMWorkflowEngine.instantiate(
+                "com.totvs.technology.ecm.workflow.ws.ObjectFactory"
+            );
+        } catch (factoryError) {
+            log.warn("DATASET START PROCESS ===> ObjectFactory workflow indisponivel, seguindo com instantiate direto");
+        }
 
         var serviceAttArray = ECMWorkflowEngine.instantiate(
             "com.totvs.technology.ecm.workflow.ws.ProcessAttachmentDtoArray"
@@ -45,8 +54,23 @@ function createDataset(fields, constraints, sortFields) {
             "com.totvs.technology.ecm.workflow.ws.ProcessTaskAppointmentDtoArray"
         );
 
+        if (fields != null && fields.length >= 4 && fields[4]) {
+            try {
+                anexos = JSON.parse(fields[4]);
+                if (!anexos || typeof anexos.length === "undefined") {
+                    anexos = [];
+                }
+                log.warn("DATASET START PROCESS ===> ANEXOS ENCONTRADOS: " + anexos.length);
+            } catch (parseError) {
+                log.error("DATASET START PROCESS ===> ERRO AO PARSEAR ANEXOS: " + parseError);
+                anexos = [];
+            }
+        } else {
+            log.warn("DATASET START PROCESS ===> NENHUM ANEXO INFORMADO");
+        }
+
         // ===============================
-        // PARTICIPANTES
+        // PARTICIPANTS
         // ===============================
         var colleague = serviceObj.createStringArray();
 
@@ -55,81 +79,75 @@ function createDataset(fields, constraints, sortFields) {
         }
 
         // ===============================
-        // MONTAGEM DO CARDDATA
+        // BUILD CARDDATA FROM CONSTRAINTS
         // ===============================
         log.warn("DATASET START PROCESS ===> MONTANDO CARDDATA");
 
         var cardData = serviceObj.createStringArrayArray();
-        var formData;
 
-        function getConstraintValue(constraintsArr, fieldName) {
-            if (!constraintsArr || !constraintsArr.length) return "";
-            for (var iC = 0; iC < constraintsArr.length; iC++) {
-                var c = constraintsArr[iC];
-                if (!c) continue;
-                try {
-                    if (String(c.fieldName || "") === String(fieldName)) {
-                        return String(c.initialValue || "");
-                    }
-                } catch (e) {
-                    // ignore
+        if (constraints != null) {
+            if (constraints.length > 0) {
+                for (var c = 0; c < constraints.length; c++) {
+
+                    log.warn("DATASET START PROCESS ===> CONSTRAINT ENCONTRADA ==> " + constraints[c].fieldName);
+                    log.warn("DATASET START PROCESS ===> CONSTRAINT ENCONTRADA ==> " + constraints[c].initialValue);
+                    var campos = serviceObj.createStringArray();
+                    campos.getItem().add(constraints[c].fieldName);
+                    campos.getItem().add(constraints[c].initialValue);
+                    cardData.getItem().add(campos);
                 }
+            } else {
+                throw 'Campos nao informados.';
             }
-            return "";
-        }
-
-        // Compatibilidade: permite enviar JSON via fields[0] (DatasetFactory.getDataset(name, [json], ...))
-        // ou via constraint (ex.: fieldName = 'json'/'JSON')
-        var jsonPayload = "";
-        if (fields && fields.length > 0 && fields[0]) {
-            jsonPayload = String(fields[0]);
         } else {
-            jsonPayload = getConstraintValue(constraints, "json") || getConstraintValue(constraints, "JSON") || "";
+            throw 'Campos nao informados.';
         }
 
-        if (jsonPayload) {
-            log.warn("JSON RECEBIDO VIA PARAMETRO");
-            formData = JSON.parse(jsonPayload);
-        } else {
-            log.warn("NENHUM JSON RECEBIDO - USANDO MOCK");
+        if (anexos.length > 0) {
+            for (var i = 0; i < anexos.length; i++) {
+                var nomeArquivo = anexos[i].fileName ? String(anexos[i].fileName) : "";
+                var conteudoArquivo = anexos[i].fileContent ? String(anexos[i].fileContent) : "";
 
-            formData = {
-                numeroRequisicao: "",
-                solicitanteNome: "",
-                dataSolicitacao: "",
-                numeroMovimentoRM: "",
-                valorTotalRequisicao: "",
-                justificativaAjuste:
-                    "Solicitação criada automaticamente pelo dataset em " + new Date()
-            };
+                if (nomeArquivo === "" || conteudoArquivo === "") {
+                    continue;
+                }
+
+                var attachmentDto = null;
+                var attachment = null;
+
+                try {
+                    if (workflowObjFactory != null) {
+                        attachmentDto = workflowObjFactory.createProcessAttachmentDto();
+                        attachment = workflowObjFactory.createAttachment();
+                    }
+                } catch (factoryItemError) {
+                    attachmentDto = null;
+                    attachment = null;
+                }
+
+                if (attachmentDto == null || attachment == null) {
+                    attachmentDto = ECMWorkflowEngine.instantiate("com.totvs.technology.ecm.workflow.ws.ProcessAttachmentDto");
+                    attachment = ECMWorkflowEngine.instantiate("com.totvs.technology.ecm.workflow.ws.Attachment");
+                }
+
+                var fileBytes = java.util.Base64.getDecoder().decode(
+                    new java.lang.String(conteudoArquivo).getBytes("UTF-8")
+                );
+
+                attachment.setFileName(nomeArquivo);
+                attachment.setFilecontent(fileBytes);
+                attachmentDto.getAttachments().add(attachment);
+                attachmentDto.setDescription(nomeArquivo);
+                attachmentDto.setNewAttach(true);
+                serviceAttArray.getItem().add(attachmentDto);
+            }
         }
 
-       var cardData = serviceObj.createStringArrayArray();
-    	
-    	if (constraints != null){
-    		if (constraints.length >0) {
-        		for (var c = 0; c < constraints.length; c++){
-
-					log.warn("DATASET START PROCESS ===> CONSTRAINT ENCONTRADA ==> " + constraints[c].fieldName)
-					log.warn("DATASET START PROCESS ===> CONSTRAINT ENCONTRADA ==> " + constraints[c].initialValue)
-    		    	var campos = serviceObj.createStringArray();
-    		    	campos.getItem().add(constraints[c].fieldName);
-    		    	campos.getItem().add(constraints[c].initialValue);
-    		    	cardData.getItem().add(campos);
-        		}
-    		} else {
-    			throw 'Campos não informados.'
-    		}
-    	} else {
-    		throw 'Campos não informados.'
-		}
-
-       
         log.warn("DATASET START PROCESS ===> INICIANDO PROCESSO");
 
         var result2 = service.startProcess(
             "vflows.ext.vinicius",
-            "wwRXYTU-DhVWT",
+            "}tPHIJifgSx7NT1@",
             parseInt(companyId),
             processId,
             parseInt(choosedState),
@@ -144,7 +162,7 @@ function createDataset(fields, constraints, sortFields) {
         );
 
         // ===============================
-        // TRATAMENTO DO RETORNO
+        // RETURN HANDLING
         // ===============================
         var error = "";
         var iProcess = "";
@@ -154,8 +172,8 @@ function createDataset(fields, constraints, sortFields) {
             for (var a = 0; a < result2.getItem().size(); a++) {
 
                 var result = result2.getItem().get(a);
-                var key    = result.getItem().get(0);
-                var value  = result.getItem().get(1);
+                var key = result.getItem().get(0);
+                var value = result.getItem().get(1);
 
                 if (key == "ERROR") {
                     error = value;

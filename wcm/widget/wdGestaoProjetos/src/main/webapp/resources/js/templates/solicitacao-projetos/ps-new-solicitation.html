@@ -105,6 +105,21 @@
                         </label>
                     </div>
 
+                    <div id="objetivos-estrategicos-section" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Objetivos Estratégicos</label>
+                        <div id="objetivos-estrategicos-list" class="space-y-2 mb-3">
+                            <div class="strategic-objective-item flex items-center gap-2 p-3 bg-white border border-green-200 rounded-lg">
+                                <input type="text" placeholder="Descreva um objetivo estratégico..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="objetivos-estrategicos">
+                                <button data-action="remove-strategic-objective" class="text-red-500 hover:text-red-700">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button data-action="add-strategic-objective" class="text-sm text-bevap-green hover:text-green-700 font-medium">
+                            <i class="fa-solid fa-plus mr-1"></i> Adicionar Objetivo
+                        </button>
+                    </div>
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-3">Prioridade</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -235,23 +250,14 @@
                             <p class="text-gray-600 font-medium mb-1">Arraste arquivos aqui ou clique para selecionar</p>
                             <p class="text-sm text-gray-500">Proposta, Estudos, Prints (PDF, DOC, XLS, PNG, JPG - Máx. 10MB)</p>
                         </div>
+                        <input id="attachments-input" type="file" class="hidden" multiple>
 
                         <div id="files-list" class="mt-4 space-y-2">
-                            <div class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
-                                <div class="flex items-center">
-                                    <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
-                                    <div>
-                                        <div class="font-medium text-sm">proposta-sso.pdf</div>
-                                        <div class="text-xs text-gray-500">2.4 MB</div>
-                                    </div>
-                                </div>
-                                <button class="text-red-500 hover:text-red-700">
-                                    <i class="fa-solid fa-trash"></i>
-                                </button>
+                            <div id="files-empty-state" class="text-sm text-gray-500">
+                                Nenhum anexo selecionado.
                             </div>
                         </div>
                     </div>
-
                     <div class="border-t pt-6">
                         <div class="flex items-start mb-4">
                             <input type="checkbox" id="declaracao" class="field-input mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" data-field="declaracao" required>
@@ -364,7 +370,7 @@
                 <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
             <div class="flex items-center space-x-3">
-                <button data-action="cancel-form" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
+                <button data-action="cancel-form" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
                     <i class="fa-solid fa-ban mr-2"></i> Cancelar
                 </button>
                 <button data-action="submit-form" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
@@ -425,6 +431,8 @@
         </button>
     </div>
 </div>
+
+
 
 
 
