@@ -94,6 +94,9 @@
                         <button onclick="switchTab('impacto')" id="tab-impacto" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
                             <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Área
                         </button>
+                        <button onclick="switchTab('checklist')" id="tab-checklist" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                            <i class="fa-solid fa-list-check mr-2"></i>Checklist
+                        </button>
                     </nav>
                 </div>
 
@@ -370,37 +373,54 @@
                             <textarea rows="4" placeholder="Comentários adicionais sobre o impacto na área..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
                         </div>
 
-                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                            <h4 class="font-medium text-yellow-900 mb-2 flex items-center">
-                                <i class="fa-solid fa-clipboard-check mr-2"></i>
-                                Checklist de Impacto
-                            </h4>
-                            <div class="space-y-2 text-sm">
-                                <label class="flex items-center">
-                                    <input type="checkbox" class="impacto-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
-                                    <span class="text-gray-700">Equipe possui disponibilidade para o projeto</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" class="impacto-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
-                                    <span class="text-gray-700">Recursos necessários estão identificados</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" class="impacto-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
-                                    <span class="text-gray-700">Não há conflitos críticos de agenda</span>
-                                </label>
-                                <label class="flex items-center">
-                                    <input type="checkbox" class="impacto-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-2">
-                                    <span class="text-gray-700">Projeto alinhado às prioridades da área</span>
-                                </label>
+                    </div>
+                </div>
+
+                <div id="tab-content-checklist" class="p-6 hidden">
+                    <div class="mb-8 p-0">
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Itens de Verificação</h3>
+
+                        <div class="space-y-3">
+                            <label class="flex items-start">
+                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Equipe possui disponibilidade para o projeto</span>
+                                    <p class="text-gray-500 text-xs mt-1">A capacidade da equipe comporta o início e a execução das atividades previstas.</p>
+                                </span>
+                            </label>
+
+                            <label class="flex items-start">
+                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Recursos necessários estão identificados</span>
+                                    <p class="text-gray-500 text-xs mt-1">Pessoas, orçamento, ferramentas e demais recursos foram mapeados.</p>
+                                </span>
+                            </label>
+
+                            <label class="flex items-start">
+                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Não há conflitos críticos de agenda</span>
+                                    <p class="text-gray-500 text-xs mt-1">Não existem iniciativas concorrentes que inviabilizem o cronograma planejado.</p>
+                                </span>
+                            </label>
+
+                            <label class="flex items-start">
+                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Projeto alinhado às prioridades da área</span>
+                                    <p class="text-gray-500 text-xs mt-1">O projeto está coerente com metas e prioridades operacionais da área.</p>
+                                </span>
+                            </label>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t">
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span class="text-gray-600">Completude do Checklist</span>
+                                <span id="impacto-checklist-percentage" class="font-semibold text-bevap-navy">0%</span>
                             </div>
-                            <div class="mt-6 pt-4 border-t border-yellow-200">
-                                <div class="flex justify-between text-sm mb-2">
-                                    <span class="text-gray-600">Completude do Checklist</span>
-                                    <span id="impacto-checklist-percentage" class="font-semibold text-bevap-navy">0%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2">
-                                    <div id="impacto-checklist-progress" class="bg-bevap-green h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
-                                </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div id="impacto-checklist-progress" class="bg-bevap-green h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
                             </div>
                         </div>
                     </div>
@@ -537,10 +557,10 @@
                 <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
             <div class="flex items-center space-x-3">
-                <button onclick="showRejectModal()" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
+                <button onclick="showRejectModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
                     <i class="fa-solid fa-ban mr-2"></i> Reprovar
                 </button>
-                <button onclick="showReturnModal()" class="px-5 py-2.5 text-sm font-medium text-yellow-700 bg-white border border-yellow-300 rounded-lg hover:bg-yellow-50 transition-all">
+                <button onclick="showReturnModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
                     <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
                 </button>
                 <button onclick="openApproveModal()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
