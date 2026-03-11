@@ -756,7 +756,7 @@
                                     <tfoot class="bg-gray-50 font-semibold">
                                         <tr>
                                             <td colspan="4" class="px-4 py-3 text-right text-gray-700">Total Geral:</td>
-                                            <td class="px-4 py-3 text-right text-bevap-navy text-lg">R$ 428.900,00</td>
+                                            <td id="total-geral" class="px-4 py-3 text-right text-bevap-navy text-lg">R$ 428.900,00</td>
                                         </tr>
                                     </tfoot>
                                 </table>
@@ -793,7 +793,9 @@
                                                         <tr>
                                                             <th class="px-3 py-2 text-left font-medium text-gray-700">Centro de Custo</th>
                                                             <th class="px-3 py-2 text-left font-medium text-gray-700">Conta Contábil</th>
-                                                            <th class="px-3 py-2 text-left font-medium text-gray-700 w-28">%</th>
+                                                            <th class="px-3 py-2 text-left font-medium text-gray-700 w-16">%</th>
+                                                            <th class="px-3 py-2 text-right font-medium text-gray-700 w-40">Saldo</th>
+                                                            <th class="px-3 py-2 text-right font-medium text-gray-700 w-48">Saldo após compromisso</th>
                                                             <th class="px-3 py-2 text-right font-medium text-gray-700 w-12"></th>
                                                         </tr>
                                                     </thead>
@@ -817,7 +819,13 @@
                                                                 </select>
                                                             </td>
                                                             <td class="px-3 py-2">
-                                                                <input type="number" value="100" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                <input type="number" value="100" min="0" max="100" class="w-16 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right font-medium text-gray-900">
+                                                                <span class="cc-balance">—</span>
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right font-semibold">
+                                                                <span class="cc-balance-after">—</span>
                                                             </td>
                                                             <td class="px-3 py-2 text-right">
                                                                 <button type="button" class="remove-cost-allocation text-gray-400 hover:text-red-600" title="Remover">
@@ -849,7 +857,13 @@
                                                         </select>
                                                     </td>
                                                     <td class="px-3 py-2">
-                                                        <input type="number" value="0" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                        <input type="number" value="0" min="0" max="100" class="w-16 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                    </td>
+                                                    <td class="px-3 py-2 text-right font-medium text-gray-900">
+                                                        <span class="cc-balance">—</span>
+                                                    </td>
+                                                    <td class="px-3 py-2 text-right font-semibold">
+                                                        <span class="cc-balance-after">—</span>
                                                     </td>
                                                     <td class="px-3 py-2 text-right">
                                                         <button type="button" class="remove-cost-allocation text-gray-400 hover:text-red-600" title="Remover">
@@ -883,7 +897,9 @@
                                                         <tr>
                                                             <th class="px-3 py-2 text-left font-medium text-gray-700">Centro de Custo</th>
                                                             <th class="px-3 py-2 text-left font-medium text-gray-700">Conta Contábil</th>
-                                                            <th class="px-3 py-2 text-left font-medium text-gray-700 w-28">%</th>
+                                                            <th class="px-3 py-2 text-left font-medium text-gray-700 w-16">%</th>
+                                                            <th class="px-3 py-2 text-right font-medium text-gray-700 w-40">Saldo</th>
+                                                            <th class="px-3 py-2 text-right font-medium text-gray-700 w-48">Saldo após compromisso</th>
                                                             <th class="px-3 py-2 text-right font-medium text-gray-700 w-12"></th>
                                                         </tr>
                                                     </thead>
@@ -907,7 +923,13 @@
                                                                 </select>
                                                             </td>
                                                             <td class="px-3 py-2">
-                                                                <input type="number" value="100" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                <input type="number" value="100" min="0" max="100" class="w-16 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right font-medium text-gray-900">
+                                                                <span class="cc-balance">—</span>
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right font-semibold">
+                                                                <span class="cc-balance-after">—</span>
                                                             </td>
                                                             <td class="px-3 py-2 text-right">
                                                                 <button type="button" class="remove-cost-allocation text-gray-400 hover:text-red-600" title="Remover">
@@ -939,7 +961,13 @@
                                                         </select>
                                                     </td>
                                                     <td class="px-3 py-2">
-                                                        <input type="number" value="0" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                        <input type="number" value="0" min="0" max="100" class="w-16 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                    </td>
+                                                    <td class="px-3 py-2 text-right font-medium text-gray-900">
+                                                        <span class="cc-balance">—</span>
+                                                    </td>
+                                                    <td class="px-3 py-2 text-right font-semibold">
+                                                        <span class="cc-balance-after">—</span>
                                                     </td>
                                                     <td class="px-3 py-2 text-right">
                                                         <button type="button" class="remove-cost-allocation text-gray-400 hover:text-red-600" title="Remover">
@@ -1093,17 +1121,29 @@
                     <div class="space-y-3">
                         <div>
                             <div class="text-xs text-blue-200 mb-1">Valor da Proposta</div>
-                            <div class="text-2xl font-bold">R$ 428.900</div>
+                            <div id="impact-proposal-value" class="text-2xl font-bold">R$ 428.900</div>
                         </div>
                         <div class="h-px bg-blue-700"></div>
                         <div>
                             <div class="text-xs text-blue-200 mb-1">Saldo Disponível CC</div>
-                            <div class="text-xl font-semibold text-bevap-gold">R$ 600.000</div>
+                            <div id="impact-available-list" class="space-y-1 mb-2">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-blue-100">—</span>
+                                    <span class="font-medium text-blue-50">—</span>
+                                </div>
+                            </div>
+                            <div id="impact-available-balance" class="text-xl font-semibold text-bevap-gold">R$ 600.000</div>
                         </div>
                         <div class="h-px bg-blue-700"></div>
                         <div>
                             <div class="text-xs text-blue-200 mb-1">Saldo Após Aprovação</div>
-                            <div class="text-xl font-semibold text-green-300">R$ 171.100</div>
+                            <div id="impact-after-list" class="space-y-1 mb-2">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-blue-100">—</span>
+                                    <span class="font-medium text-blue-50">—</span>
+                                </div>
+                            </div>
+                            <div id="impact-balance-after" class="text-xl font-semibold text-green-300">R$ 171.100</div>
                         </div>
                     </div>
                 </div>
@@ -1448,6 +1488,14 @@ function initCostNatureAndAllocation() {
     const capexLabel = document.getElementById('capex-percent-label');
     const opexLabel = document.getElementById('opex-percent-label');
 
+    const totalGeralEl = document.getElementById('total-geral');
+
+    const impactProposalValueEl = document.getElementById('impact-proposal-value');
+    const impactAvailableBalanceEl = document.getElementById('impact-available-balance');
+    const impactBalanceAfterEl = document.getElementById('impact-balance-after');
+    const impactAvailableListEl = document.getElementById('impact-available-list');
+    const impactAfterListEl = document.getElementById('impact-after-list');
+
     const capexAllocationWrapper = document.getElementById('cost-allocation-capex-wrapper');
     const opexAllocationWrapper = document.getElementById('cost-allocation-opex-wrapper');
 
@@ -1462,6 +1510,46 @@ function initCostNatureAndAllocation() {
 
     if (!capexInput || !opexInput || !capexAllocationWrapper || !opexAllocationWrapper) return;
     if (!capexTbody || !opexTbody || !capexRowTemplate || !opexRowTemplate) return;
+
+    const ccBalances = {
+        'ti-infra': 600000,
+        'ti-dev': 300000,
+        'ti-seg': 200000,
+        'ti-suporte': 150000,
+    };
+
+    const parseBRL = (text) => {
+        if (!text) return 0;
+        const cleaned = String(text)
+            .replace(/\s/g, '')
+            .replace('R$', '')
+            .replace(/\./g, '')
+            .replace(',', '.');
+        const value = Number(cleaned.replace(/[^0-9.-]/g, ''));
+        return Number.isFinite(value) ? value : 0;
+    };
+
+    const formatBRL = (value) => {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue)) return '—';
+        return numericValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    };
+
+    const getTotalGeral = () => {
+        if (!totalGeralEl) return 0;
+        return parseBRL(totalGeralEl.textContent);
+    };
+
+    const formatBRLNoCents = (value) => {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue)) return '—';
+        return numericValue.toLocaleString('pt-BR', {
+            style: 'currency',
+            currency: 'BRL',
+            maximumFractionDigits: 0,
+            minimumFractionDigits: 0,
+        });
+    };
 
     const clampPercent = (value) => {
         const numericValue = Number(value);
@@ -1495,16 +1583,157 @@ function initCostNatureAndAllocation() {
 
         syncPercentLabels();
         updateAllocationVisibility();
+        updateAllAllocations();
     };
 
     capexInput.addEventListener('input', () => enforceHundredRule('capex'));
     opexInput.addEventListener('input', () => enforceHundredRule('opex'));
+
+    const updateAllocationRow = (row) => {
+        const totalGeral = getTotalGeral();
+        const centerSelect = row.querySelector('td:nth-child(1) select');
+        const percentInput = row.querySelector('td:nth-child(3) input[type="number"]');
+        const balanceEl = row.querySelector('.cc-balance');
+        const balanceAfterEl = row.querySelector('.cc-balance-after');
+
+        if (!centerSelect || !percentInput || !balanceEl || !balanceAfterEl) return;
+
+        const ccKey = centerSelect.value;
+        if (!ccKey || !Object.prototype.hasOwnProperty.call(ccBalances, ccKey)) {
+            balanceEl.textContent = '—';
+            balanceAfterEl.textContent = '—';
+            return;
+        }
+
+        const saldo = ccBalances[ccKey];
+        const percent = clampPercent(percentInput.value);
+        const comprometido = totalGeral * (percent / 100);
+        const saldoApos = saldo - comprometido;
+
+        balanceEl.textContent = formatBRL(saldo);
+        balanceAfterEl.textContent = formatBRL(saldoApos);
+        balanceAfterEl.classList.toggle('text-red-600', saldoApos < 0);
+        balanceAfterEl.classList.toggle('text-gray-900', saldoApos >= 0);
+    };
+
+    const updateAllocationTable = (tbody) => {
+        Array.from(tbody.querySelectorAll('tr')).forEach(updateAllocationRow);
+    };
+
+    const computeCcSummary = () => {
+        const totalGeral = getTotalGeral();
+        const summary = new Map();
+
+        const addFromTbody = (tbody) => {
+            Array.from(tbody.querySelectorAll('tr')).forEach((row) => {
+                const centerSelect = row.querySelector('td:nth-child(1) select');
+                const percentInput = row.querySelector('td:nth-child(3) input[type="number"]');
+                if (!centerSelect || !percentInput) return;
+
+                const ccKey = centerSelect.value;
+                if (!ccKey || !Object.prototype.hasOwnProperty.call(ccBalances, ccKey)) return;
+
+                const percent = clampPercent(percentInput.value);
+                const committed = totalGeral * (percent / 100);
+                const label = centerSelect.options?.[centerSelect.selectedIndex]?.textContent?.trim() || ccKey;
+
+                const existing = summary.get(ccKey) || {
+                    key: ccKey,
+                    label,
+                    balance: ccBalances[ccKey],
+                    committed: 0,
+                    lines: 0,
+                };
+
+                existing.label = label;
+                existing.balance = ccBalances[ccKey];
+                existing.committed += committed;
+                existing.lines += 1;
+
+                summary.set(ccKey, existing);
+            });
+        };
+
+        if (!capexAllocationWrapper.classList.contains('hidden')) addFromTbody(capexTbody);
+        if (!opexAllocationWrapper.classList.contains('hidden')) addFromTbody(opexTbody);
+
+        const items = Array.from(summary.values())
+            .map((item) => ({
+                ...item,
+                after: item.balance - item.committed,
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
+
+        const totals = items.reduce(
+            (acc, item) => {
+                acc.available += item.balance;
+                acc.after += item.after;
+                return acc;
+            },
+            { available: 0, after: 0 }
+        );
+
+        return { totalGeral, items, totals };
+    };
+
+    const updateImpactCard = () => {
+        if (!impactProposalValueEl || !impactAvailableBalanceEl || !impactBalanceAfterEl || !impactAvailableListEl || !impactAfterListEl) return;
+
+        const { totalGeral, items, totals } = computeCcSummary();
+
+        impactProposalValueEl.textContent = formatBRLNoCents(totalGeral);
+        impactAvailableBalanceEl.textContent = items.length ? formatBRLNoCents(totals.available) : '—';
+        impactBalanceAfterEl.textContent = items.length ? formatBRLNoCents(totals.after) : '—';
+
+        impactBalanceAfterEl.classList.toggle('text-red-300', items.length && totals.after < 0);
+        impactBalanceAfterEl.classList.toggle('text-green-300', !items.length || totals.after >= 0);
+
+        const renderList = (container, rows, valueSelector) => {
+            container.innerHTML = '';
+            if (!rows.length) {
+                const emptyRow = document.createElement('div');
+                emptyRow.className = 'flex justify-between text-xs';
+                emptyRow.innerHTML = '<span class="text-blue-100">Nenhum centro de custo selecionado</span><span class="font-medium text-blue-50">—</span>';
+                container.appendChild(emptyRow);
+                return;
+            }
+
+            rows.forEach((item) => {
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between text-xs';
+
+                const left = document.createElement('span');
+                left.className = 'text-blue-100 truncate pr-2';
+                left.title = item.label;
+                left.textContent = `${item.label} (${item.lines})`;
+
+                const right = document.createElement('span');
+                const value = valueSelector(item);
+                right.className = `font-medium ${value < 0 ? 'text-red-200' : 'text-blue-50'}`;
+                right.textContent = formatBRLNoCents(value);
+
+                row.appendChild(left);
+                row.appendChild(right);
+                container.appendChild(row);
+            });
+        };
+
+        renderList(impactAvailableListEl, items, (item) => item.balance);
+        renderList(impactAfterListEl, items, (item) => item.after);
+    };
+
+    const updateAllAllocations = () => {
+        updateAllocationTable(capexTbody);
+        updateAllocationTable(opexTbody);
+        updateImpactCard();
+    };
 
     const initAllocationTable = ({ tbody, template, addButton }) => {
         if (addButton) {
             addButton.addEventListener('click', () => {
                 const row = template.content.cloneNode(true);
                 tbody.appendChild(row);
+                updateAllAllocations();
             });
         }
 
@@ -1517,7 +1746,12 @@ function initCostNatureAndAllocation() {
 
             const row = removeButton.closest('tr');
             if (row) row.remove();
+            updateAllAllocations();
         });
+
+        const onChange = () => updateAllAllocations();
+        tbody.addEventListener('change', onChange);
+        tbody.addEventListener('input', onChange);
     };
 
     initAllocationTable({ tbody: capexTbody, template: capexRowTemplate, addButton: addCapexButton });
@@ -1525,6 +1759,7 @@ function initCostNatureAndAllocation() {
 
     syncPercentLabels();
     updateAllocationVisibility();
+    updateAllAllocations();
 }
 
 // Initialize arrows on load and scroll
