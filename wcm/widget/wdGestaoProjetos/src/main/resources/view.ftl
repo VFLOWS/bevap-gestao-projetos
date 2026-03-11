@@ -1,4 +1,4 @@
-<div id="MyWidget_${instanceId}" class="super-widget wcm-widget-class fluig-style-guide" data-params="MyWidget.instance()">
+<div id="MyWidget_${instanceId}" class="super-widget wcm-widget-class" data-params="MyWidget.instance()">
     <header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50 w-full">
         <div class="w-full px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">

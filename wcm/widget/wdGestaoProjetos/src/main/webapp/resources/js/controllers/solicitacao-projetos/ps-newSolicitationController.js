@@ -19,6 +19,20 @@ const newSolicitationController = {
       'dependencies',
       'declaracao'
     ],
+    completionFields: [
+      'titulo',
+      'area',
+      'centro-custo',
+      'patrocinador',
+      'objetivo',
+      'problema',
+      'beneficios',
+      'escopo-inicial',
+      'out-of-scope',
+      'dependencies',
+      'declaracao',
+      'alinhamento'
+    ],
     requiredFieldLabels: {
       titulo: 'Titulo do Projeto',
       area: 'Area/Unidade',
@@ -81,6 +95,8 @@ const newSolicitationController = {
     this._state.currentStep = 1;
     this.updateStepper();
     this.updateChecklist();
+    this.updateSummaryPriority();
+    this.updateSummaryDetails();
   },
 
   bindEvents: function () {
@@ -164,8 +180,14 @@ const newSolicitationController = {
       this.closeValidationModal();
     });
 
+    container.on(`change${ns}`, 'input[name="prioridade"]', () => {
+      this.updateSummaryPriority();
+      this.updateSummaryDetails();
+    });
+
     container.on(`input${ns} change${ns}`, '.field-input, input[required], textarea[required]', () => {
       this.updateChecklist();
+      this.updateSummaryDetails();
     });
   },
 
@@ -252,8 +274,8 @@ const newSolicitationController = {
       }
     });
 
-    const totalRequired = this._constants.requiredFields.length;
-    const filledRequired = this._constants.requiredFields.reduce((count, fieldId) => {
+    const totalRequired = this._constants.completionFields.length;
+    const filledRequired = this._constants.completionFields.reduce((count, fieldId) => {
       return count + (this.isFieldFilled(this.getField(fieldId)) ? 1 : 0);
     }, 0);
 
@@ -347,6 +369,65 @@ const newSolicitationController = {
     this.updateChecklist();
   },
 
+  getPriorityPresentation: function (value) {
+    const map = {
+      critico: {
+        label: 'Crítico',
+        classes: 'bg-red-100 text-red-700',
+        icon: 'fa-circle-exclamation'
+      },
+      estrategico: {
+        label: 'Estratégico',
+        classes: 'bg-green-100 text-green-800',
+        icon: 'fa-star'
+      },
+      operacional: {
+        label: 'Operacional',
+        classes: 'bg-blue-100 text-blue-800',
+        icon: 'fa-circle'
+      }
+    };
+
+    return map[value] || map.estrategico;
+  },
+
+  updateSummaryPriority: function () {
+    const container = this.getContainer();
+    const selectedPriority = container.find('input[name="prioridade"]:checked').val();
+    const priority = this.getPriorityPresentation(selectedPriority);
+    const badge = container.find('#summary-priority-badge');
+    const icon = container.find('#summary-priority-icon');
+    const label = container.find('#summary-priority-label');
+
+    badge.removeClass('bg-red-100 text-red-700 bg-green-100 text-green-800 bg-blue-100 text-blue-800');
+    badge.addClass(priority.classes);
+    icon.attr('class', `fa-solid ${priority.icon} mr-1`);
+    label.text(priority.label);
+  },
+
+  updateSummaryDetails: function () {
+    const container = this.getContainer();
+    const codeValue = container.find('#summary-code-value');
+    const areaValue = container.find('#summary-area-value');
+    const sponsorValue = container.find('#summary-sponsor-value');
+
+    if (codeValue.length) {
+      codeValue.text('N/A');
+    }
+
+    if (areaValue.length) {
+      const areaField = container.find('#area');
+      const hasArea = areaField.length && String(areaField.val() || '').trim() !== '';
+      const selectedArea = hasArea ? String(areaField.find('option:selected').text() || '').trim() : '';
+      areaValue.text(selectedArea || 'N/A');
+    }
+
+    if (sponsorValue.length) {
+      const sponsor = String(container.find('#patrocinador').val() || '').trim();
+      sponsorValue.text(sponsor || 'N/A');
+    }
+  },
+
   addStakeholder: function () {
     const input = this.getContainer().find('#stakeholder-input').first();
     const value = String(input.val() || '').trim();
@@ -374,6 +455,13 @@ const newSolicitationController = {
   },
 
   submitForm: function () {
+    const missingFields = this.validateForm();
+    if (missingFields.length > 0) {
+      this.showValidationModal(missingFields);
+      return;
+    }
+
+    this.closeValidationModal();
     this.getContainer().find('#success-modal').removeClass('hidden');
   },
 
