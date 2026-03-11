@@ -763,49 +763,196 @@
                             </div>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="grid grid-cols-1 gap-6 mb-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
                                     Natureza do Custo *
                                     <i class="fa-solid fa-info-circle text-gray-400 ml-2 cursor-help" title="Defina se o investimento será CAPEX (bens duráveis) ou OPEX (despesas operacionais)"></i>
                                 </label>
                                 <div class="space-y-3">
-                                    <label class="flex items-center p-4 border-2 border-bevap-green bg-green-50 rounded-lg cursor-pointer">
+                                    <label class="block p-4 border-2 border-bevap-green bg-green-50 rounded-lg cursor-pointer">
                                         <input type="radio" name="cost-nature" value="capex" checked class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green mr-3">
-                                        <div class="flex-1">
+                                        <div class="inline-flex items-center align-middle">
                                             <span class="font-medium text-gray-900">CAPEX</span>
-                                            <span class="text-sm text-gray-600 ml-2">80%</span>
-                                            <input type="number" value="80" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
-                                            <span class="text-sm text-gray-600">%</span>
+                                            <span id="capex-percent-label" class="text-sm text-gray-600 ml-2">80%</span>
+                                            <input id="capex-percent" type="number" value="80" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
+                                            <span class="text-sm text-gray-600 ml-1">%</span>
+                                        </div>
+
+                                        <div id="cost-allocation-capex-wrapper" class="mt-4 pt-4 border-t">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <span class="text-sm font-medium text-gray-700">Centro de Custo / Conta Contábil *</span>
+                                                <button id="add-cost-allocation-capex" type="button" class="px-3 py-1.5 text-xs font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                                                    <i class="fa-solid fa-plus mr-1"></i> Adicionar rateio
+                                                </button>
+                                            </div>
+
+                                            <div class="overflow-x-auto">
+                                                <table class="min-w-full text-sm">
+                                                    <thead class="bg-gray-50">
+                                                        <tr>
+                                                            <th class="px-3 py-2 text-left font-medium text-gray-700">Centro de Custo</th>
+                                                            <th class="px-3 py-2 text-left font-medium text-gray-700">Conta Contábil</th>
+                                                            <th class="px-3 py-2 text-left font-medium text-gray-700 w-28">%</th>
+                                                            <th class="px-3 py-2 text-right font-medium text-gray-700 w-12"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="cost-allocation-capex-tbody" class="divide-y">
+                                                        <tr>
+                                                            <td class="px-3 py-2">
+                                                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                    <option value="">Selecione...</option>
+                                                                    <option value="ti-infra" selected>TI-INFRA - Infraestrutura TI</option>
+                                                                    <option value="ti-dev">TI-DEV - Desenvolvimento</option>
+                                                                    <option value="ti-seg">TI-SEG - Segurança da Informação</option>
+                                                                    <option value="ti-suporte">TI-SUPORTE - Suporte Técnico</option>
+                                                                </select>
+                                                            </td>
+                                                            <td class="px-3 py-2">
+                                                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                    <option value="">Selecione...</option>
+                                                                    <option value="1.2.3.01" selected>1.2.3.01 - Equipamentos de TI</option>
+                                                                    <option value="1.2.3.02">1.2.3.02 - Software e Licenças</option>
+                                                                    <option value="3.1.2.01">3.1.2.01 - Serviços de Terceiros</option>
+                                                                </select>
+                                                            </td>
+                                                            <td class="px-3 py-2">
+                                                                <input type="number" value="100" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right">
+                                                                <button type="button" class="remove-cost-allocation text-gray-400 hover:text-red-600" title="Remover">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <template id="cost-allocation-capex-row-template">
+                                                <tr>
+                                                    <td class="px-3 py-2">
+                                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                            <option value="" selected>Selecione...</option>
+                                                            <option value="ti-infra">TI-INFRA - Infraestrutura TI</option>
+                                                            <option value="ti-dev">TI-DEV - Desenvolvimento</option>
+                                                            <option value="ti-seg">TI-SEG - Segurança da Informação</option>
+                                                            <option value="ti-suporte">TI-SUPORTE - Suporte Técnico</option>
+                                                        </select>
+                                                    </td>
+                                                    <td class="px-3 py-2">
+                                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                            <option value="" selected>Selecione...</option>
+                                                            <option value="1.2.3.01">1.2.3.01 - Equipamentos de TI</option>
+                                                            <option value="1.2.3.02">1.2.3.02 - Software e Licenças</option>
+                                                            <option value="3.1.2.01">3.1.2.01 - Serviços de Terceiros</option>
+                                                        </select>
+                                                    </td>
+                                                    <td class="px-3 py-2">
+                                                        <input type="number" value="0" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                    </td>
+                                                    <td class="px-3 py-2 text-right">
+                                                        <button type="button" class="remove-cost-allocation text-gray-400 hover:text-red-600" title="Remover">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </template>
                                         </div>
                                     </label>
-                                    <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green hover:bg-green-50 transition-colors">
+                                    <label class="block p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green hover:bg-green-50 transition-colors">
                                         <input type="radio" name="cost-nature" value="opex" class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green mr-3">
-                                        <div class="flex-1">
+                                        <div class="inline-flex items-center align-middle">
                                             <span class="font-medium text-gray-900">OPEX</span>
-                                            <span class="text-sm text-gray-600 ml-2">20%</span>
-                                            <input type="number" value="20" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
-                                            <span class="text-sm text-gray-600">%</span>
+                                            <span id="opex-percent-label" class="text-sm text-gray-600 ml-2">20%</span>
+                                            <input id="opex-percent" type="number" value="20" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
+                                            <span class="text-sm text-gray-600 ml-1">%</span>
+                                        </div>
+
+                                        <div id="cost-allocation-opex-wrapper" class="mt-4 pt-4 border-t">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <span class="text-sm font-medium text-gray-700">Centro de Custo / Conta Contábil *</span>
+                                                <button id="add-cost-allocation-opex" type="button" class="px-3 py-1.5 text-xs font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                                                    <i class="fa-solid fa-plus mr-1"></i> Adicionar rateio
+                                                </button>
+                                            </div>
+
+                                            <div class="overflow-x-auto">
+                                                <table class="min-w-full text-sm">
+                                                    <thead class="bg-gray-50">
+                                                        <tr>
+                                                            <th class="px-3 py-2 text-left font-medium text-gray-700">Centro de Custo</th>
+                                                            <th class="px-3 py-2 text-left font-medium text-gray-700">Conta Contábil</th>
+                                                            <th class="px-3 py-2 text-left font-medium text-gray-700 w-28">%</th>
+                                                            <th class="px-3 py-2 text-right font-medium text-gray-700 w-12"></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="cost-allocation-opex-tbody" class="divide-y">
+                                                        <tr>
+                                                            <td class="px-3 py-2">
+                                                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                    <option value="">Selecione...</option>
+                                                                    <option value="ti-infra" selected>TI-INFRA - Infraestrutura TI</option>
+                                                                    <option value="ti-dev">TI-DEV - Desenvolvimento</option>
+                                                                    <option value="ti-seg">TI-SEG - Segurança da Informação</option>
+                                                                    <option value="ti-suporte">TI-SUPORTE - Suporte Técnico</option>
+                                                                </select>
+                                                            </td>
+                                                            <td class="px-3 py-2">
+                                                                <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                    <option value="">Selecione...</option>
+                                                                    <option value="1.2.3.01" selected>1.2.3.01 - Equipamentos de TI</option>
+                                                                    <option value="1.2.3.02">1.2.3.02 - Software e Licenças</option>
+                                                                    <option value="3.1.2.01">3.1.2.01 - Serviços de Terceiros</option>
+                                                                </select>
+                                                            </td>
+                                                            <td class="px-3 py-2">
+                                                                <input type="number" value="100" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                            </td>
+                                                            <td class="px-3 py-2 text-right">
+                                                                <button type="button" class="remove-cost-allocation text-gray-400 hover:text-red-600" title="Remover">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+
+                                            <template id="cost-allocation-opex-row-template">
+                                                <tr>
+                                                    <td class="px-3 py-2">
+                                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                            <option value="" selected>Selecione...</option>
+                                                            <option value="ti-infra">TI-INFRA - Infraestrutura TI</option>
+                                                            <option value="ti-dev">TI-DEV - Desenvolvimento</option>
+                                                            <option value="ti-seg">TI-SEG - Segurança da Informação</option>
+                                                            <option value="ti-suporte">TI-SUPORTE - Suporte Técnico</option>
+                                                        </select>
+                                                    </td>
+                                                    <td class="px-3 py-2">
+                                                        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                            <option value="" selected>Selecione...</option>
+                                                            <option value="1.2.3.01">1.2.3.01 - Equipamentos de TI</option>
+                                                            <option value="1.2.3.02">1.2.3.02 - Software e Licenças</option>
+                                                            <option value="3.1.2.01">3.1.2.01 - Serviços de Terceiros</option>
+                                                        </select>
+                                                    </td>
+                                                    <td class="px-3 py-2">
+                                                        <input type="number" value="0" min="0" max="100" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                    </td>
+                                                    <td class="px-3 py-2 text-right">
+                                                        <button type="button" class="remove-cost-allocation text-gray-400 hover:text-red-600" title="Remover">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </template>
                                         </div>
                                     </label>
                                 </div>
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Centro de Custo *</label>
-                                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
-                                    <option value="">Selecione...</option>
-                                    <option value="ti-infra" selected>TI-INFRA - Infraestrutura TI</option>
-                                    <option value="ti-dev">TI-DEV - Desenvolvimento</option>
-                                    <option value="ti-seg">TI-SEG - Segurança da Informação</option>
-                                    <option value="ti-suporte">TI-SUPORTE - Suporte Técnico</option>
-                                </select>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Conta Contábil *</label>
-                                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
-                                    <option value="">Selecione...</option>
-                                    <option value="1.2.3.01" selected>1.2.3.01 - Equipamentos de TI</option>
-                                    <option value="1.2.3.02">1.2.3.02 - Software e Licenças</option>
-                                    <option value="3.1.2.01">3.1.2.01 - Serviços de Terceiros</option>
-                                </select>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Competência *</label>
                                 <input type="month" value="2026-03" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                             </div>
@@ -1295,6 +1442,91 @@ function showToast(type, title, message) {
     }, 4000);
 }
 
+function initCostNatureAndAllocation() {
+    const capexInput = document.getElementById('capex-percent');
+    const opexInput = document.getElementById('opex-percent');
+    const capexLabel = document.getElementById('capex-percent-label');
+    const opexLabel = document.getElementById('opex-percent-label');
+
+    const capexAllocationWrapper = document.getElementById('cost-allocation-capex-wrapper');
+    const opexAllocationWrapper = document.getElementById('cost-allocation-opex-wrapper');
+
+    const capexTbody = document.getElementById('cost-allocation-capex-tbody');
+    const opexTbody = document.getElementById('cost-allocation-opex-tbody');
+
+    const capexRowTemplate = document.getElementById('cost-allocation-capex-row-template');
+    const opexRowTemplate = document.getElementById('cost-allocation-opex-row-template');
+
+    const addCapexButton = document.getElementById('add-cost-allocation-capex');
+    const addOpexButton = document.getElementById('add-cost-allocation-opex');
+
+    if (!capexInput || !opexInput || !capexAllocationWrapper || !opexAllocationWrapper) return;
+    if (!capexTbody || !opexTbody || !capexRowTemplate || !opexRowTemplate) return;
+
+    const clampPercent = (value) => {
+        const numericValue = Number(value);
+        if (Number.isNaN(numericValue)) return 0;
+        return Math.min(100, Math.max(0, numericValue));
+    };
+
+    const syncPercentLabels = () => {
+        if (capexLabel) capexLabel.textContent = `${clampPercent(capexInput.value)}%`;
+        if (opexLabel) opexLabel.textContent = `${clampPercent(opexInput.value)}%`;
+    };
+
+    const updateAllocationVisibility = () => {
+        const capexValue = clampPercent(capexInput.value);
+        const opexValue = clampPercent(opexInput.value);
+
+        capexAllocationWrapper.classList.toggle('hidden', opexValue === 100);
+        opexAllocationWrapper.classList.toggle('hidden', capexValue === 100);
+    };
+
+    const enforceHundredRule = (changed) => {
+        const capexValue = clampPercent(capexInput.value);
+        const opexValue = clampPercent(opexInput.value);
+
+        if (changed === 'capex' && capexValue === 100) {
+            opexInput.value = 0;
+        }
+        if (changed === 'opex' && opexValue === 100) {
+            capexInput.value = 0;
+        }
+
+        syncPercentLabels();
+        updateAllocationVisibility();
+    };
+
+    capexInput.addEventListener('input', () => enforceHundredRule('capex'));
+    opexInput.addEventListener('input', () => enforceHundredRule('opex'));
+
+    const initAllocationTable = ({ tbody, template, addButton }) => {
+        if (addButton) {
+            addButton.addEventListener('click', () => {
+                const row = template.content.cloneNode(true);
+                tbody.appendChild(row);
+            });
+        }
+
+        tbody.addEventListener('click', (event) => {
+            const target = event.target;
+            const removeButton = target?.closest?.('.remove-cost-allocation');
+            if (!removeButton) return;
+
+            if (tbody.children.length <= 1) return;
+
+            const row = removeButton.closest('tr');
+            if (row) row.remove();
+        });
+    };
+
+    initAllocationTable({ tbody: capexTbody, template: capexRowTemplate, addButton: addCapexButton });
+    initAllocationTable({ tbody: opexTbody, template: opexRowTemplate, addButton: addOpexButton });
+
+    syncPercentLabels();
+    updateAllocationVisibility();
+}
+
 // Initialize arrows on load and scroll
 window.addEventListener('DOMContentLoaded', () => {
     updateFormTabsArrows();
@@ -1302,6 +1534,8 @@ window.addEventListener('DOMContentLoaded', () => {
     if (scroller) {
         scroller.addEventListener('scroll', updateFormTabsArrows);
     }
+
+    initCostNatureAndAllocation();
 });
 
 window.addEventListener('resize', updateFormTabsArrows);
