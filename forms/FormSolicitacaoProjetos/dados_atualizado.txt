@@ -12,8 +12,6 @@ alinhadobevapNS
 prioridadeNS
 escopoinicialNS
 foradeescopoNS
--tblRiscosIniciaisNS (PAI x FILHO)
- - riscoPotencialNS (CAMPO PAIxFILHO)
 dependenciasNS
 -tblRiscosIniciaisNS (PAI x FILHO)
  - riscoPotencialNS (CAMPO PAIxFILHO)

@@ -45,6 +45,10 @@ const router = {
         newSolicitation: {
           controller: newSolicitationController,
           handler: () => newSolicitationController.load(params)
+        },
+        evaluateProject: {
+          controller: evaluateProjectController,
+          handler: () => evaluateProjectController.load(params)
         }
       };
 

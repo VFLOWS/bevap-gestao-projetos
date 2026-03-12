@@ -1,71 +1,3 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TI – Avaliar Projeto</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'bevap-navy': '#0B2E4A',
-                        'bevap-green': '#1C8C5D',
-                        'bevap-gold': '#F1B434',
-                    },
-                    fontFamily: {
-                        'montserrat': ['Montserrat', 'sans-serif'],
-                        'inter': ['Inter', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <style>::-webkit-scrollbar { display: none;}</style>
-</head>
-<body class="bg-gray-50 font-inter">
-
-<header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-16">
-            <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2">
-                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
-                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
-                    </div>
-                    <span class="text-white font-montserrat font-bold text-xl hidden sm:block">BEVAP</span>
-                </div>
-                <div class="h-8 w-px bg-gray-400 hidden md:block"></div>
-                <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">TI – Avaliar Projeto</h1>
-            </div>
-            <div class="flex items-center space-x-3">
-                <button class="text-white hover:text-bevap-gold transition-colors">
-                    <i class="fa-regular fa-bell text-xl"></i>
-                </button>
-                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Analista TI" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
-            </div>
-        </div>
-        <div class="pb-3">
-            <nav class="flex items-center space-x-2 text-sm">
-                <a href="ux-dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
-                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-                <a href="#" class="text-gray-300 hover:text-white transition-colors">Portfólio</a>
-                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-                <a href="#" class="text-gray-300 hover:text-white transition-colors">Solicitações</a>
-                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-                <span class="text-bevap-gold font-medium">Avaliar</span>
-            </nav>
-        </div>
-    </div>
-</header>
-
 <main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
     
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -76,8 +8,8 @@
                 <div class="flex items-start">
                     <i class="fa-solid fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
                     <div class="text-sm text-blue-800">
-                        <p class="font-medium mb-1">Análise Técnica Pendente</p>
-                        <p>Preencha a avaliação técnica e o checklist para encaminhar o projeto para a próxima etapa.</p>
+                        <p class="font-medium mb-1">Análise TI Concluída</p>
+                        <p>O projeto foi avaliado pela TI e recomendado para execução interna. Revise o impacto na sua área antes de aprovar.</p>
                     </div>
                 </div>
             </div>
@@ -88,16 +20,13 @@
                         <button onclick="switchTab('solicitacao')" id="tab-solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50">
                             <i class="fa-solid fa-file-lines mr-2"></i>Solicitação
                         </button>
-                        <button onclick="switchTab('analise-tecnica')" id="tab-analise-tecnica" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-                            <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atenção" aria-label="Atenção">
-                                <i class="fa-solid fa-exclamation text-[10px]"></i>
-                            </span>
-                            <i class="fa-solid fa-microscope mr-2"></i>Análise Técnica
+                        <button onclick="switchTab('analise-ti')" id="tab-analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                            <i class="fa-solid fa-microscope mr-2"></i>Análise TI
                         </button>
-                        <button onclick="switchTab('checklist')" id="tab-checklist" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-                            <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atenção" aria-label="Atenção">
-                                <i class="fa-solid fa-exclamation text-[10px]"></i>
-                            </span>
+                        <button onclick="switchTab('impacto')" id="tab-impacto" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                            <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Área
+                        </button>
+                        <button onclick="switchTab('checklist')" id="tab-checklist" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
                             <i class="fa-solid fa-list-check mr-2"></i>Checklist
                         </button>
                     </nav>
@@ -233,74 +162,149 @@
                     </div>
                 </div>
 
-                <div id="tab-content-analise-tecnica" class="p-6 hidden">
+                <div id="tab-content-analise-ti" class="p-6 hidden">
                     <div class="space-y-6">
-                        <div class="bg-white  rounded-lg">
-                            <div class="space-y-5">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Viabilidade Técnica <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                        <label class="relative">
-                                            <input type="radio" name="viabilidade" value="viavel" class="sr-only peer" checked required>
-                                            <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-bevap-green peer-checked:bg-green-50 text-center transition-all">
-                                                <i class="fa-solid fa-check-circle text-bevap-green text-2xl mb-2"></i>
-                                                <div class="font-semibold">Viável</div>
-                                            </div>
-                                        </label>
-                                        <label class="relative">
-                                            <input type="radio" name="viabilidade" value="parcial" class="sr-only peer">
-                                            <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-bevap-gold peer-checked:bg-yellow-50 text-center transition-all">
-                                                <i class="fa-solid fa-circle-half-stroke text-bevap-gold text-2xl mb-2"></i>
-                                                <div class="font-semibold">Parcial</div>
-                                            </div>
-                                        </label>
-                                        <label class="relative">
-                                            <input type="radio" name="viabilidade" value="inviavel" class="sr-only peer">
-                                            <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-red-500 peer-checked:bg-red-50 text-center transition-all">
-                                                <i class="fa-solid fa-circle-xmark text-red-500 text-2xl mb-2"></i>
-                                                <div class="font-semibold">Inviável</div>
-                                            </div>
-                                        </label>
-                                    </div>
-                                </div>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <i class="fa-solid fa-check-circle text-bevap-green text-xl mr-2"></i>
+                                <h3 class="font-montserrat font-semibold text-bevap-navy">Parecer TI: Viável</h3>
+                            </div>
+                            <p class="text-sm text-gray-700">Projeto tecnicamente viável com infraestrutura existente. Integrações podem ser realizadas via APIs REST. Equipe interna possui competência necessária.</p>
+                        </div>
 
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Alternativas Consideradas <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
-                                    <textarea rows="3" placeholder="Descreva as alternativas avaliadas (soluções, fornecedores, abordagens)..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" required></textarea>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Avaliação Técnica</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg space-y-3 text-sm">
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-lightbulb text-bevap-gold mr-3 mt-1"></i>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Esforço Estimado (horas) <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
-                                        <input type="number" min="0" value="240" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" required>
+                                        <div class="font-medium text-gray-900">Alternativas Consideradas</div>
+                                        <p class="text-gray-700 mt-1">Avaliamos ServiceNow e Jira Service Management, mas GLPI oferece melhor custo-benefício e já está implantado.</p>
                                     </div>
+                                </div>
+                                <div class="flex items-start">
+                                    <i class="fa-solid fa-chart-simple text-blue-600 mr-3 mt-1"></i>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Esforço Estimado (pontos) <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
-                                        <input type="number" min="0" value="21" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" required>
+                                        <div class="font-medium text-gray-900">Esforço Estimado</div>
+                                        <p class="text-gray-700 mt-1">21 pontos de história / 320 horas (2 desenvolvedores full-time por 6 semanas)</p>
                                     </div>
-                                </div>
-
-                                <div>
-                                    <div class="flex items-center justify-between">
-                                        <label class="block text-sm font-medium text-gray-700">Riscos Identificados</label>
-                                        <button type="button" onclick="addRiskItem()" class="inline-flex items-center px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
-                                            <i class="fa-solid fa-plus mr-2"></i>Adicionar risco
-                                        </button>
-                                    </div>
-                                    <div id="risks-container" class="mt-3 space-y-3"></div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Dependências Técnicas <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
-                                    <textarea rows="3" placeholder="Liste dependências (acessos, ambientes, integrações, licenças, dados)..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" required>Licenciamento do provedor de identidade e disponibilidade da equipe de infraestrutura para configuração.</textarea>
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Observações da Análise</label>
-                                    <textarea rows="4" placeholder="Observações gerais do analista de TI..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none">Projeto viável e alinhado à arquitetura atual. Recomenda-se priorização alta devido ao impacto em segurança e produtividade.</textarea>
                                 </div>
                             </div>
                         </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos Identificados</h3>
+                            <div class="space-y-3">
+                                <div class="flex items-start p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-yellow-200 text-yellow-800 font-medium mr-3">Médio</span>
+                                    <div class="text-sm">
+                                        <div class="font-medium text-gray-900">Disponibilidade de Ambientes</div>
+                                        <p class="text-gray-700 mt-1">Necessário ambiente de homologação dedicado para testes de integração.</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-start p-3 bg-green-50 border border-green-200 rounded-lg">
+                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-green-200 text-green-800 font-medium mr-3">Baixo</span>
+                                    <div class="text-sm">
+                                        <div class="font-medium text-gray-900">Complexidade das APIs</div>
+                                        <p class="text-gray-700 mt-1">APIs GLPI são bem documentadas e equipe já possui experiência.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Dependências Técnicas</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <ul class="text-sm text-gray-700 space-y-2">
+                                    <li class="flex items-center">
+                                        <i class="fa-solid fa-server text-bevap-navy mr-2"></i>
+                                        Atualização GLPI para versão 10.x
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fa-solid fa-key text-bevap-navy mr-2"></i>
+                                        Credenciais de integração com Active Directory
+                                    </li>
+                                    <li class="flex items-center">
+                                        <i class="fa-solid fa-database text-bevap-navy mr-2"></i>
+                                        Acesso ao banco de dados de ativos
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Observações do Analista TI</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-700">
+                                <p>Projeto bem estruturado com escopo claro. Recomendo priorização alta devido ao impacto operacional. Sugiro início imediato após aprovação para aproveitar janela de disponibilidade da equipe.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-content-impacto" class="p-6 hidden">
+                    <div class="space-y-6">
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <p class="text-sm text-blue-800"><i class="fa-solid fa-info-circle mr-2"></i> Avalie o impacto deste projeto na capacidade operacional da sua área.</p>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Disponibilidade da Equipe</label>
+                            <div class="bg-gray-50 p-5 rounded-lg">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="text-sm text-gray-600">Capacidade disponível</span>
+                                    <span class="text-lg font-bold text-bevap-navy" id="capacity-value">60%</span>
+                                </div>
+                                <input type="range" min="0" max="100" value="60" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-bevap-green" oninput="updateCapacity(this.value)">
+                                <div class="flex justify-between text-xs text-gray-500 mt-2">
+                                    <span>0%</span>
+                                    <span>50%</span>
+                                    <span>100%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Recursos Necessários da Área</label>
+                            <textarea rows="3" placeholder="Descreva quais recursos (pessoas, equipamentos, orçamento) serão necessários..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Conflitos de Agenda</label>
+                            <textarea rows="3" placeholder="Existem outros projetos ou atividades que podem conflitar?" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Prioridade para a Área</label>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                                <label class="relative">
+                                    <input type="radio" name="prioridade-area" value="critico" class="sr-only peer">
+                                    <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-red-500 peer-checked:bg-red-50 text-center transition-all">
+                                        <i class="fa-solid fa-exclamation-triangle text-red-500 text-2xl mb-2"></i>
+                                        <div class="font-semibold">Crítico</div>
+                                    </div>
+                                </label>
+                                <label class="relative">
+                                    <input type="radio" name="prioridade-area" value="estrategico" class="sr-only peer" checked>
+                                    <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-bevap-green peer-checked:bg-green-50 text-center transition-all">
+                                        <i class="fa-solid fa-star text-bevap-green text-2xl mb-2"></i>
+                                        <div class="font-semibold">Estratégico</div>
+                                    </div>
+                                </label>
+                                <label class="relative">
+                                    <input type="radio" name="prioridade-area" value="operacional" class="sr-only peer">
+                                    <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-blue-500 peer-checked:bg-blue-50 text-center transition-all">
+                                        <i class="fa-solid fa-cog text-blue-500 text-2xl mb-2"></i>
+                                        <div class="font-semibold">Operacional</div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Observações do Gestor</label>
+                            <textarea rows="4" placeholder="Comentários adicionais sobre o impacto na área..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                        </div>
+
                     </div>
                 </div>
 
@@ -310,58 +314,34 @@
 
                         <div class="space-y-3">
                             <label class="flex items-start">
-                                <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
+                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Objetivo claramente definido</span>
-                                    <p class="text-gray-500 text-xs mt-1">O projeto possui objetivo claro e mensurável</p>
+                                    <span class="font-medium">Equipe possui disponibilidade para o projeto</span>
+                                    <p class="text-gray-500 text-xs mt-1">A capacidade da equipe comporta o início e a execução das atividades previstas.</p>
                                 </span>
                             </label>
 
                             <label class="flex items-start">
-                                <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
+                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Escopo bem delimitado</span>
-                                    <p class="text-gray-500 text-xs mt-1">Escopo e fora de escopo estão definidos</p>
+                                    <span class="font-medium">Recursos necessários estão identificados</span>
+                                    <p class="text-gray-500 text-xs mt-1">Pessoas, orçamento, ferramentas e demais recursos foram mapeados.</p>
                                 </span>
                             </label>
 
                             <label class="flex items-start">
-                                <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Documentação técnica adequada</span>
-                                    <p class="text-gray-500 text-xs mt-1">Possui documentos técnicos suficientes</p>
+                                    <span class="font-medium">Não há conflitos críticos de agenda</span>
+                                    <p class="text-gray-500 text-xs mt-1">Não existem iniciativas concorrentes que inviabilizem o cronograma planejado.</p>
                                 </span>
                             </label>
 
                             <label class="flex items-start">
-                                <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
+                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Patrocinador identificado</span>
-                                    <p class="text-gray-500 text-xs mt-1">Possui patrocinador executivo definido</p>
-                                </span>
-                            </label>
-
-                            <label class="flex items-start">
-                                <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
-                                <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Alinhamento estratégico confirmado</span>
-                                    <p class="text-gray-500 text-xs mt-1">Projeto alinhado aos objetivos BEVAP</p>
-                                </span>
-                            </label>
-
-                            <label class="flex items-start">
-                                <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
-                                <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Recursos técnicos disponíveis</span>
-                                    <p class="text-gray-500 text-xs mt-1">Equipe e infraestrutura adequadas</p>
-                                </span>
-                            </label>
-
-                            <label class="flex items-start">
-                                <input type="checkbox" class="mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
-                                <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Anexos essenciais presentes</span>
-                                    <p class="text-gray-500 text-xs mt-1">Documentos de apoio necessários foram anexados</p>
+                                    <span class="font-medium">Projeto alinhado às prioridades da área</span>
+                                    <p class="text-gray-500 text-xs mt-1">O projeto está coerente com metas e prioridades operacionais da área.</p>
                                 </span>
                             </label>
                         </div>
@@ -369,10 +349,10 @@
                         <div class="mt-6 pt-4 border-t">
                             <div class="flex items-center justify-between text-sm mb-2">
                                 <span class="text-gray-600">Completude do Checklist</span>
-                                <span class="font-semibold text-bevap-navy" id="checklist-percentage">0%</span>
+                                <span id="impacto-checklist-percentage" class="font-semibold text-bevap-navy">0%</span>
                             </div>
                             <div class="w-full bg-gray-200 rounded-full h-2">
-                                <div class="bg-bevap-green h-2 rounded-full" style="width: 0%" id="checklist-progress"></div>
+                                <div id="impacto-checklist-progress" class="bg-bevap-green h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
                             </div>
                         </div>
                     </div>
@@ -418,17 +398,17 @@
                         </div>
                         <div class="flex items-center justify-between">
                             <span class="text-gray-600">Status</span>
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800 font-medium">
-                                <i class="fa-solid fa-clock mr-1"></i> Em Análise
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 font-medium">
+                                <i class="fa-solid fa-clock mr-1"></i> Aguardando Aprovação
                             </span>
                         </div>
                     </div>
 
                     <div class="mt-4 pt-4 border-t space-y-2">
-                        <button onclick="showTimeline()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                        <button onclick="viewTimeline()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
                             <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
                         </button>
-                        <button onclick="showAttachments()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
+                        <button onclick="viewAttachments()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
                             <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos (2)
                         </button>
                     </div>
@@ -442,11 +422,15 @@
                     <div class="space-y-2 text-sm">
                         <div class="flex items-center text-green-600">
                             <i class="fa-solid fa-check-circle mr-2"></i>
-                            <span>Solicitação completa</span>
+                            <span>Solicitação aprovada</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Análise TI concluída</span>
                         </div>
                         <div class="flex items-center text-yellow-600">
                             <i class="fa-solid fa-exclamation-circle mr-2"></i>
-                            <span>Análise Técnica pendente</span>
+                            <span>Impacto na área pendente</span>
                         </div>
                     </div>
                 </div>
@@ -506,13 +490,13 @@
             </button>
             <div class="flex items-center space-x-3">
                 <button onclick="showRejectModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
-                    <i class="fa-solid fa-ban mr-2"></i> Não Continuidade
+                    <i class="fa-solid fa-ban mr-2"></i> Reprovar
                 </button>
                 <button onclick="showReturnModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
                     <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
                 </button>
                 <button onclick="openApproveModal()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
-                    <i class="fa-solid fa-check mr-2"></i> Aprovar e Encaminhar
+                    <i class="fa-solid fa-check mr-2"></i> Aprovar
                 </button>
             </div>
         </div>
@@ -525,10 +509,10 @@
             <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
                 <i class="fa-solid fa-check-circle text-bevap-green text-2xl"></i>
             </div>
-            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Encaminhamento</h3>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovação</h3>
         </div>
-        <p class="text-gray-700 mb-6">Confirma a aprovação da avaliação técnica para o projeto <strong>PRJ-2026-033 • Implantar SSO corporativo</strong>?</p>
-        <p class="text-sm text-gray-600 mb-6">Ao confirmar, o projeto será encaminhado para <strong>Aprovação do Projeto</strong>.</p>
+        <p class="text-gray-700 mb-6">Você está aprovando o projeto <strong>PRJ-2026-033 • Implantar SSO corporativo</strong>.</p>
+        <p class="text-sm text-gray-600 mb-6">Ao confirmar, o projeto seguirá para <strong>TI – Triagem Técnica</strong>.</p>
         <div class="flex justify-end space-x-3">
             <button onclick="closeApproveModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 Cancelar
@@ -554,14 +538,17 @@
 
 <div id="modal-reject" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Não Continuidade</h3>
-        <p class="text-sm text-gray-600 mb-4">Justifique a decisão de não continuidade do projeto:</p>
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Reprovar Projeto</h3>
+        <p class="text-sm text-gray-600 mb-4">Justifique a reprovação do projeto para notificar os stakeholders:</p>
         <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
             <option value="">Selecione a categoria</option>
-            <option value="orcamento">Restrição orçamentária</option>
-            <option value="tecnica">Inviabilidade técnica</option>
-            <option value="prioridade">Baixa prioridade</option>
-            <option value="recursos">Falta de recursos</option>
+            <option value="estrategia">Não alinhado à estratégia</option>
+            <option value="prioridades">Prioridades conflitantes</option>
+            <option value="recursos">Recursos indisponíveis</option>
+            <option value="orcamento">Orçamento/ROI insuficiente</option>
+            <option value="riscos">Risco elevado</option>
+            <option value="escopo">Escopo indefinido</option>
+            <option value="outro">Outro</option>
         </select>
         <textarea rows="4" placeholder="Descrição detalhada..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
         <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
@@ -574,73 +561,69 @@
     </div>
 </div>
 
-<div id="toast" class="hidden fixed top-20 right-4 bg-white shadow-lg rounded-lg p-4 z-50 border-l-4 border-bevap-green">
+<div id="toast" class="hidden fixed top-20 right-4 bg-white rounded-lg shadow-xl border-l-4 p-4 z-50 max-w-sm">
     <div class="flex items-center">
-        <i class="fa-solid fa-check-circle text-bevap-green text-xl mr-3"></i>
-        <span class="text-sm font-medium text-gray-900" id="toast-message">Ação realizada com sucesso!</span>
+        <i id="toast-icon" class="text-2xl mr-3"></i>
+        <div>
+            <div id="toast-title" class="font-semibold"></div>
+            <div id="toast-message" class="text-sm text-gray-600"></div>
+        </div>
     </div>
 </div>
 
 <script>
 function switchTab(tabName) {
-    const tabs = ['solicitacao', 'analise-tecnica', 'checklist'];
-    tabs.forEach(tab => {
-        const tabBtn = document.getElementById('tab-' + tab);
-        const tabContent = document.getElementById('tab-content-' + tab);
-        if (tabBtn) {
-            tabBtn.classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
-            tabBtn.classList.add('border-transparent', 'text-gray-500');
-        }
-        if (tabContent) tabContent.classList.add('hidden');
+    document.querySelectorAll('[id^="tab-"]').forEach(btn => {
+        btn.classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+        btn.classList.add('border-transparent', 'text-gray-500');
     });
-
-    const activeBtn = document.getElementById('tab-' + tabName);
-    const activeContent = document.getElementById('tab-content-' + tabName);
-    if (activeBtn) {
-        activeBtn.classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
-        activeBtn.classList.remove('border-transparent', 'text-gray-500');
-
-        const badge = activeBtn.querySelector('.tab-notice-badge');
-        if (badge) badge.remove();
-    }
-    if (activeContent) activeContent.classList.remove('hidden');
+    document.querySelectorAll('[id^="tab-content-"]').forEach(content => {
+        content.classList.add('hidden');
+    });
+    
+    document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500');
+    document.getElementById('tab-' + tabName).classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+    document.getElementById('tab-content-' + tabName).classList.remove('hidden');
 }
 
-function addRiskItem() {
-    const container = document.getElementById('risks-container');
-    if (!container) return;
-
-    const riskItem = document.createElement('div');
-    riskItem.className = 'risk-item grid grid-cols-1 md:grid-cols-12 gap-3 items-start p-3 border border-gray-200 rounded-lg bg-gray-50';
-    riskItem.innerHTML = `
-        <div class="md:col-span-3">
-            <label class="block text-xs font-medium text-gray-600 mb-1">Nível de Risco</label>
-            <select class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all text-sm">
-                <option selected value="">Selecione</option>
-                <option value="baixo">Baixo</option>
-                <option value="medio">Médio</option>
-                <option value="alto">Alto</option>
-            </select>
-        </div>
-        <div class="md:col-span-8">
-            <label class="block text-xs font-medium text-gray-600 mb-1">Descrição do Risco</label>
-            <textarea rows="2" placeholder="Descreva o risco técnico identificado..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm"></textarea>
-        </div>
-        <div class="md:col-span-1 flex md:justify-end md:pt-6">
-            <button type="button" onclick="removeRiskItem(this)" class="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors" title="Remover risco">
-                <i class="fa-solid fa-trash"></i>
-            </button>
-        </div>
-    `;
-
-    container.appendChild(riskItem);
+function updateCapacity(value) {
+    document.getElementById('capacity-value').textContent = value + '%';
 }
 
-function removeRiskItem(button) {
-    const container = document.getElementById('risks-container');
-    const item = button.closest('.risk-item');
-    if (!container || !item) return;
-    item.remove();
+function updateImpactoChecklistProgress() {
+    const items = document.querySelectorAll('.impacto-checklist-item');
+    const checkedItems = document.querySelectorAll('.impacto-checklist-item:checked');
+    const percentage = items.length ? Math.round((checkedItems.length / items.length) * 100) : 0;
+
+    document.getElementById('impacto-checklist-percentage').textContent = percentage + '%';
+    document.getElementById('impacto-checklist-progress').style.width = percentage + '%';
+}
+
+window.addEventListener('load', function() {
+    document.querySelectorAll('.impacto-checklist-item').forEach(function(item) {
+        item.addEventListener('change', updateImpactoChecklistProgress);
+    });
+    updateImpactoChecklistProgress();
+});
+
+function saveDraft() {
+    showToast('Rascunho Salvo', 'Suas alterações foram salvas com sucesso.', 'success');
+}
+
+function openApproveModal() {
+    document.getElementById('approve-modal').classList.remove('hidden');
+}
+
+function closeApproveModal() {
+    document.getElementById('approve-modal').classList.add('hidden');
+}
+
+function confirmApprove() {
+    closeApproveModal();
+    showToast('Aprovado', 'O projeto seguirá para TI – Triagem Técnica.', 'success');
+    setTimeout(() => {
+        window.open('ux-triagem-tecnica.html', '_blank');
+    }, 1200);
 }
 
 function showReturnModal() {
@@ -657,39 +640,12 @@ function closeModal(modalId) {
 
 function confirmReturn() {
     closeModal('modal-return');
-    showToast('Projeto devolvido para correção');
+    showToast('Devolvido', 'O projeto foi devolvido para correção.', 'warning');
 }
 
 function confirmReject() {
     closeModal('modal-reject');
-    showToast('Projeto marcado como não continuidade', 'error');
-}
-
-function openApproveModal() {
-    document.getElementById('approve-modal').classList.remove('hidden');
-}
-
-function closeApproveModal() {
-    document.getElementById('approve-modal').classList.add('hidden');
-}
-
-function confirmApprove() {
-    closeApproveModal();
-    showToast('Encaminhado para Aprovação do Projeto');
-    setTimeout(() => {
-        window.open('ux-aprovar-projeto.html', '_blank');
-    }, 1200);
-}
-
-function saveDraft() {
-    showToast('Rascunho salvo com sucesso');
-}
-
-function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    document.getElementById('toast-message').textContent = message;
-    toast.classList.remove('hidden');
-    setTimeout(() => toast.classList.add('hidden'), 3000);
+    showToast('Projeto Reprovado', 'O projeto foi reprovado e os stakeholders foram notificados.', 'error');
 }
 
 window.addEventListener('click', function (event) {
@@ -699,39 +655,38 @@ window.addEventListener('click', function (event) {
     }
 });
 
+function viewAttachments() {
+    showToast('Anexos', 'Abrindo visualização de anexos...', 'info');
+}
+
+function viewTimeline() {
+    showToast('Linha do Tempo', 'Abrindo histórico do projeto...', 'info');
+}
+
 function viewAttachment(type) {
-    showToast('Abrindo anexo...');
+    showToast('Visualizar Anexo', 'Abrindo arquivo...', 'info');
 }
 
-function showTimeline() {
-    showToast('Linha do tempo em desenvolvimento');
-}
-
-function showAttachments() {
-    showToast('Visualizador de anexos em desenvolvimento');
-}
-
-// Legacy checklist progress (kept for backward-compat if checklist is reintroduced)
-const checklistRoot = document.getElementById('tab-content-checklist');
-if (checklistRoot) {
-    checklistRoot.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        checkbox.addEventListener('change', updateChecklistProgress);
-    });
-    updateChecklistProgress();
-}
-
-function updateChecklistProgress() {
-    const root = document.getElementById('tab-content-checklist');
-    if (!root) return;
-
-    const checkboxes = root.querySelectorAll('input[type="checkbox"]');
-    const checked = root.querySelectorAll('input[type="checkbox"]:checked').length;
-    const percentage = checkboxes.length ? Math.round((checked / checkboxes.length) * 100) : 0;
-
-    const percentageEl = document.getElementById('checklist-percentage');
-    if (percentageEl) percentageEl.textContent = percentage + '%';
-    const progressEl = document.getElementById('checklist-progress');
-    if (progressEl) progressEl.style.width = percentage + '%';
+function showToast(title, message, type) {
+    const toast = document.getElementById('toast');
+    const icon = document.getElementById('toast-icon');
+    const toastTitle = document.getElementById('toast-title');
+    const toastMessage = document.getElementById('toast-message');
+    
+    const config = {
+        success: { icon: 'fa-solid fa-check-circle text-bevap-green', border: 'border-bevap-green' },
+        error: { icon: 'fa-solid fa-times-circle text-red-500', border: 'border-red-500' },
+        warning: { icon: 'fa-solid fa-exclamation-triangle text-bevap-gold', border: 'border-bevap-gold' },
+        info: { icon: 'fa-solid fa-info-circle text-blue-500', border: 'border-blue-500' }
+    };
+    
+    icon.className = config[type].icon + ' text-2xl mr-3';
+    toast.className = 'fixed top-20 right-4 bg-white rounded-lg shadow-xl border-l-4 p-4 z-50 max-w-sm ' + config[type].border;
+    toastTitle.textContent = title;
+    toastMessage.textContent = message;
+    
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 3000);
 }
 </script>
 

@@ -27,6 +27,79 @@ var fluigService = {
         });
     },
 
+    getDatasetRows: function (datasetId, options = {}) {
+        return new Promise((resolve, reject) => {
+            try {
+                if (typeof DatasetFactory === 'undefined') {
+                    throw new Error('DatasetFactory indisponivel no contexto atual');
+                }
+
+                var fields = Array.isArray(options.fields) && options.fields.length ? options.fields : null;
+                var sortFields = Array.isArray(options.sortFields) && options.sortFields.length ? options.sortFields : null;
+                var constraints = [];
+
+                if (options.filters) {
+                    Object.keys(options.filters).forEach(function (key) {
+                        var value = options.filters[key];
+
+                        if (value === null || value === undefined || value === '') {
+                            return;
+                        }
+
+                        constraints.push(
+                            DatasetFactory.createConstraint(key, String(value), String(value), ConstraintType.MUST)
+                        );
+                    });
+                }
+
+                console.group('[getDatasetRows] chamada dsGetSolicitacaoProjetos');
+                console.log('[getDatasetRows] datasetId :', datasetId);
+                console.log('[getDatasetRows] fields    :', JSON.stringify(fields));
+                console.log('[getDatasetRows] constraints:', JSON.stringify(constraints.map(function(c){ return { fieldName: c.fieldName, initialValue: c.initialValue }; })));
+                console.groupEnd();
+
+                var dataset = DatasetFactory.getDataset(datasetId, fields, constraints, sortFields);
+
+                console.group('[getDatasetRows] retorno bruto do dataset');
+                console.log('[getDatasetRows] dataset           :', dataset);
+                console.log('[getDatasetRows] dataset.columns   :', dataset ? JSON.stringify(dataset.columns) : 'n/a');
+                console.log('[getDatasetRows] dataset.values    :', dataset ? JSON.stringify(dataset.values) : 'n/a');
+                console.log('[getDatasetRows] values.length     :', (dataset && dataset.values) ? dataset.values.length : 0);
+                console.groupEnd();
+
+                if (!dataset || !Array.isArray(dataset.values) || dataset.values.length === 0) {
+                    resolve([]);
+                    return;
+                }
+
+                var values = dataset.values;
+
+                // Alguns datasets retornam array de arrays (valores) + dataset.columns.
+                // Aqui normalizamos para um array de objetos { coluna: valor }.
+                if (Array.isArray(values[0])) {
+                    var columns = Array.isArray(dataset.columns) ? dataset.columns : [];
+
+                    var rows = values.map(function (rowArr) {
+                        var obj = {};
+                        for (var i = 0; i < columns.length; i++) {
+                            var key = columns[i];
+                            obj[key] = (rowArr && rowArr.length > i) ? rowArr[i] : null;
+                        }
+                        return obj;
+                    });
+
+                    resolve(rows);
+                    return;
+                }
+
+                // Se já vier como array de objetos, mantém.
+                resolve(values);
+            } catch (error) {
+                reject(error);
+            }
+        });
+    },
+
     createCard: function (parentDocumentId, cardData) {
         return new Promise((resolve, reject) => {
 
@@ -253,7 +326,7 @@ var fluigService = {
                     { formField: "objetivo", fluigField: "objetivodoprojetoNS" },
                     { formField: "problema", fluigField: "problemaOportunidadeNS" },
                     { formField: "beneficios", fluigField: "beneficiosesperadosNS" },
-                    { formField: "prioridade", fluigField: "prioridades" },
+                    { formField: "prioridade", fluigField: "prioridadeNS" },
                     { formField: "escopo-inicial", fluigField: "escopoinicialNS" },
                     { formField: "out-of-scope", fluigField: "foradeescopoNS" },
                     { formField: "dependencies", fluigField: "dependenciasNS" },

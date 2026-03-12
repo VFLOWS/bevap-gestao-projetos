@@ -568,31 +568,11 @@
                     <div>
                         <div class="flex items-center justify-between mb-3">
                             <h3 class="text-sm font-semibold text-bevap-navy">Aprovações Pendentes</h3>
-                            <span class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">4</span>
+                            <span id="pending-approvals-count" class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">0</span>
                         </div>
-                        <div class="space-y-2">
-                            <div class="bg-slate-50 rounded-lg p-3 border-l-4 border-bevap-gold">
-                                <div class="flex items-start justify-between mb-2">
-                                    <span class="text-xs font-mono text-slate-500">PRJ-2026-018</span>
-                                    <span class="text-xs text-red-600 font-medium">Urgente</span>
-                                </div>
-                                <p class="text-sm font-medium text-bevap-navy mb-2">Portal RH</p>
-                                <p class="text-xs text-slate-600 mb-3">Aguardando aprovação TI</p>
-                                <button class="w-full bg-bevap-green hover:bg-bevap-green/90 text-white text-sm py-2 rounded-lg font-medium transition-colors">
-                                    Avaliar Agora
-                                </button>
-                            </div>
-
-                            <div class="bg-slate-50 rounded-lg p-3 border-l-4 border-bevap-navy">
-                                <div class="flex items-start justify-between mb-2">
-                                    <span class="text-xs font-mono text-slate-500">PRJ-2026-017</span>
-                                    <span class="text-xs text-slate-600">Normal</span>
-                                </div>
-                                <p class="text-sm font-medium text-bevap-navy mb-2">API Gateway</p>
-                                <p class="text-xs text-slate-600 mb-3">Aguardando aprovação Comitê</p>
-                                <button class="w-full bg-bevap-green hover:bg-bevap-green/90 text-white text-sm py-2 rounded-lg font-medium transition-colors">
-                                    Aprovar
-                                </button>
+                        <div id="pending-approvals-list" class="space-y-2">
+                            <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-500">
+                                Carregando pendências...
                             </div>
                         </div>
                     </div>
