@@ -173,6 +173,21 @@
                         </label>
                     </div>
 
+                    <div id="objetivos-estrategicos-section" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Objetivos Estratégicos</label>
+                        <div id="objetivos-estrategicos-list" class="space-y-2 mb-3">
+                            <div class="flex items-center gap-2 p-3 bg-white border border-green-200 rounded-lg">
+                                <input type="text" placeholder="Descreva um objetivo estratégico..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="objetivos-estrategicos">
+                                <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">
+                                    <i class="fa-solid fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button onclick="addStrategicObjective()" class="text-sm text-bevap-green hover:text-green-700 font-medium">
+                            <i class="fa-solid fa-plus mr-1"></i> Adicionar Objetivo
+                        </button>
+                    </div>
+
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-3">Prioridade</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -255,7 +270,7 @@
                             <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                                 <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
                                 <input type="text" placeholder="Descreva um risco potencial..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="riscos">
-                                <button class="text-red-500 hover:text-red-700">
+                                <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">
                                     <i class="fa-solid fa-times"></i>
                                 </button>
                             </div>
@@ -445,7 +460,7 @@
                 <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
             <div class="flex items-center space-x-3">
-                <button onclick="cancelForm()" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
+                <button onclick="cancelForm()" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600  rounded-lg hover:bg-red-700  transition-all">
                     <i class="fa-solid fa-ban mr-2"></i> Cancelar
                 </button>
                 <button onclick="submitForm()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
@@ -735,6 +750,39 @@ function toggleFornecedor() {
     }
 }
 
+function toggleStrategicObjectives() {
+    const checkbox = document.getElementById('alinhamento');
+    const section = document.getElementById('objetivos-estrategicos-section');
+    if (!checkbox || !section) return;
+
+    if (checkbox.checked) {
+        section.classList.remove('hidden');
+    } else {
+        section.classList.add('hidden');
+    }
+}
+
+function addStrategicObjective() {
+    const list = document.getElementById('objetivos-estrategicos-list');
+    if (!list) return;
+
+    const newObjective = document.createElement('div');
+    newObjective.className = 'flex items-center gap-2 p-3 bg-white border border-green-200 rounded-lg';
+    newObjective.innerHTML = `
+        <input type="text" placeholder="Descreva um objetivo estratégico..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="objetivos-estrategicos">
+        <button onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    `;
+    list.appendChild(newObjective);
+
+    const input = newObjective.querySelector('input');
+    if (input) {
+        input.addEventListener('input', updateChecklist);
+        input.addEventListener('change', updateChecklist);
+    }
+}
+
 function addRisk() {
     const risksList = document.getElementById('riscos-list');
     const newRisk = document.createElement('div');
@@ -813,6 +861,15 @@ function viewRequest() {
 document.addEventListener('DOMContentLoaded', function() {
     updateStepper();
     updateChecklist();
+
+    toggleStrategicObjectives();
+    const alinhamento = document.getElementById('alinhamento');
+    if (alinhamento) {
+        alinhamento.addEventListener('change', function() {
+            toggleStrategicObjectives();
+            updateChecklist();
+        });
+    }
     
     document.querySelectorAll('.field-input, input[required], textarea[required]').forEach(field => {
         field.addEventListener('input', updateChecklist);
