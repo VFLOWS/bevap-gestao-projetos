@@ -498,7 +498,7 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                                 <div class="bg-gray-50 p-4 rounded-lg">
                                     <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
-                                    <div class="text-lg font-bold text-bevap-navy">R$ 128.450,00</div>
+                                    <div id="proposal-total-value" class="text-lg font-bold text-bevap-navy">R$ 128.450,00</div>
                                     <div class="text-xs text-green-600">BRL</div>
                                 </div>
                                 <div class="bg-gray-50 p-4 rounded-lg">
@@ -701,7 +701,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Data de Emissão *</label>
-                            <input type="date" value="2026-01-20" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            <input id="contract-issue-date" type="date" value="2026-01-20" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                         </div>
                     </div>
 
@@ -728,25 +728,273 @@
                                 <option value="vista">À vista</option>
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Centro de Custo</label>
-                            <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
-                                <option value="">Selecione...</option>
-                                <option value="TI-DEV" selected>TI-DEV - Desenvolvimento</option>
-                                <option value="TI-INFRA">TI-INFRA - Infraestrutura</option>
-                                <option value="COMPRAS">COMPRAS - Fornecedores</option>
-                            </select>
-                        </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Conta Contábil</label>
-                        <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
-                            <option value="">Selecione...</option>
-                            <option value="6.1.2.01.001" selected>6.1.2.01.001 - Serviços de TI</option>
-                            <option value="6.1.2.01.002">6.1.2.01.002 - Consultoria</option>
-                            <option value="6.1.2.01.003">6.1.2.01.003 - Desenvolvimento</option>
-                        </select>
+                        <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                            Natureza do Custo *
+                            <i class="fa-solid fa-info-circle text-gray-400 ml-2 cursor-help" title="Defina se a contratação será CAPEX (bens duráveis) ou OPEX (despesas operacionais)"></i>
+                        </label>
+
+                        <div class="space-y-3">
+                            <label class="block p-4 border-2 border-bevap-green bg-green-50 rounded-lg cursor-pointer">
+                                <input type="radio" name="contract-cost-nature" value="capex" checked class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green mr-3">
+                                <div class="inline-flex items-center align-middle">
+                                    <span class="font-medium text-gray-900">CAPEX</span>
+                                    <span id="contract-capex-percent-label" class="text-sm text-gray-600 ml-2">80%</span>
+                                    <input id="contract-capex-percent" type="number" value="80" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
+                                    <span class="text-sm text-gray-600 ml-1">%</span>
+                                </div>
+
+                                <div id="contract-cost-allocation-capex-wrapper" class="mt-4 pt-4 border-t">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-sm font-medium text-gray-700">Centro de Custo / Conta Contábil *</span>
+                                        <button id="add-contract-cost-allocation-capex" type="button" class="px-3 py-1.5 text-xs font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                                            <i class="fa-solid fa-plus mr-1"></i> Adicionar rateio
+                                        </button>
+                                    </div>
+
+                                    <div>
+                                        <table class="w-full text-sm">
+                                            <tbody id="contract-cost-allocation-capex-tbody">
+                                                <tr class="contract-cost-allocation-row">
+                                                    <td class="py-3" colspan="6">
+                                                        <div class="p-4 bg-white border border-gray-200 rounded-lg">
+                                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                                <div>
+                                                                    <label class="block text-xs font-medium text-gray-600 mb-1">Centro de Custo</label>
+                                                                    <select class="cc-center-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                        <option value="">Selecione...</option>
+                                                                        <option value="ti-dev" selected>TI-DEV - Desenvolvimento</option>
+                                                                        <option value="ti-infra">TI-INFRA - Infraestrutura</option>
+                                                                        <option value="compras">COMPRAS - Fornecedores</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-xs font-medium text-gray-600 mb-1">Conta Contábil</label>
+                                                                    <select class="cc-account-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                        <option value="">Selecione...</option>
+                                                                        <option value="6.1.2.01.001" selected>6.1.2.01.001 - Serviços de TI</option>
+                                                                        <option value="6.1.2.01.002">6.1.2.01.002 - Consultoria</option>
+                                                                        <option value="6.1.2.01.003">6.1.2.01.003 - Desenvolvimento</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                                                                <div>
+                                                                    <label class="block text-xs font-medium text-gray-600 mb-1">%</label>
+                                                                    <input type="number" value="100" min="0" max="100" class="cc-percent-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-xs font-medium text-gray-600 mb-1">Saldo</label>
+                                                                    <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-medium text-gray-900">
+                                                                        <span class="cc-balance">—</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-xs font-medium text-gray-600 mb-1">Saldo após compromisso</label>
+                                                                    <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-semibold">
+                                                                        <span class="cc-balance-after">—</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex md:justify-end">
+                                                                    <button type="button" class="remove-contract-cost-allocation px-3 py-2 text-sm font-medium text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-red-600 transition-colors" title="Remover">
+                                                                        <i class="fa-solid fa-trash mr-2"></i>Remover
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <template id="contract-cost-allocation-capex-row-template">
+                                        <tr class="contract-cost-allocation-row">
+                                            <td class="py-3" colspan="6">
+                                                <div class="p-4 bg-white border border-gray-200 rounded-lg">
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">Centro de Custo</label>
+                                                            <select class="cc-center-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                <option value="" selected>Selecione...</option>
+                                                                <option value="ti-dev">TI-DEV - Desenvolvimento</option>
+                                                                <option value="ti-infra">TI-INFRA - Infraestrutura</option>
+                                                                <option value="compras">COMPRAS - Fornecedores</option>
+                                                            </select>
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">Conta Contábil</label>
+                                                            <select class="cc-account-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                <option value="" selected>Selecione...</option>
+                                                                <option value="6.1.2.01.001">6.1.2.01.001 - Serviços de TI</option>
+                                                                <option value="6.1.2.01.002">6.1.2.01.002 - Consultoria</option>
+                                                                <option value="6.1.2.01.003">6.1.2.01.003 - Desenvolvimento</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">%</label>
+                                                            <input type="number" value="0" min="0" max="100" class="cc-percent-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">Saldo</label>
+                                                            <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-medium text-gray-900">
+                                                                <span class="cc-balance">—</span>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">Saldo após compromisso</label>
+                                                            <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-semibold">
+                                                                <span class="cc-balance-after">—</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex md:justify-end">
+                                                            <button type="button" class="remove-contract-cost-allocation px-3 py-2 text-sm font-medium text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-red-600 transition-colors" title="Remover">
+                                                                <i class="fa-solid fa-trash mr-2"></i>Remover
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </div>
+                            </label>
+
+                            <label class="block p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:border-bevap-green hover:bg-green-50 transition-colors">
+                                <input type="radio" name="contract-cost-nature" value="opex" class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green mr-3">
+                                <div class="inline-flex items-center align-middle">
+                                    <span class="font-medium text-gray-900">OPEX</span>
+                                    <span id="contract-opex-percent-label" class="text-sm text-gray-600 ml-2">20%</span>
+                                    <input id="contract-opex-percent" type="number" value="20" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" min="0" max="100">
+                                    <span class="text-sm text-gray-600 ml-1">%</span>
+                                </div>
+
+                                <div id="contract-cost-allocation-opex-wrapper" class="mt-4 pt-4 border-t">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-sm font-medium text-gray-700">Centro de Custo / Conta Contábil *</span>
+                                        <button id="add-contract-cost-allocation-opex" type="button" class="px-3 py-1.5 text-xs font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                                            <i class="fa-solid fa-plus mr-1"></i> Adicionar rateio
+                                        </button>
+                                    </div>
+
+                                    <div>
+                                        <table class="w-full text-sm">
+                                            <tbody id="contract-cost-allocation-opex-tbody">
+                                                <tr class="contract-cost-allocation-row">
+                                                    <td class="py-3" colspan="6">
+                                                        <div class="p-4 bg-white border border-gray-200 rounded-lg">
+                                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                                <div>
+                                                                    <label class="block text-xs font-medium text-gray-600 mb-1">Centro de Custo</label>
+                                                                    <select class="cc-center-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                        <option value="">Selecione...</option>
+                                                                        <option value="ti-dev" selected>TI-DEV - Desenvolvimento</option>
+                                                                        <option value="ti-infra">TI-INFRA - Infraestrutura</option>
+                                                                        <option value="compras">COMPRAS - Fornecedores</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-xs font-medium text-gray-600 mb-1">Conta Contábil</label>
+                                                                    <select class="cc-account-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                        <option value="">Selecione...</option>
+                                                                        <option value="6.1.2.01.001" selected>6.1.2.01.001 - Serviços de TI</option>
+                                                                        <option value="6.1.2.01.002">6.1.2.01.002 - Consultoria</option>
+                                                                        <option value="6.1.2.01.003">6.1.2.01.003 - Desenvolvimento</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                                                                <div>
+                                                                    <label class="block text-xs font-medium text-gray-600 mb-1">%</label>
+                                                                    <input type="number" value="100" min="0" max="100" class="cc-percent-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-xs font-medium text-gray-600 mb-1">Saldo</label>
+                                                                    <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-medium text-gray-900">
+                                                                        <span class="cc-balance">—</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div>
+                                                                    <label class="block text-xs font-medium text-gray-600 mb-1">Saldo após compromisso</label>
+                                                                    <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-semibold">
+                                                                        <span class="cc-balance-after">—</span>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="flex md:justify-end">
+                                                                    <button type="button" class="remove-contract-cost-allocation px-3 py-2 text-sm font-medium text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-red-600 transition-colors" title="Remover">
+                                                                        <i class="fa-solid fa-trash mr-2"></i>Remover
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <template id="contract-cost-allocation-opex-row-template">
+                                        <tr class="contract-cost-allocation-row">
+                                            <td class="py-3" colspan="6">
+                                                <div class="p-4 bg-white border border-gray-200 rounded-lg">
+                                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">Centro de Custo</label>
+                                                            <select class="cc-center-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                <option value="" selected>Selecione...</option>
+                                                                <option value="ti-dev">TI-DEV - Desenvolvimento</option>
+                                                                <option value="ti-infra">TI-INFRA - Infraestrutura</option>
+                                                                <option value="compras">COMPRAS - Fornecedores</option>
+                                                            </select>
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">Conta Contábil</label>
+                                                            <select class="cc-account-select w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                                <option value="" selected>Selecione...</option>
+                                                                <option value="6.1.2.01.001">6.1.2.01.001 - Serviços de TI</option>
+                                                                <option value="6.1.2.01.002">6.1.2.01.002 - Consultoria</option>
+                                                                <option value="6.1.2.01.003">6.1.2.01.003 - Desenvolvimento</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">%</label>
+                                                            <input type="number" value="0" min="0" max="100" class="cc-percent-input w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">Saldo</label>
+                                                            <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-medium text-gray-900">
+                                                                <span class="cc-balance">—</span>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <label class="block text-xs font-medium text-gray-600 mb-1">Saldo após compromisso</label>
+                                                            <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-semibold">
+                                                                <span class="cc-balance-after">—</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex md:justify-end">
+                                                            <button type="button" class="remove-contract-cost-allocation px-3 py-2 text-sm font-medium text-gray-500 border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-red-600 transition-colors" title="Remover">
+                                                                <i class="fa-solid fa-trash mr-2"></i>Remover
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <div>
@@ -905,11 +1153,42 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Valor Final *</label>
-                            <input type="text" value="R$ 128.450,00" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            <input id="contract-final-value" type="text" value="R$ 128.450,00" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Impostos/Encargos</label>
                             <input type="text" value="R$ 12.845,00" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Condição de Pagamento *</label>
+                            <select id="finance-payment-terms" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                <option value="">Selecione...</option>
+                                <option value="vista">À vista</option>
+                                <option value="30">30 dias</option>
+                                <option value="45">45 dias</option>
+                                <option value="60">60 dias</option>
+                                <option value="30/60/90" selected>30/60/90 dias</option>
+                                <option value="parcelado">Parcelado (até 12x)</option>
+                            </select>
+                            <p id="finance-payment-terms-info" class="text-xs text-gray-500 mt-1">A condição define a geração automática das parcelas abaixo.</p>
+                        </div>
+
+                        <div id="finance-installments-config" class="hidden">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Quantidade de parcelas *</label>
+                            <select id="finance-installments-count" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                <option value="4" selected>4x</option>
+                                <option value="5">5x</option>
+                                <option value="6">6x</option>
+                                <option value="7">7x</option>
+                                <option value="8">8x</option>
+                                <option value="9">9x</option>
+                                <option value="10">10x</option>
+                                <option value="11">11x</option>
+                                <option value="12">12x</option>
+                            </select>
                         </div>
                     </div>
 
@@ -920,47 +1199,16 @@
                                 <thead class="bg-gray-50">
                                     <tr>
                                         <th class="px-4 py-3 text-left text-gray-700 font-medium">Parcela</th>
-                                        <th class="px-4 py-3 text-left text-gray-700 font-medium">Vencimento</th>
+                                        <th class="px-4 py-3 text-left text-gray-700 font-medium">Data programada para vencimento</th>
                                         <th class="px-4 py-3 text-right text-gray-700 font-medium">Valor</th>
                                         <th class="px-4 py-3 text-center text-gray-700 font-medium">Ações</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <tr>
-                                        <td class="px-4 py-3">1ª Parcela</td>
-                                        <td class="px-4 py-3">25/02/2026</td>
-                                        <td class="px-4 py-3 text-right font-medium">R$ 42.816,67</td>
-                                        <td class="px-4 py-3 text-center">
-                                            <button class="text-blue-600 hover:text-blue-800">
-                                                <i class="fa-solid fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-3">2ª Parcela</td>
-                                        <td class="px-4 py-3">25/03/2026</td>
-                                        <td class="px-4 py-3 text-right font-medium">R$ 42.816,67</td>
-                                        <td class="px-4 py-3 text-center">
-                                            <button class="text-blue-600 hover:text-blue-800">
-                                                <i class="fa-solid fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="px-4 py-3">3ª Parcela</td>
-                                        <td class="px-4 py-3">25/04/2026</td>
-                                        <td class="px-4 py-3 text-right font-medium">R$ 42.816,66</td>
-                                        <td class="px-4 py-3 text-center">
-                                            <button class="text-blue-600 hover:text-blue-800">
-                                                <i class="fa-solid fa-edit"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
+                                <tbody id="finance-installments-tbody" class="divide-y divide-gray-200"></tbody>
                                 <tfoot class="bg-gray-50">
                                     <tr>
                                         <td colspan="2" class="px-4 py-3 text-right font-semibold">Total:</td>
-                                        <td class="px-4 py-3 text-right font-bold text-bevap-navy">R$ 128.450,00</td>
+                                        <td id="finance-installments-total" class="px-4 py-3 text-right font-bold text-bevap-navy">R$ 128.450,00</td>
                                         <td class="px-4 py-3"></td>
                                     </tr>
                                 </tfoot>
@@ -1116,10 +1364,10 @@
             </button>
 
             <div class="flex items-center space-x-3">
-                <button onclick="openCancelModal()" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
+                <button onclick="openCancelModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
                     <i class="fa-solid fa-ban mr-2"></i> Cancelar Processo
                 </button>
-                <button onclick="openReturnModal()" class="px-5 py-2.5 text-sm font-medium text-yellow-700 bg-white border border-yellow-300 rounded-lg hover:bg-yellow-50 transition-all">
+                <button onclick="openReturnModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
                     <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
                 </button>
                 <button onclick="openConfirmModal()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
@@ -1152,27 +1400,19 @@
 
 <div id="return-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <div class="flex items-center mb-4">
-            <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mr-4">
-                <i class="fa-solid fa-arrow-rotate-left text-yellow-600 text-2xl"></i>
-            </div>
-            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Devolver para Correção</h3>
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-2">Devolver para Correção</h3>
+        <p class="text-gray-600 mb-5">Descreva o que precisa ser ajustado para prosseguir com a contratação.</p>
+
+        <div class="mb-5">
+            <label for="return-reason" class="block text-sm font-medium text-gray-700 mb-2">Motivo/Orientações *</label>
+            <textarea id="return-reason" rows="4" placeholder="Ex.: Ajustar centro de custo, anexar documento, corrigir valor..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
         </div>
-        <p class="text-gray-700 mb-4">Informe o motivo da devolução:</p>
-        <select id="return-reason" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
-            <option value="">Selecione uma categoria...</option>
-            <option value="doc-faltante">Documento faltante</option>
-            <option value="valor-divergente">Valor divergente</option>
-            <option value="info-incompleta">Informação incompleta</option>
-            <option value="prazo">Prazo/condições inadequadas</option>
-            <option value="outro">Outro motivo</option>
-        </select>
-        <textarea id="return-description" rows="4" placeholder="Descreva detalhadamente o que precisa ser corrigido..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none mb-4"></textarea>
+
         <div class="flex justify-end space-x-3">
             <button onclick="closeReturnModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 Cancelar
             </button>
-            <button onclick="submitReturn()" class="px-6 py-2 bg-bevap-navy text-white rounded-lg hover:bg-blue-900 transition-colors font-medium">
+            <button onclick="submitReturn()" class="px-6 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors font-medium">
                 Devolver
             </button>
         </div>
@@ -1181,24 +1421,26 @@
 
 <div id="cancel-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <div class="flex items-center mb-4">
-            <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
-                <i class="fa-solid fa-times-circle text-red-600 text-2xl"></i>
-            </div>
-            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Cancelar Processo</h3>
-        </div>
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-2">Cancelar Processo</h3>
         <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-            <p class="text-sm text-red-800">⚠️ Esta ação não pode ser desfeita. Todos os stakeholders serão notificados.</p>
+            <p class="text-sm text-red-800">Esta ação não pode ser desfeita. Todos os stakeholders serão notificados.</p>
         </div>
-        <p class="text-gray-700 mb-4">Categoria do cancelamento:</p>
-        <select id="cancel-category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent mb-3">
+
+        <div class="mb-4">
+            <label for="cancel-category" class="block text-sm font-medium text-gray-700 mb-2">Categoria *</label>
+            <select id="cancel-category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
             <option value="">Selecione...</option>
             <option value="orcamento">Orçamento insuficiente</option>
             <option value="compliance">Não conformidade</option>
             <option value="estrategia">Mudança estratégica</option>
             <option value="outro">Outro</option>
-        </select>
-        <textarea id="cancel-justification" rows="4" placeholder="Justifique detalhadamente o cancelamento..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none mb-4"></textarea>
+            </select>
+        </div>
+
+        <div class="mb-5">
+            <label for="cancel-justification" class="block text-sm font-medium text-gray-700 mb-2">Justificativa *</label>
+            <textarea id="cancel-justification" rows="4" placeholder="Justifique detalhadamente o cancelamento..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+        </div>
         <div class="flex justify-end space-x-3">
             <button onclick="closeCancelModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 Cancelar
@@ -1330,9 +1572,19 @@ function openReturnModal() {
 
 function closeReturnModal() {
     document.getElementById('return-modal').classList.add('hidden');
+
+    const reasonEl = document.getElementById('return-reason');
+    if (reasonEl) reasonEl.value = '';
 }
 
 function submitReturn() {
+    const reasonEl = document.getElementById('return-reason');
+    const reason = reasonEl?.value?.trim();
+    if (!reason) {
+        showToast('error', 'Informe o motivo/orientações para devolução.');
+        return;
+    }
+
     showToast('success', 'Projeto devolvido para correção!');
     closeReturnModal();
 }
@@ -1343,9 +1595,28 @@ function openCancelModal() {
 
 function closeCancelModal() {
     document.getElementById('cancel-modal').classList.add('hidden');
+
+    const categoryEl = document.getElementById('cancel-category');
+    const justificationEl = document.getElementById('cancel-justification');
+    if (categoryEl) categoryEl.value = '';
+    if (justificationEl) justificationEl.value = '';
 }
 
 function submitCancel() {
+    const categoryEl = document.getElementById('cancel-category');
+    const justificationEl = document.getElementById('cancel-justification');
+    const category = categoryEl?.value?.trim();
+    const justification = justificationEl?.value?.trim();
+
+    if (!category) {
+        showToast('error', 'Selecione a categoria do cancelamento.');
+        return;
+    }
+    if (!justification) {
+        showToast('error', 'Informe a justificativa do cancelamento.');
+        return;
+    }
+
     showToast('success', 'Projeto cancelado com sucesso!');
     closeCancelModal();
 }
@@ -1368,12 +1639,352 @@ function showToast(type, message) {
     }, 3000);
 }
 
+function initContractCostNatureAndAllocation() {
+    const capexInput = document.getElementById('contract-capex-percent');
+    const opexInput = document.getElementById('contract-opex-percent');
+    const capexLabel = document.getElementById('contract-capex-percent-label');
+    const opexLabel = document.getElementById('contract-opex-percent-label');
+
+    const capexAllocationWrapper = document.getElementById('contract-cost-allocation-capex-wrapper');
+    const opexAllocationWrapper = document.getElementById('contract-cost-allocation-opex-wrapper');
+
+    const capexTbody = document.getElementById('contract-cost-allocation-capex-tbody');
+    const opexTbody = document.getElementById('contract-cost-allocation-opex-tbody');
+
+    const capexRowTemplate = document.getElementById('contract-cost-allocation-capex-row-template');
+    const opexRowTemplate = document.getElementById('contract-cost-allocation-opex-row-template');
+
+    const addCapexButton = document.getElementById('add-contract-cost-allocation-capex');
+    const addOpexButton = document.getElementById('add-contract-cost-allocation-opex');
+
+    if (!capexInput || !opexInput) return;
+    if (!capexAllocationWrapper || !opexAllocationWrapper) return;
+    if (!capexTbody || !opexTbody || !capexRowTemplate || !opexRowTemplate) return;
+
+    const ccBalances = {
+        'ti-infra': 600000,
+        'ti-dev': 300000,
+        'compras': 250000,
+    };
+
+    const parseBRL = (text) => {
+        if (!text) return 0;
+        const cleaned = String(text)
+            .replace(/\s/g, '')
+            .replace('R$', '')
+            .replace(/\./g, '')
+            .replace(',', '.');
+        const value = Number(cleaned.replace(/[^0-9.-]/g, ''));
+        return Number.isFinite(value) ? value : 0;
+    };
+
+    const formatBRL = (value) => {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue)) return '—';
+        return numericValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    };
+
+    const getContractTotal = () => {
+        const valueInput = document.getElementById('contract-final-value');
+        if (valueInput && valueInput.value) return parseBRL(valueInput.value);
+
+        const proposalValue = document.getElementById('proposal-total-value');
+        if (proposalValue) return parseBRL(proposalValue.textContent);
+
+        return 0;
+    };
+
+    const clampPercent = (value) => {
+        const numericValue = Number(value);
+        if (Number.isNaN(numericValue)) return 0;
+        return Math.min(100, Math.max(0, numericValue));
+    };
+
+    const syncPercentLabels = () => {
+        if (capexLabel) capexLabel.textContent = `${clampPercent(capexInput.value)}%`;
+        if (opexLabel) opexLabel.textContent = `${clampPercent(opexInput.value)}%`;
+    };
+
+    const updateAllocationVisibility = () => {
+        const capexValue = clampPercent(capexInput.value);
+        const opexValue = clampPercent(opexInput.value);
+
+        capexAllocationWrapper.classList.toggle('hidden', opexValue === 100);
+        opexAllocationWrapper.classList.toggle('hidden', capexValue === 100);
+    };
+
+    const updateAllocationRow = (row) => {
+        const total = getContractTotal();
+        const centerSelect = row.querySelector('.cc-center-select');
+        const percentInput = row.querySelector('.cc-percent-input');
+        const balanceEl = row.querySelector('.cc-balance');
+        const balanceAfterEl = row.querySelector('.cc-balance-after');
+
+        if (!centerSelect || !percentInput || !balanceEl || !balanceAfterEl) return;
+
+        const ccKey = centerSelect.value;
+        if (!ccKey || !Object.prototype.hasOwnProperty.call(ccBalances, ccKey)) {
+            balanceEl.textContent = '—';
+            balanceAfterEl.textContent = '—';
+            return;
+        }
+
+        const saldo = ccBalances[ccKey];
+        const percent = clampPercent(percentInput.value);
+        const comprometido = total * (percent / 100);
+        const saldoApos = saldo - comprometido;
+
+        balanceEl.textContent = formatBRL(saldo);
+        balanceAfterEl.textContent = formatBRL(saldoApos);
+        balanceAfterEl.classList.toggle('text-red-600', saldoApos < 0);
+        balanceAfterEl.classList.toggle('text-gray-900', saldoApos >= 0);
+    };
+
+    const updateAllocationTable = (tbody) => {
+        Array.from(tbody.querySelectorAll('tr')).forEach(updateAllocationRow);
+    };
+
+    const updateAllAllocations = () => {
+        updateAllocationTable(capexTbody);
+        updateAllocationTable(opexTbody);
+    };
+
+    const enforceHundredRule = (changed) => {
+        const capexValue = clampPercent(capexInput.value);
+        const opexValue = clampPercent(opexInput.value);
+
+        if (changed === 'capex' && capexValue === 100) {
+            opexInput.value = 0;
+        }
+        if (changed === 'opex' && opexValue === 100) {
+            capexInput.value = 0;
+        }
+
+        syncPercentLabels();
+        updateAllocationVisibility();
+        updateAllAllocations();
+    };
+
+    capexInput.addEventListener('input', () => enforceHundredRule('capex'));
+    opexInput.addEventListener('input', () => enforceHundredRule('opex'));
+
+    const initAllocationTable = ({ tbody, template, addButton }) => {
+        if (addButton) {
+            addButton.addEventListener('click', () => {
+                const row = template.content.cloneNode(true);
+                tbody.appendChild(row);
+                updateAllAllocations();
+            });
+        }
+
+        tbody.addEventListener('click', (event) => {
+            const target = event.target;
+            const removeButton = target?.closest?.('.remove-contract-cost-allocation');
+            if (!removeButton) return;
+            if (tbody.children.length <= 1) return;
+
+            const row = removeButton.closest('tr');
+            if (row) row.remove();
+            updateAllAllocations();
+        });
+
+        const onChange = () => updateAllAllocations();
+        tbody.addEventListener('change', onChange);
+        tbody.addEventListener('input', onChange);
+    };
+
+    initAllocationTable({ tbody: capexTbody, template: capexRowTemplate, addButton: addCapexButton });
+    initAllocationTable({ tbody: opexTbody, template: opexRowTemplate, addButton: addOpexButton });
+
+    const contractValueInput = document.getElementById('contract-final-value');
+    if (contractValueInput) {
+        contractValueInput.addEventListener('input', updateAllAllocations);
+        contractValueInput.addEventListener('change', updateAllAllocations);
+    }
+
+    syncPercentLabels();
+    updateAllocationVisibility();
+    updateAllAllocations();
+}
+
+function initFinancePaymentTermsAndInstallments() {
+    const termsSelect = document.getElementById('finance-payment-terms');
+    const termsInfo = document.getElementById('finance-payment-terms-info');
+    const installmentsConfig = document.getElementById('finance-installments-config');
+    const installmentsCountSelect = document.getElementById('finance-installments-count');
+    const tbody = document.getElementById('finance-installments-tbody');
+    const totalEl = document.getElementById('finance-installments-total');
+    const valueInput = document.getElementById('contract-final-value');
+    const issueDateInput = document.getElementById('contract-issue-date');
+
+    if (!termsSelect || !tbody) return;
+
+    const parseBRL = (text) => {
+        if (!text) return 0;
+        const cleaned = String(text)
+            .replace(/\s/g, '')
+            .replace('R$', '')
+            .replace(/\./g, '')
+            .replace(',', '.');
+        const value = Number(cleaned.replace(/[^0-9.-]/g, ''));
+        return Number.isFinite(value) ? value : 0;
+    };
+
+    const formatBRL = (value) => {
+        const numericValue = Number(value);
+        if (!Number.isFinite(numericValue)) return '—';
+        return numericValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    };
+
+    const toCents = (value) => Math.round(Number(value) * 100);
+    const fromCents = (cents) => Number(cents) / 100;
+
+    const getBaseDate = () => {
+        const raw = issueDateInput?.value;
+        if (raw) {
+            const d = new Date(`${raw}T00:00:00`);
+            if (!Number.isNaN(d.getTime())) return d;
+        }
+        return new Date();
+    };
+
+    const addDays = (date, days) => {
+        const d = new Date(date.getTime());
+        d.setDate(d.getDate() + Number(days));
+        return d;
+    };
+
+    const formatDateBR = (date) => {
+        const dd = String(date.getDate()).padStart(2, '0');
+        const mm = String(date.getMonth() + 1).padStart(2, '0');
+        const yyyy = date.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
+    };
+
+    const getScheduleDays = (terms) => {
+        switch (terms) {
+            case '30/60/90':
+                return [30, 60, 90];
+            case '30':
+                return [30];
+            case '45':
+                return [45];
+            case '60':
+                return [60];
+            case 'parcelado': {
+                const countRaw = installmentsCountSelect?.value;
+                const count = Math.min(12, Math.max(4, Number(countRaw || 4)));
+                return Array.from({ length: count }, (_, idx) => 30 * (idx + 1));
+            }
+            case 'vista':
+                return [0];
+            default:
+                return [30, 60, 90];
+        }
+    };
+
+    const getTermsInfo = (terms) => {
+        switch (terms) {
+            case 'vista':
+                return 'Tipo: À vista (pagamento único).';
+            case 'parcelado': {
+                const countRaw = installmentsCountSelect?.value;
+                const count = Math.min(12, Math.max(4, Number(countRaw || 4)));
+                return `Tipo: Parcelado (${count}x).`;
+            }
+            case '30':
+            case '45':
+            case '60':
+                return `Tipo: Prazo (${terms} dias).`;
+            case '30/60/90':
+                return 'Tipo: Prazo (30/60/90 dias).';
+            default:
+                return 'A condição define a geração automática das parcelas abaixo.';
+        }
+    };
+
+    const getTotalValue = () => {
+        if (valueInput?.value) return parseBRL(valueInput.value);
+
+        const proposalValue = document.getElementById('proposal-total-value');
+        if (proposalValue) return parseBRL(proposalValue.textContent);
+
+        return 0;
+    };
+
+    const buildInstallments = () => {
+        const terms = termsSelect.value;
+
+        const isInstallmentPlan = terms === 'parcelado';
+        if (installmentsConfig) installmentsConfig.classList.toggle('hidden', !isInstallmentPlan);
+        if (termsInfo) termsInfo.textContent = getTermsInfo(terms);
+
+        if (!terms) {
+            tbody.innerHTML = '';
+            if (totalEl) totalEl.textContent = '—';
+            return;
+        }
+
+        const baseDate = getBaseDate();
+        const schedule = getScheduleDays(terms);
+        const total = getTotalValue();
+        const totalCents = toCents(total);
+        const n = schedule.length;
+
+        const base = n ? Math.floor(totalCents / n) : totalCents;
+        const remainder = n ? (totalCents - base * n) : 0;
+
+        const rows = schedule.map((days, idx) => {
+            const extra = idx < remainder ? 1 : 0;
+            const cents = base + extra;
+            const amount = formatBRL(fromCents(cents));
+            const date = formatDateBR(addDays(baseDate, days));
+
+            const label = terms === 'vista' ? 'À vista' : `${idx + 1}ª Parcela`;
+
+            return `
+                <tr>
+                    <td class="px-4 py-3">${label}</td>
+                    <td class="px-4 py-3">${date}</td>
+                    <td class="px-4 py-3 text-right font-medium">${amount}</td>
+                    <td class="px-4 py-3 text-center">
+                        <button class="text-blue-600 hover:text-blue-800" type="button">
+                            <i class="fa-solid fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = rows.join('');
+        if (totalEl) totalEl.textContent = formatBRL(total);
+    };
+
+    termsSelect.addEventListener('change', buildInstallments);
+    if (installmentsCountSelect) {
+        installmentsCountSelect.addEventListener('change', buildInstallments);
+        installmentsCountSelect.addEventListener('input', buildInstallments);
+    }
+    if (valueInput) {
+        valueInput.addEventListener('input', buildInstallments);
+        valueInput.addEventListener('change', buildInstallments);
+    }
+    if (issueDateInput) {
+        issueDateInput.addEventListener('change', buildInstallments);
+    }
+
+    buildInstallments();
+}
+
 window.addEventListener('DOMContentLoaded', () => {
     updateFormTabsArrows();
     const scroller = document.getElementById('form-tabs-scroll');
     if (scroller) {
         scroller.addEventListener('scroll', updateFormTabsArrows);
     }
+
+    initContractCostNatureAndAllocation();
+    initFinancePaymentTermsAndInstallments();
 });
 
 window.addEventListener('resize', updateFormTabsArrows);

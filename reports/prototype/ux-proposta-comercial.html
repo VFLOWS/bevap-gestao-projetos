@@ -494,6 +494,22 @@
                                 <input id="supplier-contact-phone" type="tel" placeholder="(11) 99999-9999" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                             </div>
                         </div>
+
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 mt-8">Contato Adicional</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Contato</label>
+                                <input id="supplier-contact-name-2" type="text" placeholder="Nome do contato..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
+                                <input id="supplier-contact-email-2" type="email" placeholder="email@fornecedor.com" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+                                <input id="supplier-contact-phone-2" type="tel" placeholder="(11) 99999-9999" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -663,30 +679,48 @@
                     <div class="mb-8 p-6">
                         <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Itens de Verificação</h3>
 
-                        <div class="bg-gray-50 p-4 rounded-lg space-y-3">
-                            <label class="flex items-center">
-                                <input type="checkbox" class="proposal-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3" checked>
-                                <span class="text-sm text-gray-700">Escopo está claro e detalhado</span>
+                        <div class="space-y-3">
+                            <label class="flex items-start">
+                                <input type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Escopo está claro e detalhado</span>
+                                    <p class="text-gray-500 text-xs mt-1">Escopo e itens entregáveis estão descritos de forma objetiva.</p>
+                                </span>
                             </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" class="proposal-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3" checked>
-                                <span class="text-sm text-gray-700">Impostos e taxas estão inclusos no valor</span>
+                            <label class="flex items-start">
+                                <input type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Impostos e taxas estão inclusos no valor</span>
+                                    <p class="text-gray-500 text-xs mt-1">A composição do valor considera impostos, taxas e encargos aplicáveis.</p>
+                                </span>
                             </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" class="proposal-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3" checked>
-                                <span class="text-sm text-gray-700">Prazos de entrega definidos</span>
+                            <label class="flex items-start">
+                                <input type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" checked>
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Prazos de entrega definidos</span>
+                                    <p class="text-gray-500 text-xs mt-1">Cronograma e marcos de entrega estão definidos na proposta.</p>
+                                </span>
                             </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" class="proposal-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3">
-                                <span class="text-sm text-gray-700">Garantias e SLA especificados</span>
+                            <label class="flex items-start">
+                                <input type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Garantias e SLA especificados</span>
+                                    <p class="text-gray-500 text-xs mt-1">Condições de garantia, suporte e SLA estão explicitadas.</p>
+                                </span>
                             </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" class="proposal-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3">
-                                <span class="text-sm text-gray-700">Vigência da proposta confirmada</span>
+                            <label class="flex items-start">
+                                <input type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Vigência da proposta confirmada</span>
+                                    <p class="text-gray-500 text-xs mt-1">O prazo de validade da proposta está informado e vigente.</p>
+                                </span>
                             </label>
-                            <label class="flex items-center">
-                                <input type="checkbox" class="proposal-checklist-item w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3">
-                                <span class="text-sm text-gray-700">Documentos anexados e completos</span>
+                            <label class="flex items-start">
+                                <input type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <span class="ml-3 text-sm text-gray-700">
+                                    <span class="font-medium">Documentos anexados e completos</span>
+                                    <p class="text-gray-500 text-xs mt-1">Proposta, escopo e anexos necessários foram incluídos.</p>
+                                </span>
                             </label>
                         </div>
 
@@ -855,10 +889,10 @@
                 <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
             <div class="flex items-center space-x-3">
-                <button onclick="openDiscontinueModal()" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
+                <button onclick="openDiscontinueModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
                     <i class="fa-solid fa-ban mr-2"></i> Não Continuidade
                 </button>
-                <button onclick="openReturnModal()" class="px-5 py-2.5 text-sm font-medium text-yellow-700 bg-white border border-yellow-300 rounded-lg hover:bg-yellow-50 transition-all">
+                <button onclick="openReturnModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
                     <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
                 </button>
                 <button onclick="openApproveModal()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
@@ -877,7 +911,8 @@
             </div>
             <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Envio</h3>
         </div>
-        <p class="text-gray-700 mb-6">Você está enviando a proposta comercial para aprovação do solicitante.</p>
+        <p class="text-gray-700 mb-6">Confirma o envio da proposta comercial para aprovação do solicitante no projeto <strong>PRJ-2026-033 • Implantar SSO corporativo</strong>?</p>
+        <p id="approve-next-step-text" class="text-sm text-gray-600 mb-6">Ao confirmar, a proposta seguirá para a próxima etapa.</p>
         <div class="flex justify-end space-x-3">
             <button onclick="closeApproveModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 Cancelar
@@ -941,19 +976,28 @@ const supplierDatabase = {
         cnpj: '12.345.678/0001-90',
         contactName: 'Ana Souza',
         contactEmail: 'ana@techpartners.com',
-        contactPhone: '(11) 98888-1010'
+        contactPhone: '(11) 98888-1010',
+        contactName2: 'Marcos Pereira',
+        contactEmail2: 'marcos.pereira@techpartners.com',
+        contactPhone2: '(11) 97777-1111'
     },
     'Inova Sistemas S.A.': {
         cnpj: '45.678.901/0001-22',
         contactName: 'Bruno Lima',
         contactEmail: 'bruno@inovasistemas.com.br',
-        contactPhone: '(21) 97777-2020'
+        contactPhone: '(21) 97777-2020',
+        contactName2: 'Fernanda Rocha',
+        contactEmail2: 'fernanda.rocha@inovasistemas.com.br',
+        contactPhone2: '(21) 96666-2222'
     },
     'Nexus Consulting Brasil': {
         cnpj: '78.901.234/0001-55',
         contactName: 'Carla Menezes',
         contactEmail: 'carla@nexusconsulting.com.br',
-        contactPhone: '(31) 96666-3030'
+        contactPhone: '(31) 96666-3030',
+        contactName2: 'Rafael Costa',
+        contactEmail2: 'rafael.costa@nexusconsulting.com.br',
+        contactPhone2: '(31) 95555-3333'
     }
 };
 
@@ -1027,6 +1071,11 @@ function selectSupplier(supplierName) {
     document.getElementById('supplier-contact-name').value = supplier.contactName;
     document.getElementById('supplier-contact-email').value = supplier.contactEmail;
     document.getElementById('supplier-contact-phone').value = supplier.contactPhone;
+
+    document.getElementById('supplier-contact-name-2').value = supplier.contactName2 || '';
+    document.getElementById('supplier-contact-email-2').value = supplier.contactEmail2 || '';
+    document.getElementById('supplier-contact-phone-2').value = supplier.contactPhone2 || '';
+
     document.getElementById('supplier-suggestions').classList.add('hidden');
 }
 
@@ -1174,6 +1223,10 @@ function saveDraft() {
 }
 
 function openApproveModal() {
+    const nextStepEl = document.getElementById('approve-next-step-text');
+    if (nextStepEl) {
+        nextStepEl.innerHTML = 'Ao confirmar, a proposta seguirá para <strong>Aprovação da Proposta Comercial</strong>.';
+    }
     document.getElementById('approve-modal').classList.remove('hidden');
 }
 

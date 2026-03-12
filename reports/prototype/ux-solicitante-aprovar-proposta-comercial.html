@@ -96,9 +96,6 @@
                             <button type="button" onclick="switchFormTab('proposta-fornecedor')" id="tab-proposta-fornecedor" class="px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
                                 <i class="fa-solid fa-handshake mr-2"></i>Proposta do Fornecedor
                             </button>
-                            <button type="button" onclick="switchFormTab('feedback')" id="tab-feedback" class="px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                                <i class="fa-solid fa-comments mr-2"></i>Feedback
-                            </button>
                         </div>
 
                         <button id="form-tabs-left-arrow" type="button" onclick="scrollFormTabs('left')" class="absolute left-0 top-0 bottom-0 w-24 rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-start pl-2">
@@ -617,7 +614,7 @@
                                 </div>
                             </div>
 
-                             <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                             <!-- <div class="bg-green-50 border border-green-200 rounded-lg p-4">
                                 <h4 class="text-sm font-semibold text-bevap-navy mb-3 flex items-center">
                                     <i class="fa-solid fa-comment-dots mr-2 text-bevap-gold"></i>
                                     Feedback da Aprovação Comercial
@@ -635,32 +632,28 @@
                                         O prazo de 10 semanas é adequado para nossa janela de implementação. Recomendo aprovação, pois a infraestrutura atual já está no limite e este projeto é crítico para a continuidade dos negócios.
                                     </p>
                                 </div>
+                            </div> -->
+
+                            <div class="pt-6 border-t">
+                                <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                                    <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
+                                    Seu Feedback
+                                </h3>
+
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Observações / Negociação</label>
+                                    <textarea id="feedback-text" rows="4" placeholder="Adicione comentários, sugestões de ajustes ou pontos para negociação..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="flex items-start">
+                                        <input type="checkbox" id="agreement-checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
+                                        <span class="text-sm text-gray-700">Li e concordo com a proposta comercial apresentada e suas condições gerais *</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
-                    </div>
-                </div>
-
-                <div id="tab-content-feedback" class="p-6 hidden">
-                    <div class="space-y-6">
-                        <div>
-                            <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                                <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
-                                Seu Feedback
-                            </h3>
-
-                            <div class="mb-6">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Observações / Negociação</label>
-                                <textarea id="feedback-text" rows="4" placeholder="Adicione comentários, sugestões de ajustes ou pontos para negociação..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
-                            </div>
-
-                            <div class="mb-2">
-                                <label class="flex items-start">
-                                    <input type="checkbox" id="agreement-checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
-                                    <span class="text-sm text-gray-700">Li e concordo com a proposta comercial apresentada e suas condições gerais *</span>
-                                </label>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -864,10 +857,10 @@
                 <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
             <div class="flex items-center space-x-3">
-                <button onclick="openDiscontinueModal()" class="px-5 py-2.5 text-sm font-medium text-red-700 bg-white border border-red-300 rounded-lg hover:bg-red-50 transition-all">
+                <button onclick="openDiscontinueModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
                     <i class="fa-solid fa-ban mr-2"></i> Não Continuidade
                 </button>
-                <button onclick="openReturnModal()" class="px-5 py-2.5 text-sm font-medium text-yellow-700 bg-white border border-yellow-300 rounded-lg hover:bg-yellow-50 transition-all">
+                <button onclick="openReturnModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
                     <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
                 </button>
                 <button onclick="openApproveModal()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
@@ -950,7 +943,7 @@
 
 <script>
 function switchFormTab(tabName) {
-    const tabs = ['solicitacao', 'analise-ti', 'impacto', 'triagem-ti', 'proposta-fornecedor', 'feedback'];
+    const tabs = ['solicitacao', 'analise-ti', 'impacto', 'triagem-ti', 'proposta-fornecedor'];
     tabs.forEach(tab => {
         document.getElementById('tab-' + tab).classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
         document.getElementById('tab-' + tab).classList.add('border-transparent', 'text-gray-500', 'hover:text-gray-700');
