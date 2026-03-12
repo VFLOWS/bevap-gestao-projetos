@@ -736,6 +736,38 @@ const newSolicitationController = {
     };
   },
 
+  createSubmitLoading: function () {
+    if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
+      return modalLoadingService.show({
+        title: 'Enviando solicitacao',
+        message: 'Aguarde enquanto a solicitacao e criada no Fluig...'
+      });
+    }
+
+    const legacyLoading = FLUIGC.loading(this.getContainer());
+    legacyLoading.show();
+
+    return {
+      hide: function () {
+        legacyLoading.hide();
+      },
+      updateMessage: function () {}
+    };
+  },
+
+  waitForUiPaint: function () {
+    return new Promise((resolve) => {
+      if (typeof window.requestAnimationFrame === 'function') {
+        window.requestAnimationFrame(() => {
+          setTimeout(resolve, 0);
+        });
+        return;
+      }
+
+      setTimeout(resolve, 0);
+    });
+  },
+
   submitForm: async function () {
     if (this._state.isSubmitting) return;
 
@@ -747,12 +779,15 @@ const newSolicitationController = {
 
     this.closeValidationModal();
 
-    const loading = FLUIGC.loading(this.getContainer());
-    loading.show();
+    const loading = this.createSubmitLoading();
     this._state.isSubmitting = true;
 
     try {
+      loading.updateMessage('Preparando dados do formulario...');
+      await this.waitForUiPaint();
       const payload = await this.buildSubmissionPayload();
+      loading.updateMessage('Enviando para o processo no Fluig...');
+      await this.waitForUiPaint();
       const result = await fluigService.createProjectSolicitation(payload);
       this._state.numSolicitacao = String(result.numSolicitacao || "").trim();
       this.getContainer().find('#success-modal').removeClass('hidden');
