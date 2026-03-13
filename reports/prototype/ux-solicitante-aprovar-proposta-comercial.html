@@ -11,7 +11,7 @@
             theme: {
                 extend: {
                     colors: {
-                        'bevap-navy': '#0B2E4A',
+                        'bevap-navy': '#3D567E',
                         'bevap-green': '#1C8C5D',
                         'bevap-gold': '#F1B434',
                     },
@@ -36,14 +36,11 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2">
-                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
-                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
-                    </div>
-                    <span class="text-white font-montserrat font-bold text-xl">BEVAP</span>
+                <div class="flex items-center space-x-2 bg-white px-4 py-1 rounded-lg">
+                    <img src="logoBevap.png" class="h-auto w-24" alt="">
                 </div>
-                <div class="h-8 w-px bg-gray-400"></div>
-                <h1 class="text-white font-montserrat font-semibold text-lg">Aprovar Proposta Comercial</h1>
+                <div class="h-8 w-px bg-gray-400 hidden md:block"></div>
+                <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">Solicitante – Aprovar Proposta Comercial</h1>
             </div>
             <div class="flex items-center space-x-3">
                 <button class="text-white hover:text-bevap-gold transition-colors">
@@ -52,13 +49,22 @@
                 <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Solicitante" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
             </div>
         </div>
-        <div class="pb-3">
-            <nav class="flex items-center space-x-2 text-sm">
-                <a href="dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
-                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+    </div>
+    <div class="">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center">
+            <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                <a href="ux-dashboard.html" class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Início</span>
+                </a>
+                <span class="text-gray-400">/</span>
+                <a href="ux-dashboard.html" class="text-gray-300 hover:text-white transition-colors">Portfólio</a>
+                <span class="text-gray-400">/</span>
                 <a href="#" class="text-gray-300 hover:text-white transition-colors">Solicitações</a>
-                <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-                <span class="text-bevap-gold font-medium">Proposta</span>
+                <span class="text-gray-400">/</span>
+                <a href="#" class="text-gray-300 hover:text-white transition-colors">Proposta Comercial</a>
+                <span class="text-gray-400">/</span>
+                <span class="text-bevap-gold font-medium">Aprovação do Solicitante</span>
             </nav>
         </div>
     </div>
@@ -93,7 +99,10 @@
                             <button type="button" onclick="switchFormTab('triagem-ti')" id="tab-triagem-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
                                 <i class="fa-solid fa-route mr-2"></i>Triagem TI
                             </button>
-                            <button type="button" onclick="switchFormTab('proposta-fornecedor')" id="tab-proposta-fornecedor" class="px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                            <button type="button" onclick="switchFormTab('proposta-fornecedor')" id="tab-proposta-fornecedor" class="relative px-5 py-3 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atenção" aria-label="Atenção">
+                                    <i class="fa-solid fa-exclamation text-[10px]"></i>
+                                </span>
                                 <i class="fa-solid fa-handshake mr-2"></i>Proposta do Fornecedor
                             </button>
                         </div>
@@ -106,6 +115,9 @@
                         </button>
 
                         <button id="form-tabs-right-arrow" type="button" onclick="scrollFormTabs('right')" class="absolute right-0 top-0 bottom-0 w-24 rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-end pr-2">
+                            <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atenção" aria-label="Atenção">
+                                <i class="fa-solid fa-exclamation text-[10px]"></i>
+                            </span>
                             <span class="flex items-center gap-0 text-base leading-none">
                                 <i class="fa-solid fa-chevron-right"></i>
                                 <i class="fa-solid fa-chevron-right"></i>
@@ -950,9 +962,13 @@ function switchFormTab(tabName) {
         document.getElementById('tab-content-' + tab).classList.add('hidden');
     });
 
-    document.getElementById('tab-' + tabName).classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
-    document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700');
+    const activeTab = document.getElementById('tab-' + tabName);
+    activeTab.classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
+    activeTab.classList.remove('border-transparent', 'text-gray-500', 'hover:text-gray-700');
     document.getElementById('tab-content-' + tabName).classList.remove('hidden');
+
+    const badge = activeTab.querySelector('.tab-notice-badge');
+    if (badge) badge.remove();
 }
 
 function updateFormTabsArrows() {
@@ -974,11 +990,17 @@ function updateFormTabsArrows() {
 
 function scrollFormTabs(direction) {
     const scroller = document.getElementById('form-tabs-scroll');
+    const rightArrow = document.getElementById('form-tabs-right-arrow');
     if (!scroller) return;
 
     const target = direction === 'right'
         ? (scroller.scrollWidth - scroller.clientWidth)
         : 0;
+
+    if (direction === 'right') {
+        const badge = rightArrow ? rightArrow.querySelector('.tab-notice-badge') : null;
+        if (badge) badge.remove();
+    }
 
     scroller.scrollTo({ left: target, behavior: 'smooth' });
     window.setTimeout(updateFormTabsArrows, 360);

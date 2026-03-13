@@ -27,7 +27,7 @@ Este repositório contém a estrutura base para prototipar as páginas/widgets d
 README.md
 
 Identidade BEVAP (tokens):
-- Cores: Green #1C8C5D, Navy #0B2E4A, Gold #F1B434.
+- Cores: Green #1C8C5D, Navy #3D567E, Gold #F1B434.
 - Fontes: Montserrat (títulos) e Inter (corpo) via CDN.
 
 4) Como usar (passo a passo)
@@ -56,7 +56,7 @@ Dica: Também é possível abrir o view.ftl local em um servidor estático apena
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="${publisherContextPath}/resources/css/custom.css">
-<script>tailwind.config={theme:{extend:{colors:{bevap:{green:'#1C8C5D',navy:'#0B2E4A',gold:'#F1B434'}}}}}</script>
+<script>tailwind.config={theme:{extend:{colors:{bevap:{green:'#1C8C5D',navy:'#3D567E',gold:'#F1B434'}}}}}</script>
 
 6.2. Manifesto mínimo (wcmmanifest.json)
 {

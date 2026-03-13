@@ -11,7 +11,7 @@
             theme: {
                 extend: {
                     colors: {
-                        'bevap-navy': '#0B2E4A',
+                        'bevap-navy': '#3D567E',
                         'bevap-green': '#1C8C5D',
                         'bevap-gold': '#F1B434',
                     },
@@ -36,16 +36,13 @@
     <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <div class="flex items-center space-x-4">
-                <div class="flex items-center space-x-2">
-                    <div class="w-10 h-10 bg-bevap-gold rounded-lg flex items-center justify-center">
-                        <span class="text-bevap-navy font-montserrat font-bold text-lg">B</span>
-                    </div>
-                    <span class="text-white font-montserrat font-bold text-xl hidden sm:block">BEVAP</span>
+                <div class="flex items-center space-x-2 bg-white px-4 py-1 rounded-lg">
+                    <img src="logoBevap.png" class="h-auto w-24" alt="">
                 </div>
-                <div class="h-8 w-px bg-gray-400 hidden md:block"></div>
-                <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">Detalhamento da Solicitação</h1>
+                <div class="h-8 w-px bg-gray-400"></div>
+                <h1 class="text-white font-montserrat font-semibold text-lg">Detalhamento da Solicitação</h1>
             </div>
-            <a href="ux-dashboard.html" class="flex items-center space-x-3">
+            <div class="flex items-center space-x-3">
                 <button class="text-white hover:text-bevap-gold transition-colors">
                     <i class="fa-regular fa-bell text-xl"></i>
                 </button>
@@ -53,14 +50,19 @@
             </div>
         </div>
     </div>
-    <div class="max-w-[85rem] mx-auto sm:px-6 pb-3">
-        <nav class="flex items-center space-x-2 text-sm">
-            <a href="ux-dashboard.html" class="text-gray-300 hover:text-white transition-colors">Home</a>
-            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-            <a href="#" class="text-gray-300 hover:text-white transition-colors">Portfólio</a>
-            <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
+    <div class="">
+        <div class="max-w-[85rem] mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center">
+        <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+            <a href="ux-dashboard.html" class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+                <i class="fa-solid fa-house text-xs"></i>
+                <span>Início</span>
+            </a>
+            <span class="text-gray-400">/</span>
+            <a href="ux-dashboard.html" class="text-gray-300 hover:text-white transition-colors">Portfólio</a>
+            <span class="text-gray-400">/</span>
             <span class="text-bevap-gold font-medium">PRJ-2024-001</span>
         </nav>
+        </div>
     </div>
 </header>
 
