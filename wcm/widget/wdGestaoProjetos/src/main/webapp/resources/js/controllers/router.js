@@ -49,6 +49,10 @@ const router = {
         evaluateProject: {
           controller: evaluateProjectController,
           handler: () => evaluateProjectController.load(params)
+        },
+        immediateApproval: {
+          controller: immediateApprovalController,
+          handler: () => immediateApprovalController.load(params)
         }
       };
 

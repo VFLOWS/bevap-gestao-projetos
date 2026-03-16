@@ -1,260 +1,69 @@
 <main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-    
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
         <div id="content-section" class="lg:col-span-2">
-            
             <div id="alert-banner" class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div class="flex items-start">
                     <i class="fa-solid fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
                     <div class="text-sm text-blue-800">
-                        <p class="font-medium mb-1">Análise TI Concluída</p>
-                        <p>O projeto foi avaliado pela TI e recomendado para execução interna. Revise o impacto na sua área antes de aprovar.</p>
+                        <p class="font-medium mb-1">Analise TI concluida</p>
+                        <p>Revise o historico do projeto e registre o impacto na sua area antes de aprovar.</p>
                     </div>
                 </div>
             </div>
 
-            <div id="tabs-container" class="bg-white rounded-lg shadow-md">
+            <div id="tabs-container" class="bg-white rounded-lg shadow-md" data-component="tabs" data-tabs-default="solicitacao">
                 <div class="border-b">
-                    <nav class="flex space-x-0">
-                        <button onclick="switchTab('solicitacao')" id="tab-solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50">
-                            <i class="fa-solid fa-file-lines mr-2"></i>Solicitação
+                    <nav class="flex flex-wrap">
+                        <button data-tab="solicitacao" id="tab-solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                            <i class="fa-solid fa-file-lines mr-2"></i>Solicitacao
                         </button>
-                        <button onclick="switchTab('analise-ti')" id="tab-analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-                            <i class="fa-solid fa-microscope mr-2"></i>Análise TI
+                        <button data-tab="analise-ti" id="tab-analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                            <i class="fa-solid fa-microscope mr-2"></i>Analise TI
                         </button>
-                        <button onclick="switchTab('impacto')" id="tab-impacto" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-                            <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Área
+                        <button data-tab="impacto" id="tab-impacto" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                            <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
+                                <i class="fa-solid fa-exclamation text-[10px]"></i>
+                            </span>
+                            <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Area
                         </button>
-                        <button onclick="switchTab('checklist')" id="tab-checklist" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                        <button data-tab="checklist" id="tab-checklist" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
+                            <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
+                                <i class="fa-solid fa-exclamation text-[10px]"></i>
+                            </span>
                             <i class="fa-solid fa-list-check mr-2"></i>Checklist
                         </button>
                     </nav>
                 </div>
 
-                <div id="tab-content-solicitacao" class="p-6">
-                    <div class="space-y-6">
-                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
-                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-4">Dados Básicos</h3>
-                            <div class="space-y-5">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Título do Projeto</label>
-                                    <p class="text-lg font-semibold text-gray-800">Implantar SSO corporativo</p>
-                                </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
-                                        <p class="text-gray-800">Tecnologia da Informação</p>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
-                                        <p class="text-gray-800">1001-TI</p>
-                                    </div>
-                                </div>
-
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
-                                    <p class="text-gray-800">Diretoria TI</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center px-4 py-3 border border-green-200 bg-green-50 rounded-lg">
-                            <i class="fa-solid fa-check-circle text-bevap-green mr-2"></i>
-                            <span class="text-sm text-gray-700 font-medium">Alinhado aos objetivos estratégicos BEVAP</span>
-                        </div>
-
-                        <div class="grid grid-cols-1 gap-4">
-                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
-                                <div class="flex items-center mb-2">
-                                    <i class="fa-solid fa-bullseye text-bevap-green mr-2"></i>
-                                    <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Objetivo do Projeto</h3>
-                                </div>
-                                <p class="text-sm text-gray-700">Centralizar a autenticação de usuários em um único sistema, melhorando a segurança e a experiência de acesso às aplicações corporativas.</p>
-                            </div>
-
-                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
-                                <div class="flex items-center mb-2">
-                                    <i class="fa-solid fa-circle-exclamation text-bevap-gold mr-2"></i>
-                                    <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Problema/Oportunidade</h3>
-                                </div>
-                                <p class="text-sm text-gray-700">Atualmente, os usuários precisam gerenciar múltiplas senhas para diferentes sistemas, o que gera sobrecarga para o suporte e riscos de segurança. A implementação do SSO (Single Sign-On) simplificará o acesso e fortalecerá as políticas de segurança.</p>
-                            </div>
-
-                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
-                                <div class="flex items-center mb-2">
-                                    <i class="fa-solid fa-chart-line text-bevap-green mr-2"></i>
-                                    <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Benefícios Esperados</h3>
-                                </div>
-                                <p class="text-sm text-gray-700">Melhoria na segurança com políticas de senha centralizadas, redução de chamados de suporte relacionados a senhas e aumento da produtividade dos colaboradores com acesso simplificado.</p>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
-                                <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Escopo Inicial</h3>
-                                <p class="text-sm text-gray-700">Integração do SSO com os principais sistemas da empresa: ERP, CRM e portal do colaborador. Inclui a configuração do provedor de identidade e a criação de documentação para usuários e administradores.</p>
-                            </div>
-                            <div class="p-5 bg-white border border-gray-200 rounded-lg">
-                                <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Fora de Escopo</h3>
-                                <p class="text-sm text-gray-700">A integração com sistemas legados ou de terceiros que não suportam SAML/OAuth não está incluída nesta fase. A migração de contas de usuário não utilizadas também está fora de escopo.</p>
-                            </div>
-                        </div>
-
-                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
-                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-2">Dependências</h3>
-                            <p class="text-sm text-gray-700">Disponibilidade da equipe de infraestrutura para configuração de servidores e rede. Licenciamento do provedor de identidade a ser adquirido pela área de compras.</p>
-                        </div>
-
-                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
-                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Riscos Iniciais</h3>
-                            <div class="space-y-2">
-                                <div class="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
-                                    <span class="text-sm text-gray-700">Atraso na aquisição das licenças do provedor de identidade.</span>
-                                </div>
-                                <div class="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
-                                    <span class="text-sm text-gray-700">Incompatibilidade de algum sistema crítico com o protocolo de SSO escolhido.</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
-                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Stakeholders</h3>
-                            <div class="flex flex-wrap gap-2">
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Diretoria TI</span>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Equipe de Segurança</span>
-                                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">Gerentes de Departamento</span>
-                            </div>
-                        </div>
-
-                        <div class="p-5 bg-white border border-gray-200 rounded-lg">
-                            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Anexos</h3>
-                            <div class="divide-y">
-                                <div class="py-3 flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
-                                        <div>
-                                            <div class="font-medium text-sm text-gray-900">proposta-sso.pdf</div>
-                                            <div class="text-xs text-gray-500">2.4 MB</div>
-                                        </div>
-                                    </div>
-                                    <button onclick="viewAttachment('pdf')" class="px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors" title="Baixar">
-                                        <i class="fa-solid fa-download"></i>
-                                    </button>
-                                </div>
-                                <div class="py-3 flex items-center justify-between">
-                                    <div class="flex items-center">
-                                        <i class="fa-solid fa-file-image text-blue-500 text-xl mr-3"></i>
-                                        <div>
-                                            <div class="font-medium text-sm text-gray-900">arquitetura-sistemas.png</div>
-                                            <div class="text-xs text-gray-500">800 KB</div>
-                                        </div>
-                                    </div>
-                                    <button onclick="viewAttachment('image')" class="px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors" title="Baixar">
-                                        <i class="fa-solid fa-download"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                <div id="tab-content-solicitacao" class="p-6" data-tab-panel="solicitacao">
+                    <div data-component="tab-solicitacao-history" class="text-sm text-gray-500">
+                        Carregando conteudo da solicitacao...
                     </div>
                 </div>
 
-                <div id="tab-content-analise-ti" class="p-6 hidden">
-                    <div class="space-y-6">
-                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                            <div class="flex items-center mb-2">
-                                <i class="fa-solid fa-check-circle text-bevap-green text-xl mr-2"></i>
-                                <h3 class="font-montserrat font-semibold text-bevap-navy">Parecer TI: Viável</h3>
-                            </div>
-                            <p class="text-sm text-gray-700">Projeto tecnicamente viável com infraestrutura existente. Integrações podem ser realizadas via APIs REST. Equipe interna possui competência necessária.</p>
-                        </div>
-
-                        <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Avaliação Técnica</h3>
-                            <div class="bg-gray-50 p-4 rounded-lg space-y-3 text-sm">
-                                <div class="flex items-start">
-                                    <i class="fa-solid fa-lightbulb text-bevap-gold mr-3 mt-1"></i>
-                                    <div>
-                                        <div class="font-medium text-gray-900">Alternativas Consideradas</div>
-                                        <p class="text-gray-700 mt-1">Avaliamos ServiceNow e Jira Service Management, mas GLPI oferece melhor custo-benefício e já está implantado.</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start">
-                                    <i class="fa-solid fa-chart-simple text-blue-600 mr-3 mt-1"></i>
-                                    <div>
-                                        <div class="font-medium text-gray-900">Esforço Estimado</div>
-                                        <p class="text-gray-700 mt-1">21 pontos de história / 320 horas (2 desenvolvedores full-time por 6 semanas)</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos Identificados</h3>
-                            <div class="space-y-3">
-                                <div class="flex items-start p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-yellow-200 text-yellow-800 font-medium mr-3">Médio</span>
-                                    <div class="text-sm">
-                                        <div class="font-medium text-gray-900">Disponibilidade de Ambientes</div>
-                                        <p class="text-gray-700 mt-1">Necessário ambiente de homologação dedicado para testes de integração.</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start p-3 bg-green-50 border border-green-200 rounded-lg">
-                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-green-200 text-green-800 font-medium mr-3">Baixo</span>
-                                    <div class="text-sm">
-                                        <div class="font-medium text-gray-900">Complexidade das APIs</div>
-                                        <p class="text-gray-700 mt-1">APIs GLPI são bem documentadas e equipe já possui experiência.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Dependências Técnicas</h3>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <ul class="text-sm text-gray-700 space-y-2">
-                                    <li class="flex items-center">
-                                        <i class="fa-solid fa-server text-bevap-navy mr-2"></i>
-                                        Atualização GLPI para versão 10.x
-                                    </li>
-                                    <li class="flex items-center">
-                                        <i class="fa-solid fa-key text-bevap-navy mr-2"></i>
-                                        Credenciais de integração com Active Directory
-                                    </li>
-                                    <li class="flex items-center">
-                                        <i class="fa-solid fa-database text-bevap-navy mr-2"></i>
-                                        Acesso ao banco de dados de ativos
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Observações do Analista TI</h3>
-                            <div class="bg-gray-50 p-4 rounded-lg text-sm text-gray-700">
-                                <p>Projeto bem estruturado com escopo claro. Recomendo priorização alta devido ao impacto operacional. Sugiro início imediato após aprovação para aproveitar janela de disponibilidade da equipe.</p>
-                            </div>
-                        </div>
+                <div id="tab-content-analise-ti" class="p-6 hidden" data-tab-panel="analise-ti">
+                    <div data-component="tab-analise-ti-history" class="text-sm text-gray-500">
+                        Carregando conteudo da analise TI...
                     </div>
                 </div>
 
-                <div id="tab-content-impacto" class="p-6 hidden">
+                <div id="tab-content-impacto" class="p-6 hidden" data-tab-panel="impacto">
                     <div class="space-y-6">
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                            <p class="text-sm text-blue-800"><i class="fa-solid fa-info-circle mr-2"></i> Avalie o impacto deste projeto na capacidade operacional da sua área.</p>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <p class="text-sm text-blue-800">
+                                <i class="fa-solid fa-info-circle mr-2"></i>
+                                Avalie o impacto deste projeto na capacidade operacional da sua area.
+                            </p>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Disponibilidade da Equipe</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Disponibilidade da Equipe <span class="text-red-500">*</span></label>
                             <div class="bg-gray-50 p-5 rounded-lg">
                                 <div class="flex items-center justify-between mb-3">
-                                    <span class="text-sm text-gray-600">Capacidade disponível</span>
+                                    <span class="text-sm text-gray-600">Capacidade disponivel</span>
                                     <span class="text-lg font-bold text-bevap-navy" id="capacity-value">60%</span>
                                 </div>
-                                <input type="range" min="0" max="100" value="60" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-bevap-green" oninput="updateCapacity(this.value)">
+                                <input id="team-availability-input" data-field="disponibilidadedaEquipeSI" type="range" min="0" max="100" value="60" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-bevap-green">
                                 <div class="flex justify-between text-xs text-gray-500 mt-2">
                                     <span>0%</span>
                                     <span>50%</span>
@@ -264,34 +73,34 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Recursos Necessários da Área</label>
-                            <textarea rows="3" placeholder="Descreva quais recursos (pessoas, equipamentos, orçamento) serão necessários..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Recursos Necessarios da Area <span class="text-red-500">*</span></label>
+                            <textarea id="required-resources-input" data-field="recursosNecessariosAreaSI" rows="3" placeholder="Descreva quais recursos serao necessarios..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Conflitos de Agenda</label>
-                            <textarea rows="3" placeholder="Existem outros projetos ou atividades que podem conflitar?" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Conflitos de Agenda <span class="text-red-500">*</span></label>
+                            <textarea id="schedule-conflicts-input" data-field="conflitosdeAgendaSI" rows="3" placeholder="Existem projetos ou atividades que podem conflitar?" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Prioridade para a Área</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Prioridade para a Area <span class="text-red-500">*</span></label>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                 <label class="relative">
-                                    <input type="radio" name="prioridade-area" value="critico" class="sr-only peer">
+                                    <input type="radio" name="area-priority" value="critico" data-field="prioridadeparaaAreaSI" class="sr-only peer">
                                     <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-red-500 peer-checked:bg-red-50 text-center transition-all">
                                         <i class="fa-solid fa-exclamation-triangle text-red-500 text-2xl mb-2"></i>
-                                        <div class="font-semibold">Crítico</div>
+                                        <div class="font-semibold">Critico</div>
                                     </div>
                                 </label>
                                 <label class="relative">
-                                    <input type="radio" name="prioridade-area" value="estrategico" class="sr-only peer" checked>
+                                    <input type="radio" name="area-priority" value="estrategico" data-field="prioridadeparaaAreaSI" class="sr-only peer" checked>
                                     <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-bevap-green peer-checked:bg-green-50 text-center transition-all">
                                         <i class="fa-solid fa-star text-bevap-green text-2xl mb-2"></i>
-                                        <div class="font-semibold">Estratégico</div>
+                                        <div class="font-semibold">Estrategico</div>
                                     </div>
                                 </label>
                                 <label class="relative">
-                                    <input type="radio" name="prioridade-area" value="operacional" class="sr-only peer">
+                                    <input type="radio" name="area-priority" value="operacional" data-field="prioridadeparaaAreaSI" class="sr-only peer">
                                     <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-blue-500 peer-checked:bg-blue-50 text-center transition-all">
                                         <i class="fa-solid fa-cog text-blue-500 text-2xl mb-2"></i>
                                         <div class="font-semibold">Operacional</div>
@@ -301,47 +110,46 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Observações do Gestor</label>
-                            <textarea rows="4" placeholder="Comentários adicionais sobre o impacto na área..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Observacoes do Gestor</label>
+                            <textarea id="manager-observations-input" data-field="observacoesdoGestorSI" rows="4" placeholder="Comentarios adicionais sobre o impacto na area..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
                         </div>
-
                     </div>
                 </div>
 
-                <div id="tab-content-checklist" class="p-6 hidden">
-                    <div class="mb-8 p-0">
-                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Itens de Verificação</h3>
+                <div id="tab-content-checklist" class="p-6 hidden" data-tab-panel="checklist">
+                    <div class="mb-8">
+                        <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Itens de Verificacao</h3>
 
                         <div class="space-y-3">
                             <label class="flex items-start">
-                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <input id="team-available-check" data-field="equipepossuiDisponibilidadeSI" type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
                                     <span class="font-medium">Equipe possui disponibilidade para o projeto</span>
-                                    <p class="text-gray-500 text-xs mt-1">A capacidade da equipe comporta o início e a execução das atividades previstas.</p>
+                                    <p class="text-gray-500 text-xs mt-1">A capacidade da equipe comporta o inicio e a execucao das atividades previstas.</p>
                                 </span>
                             </label>
 
                             <label class="flex items-start">
-                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <input id="resources-identified-check" data-field="recursosNecessIdentSI" type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Recursos necessários estão identificados</span>
-                                    <p class="text-gray-500 text-xs mt-1">Pessoas, orçamento, ferramentas e demais recursos foram mapeados.</p>
+                                    <span class="font-medium">Recursos necessarios estao identificados</span>
+                                    <p class="text-gray-500 text-xs mt-1">Pessoas, orcamento, ferramentas e demais recursos foram mapeados.</p>
                                 </span>
                             </label>
 
                             <label class="flex items-start">
-                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <input id="conflicts-clear-check" data-field="naoHaConflitosCriticosSI" type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Não há conflitos críticos de agenda</span>
-                                    <p class="text-gray-500 text-xs mt-1">Não existem iniciativas concorrentes que inviabilizem o cronograma planejado.</p>
+                                    <span class="font-medium">Nao ha conflitos criticos de agenda</span>
+                                    <p class="text-gray-500 text-xs mt-1">Nao existem iniciativas concorrentes que inviabilizem o cronograma planejado.</p>
                                 </span>
                             </label>
 
                             <label class="flex items-start">
-                                <input type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                                <input id="aligned-priorities-check" data-field="projetoAlinhadoPrioridadesSI" type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Projeto alinhado às prioridades da área</span>
-                                    <p class="text-gray-500 text-xs mt-1">O projeto está coerente com metas e prioridades operacionais da área.</p>
+                                    <span class="font-medium">Projeto alinhado as prioridades da area</span>
+                                    <p class="text-gray-500 text-xs mt-1">O projeto esta coerente com metas e prioridades operacionais da area.</p>
                                 </span>
                             </label>
                         </div>
@@ -362,140 +170,27 @@
 
         <div id="sidebar-summary" class="lg:col-span-1">
             <div class="sticky top-24 space-y-4">
-                
-                <div id="project-summary" class="bg-white rounded-lg shadow-md p-5">
-                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
-                        <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
-                        Resumo do Projeto
-                    </h3>
-                    
-                    <div class="space-y-3 text-sm">
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Código</span>
-                            <span class="font-mono font-semibold text-bevap-navy">PRJ-2024-001</span>
-                        </div>
-                        <div class="pb-2 border-b">
-                            <span class="text-gray-600">Título</span>
-                            <p class="font-medium text-gray-900 mt-1">Implantar SSO corporativo</p>
-                        </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Solicitante</span>
-                            <span class="font-medium text-gray-900">João Vieira</span>
-                        </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Área</span>
-                            <span class="font-medium text-gray-900">TI</span>
-                        </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Patrocinador</span>
-                            <span class="font-medium text-gray-900">Diretoria TI</span>
-                        </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Prioridade</span>
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
-                                <i class="fa-solid fa-star mr-1"></i> Estratégico
-                            </span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-600">Status</span>
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800 font-medium">
-                                <i class="fa-solid fa-clock mr-1"></i> Aguardando Aprovação
-                            </span>
-                        </div>
-                    </div>
-
-                    <div class="mt-4 pt-4 border-t space-y-2">
-                        <button onclick="viewTimeline()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
-                            <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
-                        </button>
-                        <button onclick="viewAttachments()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
-                            <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos (2)
-                        </button>
-                    </div>
-                </div>
-
-                <div id="progress-status" class="bg-white rounded-lg shadow-md p-5">
-                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
-                        <i class="fa-solid fa-tasks mr-2 text-bevap-green"></i>
-                        Progresso
-                    </h3>
-                    <div class="space-y-2 text-sm">
-                        <div class="flex items-center text-green-600">
-                            <i class="fa-solid fa-check-circle mr-2"></i>
-                            <span>Solicitação aprovada</span>
-                        </div>
-                        <div class="flex items-center text-green-600">
-                            <i class="fa-solid fa-check-circle mr-2"></i>
-                            <span>Análise TI concluída</span>
-                        </div>
-                        <div class="flex items-center text-yellow-600">
-                            <i class="fa-solid fa-exclamation-circle mr-2"></i>
-                            <span>Impacto na área pendente</span>
-                        </div>
-                    </div>
-                </div>
+                <div data-component="project-summary"></div>
+                <div data-component="progress-status"></div>
             </div>
         </div>
     </div>
-            <!-- <section id="simulation-links-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
-                    <i class="fa-solid fa-flask-vial mr-2 text-bevap-green"></i>Simulação de Telas (Protótipo)
-                </h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <a href="ux-dashboard.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
-                        <i class="fa-solid fa-tachometer-alt text-bevap-navy text-2xl mb-2"></i>
-                        <span class="text-sm font-medium text-bevap-navy text-center">Dashboard</span>
-                    </a>
-                    <a href="ux-aprovacao-comite.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
-                        <i class="fa-solid fa-users-viewfinder text-bevap-navy text-2xl mb-2"></i>
-                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovação Comitê</span>
-                    </a>
-                    <a href="ux-aprovacao-gcc.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
-                        <i class="fa-solid fa-user-check text-bevap-navy text-2xl mb-2"></i>
-                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovação GCC</span>
-                    </a>
-                    <a href="ux-aprovar-projeto.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
-                        <i class="fa-solid fa-thumbs-up text-bevap-navy text-2xl mb-2"></i>
-                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovar Projeto</span>
-                    </a>
-                    <a href="ux-avaliar-projeto.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
-                        <i class="fa-solid fa-clipboard-check text-bevap-navy text-2xl mb-2"></i>
-                        <span class="text-sm font-medium text-bevap-navy text-center">Avaliar Projeto</span>
-                    </a>
-                    <a href="ux-compras-realizar-contratacao.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
-                        <i class="fa-solid fa-shopping-cart text-bevap-navy text-2xl mb-2"></i>
-                        <span class="text-sm font-medium text-bevap-navy text-center">Realizar Contratação</span>
-                    </a>
-                    <a href="ux-proposta-comercial.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
-                        <i class="fa-solid fa-file-invoice-dollar text-bevap-navy text-2xl mb-2"></i>
-                        <span class="text-sm font-medium text-bevap-navy text-center">Proposta Comercial</span>
-                    </a>
-                    <a href="ux-solicitante-aprovar-proposta-comercial.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
-                        <i class="fa-solid fa-user-plus text-bevap-navy text-2xl mb-2"></i>
-                        <span class="text-sm font-medium text-bevap-navy text-center">Aprovar Proposta</span>
-                    </a>
-                    <a href="ux-triagem-tecnica.html" class="flex flex-col items-center justify-center p-4 border border-slate-200 rounded-lg hover:border-bevap-green hover:bg-bevap-green/5 transition-all">
-                        <i class="fa-solid fa-cogs text-bevap-navy text-2xl mb-2"></i>
-                        <span class="text-sm font-medium text-bevap-navy text-center">Triagem Técnica</span>
-                    </a>
-                </div>
-            </section> -->
 </main>
 
 <footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div class="flex items-center justify-between">
-            <button onclick="saveDraft()" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
+            <button data-action="save-draft" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
                 <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
             <div class="flex items-center space-x-3">
-                <button onclick="showRejectModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
+                <button data-action="open-reject-modal" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
                     <i class="fa-solid fa-ban mr-2"></i> Reprovar
                 </button>
-                <button onclick="showReturnModal()" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
-                    <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
+                <button data-action="open-return-modal" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
+                    <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correcao
                 </button>
-                <button onclick="openApproveModal()" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
+                <button data-action="open-approve-modal" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
                     <i class="fa-solid fa-check mr-2"></i> Aprovar
                 </button>
             </div>
@@ -509,29 +204,29 @@
             <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
                 <i class="fa-solid fa-check-circle text-bevap-green text-2xl"></i>
             </div>
-            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovação</h3>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovacao</h3>
         </div>
-        <p class="text-gray-700 mb-6">Você está aprovando o projeto <strong>PRJ-2026-033 • Implantar SSO corporativo</strong>.</p>
-        <p class="text-sm text-gray-600 mb-6">Ao confirmar, o projeto seguirá para <strong>TI – Triagem Técnica</strong>.</p>
+        <p class="text-gray-700 mb-3">Voce esta aprovando o projeto <strong id="approve-project-label">Projeto selecionado</strong>.</p>
+        <p class="text-sm text-gray-600 mb-6">Ao confirmar, o projeto seguiria para TI - Triagem Tecnica.</p>
         <div class="flex justify-end space-x-3">
-            <button onclick="closeApproveModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+            <button data-action="close-modal" data-modal-id="approve-modal" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 Cancelar
             </button>
-            <button onclick="confirmApprove()" class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+            <button data-action="confirm-approve" class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
                 Confirmar
             </button>
         </div>
     </div>
 </div>
 
-<div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+<div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-cente r justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correção</h3>
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correcao</h3>
         <p class="text-sm text-gray-600 mb-4">Descreva os pontos que precisam ser corrigidos pelo solicitante:</p>
-        <textarea rows="4" placeholder="Motivo da devolução..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+        <textarea id="return-reason-input" rows="4" placeholder="Motivo da devolucao..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
         <div class="flex justify-end space-x-3">
-            <button onclick="closeModal('modal-return')" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
-            <button onclick="confirmReturn()" class="px-4 py-2 text-sm text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-all">Devolver</button>
+            <button data-action="close-modal" data-modal-id="modal-return" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+            <button data-action="confirm-return" class="px-4 py-2 text-sm text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-all">Devolver</button>
         </div>
     </div>
 </div>
@@ -539,24 +234,24 @@
 <div id="modal-reject" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
         <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Reprovar Projeto</h3>
-        <p class="text-sm text-gray-600 mb-4">Justifique a reprovação do projeto para notificar os stakeholders:</p>
-        <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
+        <p class="text-sm text-gray-600 mb-4">Justifique a reprovacao do projeto para notificar os stakeholders:</p>
+        <select id="reject-category-input" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
             <option value="">Selecione a categoria</option>
-            <option value="estrategia">Não alinhado à estratégia</option>
+            <option value="estrategia">Nao alinhado a estrategia</option>
             <option value="prioridades">Prioridades conflitantes</option>
-            <option value="recursos">Recursos indisponíveis</option>
-            <option value="orcamento">Orçamento/ROI insuficiente</option>
+            <option value="recursos">Recursos indisponiveis</option>
+            <option value="orcamento">Orcamento ou ROI insuficiente</option>
             <option value="riscos">Risco elevado</option>
             <option value="escopo">Escopo indefinido</option>
             <option value="outro">Outro</option>
         </select>
-        <textarea rows="4" placeholder="Descrição detalhada..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+        <textarea id="reject-description-input" rows="4" placeholder="Descricao detalhada..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
         <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-            <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> Os stakeholders serão notificados automaticamente.</p>
+            <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> Esta acao permanece apenas na interface nesta entrega.</p>
         </div>
         <div class="flex justify-end space-x-3">
-            <button onclick="closeModal('modal-reject')" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
-            <button onclick="confirmReject()" class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all">Confirmar</button>
+            <button data-action="close-modal" data-modal-id="modal-reject" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+            <button data-action="confirm-reject" class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all">Confirmar</button>
         </div>
     </div>
 </div>
@@ -570,128 +265,3 @@
         </div>
     </div>
 </div>
-
-<script>
-function switchTab(tabName) {
-    document.querySelectorAll('[id^="tab-"]').forEach(btn => {
-        btn.classList.remove('border-bevap-green', 'text-bevap-green', 'bg-green-50');
-        btn.classList.add('border-transparent', 'text-gray-500');
-    });
-    document.querySelectorAll('[id^="tab-content-"]').forEach(content => {
-        content.classList.add('hidden');
-    });
-    
-    document.getElementById('tab-' + tabName).classList.remove('border-transparent', 'text-gray-500');
-    document.getElementById('tab-' + tabName).classList.add('border-bevap-green', 'text-bevap-green', 'bg-green-50');
-    document.getElementById('tab-content-' + tabName).classList.remove('hidden');
-}
-
-function updateCapacity(value) {
-    document.getElementById('capacity-value').textContent = value + '%';
-}
-
-function updateImpactoChecklistProgress() {
-    const items = document.querySelectorAll('.impacto-checklist-item');
-    const checkedItems = document.querySelectorAll('.impacto-checklist-item:checked');
-    const percentage = items.length ? Math.round((checkedItems.length / items.length) * 100) : 0;
-
-    document.getElementById('impacto-checklist-percentage').textContent = percentage + '%';
-    document.getElementById('impacto-checklist-progress').style.width = percentage + '%';
-}
-
-window.addEventListener('load', function() {
-    document.querySelectorAll('.impacto-checklist-item').forEach(function(item) {
-        item.addEventListener('change', updateImpactoChecklistProgress);
-    });
-    updateImpactoChecklistProgress();
-});
-
-function saveDraft() {
-    showToast('Rascunho Salvo', 'Suas alterações foram salvas com sucesso.', 'success');
-}
-
-function openApproveModal() {
-    document.getElementById('approve-modal').classList.remove('hidden');
-}
-
-function closeApproveModal() {
-    document.getElementById('approve-modal').classList.add('hidden');
-}
-
-function confirmApprove() {
-    closeApproveModal();
-    showToast('Aprovado', 'O projeto seguirá para TI – Triagem Técnica.', 'success');
-    setTimeout(() => {
-        window.open('ux-triagem-tecnica.html', '_blank');
-    }, 1200);
-}
-
-function showReturnModal() {
-    document.getElementById('modal-return').classList.remove('hidden');
-}
-
-function showRejectModal() {
-    document.getElementById('modal-reject').classList.remove('hidden');
-}
-
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.add('hidden');
-}
-
-function confirmReturn() {
-    closeModal('modal-return');
-    showToast('Devolvido', 'O projeto foi devolvido para correção.', 'warning');
-}
-
-function confirmReject() {
-    closeModal('modal-reject');
-    showToast('Projeto Reprovado', 'O projeto foi reprovado e os stakeholders foram notificados.', 'error');
-}
-
-window.addEventListener('click', function (event) {
-    const approveModal = document.getElementById('approve-modal');
-    if (approveModal && event.target === approveModal) {
-        closeApproveModal();
-    }
-});
-
-function viewAttachments() {
-    showToast('Anexos', 'Abrindo visualização de anexos...', 'info');
-}
-
-function viewTimeline() {
-    showToast('Linha do Tempo', 'Abrindo histórico do projeto...', 'info');
-}
-
-function viewAttachment(type) {
-    showToast('Visualizar Anexo', 'Abrindo arquivo...', 'info');
-}
-
-function showToast(title, message, type) {
-    const toast = document.getElementById('toast');
-    const icon = document.getElementById('toast-icon');
-    const toastTitle = document.getElementById('toast-title');
-    const toastMessage = document.getElementById('toast-message');
-    
-    const config = {
-        success: { icon: 'fa-solid fa-check-circle text-bevap-green', border: 'border-bevap-green' },
-        error: { icon: 'fa-solid fa-times-circle text-red-500', border: 'border-red-500' },
-        warning: { icon: 'fa-solid fa-exclamation-triangle text-bevap-gold', border: 'border-bevap-gold' },
-        info: { icon: 'fa-solid fa-info-circle text-blue-500', border: 'border-blue-500' }
-    };
-    
-    icon.className = config[type].icon + ' text-2xl mr-3';
-    toast.className = 'fixed top-20 right-4 bg-white rounded-lg shadow-xl border-l-4 p-4 z-50 max-w-sm ' + config[type].border;
-    toastTitle.textContent = title;
-    toastMessage.textContent = message;
-    
-    toast.classList.remove('hidden');
-    setTimeout(() => toast.classList.add('hidden'), 3000);
-}
-</script>
-
-</body>
-</html>
-
-
-

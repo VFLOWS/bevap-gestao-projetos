@@ -17,7 +17,7 @@ function createDataset(fields, constraints, sortFields) {
 
         var comments = "Processo iniciado automaticamente";
         var userId = CODUSUARIO;
-        var completeTask = true;
+        var completeTask = !(fields != null && fields.length >= 6 && String(fields[5]) === "false");
         var managerMode = false;
 
         var colleagueIds = [CODUSUARIO];

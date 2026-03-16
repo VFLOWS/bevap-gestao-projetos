@@ -9,7 +9,8 @@ function createDataset(fields, constraints, sortFields) {
     var queryFilter = "";
     var sqlLimit = null;
     var shouldGroups = {};
-        var selectFields = "";
+    var selectFields = "";
+    var shouldReturnState = false
 
     var baseTable = "ML001543729";
     var targetTable = baseTable;
@@ -29,6 +30,12 @@ function createDataset(fields, constraints, sortFields) {
     if (fields != null && fields.length > 0) {
     
         for (var f = 0; f < fields.length; f++) {
+
+            if(fieldName == "estadoProcesso")
+            {
+                shouldReturnState = true;
+                continue
+            }
     
             var fieldName = fields[f] + "";
     
@@ -47,6 +54,8 @@ function createDataset(fields, constraints, sortFields) {
             } else {
                 parentFields.push(fieldName);
             }
+
+            
         }
     
         selectFields = parentFields.length > 0 ? parentFields.join(", ") : "PRINCIPAL.*";
@@ -187,18 +196,21 @@ function createDataset(fields, constraints, sortFields) {
         }
     }
     
-    
-
-   var myQuery = 
-       "SELECT " + topClause + selectFields + dynamicJsonSelect + " " +
-       ",( SELECT CONCAT(HP.NUM_SEQ_ESTADO,' - ',EP.DES_ESTADO) " +
+    if(shouldReturnState)
+    {
+        dynamicJsonSelect += 
+        " ,( SELECT CONCAT(HP.NUM_SEQ_ESTADO,' - ',EP.DES_ESTADO) " +
         "FROM HISTOR_PROCES AS HP " +
         "INNER JOIN ESTADO_PROCES AS EP ON  EP.NUM_SEQ = HP.NUM_SEQ_ESTADO " +
         "WHERE HP.NUM_PROCES = PWS.NUM_PROCES " +
         "AND EP.COD_DEF_PROCES = PWS.COD_DEF_PROCES " +
         "AND EP.NUM_VERS = PWS.NUM_VERS " +
         "AND HP.LOG_ATIV = 1 " +
-        ") AS estadoProcesso " +
+        ") AS estadoProcesso " 
+    }
+
+   var myQuery = 
+       "SELECT " + topClause + selectFields + dynamicJsonSelect + " " +
         "FROM " + targetTable + " AS PRINCIPAL " +
         "INNER JOIN DOCUMENTO AS DOC "+
         "    ON PRINCIPAL.documentid = DOC.NR_DOCUMENTO "+

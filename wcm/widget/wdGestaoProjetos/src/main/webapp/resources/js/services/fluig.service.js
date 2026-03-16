@@ -92,7 +92,7 @@ var fluigService = {
                     return;
                 }
 
-                // Se já vier como array de objetos, mantém.
+                // Se jÃƒÆ’Ã‚Â¡ vier como array de objetos, mantÃƒÆ’Ã‚Â©m.
                 resolve(values);
             } catch (error) {
                 reject(error);
@@ -140,7 +140,7 @@ var fluigService = {
     updateCard: function (parentId, cardId, cardData) {
         return new Promise((resolve, reject) => {
             var values = [];
-            for (key in cardData) {
+            for (var key in cardData) {
                 if(cardData[key] !== null && cardData[key] !== undefined)
                 {
                     values.push({ campo: key, valor: cardData[key] });
@@ -251,117 +251,162 @@ var fluigService = {
         });
     },
 
-    createProjectSolicitation: function (formData = {}) {
+    asTrimmedString: function (value) {
+        if (value === null || value === undefined) return "";
+        return String(value).trim();
+    },
+
+    asBooleanString: function (value) {
+        if (typeof value === "boolean") return value ? "true" : "false";
+        var normalized = this.asTrimmedString(value).toLowerCase();
+        return normalized === "true" || normalized === "1" || normalized === "on" ? "true" : "false";
+    },
+
+    toArray: function (value) {
+        return Array.isArray(value) ? value : [];
+    },
+
+    normalizeRows: function (rows) {
+        return this.toArray(rows)
+            .map(this.asTrimmedString)
+            .filter(function (value) { return value !== ""; });
+    },
+
+    normalizeProcessAttachments: function (attachments) {
+        var self = this;
+        return self.toArray(attachments)
+            .map(function (attachment) {
+                return {
+                    fileName: self.asTrimmedString(attachment && attachment.fileName),
+                    fileContent: self.asTrimmedString(attachment && attachment.fileContent),
+                    fileSize: self.asTrimmedString(attachment && attachment.fileSize)
+                };
+            })
+            .filter(function (attachment) {
+                return attachment.fileName !== "" && attachment.fileContent !== "";
+            });
+    },
+
+    normalizeAttachmentMetadata: function (attachments) {
+        var self = this;
+        return self.toArray(attachments)
+            .map(function (attachment) {
+                return {
+                    fileName: self.asTrimmedString(attachment && attachment.fileName),
+                    fileSize: self.asTrimmedString(attachment && attachment.fileSize),
+                    persisted: self.asBooleanString(attachment && attachment.persisted)
+                };
+            })
+            .filter(function (attachment) {
+                return attachment.fileName !== "";
+            });
+    },
+
+    buildConstraintsFromCardData: function (cardData) {
+        var constraints = [];
+        var self = this;
+        Object.keys(cardData || {}).forEach(function (fieldName) {
+            var finalValue = cardData[fieldName] === null || cardData[fieldName] === undefined
+                ? ""
+                : String(cardData[fieldName]);
+            constraints.push(
+                DatasetFactory.createConstraint(fieldName, finalValue, finalValue, ConstraintType.MUST)
+            );
+        });
+        return constraints;
+    },
+
+    taskFieldsToCardData: function (taskFields) {
+        var cardData = {};
+        this.toArray(taskFields).forEach(function (field) {
+            if (!field || !field.name) {
+                return;
+            }
+
+            cardData[String(field.name)] = field.value === null || field.value === undefined
+                ? ""
+                : String(field.value);
+        });
+        return cardData;
+    },
+
+    buildProjectSolicitationCardData: function (formData) {
+        var self = this;
+        var cardData = {};
+        var simpleFieldMap = [
+            { formField: "titulo", fluigField: "titulodoprojetoNS" },
+            { formField: "area", fluigField: "areaUnidadeNS" },
+            { formField: "centro-custo", fluigField: "centrodecustoNS" },
+            { formField: "patrocinador", fluigField: "patrocinadorNS" },
+            { formField: "objetivo", fluigField: "objetivodoprojetoNS" },
+            { formField: "problema", fluigField: "problemaOportunidadeNS" },
+            { formField: "beneficios", fluigField: "beneficiosesperadosNS" },
+            { formField: "prioridade", fluigField: "prioridadeNS" },
+            { formField: "escopo-inicial", fluigField: "escopoinicialNS" },
+            { formField: "out-of-scope", fluigField: "foradeescopoNS" },
+            { formField: "dependencies", fluigField: "dependenciasNS" },
+            { formField: "observacoes", fluigField: "observacoesadicionaisNS" }
+        ];
+
+        simpleFieldMap.forEach(function (mapping) {
+            cardData[mapping.fluigField] = self.asTrimmedString(formData[mapping.formField]);
+        });
+
+        cardData.alinhadobevapNS = self.asBooleanString(formData.alinhamento);
+        cardData.anexosNS = JSON.stringify(
+            self.normalizeAttachmentMetadata(formData.attachmentsMetadata || formData.attachments)
+        );
+
+        self.normalizeRows(formData.objetivosEstrategicos).forEach(function (value, index) {
+            cardData["descricaoobjetivoNS___" + (index + 1)] = value;
+        });
+
+        self.normalizeRows(formData.riscosIniciais).forEach(function (value, index) {
+            cardData["riscoPotencialNS___" + (index + 1)] = value;
+        });
+
+        self.normalizeRows(formData.stakeholders).forEach(function (value, index) {
+            cardData["valorstakeholdersNS___" + (index + 1)] = value;
+        });
+
+        return cardData;
+    },
+
+    buildProjectSolicitationStartFields: function (formData, options) {
+        var finalOptions = options || {};
+        var attachments = this.normalizeProcessAttachments(formData && formData.attachments);
+        var serializedAttachments = attachments.length ? JSON.stringify(attachments) : "";
+        var completeTask = finalOptions.completeTask === false ? "false" : "true";
+
+        return [
+            "14cdc0c0-a710-4412-81dd-d94fe3abe00a",
+            "ProcessSolicitacaoProjetos",
+            "0",
+            "1",
+            serializedAttachments,
+            completeTask
+        ];
+    },
+
+    createProjectSolicitation: function (formData = {}, options = {}) {
         return new Promise((resolve, reject) => {
             try {
                 if (!formData || typeof formData !== "object") {
                     throw new Error("Dados do formulario invalidos");
                 }
 
-                function asTrimmedString(value) {
-                    if (value === null || value === undefined) return "";
-                    return String(value).trim();
-                }
+                var fields = this.buildProjectSolicitationStartFields(formData, options);
+                var cardData = this.buildProjectSolicitationCardData(formData);
+                var constraints = this.buildConstraintsFromCardData(cardData);
+                var dsStartProcess = DatasetFactory.getDataset("dsStartProcess", fields, constraints, null);
 
-                function asBooleanString(value) {
-                    if (typeof value === "boolean") return value ? "true" : "false";
-                    const normalized = asTrimmedString(value).toLowerCase();
-                    return normalized === "true" || normalized === "1" || normalized === "on" ? "true" : "false";
-                }
-
-                function toArray(value) {
-                    return Array.isArray(value) ? value : [];
-                }
-
-                function normalizeRows(rows) {
-                    return toArray(rows)
-                        .map(asTrimmedString)
-                        .filter(value => value !== "");
-                }
-
-                function normalizeAttachments(attachments) {
-                    return toArray(attachments)
-                        .map((attachment) => {
-                            return {
-                                fileName: asTrimmedString(attachment && attachment.fileName),
-                                fileContent: asTrimmedString(attachment && attachment.fileContent)
-                            };
-                        })
-                        .filter((attachment) => attachment.fileName !== "" && attachment.fileContent !== "");
-                }
-
-                function pushConstraint(constraints, fieldName, value) {
-                    const finalValue = value === null || value === undefined ? "" : String(value);
-                    constraints.push(
-                        DatasetFactory.createConstraint(fieldName, finalValue, finalValue, ConstraintType.MUST)
-                    );
-                }
-
-                function pushChildConstraints(constraints, childFieldName, rows) {
-                    const normalizedRows = normalizeRows(rows);
-                    normalizedRows.forEach((rowValue, index) => {
-                        const lineIndex = index + 1;
-                        pushConstraint(constraints, `${childFieldName}___${lineIndex}`, rowValue);
-                    });
-                }
-
-                const attachments = normalizeAttachments(formData.attachments);
-                const serializedAttachments = attachments.length ? JSON.stringify(attachments) : "";
-
-                const fields = [
-                    "14cdc0c0-a710-4412-81dd-d94fe3abe00a",
-                    "ProcessSolicitacaoProjetos",
-                    "0",
-                    "1",
-                    serializedAttachments
-                ];
-
-                const constraints = [];
-
-                const simpleFieldMap = [
-                    { formField: "titulo", fluigField: "titulodoprojetoNS" },
-                    { formField: "area", fluigField: "areaUnidadeNS" },
-                    { formField: "centro-custo", fluigField: "centrodecustoNS" },
-                    { formField: "patrocinador", fluigField: "patrocinadorNS" },
-                    { formField: "objetivo", fluigField: "objetivodoprojetoNS" },
-                    { formField: "problema", fluigField: "problemaOportunidadeNS" },
-                    { formField: "beneficios", fluigField: "beneficiosesperadosNS" },
-                    { formField: "prioridade", fluigField: "prioridadeNS" },
-                    { formField: "escopo-inicial", fluigField: "escopoinicialNS" },
-                    { formField: "out-of-scope", fluigField: "foradeescopoNS" },
-                    { formField: "dependencies", fluigField: "dependenciasNS" },
-                    { formField: "observacoes", fluigField: "observacoesadicionaisNS" }
-                ];
-
-                simpleFieldMap.forEach((mapping) => {
-                    pushConstraint(
-                        constraints,
-                        mapping.fluigField,
-                        asTrimmedString(formData[mapping.formField])
-                    );
-                });
-
-                pushConstraint(
-                    constraints,
-                    "alinhadobevapNS",
-                    asBooleanString(formData.alinhamento)
-                );
-
-                // Versao atual sem upload real no formulario
-                pushConstraint(constraints, "anexosNS", "");
-
-                pushChildConstraints(constraints, "descricaoobjetivoNS", formData.objetivosEstrategicos);
-                pushChildConstraints(constraints, "riscoPotencialNS", formData.riscosIniciais);
-                pushChildConstraints(constraints, "valorstakeholdersNS", formData.stakeholders);
-
-                const dsStartProcess = DatasetFactory.getDataset("dsStartProcess", fields, constraints, null);
                 if (!dsStartProcess || !dsStartProcess.values || dsStartProcess.values.length === 0) {
                     throw new Error("Nenhum retorno do dsStartProcess");
                 }
 
-                const result = dsStartProcess.values[0];
-                const status = result.status || result.STATUS || "";
-                const numSolicitacao = result.numSolicitacao || result.NUMSOLICITACAO || "";
+                var result = dsStartProcess.values[0];
+                var status = result.status || result.STATUS || "";
+                var numSolicitacao = result.numSolicitacao || result.NUMSOLICITACAO || "";
 
                 if (status !== "OK") {
                     throw new Error(result.message || result.MESSAGE || "Erro ao iniciar solicitacao no Fluig");
@@ -374,6 +419,52 @@ var fluigService = {
                 });
             } catch (error) {
                 console.error("Error creating project solicitation:", error);
+                reject(error);
+            }
+        });
+    },
+
+    saveDraft: function (config = {}) {
+        return new Promise(async (resolve, reject) => {
+            try {
+                var mode = this.asTrimmedString(config.mode);
+
+                if (mode === "startProcessDraft") {
+                    var result = await this.createProjectSolicitation(config.formData || {}, {
+                        completeTask: false
+                    });
+                    var processInstanceId = this.asTrimmedString(result && result.numSolicitacao);
+                    var documentId = processInstanceId
+                        ? await this.resolveDocumentIdByProcessInstanceId(processInstanceId)
+                        : "";
+
+                    resolve({
+                        status: result.status,
+                        processInstanceId: processInstanceId,
+                        documentId: this.asTrimmedString(documentId),
+                        raw: result.raw
+                    });
+                    return;
+                }
+
+                if (mode === "updateCardDraft") {
+                    var documentId = this.asTrimmedString(config.documentId);
+                    if (!documentId) {
+                        throw new Error("documentId e obrigatorio para salvar rascunho");
+                    }
+
+                    var cardData = config.cardData || this.taskFieldsToCardData(config.taskFields);
+                    await this.updateCard(config.parentId || config.datasetName || "", documentId, cardData);
+
+                    resolve({
+                        status: "OK",
+                        documentId: documentId
+                    });
+                    return;
+                }
+
+                throw new Error("Modo de rascunho invalido");
+            } catch (error) {
                 reject(error);
             }
         });
@@ -392,99 +483,164 @@ var fluigService = {
         });
     },
 
-    saveAndSendTask(taskData, taskFields = []) {
-        return new Promise((resolve, reject) => {
+         saveAndSendTask(taskData, taskFields = [])
+    {
+        return new Promise(async (resolve, reject) => {
             try {
-
                 if (!taskData) {
-                    throw new Error('Dados de solicitação inválidos');
+                    throw new Error('Dados da tarefa invalidos');
                 }
 
                 if (!taskData.id) {
-                    throw new Error('ID da tarefa é obrigatório');
+                    throw new Error('ID da tarefa e obrigatorio');
                 }
+
                 if (!taskData.numState) {
-                    throw new Error('Número atividade destino é obrigatória');
+                    throw new Error('Numero da atividade destino e obrigatorio');
                 }
 
+                const taskId = typeof taskData.id === 'string' ? taskData.id : String(taskData.id);
+                const numState = typeof taskData.numState === 'string' ? taskData.numState : String(taskData.numState);
+                const finalTaskFields = Array.isArray(taskFields) ? taskFields : [];
+                const documentId = taskData.documentId === null || taskData.documentId === undefined
+                    ? ''
+                    : String(taskData.documentId).trim();
 
-                const taskId = typeof taskData.id === "string" ? taskData.id : String(taskData.id);
-                const numState = typeof taskData.numState === "string" ? taskData.numState : String(taskData.numState);
-                var datasetName = taskData.datasetName;
+                if (finalTaskFields.length > 0) {
+                    if (!documentId) {
+                        throw new Error('documentId e obrigatorio para atualizar o card antes da movimentacao');
+                    }
 
-                //Formata o fields
+                    var cardData = {};
+                    finalTaskFields.forEach(function (field) {
+                        if (!field || !field.name) {
+                            return;
+                        }
+
+                        cardData[String(field.name)] = field.value === null || field.value === undefined
+                            ? ''
+                            : String(field.value);
+                    });
+
+                    await fluigService.updateCard(taskData.parentId || taskData.datasetName || '', documentId, cardData);
+                }
+
                 var fields = [
                     taskId,
                     numState,
-                    "tisolucoes", // responsável
-                    "",
-                    "tisolucoes", // solicitante
-                    "true",
-                    "true",
-                ]
+                    '14cdc0c0-a710-4412-81dd-d94fe3abe00a',
+                    '',
+                    '14cdc0c0-a710-4412-81dd-d94fe3abe00a',
+                    'true',
+                    'true'
+                ];
                 var constraints = [];
 
-                if (taskFields.length > 0) {
-                    if (!taskData.datasetName) {
-                        throw new Error('Nome do dataset é obrigatório');
-                    }
-
-                    var dsWorkflow = DatasetFactory.getDataset("workflowProcess", null, [
-                        DatasetFactory.createConstraint("workflowProcessPK.processInstanceId", taskId, taskId, ConstraintType.MUST)
-                    ], null)
-
-                    if (!dsWorkflow || !dsWorkflow.values || dsWorkflow.values.length === 0) {
-                        throw new Error('Solicitação não encontrada ou inválida');
-                    }
-
-                    let cardId = dsWorkflow.values[0].cardDocumentId;
-
-                    const dsForm = DatasetFactory.getDataset(datasetName, null, [
-                        DatasetFactory.createConstraint("documentId", cardId, cardId, ConstraintType.MUST)
-                    ], null);
-
-                    let formData = dsForm && dsForm.values && dsForm.values.length > 0 ? dsForm.values[0] : null;
-                    if (!formData) {
-                        throw new Error('Dados do formulário não encontrados');
-                    }
-
-                    taskFields.forEach(field => {
-                        formData[field.name] = field.value;
-                    });
-
-                    Object.keys(formData).forEach(key => {
-                        constraints.push(DatasetFactory.createConstraint(key, formData[key], formData[key], ConstraintType.MUST));
-                    });
-
+                var dsSaveAndSend = DatasetFactory.getDataset('dsSaveAndSendTask', fields, constraints, null);
+                if (!dsSaveAndSend || !dsSaveAndSend.values || dsSaveAndSend.values.length === 0) {
+                    throw new Error('Nenhum valor retornado ao movimentar a solicitacao');
                 }
 
-                var dsSaveAndSend = DatasetFactory.getDataset("dsSaveAndSendTask", fields, constraints, null);
+                var result = dsSaveAndSend.values[0];
+                var returnCode = result.returnCode || result.codRetorno || '';
+                var message = result.message || result.msgRetorno || '';
 
-                if (dsSaveAndSend && dsSaveAndSend.values && dsSaveAndSend.values.length > 0) {
-                    var result = dsSaveAndSend.values[0];
-
-                    if (result.returnCode === 'ERROR') {
-                        throw new Error(result.message || 'Erro ao movimentar a solicitação');
-                    }
-
-                    //Retorna o resultado com sucesso
-                    resolve({
-                        success: true,
-                        data: result.message,
-                        message: 'Sucesso!'
-                    });
+                if (returnCode === 'ERROR') {
+                    throw new Error(message || 'Erro ao movimentar a solicitacao');
                 }
-                else {
-                    //Se não houver valores de retorno, mas também não houve erro explícito
-                    throw new Error('Nenhum valor retornado ao movimentar a solicitação');
-                }
+
+                resolve({
+                    success: true,
+                    data: message,
+                    message: message || 'Sucesso!',
+                    raw: result
+                });
             } catch (error) {
-                console.error("Error saving task data:", error);
+                console.error('Error saving task data:', error);
                 reject(error);
             }
         });
     },
-    
+    resolveProcessInstanceIdByDocumentId: function (documentId) {
+        return new Promise((resolve, reject) => {
+            try {
+                var finalDocumentId = documentId === null || documentId === undefined ? '' : String(documentId).trim();
+                if (!finalDocumentId) {
+                    throw new Error('documentId e obrigatorio');
+                }
+
+                var constraintCandidates = [
+                    'cardDocumentId',
+                    'workflowProcessPK.cardDocumentId',
+                    'documentId',
+                    'NR_DOCUMENTO_CARD'
+                ];
+
+                for (var i = 0; i < constraintCandidates.length; i++) {
+                    var constraintName = constraintCandidates[i];
+                    var dataset = DatasetFactory.getDataset('workflowProcess', null, [
+                        DatasetFactory.createConstraint(constraintName, finalDocumentId, finalDocumentId, ConstraintType.MUST)
+                    ], null);
+
+                    if (!dataset || !Array.isArray(dataset.values) || !dataset.values.length) {
+                        continue;
+                    }
+
+                    var row = dataset.values[0] || {};
+                    var processInstanceId = row['workflowProcessPK.processInstanceId'] || row.processInstanceId || row.PROCESSINSTANCEID || row['processInstanceId'];
+
+                    if (processInstanceId !== null && processInstanceId !== undefined && String(processInstanceId).trim() !== '') {
+                        resolve(String(processInstanceId).trim());
+                        return;
+                    }
+                }
+
+                throw new Error('Nao foi possivel localizar o processInstanceId para o documentId informado');
+            } catch (error) {
+                reject(error);
+            }
+        });
+    },
+    resolveDocumentIdByProcessInstanceId: function (processInstanceId) {
+        return new Promise((resolve, reject) => {
+            try {
+                var finalProcessInstanceId = processInstanceId === null || processInstanceId === undefined
+                    ? ''
+                    : String(processInstanceId).trim();
+
+                if (!finalProcessInstanceId) {
+                    throw new Error('processInstanceId e obrigatorio');
+                }
+
+                var dataset = DatasetFactory.getDataset('workflowProcess', null, [
+                    DatasetFactory.createConstraint(
+                        'workflowProcessPK.processInstanceId',
+                        finalProcessInstanceId,
+                        finalProcessInstanceId,
+                        ConstraintType.MUST
+                    )
+                ], null);
+
+                if (!dataset || !Array.isArray(dataset.values) || !dataset.values.length) {
+                    throw new Error('Nao foi possivel localizar o documentId para o processo informado');
+                }
+
+                var row = dataset.values[0] || {};
+                var documentId = row['workflowProcessPK.cardDocumentId']
+                    || row.cardDocumentId
+                    || row.NR_DOCUMENTO_CARD
+                    || row.documentId;
+
+                if (documentId === null || documentId === undefined || String(documentId).trim() === '') {
+                    throw new Error('Nao foi possivel localizar o documentId para o processo informado');
+                }
+
+                resolve(String(documentId).trim());
+            } catch (error) {
+                reject(error);
+            }
+        });
+    },
     getCardData: function (cardId) {
         return new Promise((resolve, reject) => {
             try {
@@ -506,7 +662,7 @@ var fluigService = {
                     resolve(null);
                 }
             } catch (error) {
-                console.error('❌ Erro ao consultar dados do card:', error);
+                console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Erro ao consultar dados do card:', error);
                 reject(error);
             }
         });
@@ -533,7 +689,7 @@ var fluigService = {
                     resolve(null);
                 }
             } catch (error) {
-                console.error('❌ Erro ao consultar atividade do processo:', error);
+                console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Erro ao consultar atividade do processo:', error);
                 reject(error);
             }
         });

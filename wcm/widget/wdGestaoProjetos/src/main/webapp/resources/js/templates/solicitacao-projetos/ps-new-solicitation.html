@@ -47,25 +47,78 @@
                         <input type="text" id="titulo" placeholder="Ex: Implantar SSO corporativo" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="titulo" required>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                Coligada <span class="text-red-500">*</span>
+                            </label>
+                            <input type="zoom" id="coligada" name="coligada" class="field-input form-control w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="coligada" zoomvalue="CODIGO" data-zoom="
+                                {
+                                    'datasetId':'deGetColigada_RM',
+                                    'displayKey':'NOMEFANTASIA',
+                                    'placeholder':'Selecione...',
+                                    'fields':[
+                                        {
+                                            'field':'CODCOLIGADA',
+                                            'label':'Código',
+                                            'visible':'false'
+                                        },
+                                        {
+                                            'field':'NOMEFANTASIA',
+                                            'label':'Descrição',
+                                            'standard':true
+                                        }
+                                    ]
+                                }" required>
+                            <input type="hidden" id="cod-coligada" name="cod-coligada">
+                        </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Área/Unidade <span class="text-red-500">*</span>
                             </label>
-                            <select id="area" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="area" required>
-                                <option value="">Selecione...</option>
-                                <option value="ti">Tecnologia da Informação</option>
-                                <option value="rh">Recursos Humanos</option>
-                                <option value="financeiro">Financeiro</option>
-                                <option value="operacoes">Operações</option>
-                                <option value="comercial">Comercial</option>
-                            </select>
+                            <input type="zoom" id="area" name="area" class="field-input form-control w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="area" zoomvalue="CODIGO" data-zoom="
+                                {
+                                    'datasetId':'ds_exemplo_area_unidade',
+                                    'displayKey':'DESCRICAO_ZOOM',
+                                    'placeholder':'Selecione...',
+                                    'fields':[
+                                        {
+                                            'field':'CODIGO',
+                                            'label':'Código',
+                                            'visible':'false'
+                                        },
+                                        {
+                                            'field':'DESCRICAO_ZOOM',
+                                            'label':'Descrição',
+                                            'standard':true
+                                        }
+                                    ]
+                                }" required>
+                            <input type="hidden" id="cod-area" name="cod-area">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Centro de Custo <span class="text-red-500">*</span>
                             </label>
-                            <input type="text" id="centro-custo" placeholder="Ex: 1001-TI" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="centro-custo" required>
+                            <input type="zoom" id="centro-custo" name="centro-custo" class="field-input form-control w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="centro-custo" zoomvalue="CODIGO" data-zoom="
+                                {
+                                    'datasetId':'ds_exemplo_centro_custo',
+                                    'displayKey':'DESCRICAO_ZOOM',
+                                    'placeholder':'Selecione...',
+                                    'fields':[
+                                        {
+                                            'field':'CODIGO',
+                                            'label':'Código',
+                                            'visible':'false'
+                                        },
+                                        {
+                                            'field':'DESCRICAO_ZOOM',
+                                            'label':'Descrição',
+                                            'standard':true
+                                        }
+                                    ]
+                                }" required>
+                            <input type="hidden" id="cod-centro-custo" name="cod-centro-custo">
                         </div>
                     </div>
 

@@ -1,0 +1,545 @@
+<html>
+<head>
+	<link type="text/css" rel="stylesheet" href="/style-guide/css/fluig-style-guide-flat.min.css"/>
+	<script type="text/javascript" src="/portal/resources/js/jquery/jquery.js"></script>
+	<script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="/portal/resources/js/mustache/mustache-min.js"></script>
+	<script type="text/javascript" src="/style-guide/js/fluig-style-guide.min.js" charset="utf-8"></script>
+</head>
+<body>
+<div class="fluig-style-guide">
+<form name="form" role="form">
+
+	<input type="hidden" name="urlServidor" id="urlServidor">
+
+	<!-- NOVA SOLICITACAO - NS -->
+	
+	
+	<label>timeline</label>
+	<input type="text" name="decisaoSuperiorImediato" id="decisaoSuperiorImediato">
+	
+	
+	<label>timeline</label>
+	<input type="text" name="decisaoAvaliarProjeto" id="decisaoAvaliarProjeto">
+	
+	
+	<label>timeline</label>
+	<input type="text" name="timelineNS" id="timelineNS">
+
+	<label>titulodoprojeto</label>
+	<input type="text" name="titulodoprojetoNS" id="titulodoprojetoNS">
+
+	<label>Ã¡rea/unidade</label>
+	<input type="text" name="areaUnidadeNS" id="areaUnidadeNS">
+
+	<label>centrodecusto</label>
+	<input type="text" name="centrodecustoNS" id="centrodecustoNS">
+
+	<label>patrocinador</label>
+	<input type="text" name="patrocinadorNS" id="patrocinadorNS">
+
+	<label>objetivodoprojeto</label>
+	<input type="text" name="objetivodoprojetoNS" id="objetivodoprojetoNS">
+
+	<label>problema/oportunidade</label>
+	<input type="text" name="problemaOportunidadeNS" id="problemaOportunidadeNS">
+
+	<label>beneficiosesperados</label>
+	<input type="text" name="beneficiosesperadosNS" id="beneficiosesperadosNS">
+
+	<label>alinhadobevap</label>
+	<input type="text" name="alinhadobevapNS" id="alinhadobevapNS">
+
+	<label>objetivos estratÃ©gicos</label>
+	<table class="table table-bordered" id="tblObjetivosEstrategicosNS" tablename="tblObjetivosEstrategicosNS" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>DescriÃ§Ã£o do objetivo</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="descricaoobjetivoNS" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>prioridade</label>
+	<input type="text" name="prioridadeNS" id="prioridadeNS">
+
+	<label>escopoinicial</label>
+	<input type="text" name="escopoinicialNS" id="escopoinicialNS">
+
+	<label>foradeescopo</label>
+	<input type="text" name="foradeescopoNS" id="foradeescopoNS">
+
+	<label>dependÃªncias</label>
+	<input type="text" name="dependenciasNS" id="dependenciasNS">
+
+	<label>riscosiniciais</label>
+	<table class="table table-bordered" id="tblRiscosIniciaisNS" tablename="tblRiscosIniciaisNS" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Risco potencial</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="riscoPotencialNS" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>stakeholders</label>
+	<table class="table table-bordered" id="tblStakeholdersNS" tablename="tblStakeholdersNS" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Stakeholder</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="valorstakeholdersNS" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>anexos</label>
+	<input type="text" name="anexosNS" id="anexosNS">
+
+	<label>observacoesadicionais</label>
+	<input type="text" name="observacoesadicionaisNS" id="observacoesadicionaisNS">
+
+	<!-- AVALIAR PROJETO TI - APTI -->
+	<label>visibilidadetecnica</label>
+	<input type="text" name="visibilidadetecnicaAPTI" id="visibilidadetecnicaAPTI">
+
+	<label>alternativasconsideradas</label>
+	<input type="text" name="alternativasconsideradasAPTI" id="alternativasconsideradasAPTI">
+
+	<label>esforcoestimadohoras</label>
+	<input type="text" name="esforcoestimadohorasAPTI" id="esforcoestimadohorasAPTI">
+
+	<label>esforcoestimadopontos</label>
+	<input type="text" name="esforcoestimadopontosAPTI" id="esforcoestimadopontosAPTI">
+
+	<label>Riscos identificados</label>
+	<table class="table table-bordered" id="tblRiscosIdentificadosAPTI" tablename="tblRiscosIdentificadosAPTI" noaddbutton="true" nodeletebutton="true"  >
+		<thead>
+			<tr>
+				<th>NÃ­vel de risco</th>
+				<th>DescriÃ§Ã£o do risco</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="nivelRiscoAPTI" class="form-control"></td>
+				<td><input type="text" name="descricaoRiscoAPTI" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>dependenciastecnicas</label>
+	<input type="text" name="dependenciastecnicasAPTI" id="dependenciastecnicasAPTI">
+
+	<label>observacoesdaanalise</label>
+	<input type="text" name="observacoesdaanaliseAPTI" id="observacoesdaanaliseAPTI">
+
+	<label>Objetivoclaramentedefinido</label>
+	<input type="text" name="objetivoClaramenteDefinidoAPTI" id="objetivoClaramenteDefinidoAPTI">
+
+	<label>Escopo bem delimitado</label>
+	<input type="text" name="escopoBemDelimitadoAPTI" id="escopoBemDelimitadoAPTI">
+
+	<label>DocumentaÃ§Ã£otecnicaadequada</label>
+	<input type="text" name="documentacaoTecnicaAdeqAPTI" id="documentacaoTecnicaAdeqAPTI">
+
+	<label>Patrocinadoridentificado</label>
+	<input type="text" name="patrocinadoridentificadoAPTI" id="patrocinadoridentificadoAPTI">
+
+	<label>AlinhamentoestratÃ©gicoconfirmado</label>
+	<input type="text" name="alinhEstratConfAPTI" id="alinhEstratConfAPTI">
+
+	<label>RecursostÃ©cnicosdisponÃ­veis</label>
+	<input type="text" name="recursosTecDispAPTI" id="recursosTecDispAPTI">
+
+	<label>Anexosessenciaispresentes</label>
+	<input type="text" name="anexosessenciaispresentesAPTI" id="anexosessenciaispresentesAPTI">
+
+	<!-- SUPERIOR IMEDIATO - SI -->
+	<label>DisponibilidadedaEquipe</label>
+	<input type="text" name="disponibilidadedaEquipeSI" id="disponibilidadedaEquipeSI">
+
+	<label>RecursosNecessÃ¡riosdaÃ�rea</label>
+	<input type="text" name="recursosNecessariosAreaSI" id="recursosNecessariosAreaSI">
+
+	<label>ConflitosdeAgenda</label>
+	<input type="text" name="conflitosdeAgendaSI" id="conflitosdeAgendaSI">
+
+	<label>PrioridadeparaaÃ�rea</label>
+	<input type="text" name="prioridadeparaaAreaSI" id="prioridadeparaaAreaSI">
+
+	<label>ObservaÃ§ÃµesdoGestor</label>
+	<input type="text" name="observacoesdoGestorSI" id="observacoesdoGestorSI">
+
+	<label>Equipepossuidisponibilidade</label>
+	<input type="text" name="equipepossuiDisponibilidadeSI" id="equipepossuiDisponibilidadeSI">
+
+	<label>RecursosnecessÃ¡riosidentificados</label>
+	<input type="text" name="recursosNecessIdentSI" id="recursosNecessIdentSI">
+
+	<label>NÃ£ohÃ¡conflitoscrÃ­ticos</label>
+	<input type="text" name="naoHaConflitosCriticosSI" id="naoHaConflitosCriticosSI">
+
+	<label>Projetoalinhadoprioridades</label>
+	<input type="text" name="projetoAlinhadoPrioridadesSI" id="projetoAlinhadoPrioridadesSI">
+
+	<!-- TI TRIAGEM TECNICA - TITT -->
+	<label>ExecuÃ§Ã£odoProjeto</label>
+	<input type="text" name="execucaoProjetoTITT" id="execucaoProjetoTITT">
+
+	<label>MotivoDecisÃ£ocategoria</label>
+	<input type="text" name="motivoDecisaoCategoriaTITT" id="motivoDecisaoCategoriaTITT">
+
+	<label>MotivoDecisÃ£odescricao</label>
+	<input type="text" name="motivoDecisaoDescricaoTITT" id="motivoDecisaoDescricaoTITT">
+
+	<label>DisponibilidadedaEquipe</label>
+	<input type="text" name="disponibilidadedaEquipeTITT" id="disponibilidadedaEquipeTITT">
+
+	<label>DataDesejadadeInÃ­cio</label>
+	<input type="text" name="dataDesejadaInicioTITT" id="dataDesejadaInicioTITT">
+
+	<label>Riscos / DependÃªncias</label>
+	<table class="table table-bordered" id="tblRiscosDependenciasTITT" tablename="tblRiscosDependenciasTITT" noaddbutton="true" nodeletebutton="true"  >
+		<thead>
+			<tr>
+				<th>Risco potencial</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="riscoPotencialTITT" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>Fornecedor Recomendado</label>
+	<input type="text" name="fornecedorRecomendadoTITT" id="fornecedorRecomendadoTITT">
+
+	<label>Tipo de ContrataÃ§Ã£o</label>
+	<input type="text" name="tipoContratacaoTITT" id="tipoContratacaoTITT">
+
+	<label>Justificativa ExecuÃ§Ã£o Externa</label>
+	<input type="text" name="justifExecucaoExtTITT" id="justifExecucaoExtTITT">
+
+	<label>Anexos de Apoio</label>
+	<input type="text" name="anexosApoioTITT" id="anexosApoioTITT">
+
+	<label>Escopo do projeto estÃ¡ claro e detalhado</label>
+	<input type="text" name="escopoProjClaroDetTITT" id="escopoProjClaroDetTITT">
+
+	<label>Estimativas de custo e prazo registradas</label>
+	<input type="text" name="estimativasCustoPrazoRegTITT" id="estimativasCustoPrazoRegTITT">
+
+	<label>Anexos essenciais estÃ£o presentes</label>
+	<input type="text" name="anexosEssenciaisPresentesTITT" id="anexosEssenciaisPresentesTITT">
+
+	<label>DecisÃ£o de execuÃ§Ã£o documentada</label>
+	<input type="text" name="decisaoExecucaoDocumentadaTITT" id="decisaoExecucaoDocumentadaTITT">
+
+	<label>Riscos e dependÃªncias mapeados</label>
+	<input type="text" name="riscosDependenciasMapeadosTITT" id="riscosDependenciasMapeadosTITT">
+
+	<!-- COMITE - APROVAR PROJETO - CAP -->
+	<label>Data/Hora</label>
+	<input type="text" name="dataHoraCAP" id="dataHoraCAP">
+
+	<label>Participantes</label>
+	<table class="table table-bordered" id="tblParticipantesCAP" tablename="tblParticipantesCAP" noaddbutton="true" nodeletebutton="true"  >
+		<thead>
+			<tr>
+				<th>Nome do participante</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="nomeParticipanteCAP" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>AnotaÃ§Ãµes</label>
+	<input type="text" name="anotacoesCAP" id="anotacoesCAP">
+
+	<label>anexaratadareuniao</label>
+	<input type="text" name="anexarAtaReuniaoCAP" id="anexarAtaReuniaoCAP">
+
+	<!-- TI PROPOSTA COMERCIAL - TIPC -->
+	<label>Nome do Fornecedor</label>
+	<input type="text" name="nomeFornecedorTIPC" id="nomeFornecedorTIPC">
+
+	<label>CNPJ</label>
+	<input type="text" name="cnpjTIPC" id="cnpjTIPC">
+
+	<label>Nome do Contato</label>
+	<input type="text" name="nomeContatoTIPC" id="nomeContatoTIPC">
+
+	<label>E-mail</label>
+	<input type="text" name="emailTIPC" id="emailTIPC">
+
+	<label>Telefone</label>
+	<input type="text" name="telefoneTIPC" id="telefoneTIPC">
+
+	<label>Nome do Contato 2</label>
+	<input type="text" name="nomeContato2TIPC" id="nomeContato2TIPC">
+
+	<label>E-mail 2</label>
+	<input type="text" name="email2TIPC" id="email2TIPC">
+
+	<label>Telefone 2</label>
+	<input type="text" name="telefone2TIPC" id="telefone2TIPC">
+
+	<label>NÂº/Ref. da Proposta</label>
+	<input type="text" name="numeroRefPropostaTIPC" id="numeroRefPropostaTIPC">
+
+	<label>VigÃªncia de Dias</label>
+	<input type="text" name="vigenciaDiasTIPC" id="vigenciaDiasTIPC">
+
+	<label>Valor Total</label>
+	<input type="text" name="valortotalTIPC" id="valortotalTIPC">
+
+	<label>Moeda</label>
+	<input type="text" name="moedaTIPC" id="moedaTIPC">
+
+	<label>Prazo Estimado</label>
+	<input type="text" name="prazoEstimadoTIPC" id="prazoEstimadoTIPC">
+
+	<label>CondiÃ§Ã£o de Pagamento</label>
+	<input type="text" name="condicaoPagamentoTIPC" id="condicaoPagamentoTIPC">
+
+	<label>Escopo Resumido</label>
+	<input type="text" name="escopoResumidoTIPC" id="escopoResumidoTIPC">
+
+	<label>Itens / ServiÃ§os</label>
+	<table class="table table-bordered" id="tblItensServicosTIPC" tablename="tblItensServicosTIPC" noaddbutton="true" nodeletebutton="true"  >
+		<thead>
+			<tr>
+				<th>DescriÃ§Ã£o</th>
+				<th>Quantidade</th>
+				<th>Valor unitÃ¡rio</th>
+				<th>Total</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="descricaoItemServicoTIPC" class="form-control"></td>
+				<td><input type="text" name="quantidadeItemServicoTIPC" class="form-control"></td>
+				<td><input type="text" name="valorUnitarioItemServicoTIPC" class="form-control"></td>
+				<td><input type="text" name="totalItemServicoTIPC" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>Riscos iniciais</label>
+	<table class="table table-bordered" id="tblRiscosIniciaisTIPC" tablename="tblRiscosIniciaisTIPC" noaddbutton="true" nodeletebutton="true"  >
+		<thead>
+			<tr>
+				<th>Risco potencial</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="riscoPotencialTIPC" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>PrÃ©-requisitos</label>
+	<table class="table table-bordered" id="tblPreRequisitosTIPC" tablename="tblPreRequisitosTIPC" noaddbutton="true" nodeletebutton="true"  >
+		<thead>
+			<tr>
+				<th>PrÃ©-requisito</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="preRequisitoTIPC" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>Anexos da Proposta</label>
+	<input type="text" name="anexosPropostaTIPC" id="anexosPropostaTIPC">
+
+	<label>Escopo estÃ¡ claro e detalhado</label>
+	<input type="text" name="escopoClaroDetalhadoTIPC" id="escopoClaroDetalhadoTIPC">
+
+	<label>Impostos e taxas estÃ£o inclusos no valor</label>
+	<input type="text" name="impostosTaxasInclusosTIPC" id="impostosTaxasInclusosTIPC">
+
+	<label>Prazos de entrega definidos</label>
+	<input type="text" name="prazosEntregaDefinidosTIPC" id="prazosEntregaDefinidosTIPC">
+
+	<label>Garantias e SLA especificados</label>
+	<input type="text" name="garantiasSlaEspecificadosTIPC" id="garantiasSlaEspecificadosTIPC">
+
+	<label>VigÃªncia da proposta confirmada</label>
+	<input type="text" name="vigenciaPropostaConfirmadaTIPC" id="vigenciaPropostaConfirmadaTIPC">
+
+	<label>Documentos anexados e completos</label>
+	<input type="text" name="documentosAnexCompTIPC" id="documentosAnexCompTIPC">
+
+	<!-- SOLICITANTE APROVAR PROPOSTA - SAP -->
+	<label>ObservaÃ§Ãµes / NegociaÃ§Ã£o</label>
+	<input type="text" name="observacoesNegociacaoSAP" id="observacoesNegociacaoSAP">
+
+	<label>Li e concordo com a proposta comercial</label>
+	<input type="text" name="liConcordoPropostaComercialSAP" id="liConcordoPropostaComercialSAP">
+
+	<!-- GCC - APROVAR CUSTO - GCC -->
+	<label>capex</label>
+	<input type="text" name="capexGCC" id="capexGCC">
+
+	<table class="table table-bordered" id="tblNaturezaCustoCapexGCC" tablename="tblNaturezaCustoCapexGCC" noaddbutton="true" nodeletebutton="true"  >
+		<thead>
+			<tr>
+				<th>Centro de custo</th>
+				<th>Conta contÃ¡bil</th>
+				<th>Porcentagem</th>
+				<th>Saldo</th>
+				<th>Saldo apÃ³s compromisso</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="centroCustoCapexGCC" class="form-control"></td>
+				<td><input type="text" name="contaContabilCapexGCC" class="form-control"></td>
+				<td><input type="text" name="porcentagemCapexGCC" class="form-control"></td>
+				<td><input type="text" name="saldoCapexGCC" class="form-control"></td>
+				<td><input type="text" name="saldoAposCompromissoCapexGCC" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>opex</label>
+	<input type="text" name="opexGCC" id="opexGCC">
+
+	<table class="table table-bordered" id="tblNaturezaCustoOpexGCC" tablename="tblNaturezaCustoOpexGCC" noaddbutton="true" nodeletebutton="true"  >
+		<thead>
+			<tr>
+				<th>Centro de custo</th>
+				<th>Conta contÃ¡bil</th>
+				<th>Porcentagem</th>
+				<th>Saldo</th>
+				<th>Saldo apÃ³s compromisso</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="centroCustoOpexGCC" class="form-control"></td>
+				<td><input type="text" name="contaContabilOpexGCC" class="form-control"></td>
+				<td><input type="text" name="porcentagemOpexGCC" class="form-control"></td>
+				<td><input type="text" name="saldoOpexGCC" class="form-control"></td>
+				<td><input type="text" name="saldoAposCompromissoOpexGCC" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>CompetÃªncia</label>
+	<input type="text" name="competenciaGCC" id="competenciaGCC">
+
+	<label>ObservaÃ§Ãµes / NegociaÃ§Ã£o</label>
+	<input type="text" name="observacoesNegociacaoGCC" id="observacoesNegociacaoGCC">
+
+	<!-- COMITE - APROVAR CUSTO PROJETO - ACP -->
+	<label>Data/Hora</label>
+	<input type="text" name="dataHoraACP" id="dataHoraACP">
+
+	<label>Participantes</label>
+	<table class="table table-bordered" id="tblParticipantesACP" tablename="tblParticipantesACP" noaddbutton="true" nodeletebutton="true"  >
+		<thead>
+			<tr>
+				<th>Nome do participante</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="nomeParticipanteACP" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>AnotaÃ§Ãµes</label>
+	<input type="text" name="anotacoesACP" id="anotacoesACP">
+
+	<label>anexaratadareuniao</label>
+	<input type="text" name="anexarAtaReuniaoACP" id="anexarAtaReuniaoACP">
+
+	<!-- COMPRAS - REALIZAR CONTRATACAO - CRC -->
+	<label>Tipo de ContrataÃ§Ã£o</label>
+	<input type="text" name="tipoContratacaoCRC" id="tipoContratacaoCRC">
+
+	<label>NÂº do Pedido/Contrato</label>
+	<input type="text" name="numeroPedidoContratoCRC" id="numeroPedidoContratoCRC">
+
+	<label>Data de EmissÃ£o</label>
+	<input type="text" name="dataEmissaoCRC" id="dataEmissaoCRC">
+
+	<label>InÃ­cio da VigÃªncia</label>
+	<input type="text" name="inicioVigenciaCRC" id="inicioVigenciaCRC">
+
+	<label>Fim da VigÃªncia</label>
+	<input type="text" name="fimVigenciaCRC" id="fimVigenciaCRC">
+
+	<label>CondiÃ§Ã£o de Pagamento</label>
+	<input type="text" name="condicaoPagamentoCRC" id="condicaoPagamentoCRC">
+
+	<label>Centro de Custo</label>
+	<input type="text" name="centroCustoCRC" id="centroCustoCRC">
+
+	<label>Conta ContÃ¡bil</label>
+	<input type="text" name="contaContabilCRC" id="contaContabilCRC">
+
+	<label>Escopo Acordado</label>
+	<input type="text" name="escopoAcordadoCRC" id="escopoAcordadoCRC">
+
+	<label>SLA/Garantia</label>
+	<input type="text" name="slaGarantiaCRC" id="slaGarantiaCRC">
+
+	<label>Multas/RescisÃ£o</label>
+	<input type="text" name="multasRescisaoCRC" id="multasRescisaoCRC">
+
+	<label>Pessoa JurÃ­dica Regular</label>
+	<input type="text" name="pessoaJuridicaRegularCRC" id="pessoaJuridicaRegularCRC">
+
+	<label>CertidÃµes Negativas</label>
+	<input type="text" name="certidoesNegativasCRC" id="certidoesNegativasCRC">
+
+	<label>LGPD - ProteÃ§Ã£o de Dados</label>
+	<input type="text" name="lgpdCRC" id="lgpdCRC">
+
+	<label>AnÃ¡lise de SeguranÃ§a</label>
+	<input type="text" name="analiseSegurancaCRC" id="analiseSegurancaCRC">
+
+	<label>Seguro de Responsabilidade</label>
+	<input type="text" name="seguroResponsabilidadeCRC" id="seguroResponsabilidadeCRC">
+
+	<label>Anexos CRC</label>
+	<input type="text" name="anexosCRC" id="anexosCRC">
+
+	<label>Escolher condiÃ§Ã£o de pagamento</label>
+	<input type="text" name="escolhercondicaopagamentoCRC" id="escolhercondicaopagamentoCRC">
+
+	<label>Escolher parcelas</label>
+	<input type="text" name="escolherparcelasCRC" id="escolherparcelasCRC">
+
+	<label>Valor Final</label>
+	<input type="text" name="valorFinalCRC" id="valorFinalCRC">
+
+	<label>Impostos/Encargos</label>
+	<input type="text" name="impostosEncargosCRC" id="impostosEncargosCRC">
+</form>
+</div>
+</body>
+</html>

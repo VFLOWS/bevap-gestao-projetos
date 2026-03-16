@@ -1,7 +1,7 @@
 const dashboardController = {
   _eventNamespace: '.dashboard',
   _pendenciesDatasetId: 'dsGetSolicitacaoProjetos',
-  _pendenciesFields: ['titulodoprojetoNS', 'documentid', 'prioridadeNS'],
+  _pendenciesFields: ['titulodoprojetoNS', 'documentid', 'prioridadeNS', 'estadoProcesso'],
 
   load: async function () {
     const container = $('#page-container');
@@ -65,15 +65,32 @@ const dashboardController = {
   },
 
   normalizePendencies: function (rows) {
-    return (rows || []).map((row) => {
+    const pendencies = (rows || []).map((row, index) => {
       return {
         projectCode: 'PRJ-2026-018',
         title: this.asText(row.titulodoprojetoNS),
         documentId: this.asText(row.documentid),
         priority: this.asText(row.prioridadeNS),
-        processState: this.asText(row.estadoProcesso)
+        processState: this.asText(row.estadoProcesso),
+        _sourceIndex: index
       };
     });
+
+    // Newest first: prefer higher documentId, fallback to latest dataset row.
+    pendencies.sort((a, b) => {
+      const docA = parseInt(a.documentId, 10);
+      const docB = parseInt(b.documentId, 10);
+      const hasDocA = Number.isFinite(docA);
+      const hasDocB = Number.isFinite(docB);
+
+      if (hasDocA && hasDocB && docA !== docB) {
+        return docB - docA;
+      }
+
+      return b._sourceIndex - a._sourceIndex;
+    });
+
+    return pendencies;
   },
 
   renderPendenciesLoading: function () {
@@ -114,8 +131,18 @@ const dashboardController = {
       const priority = priorityInfo.label;
       const title = pendency.title || 'Projeto sem título';
       const subtitle = this.getPendencySubtitle(pendency.processState);
+      const actionConfig = this.getPendencyActionConfig(pendency.processState);
+      const buttonLabel = actionConfig.route === 'immediateApproval'
+        ? 'Abrir Aprovacao'
+        : actionConfig.route === 'newSolicitation'
+          ? 'Continuar Rascunho'
+        : actionConfig.enabled
+          ? 'Avaliar Agora'
+          : 'Indisponivel';
       const borderStyleAttr = style.borderStyle ? ` style="${style.borderStyle}"` : '';
-      const buttonClasses = 'w-full bg-bevap-green hover:bg-bevap-green/90 text-white text-sm py-2 rounded-lg font-medium transition-colors';
+      const buttonClasses = actionConfig.enabled
+        ? 'w-full bg-bevap-green hover:bg-bevap-green/90 text-white text-sm py-2 rounded-lg font-medium transition-colors'
+        : 'w-full bg-slate-200 text-slate-500 text-sm py-2 rounded-lg font-medium cursor-not-allowed';
 
       return `
         <div class="bg-slate-50 rounded-lg p-3 border-l-4 ${style.borderClass}"${borderStyleAttr}>
@@ -128,12 +155,14 @@ const dashboardController = {
           <p class="text-sm font-medium text-bevap-navy mb-2">${this.escapeHtml(title)}</p>
           <p class="text-xs text-slate-600 mb-3">${this.escapeHtml(subtitle)}</p>
           <button
-            data-action="evaluate-project"
+            data-action="open-pendency"
             data-document-id="${this.escapeHtml(pendency.documentId)}"
             data-estado-processo="${this.escapeHtml(pendency.processState)}"
+            data-target-route="${this.escapeHtml(actionConfig.route)}"
+            ${actionConfig.enabled ? '' : 'disabled'}
             class="${buttonClasses}"
           >
-            Avaliar Agora
+            ${this.escapeHtml(buttonLabel)}
           </button>
         </div>
       `;
@@ -147,6 +176,8 @@ const dashboardController = {
     const activity = this.parseEstadoProcessoActivity(raw);
 
     const mapping = {
+      0: 'Rascunho da Nova Solicitacao',
+      4: 'Rascunho da Nova Solicitacao',
       5: 'Aguardando TI Avaliar Projeto',
       15: 'Aguardando Correção do Solicitante',
       19: 'Aguardando Aprovação do Superior Imediato',
@@ -177,6 +208,40 @@ const dashboardController = {
     }
 
     return 'Pendência disponível para avaliação';
+  },
+
+  getPendencyActionConfig: function (estadoProcesso) {
+    const activity = this.parseEstadoProcessoActivity(estadoProcesso);
+
+    if (activity === 0 || activity === 4) {
+      return {
+        enabled: true,
+        route: 'newSolicitation',
+        label: 'Continuar Rascunho'
+      };
+    }
+
+    if (activity === 5) {
+      return {
+        enabled: true,
+        route: 'evaluateProject',
+        label: 'Avaliar Agora'
+      };
+    }
+
+    if (activity === 19) {
+      return {
+        enabled: true,
+        route: 'immediateApproval',
+        label: 'Abrir AprovaÃ§Ã£o'
+      };
+    }
+
+    return {
+      enabled: false,
+      route: '',
+      label: 'IndisponÃ­vel'
+    };
   },
 
   parseEstadoProcessoActivity: function (estadoProcesso) {
@@ -277,15 +342,15 @@ const dashboardController = {
       location.hash = '#evaluateProject';
     });
 
-    container.on(`click${this._eventNamespace}`, '[data-action="evaluate-project"]', (event) => {
+    container.on(`click${this._eventNamespace}`, '[data-action="open-pendency"]', (event) => {
       event.preventDefault();
 
       const button = $(event.currentTarget);
       const documentId = button.data('document-id');
       const processState = button.data('estado-processo');
+      const targetRoute = String(button.data('target-route') || '').trim();
 
-      const activity = this.parseEstadoProcessoActivity(processState);
-      if (activity !== 5) {
+      if (!targetRoute) {
         return;
       }
 
@@ -300,7 +365,7 @@ const dashboardController = {
       }
 
       const queryString = params.toString();
-      location.hash = queryString ? `#evaluateProject?${queryString}` : '#evaluateProject';
+      location.hash = queryString ? `#${targetRoute}?${queryString}` : `#${targetRoute}`;
     });
   },
 

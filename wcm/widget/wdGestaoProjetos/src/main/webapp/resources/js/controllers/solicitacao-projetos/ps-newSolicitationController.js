@@ -4,9 +4,32 @@ const newSolicitationController = {
   _state: {
     currentStep: 1,
     numSolicitacao: "",
+    documentId: "",
+    processInstanceId: "",
     isSubmitting: false,
     attachments: []
   },
+
+  _draftFields: [
+    'documentid',
+    'titulodoprojetoNS',
+    'areaUnidadeNS',
+    'centrodecustoNS',
+    'patrocinadorNS',
+    'objetivodoprojetoNS',
+    'problemaOportunidadeNS',
+    'beneficiosesperadosNS',
+    'alinhadobevapNS',
+    'prioridadeNS',
+    'escopoinicialNS',
+    'foradeescopoNS',
+    'dependenciasNS',
+    'anexosNS',
+    'observacoesadicionaisNS',
+    'tblObjetivosEstrategicosNS.descricaoobjetivoNS',
+    'tblRiscosIniciaisNS.riscoPotencialNS',
+    'tblStakeholdersNS.valorstakeholdersNS'
+  ],
 
   _constants: {
     requiredFields: [
@@ -65,9 +88,11 @@ const newSolicitationController = {
     ]
   },
 
-  load: function () {
+  load: function (params = {}) {
     const container = this.getContainer();
     this.destroy();
+    this._state.documentId = params && params.documentId ? String(params.documentId) : "";
+    this._state.processInstanceId = params && params.processInstanceId ? String(params.processInstanceId) : "";
 
     return $.get(this.getTemplateUrl())
       .done((html) => {
@@ -84,6 +109,8 @@ const newSolicitationController = {
     this.unbindEvents();
     this._state.currentStep = 1;
     this._state.numSolicitacao = "";
+    this._state.documentId = "";
+    this._state.processInstanceId = "";
     this._state.isSubmitting = false;
     this._state.attachments = [];
   },
@@ -98,6 +125,8 @@ const newSolicitationController = {
 
   initializePage: function () {
     this.bindEvents();
+    this.registerZoomCallbacks();
+    this.initializeZoomFields();
     this._state.currentStep = 1;
     this._state.attachments = [];
     this.updateStepper();
@@ -106,6 +135,21 @@ const newSolicitationController = {
     this.updateSummaryPriority();
     this.updateSummaryDetails();
     this.renderAttachments();
+    this.loadDraftFromDataset();
+  },
+
+  registerZoomCallbacks: function () {
+    window.setSelectedZoomItem = setSelectedZoomItem;
+    window.removedZoomItem = removedZoomItem;
+  },
+
+  initializeZoomFields: function () {
+    if (typeof loadZoom === 'function') {
+      loadZoom();
+      return;
+    }
+
+    console.warn('[newSolicitation] loadZoom nao encontrado. Os campos zoom podem nao inicializar.');
   },
 
   bindEvents: function () {
@@ -513,8 +557,7 @@ const newSolicitationController = {
 
     if (areaValue.length) {
       const areaField = container.find('#area');
-      const hasArea = areaField.length && String(areaField.val() || '').trim() !== '';
-      const selectedArea = hasArea ? String(areaField.find('option:selected').text() || '').trim() : '';
+      const selectedArea = areaField.length ? String(areaField.val() || '').trim() : '';
       areaValue.text(selectedArea || 'N/A');
     }
 
@@ -561,9 +604,13 @@ const newSolicitationController = {
       }
 
       const alreadyExists = this._state.attachments.some((attachment) => {
-        return attachment.file.name === file.name
-          && attachment.file.size === file.size
-          && attachment.file.lastModified === file.lastModified;
+        if (attachment.file) {
+          return attachment.file.name === file.name
+            && attachment.file.size === file.size
+            && attachment.file.lastModified === file.lastModified;
+        }
+
+        return attachment.fileName === file.name;
       });
 
       if (alreadyExists) return;
@@ -580,6 +627,170 @@ const newSolicitationController = {
   removeAttachment: function (attachmentId) {
     this._state.attachments = this._state.attachments.filter((attachment) => attachment.id !== attachmentId);
     this.renderAttachments();
+  },
+
+  parseTableJson: function (value) {
+    if (Array.isArray(value)) return value;
+
+    const text = this.asText(value);
+    if (!text) return [];
+
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  },
+
+  parseAttachmentMetadata: function (value) {
+    const text = this.asText(value);
+    if (!text) return [];
+
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  },
+
+  setFieldValue: function (selector, value) {
+    const field = this.getContainer().find(selector).first();
+    if (!field.length) return;
+    field.val(value === null || value === undefined ? '' : String(value));
+  },
+
+  renderStrategicObjectives: function (items) {
+    const list = this.getContainer().find('#objetivos-estrategicos-list');
+    if (!list.length) return;
+
+    const rows = (items || []).length ? items : [''];
+    list.html(rows.map((value) => {
+      return `
+        <div class="strategic-objective-item flex items-center gap-2 p-3 bg-white border border-green-200 rounded-lg">
+          <input type="text" placeholder="Descreva um objetivo estrategico..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="objetivos-estrategicos" value="${this.escapeHtml(value)}">
+          <button data-action="remove-strategic-objective" class="text-red-500 hover:text-red-700">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+      `;
+    }).join(''));
+  },
+
+  renderInitialRisks: function (items) {
+    const list = this.getContainer().find('#riscos-list');
+    if (!list.length) return;
+
+    const rows = (items || []).length ? items : [''];
+    list.html(rows.map((value) => {
+      return `
+        <div class="flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+          <input type="text" placeholder="Descreva um risco potencial..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="riscos" value="${this.escapeHtml(value)}">
+          <button data-action="remove-risk" class="text-red-500 hover:text-red-700">
+            <i class="fa-solid fa-times"></i>
+          </button>
+        </div>
+      `;
+    }).join(''));
+  },
+
+  renderStakeholderList: function (items) {
+    const list = this.getContainer().find('#stakeholders-list');
+    if (!list.length) return;
+
+    list.html((items || []).map((value) => {
+      return `
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">
+          ${this.escapeHtml(value)}
+          <button data-action="remove-stakeholder" class="ml-2 hover:text-red-300">
+            <i class="fa-solid fa-times text-xs"></i>
+          </button>
+        </span>
+      `;
+    }).join(''));
+  },
+
+  restorePersistedAttachments: function (items) {
+    this._state.attachments = (items || []).map((item, index) => {
+      return {
+        id: `saved-att-${index + 1}`,
+        persisted: true,
+        fileName: this.asText(item && item.fileName),
+        fileSize: this.asText(item && item.fileSize)
+      };
+    }).filter((item) => item.fileName);
+  },
+
+  loadDraftFromDataset: async function () {
+    if (!this._state.documentId) {
+      return;
+    }
+
+    try {
+      const rows = await fluigService.getDatasetRows('dsGetSolicitacaoProjetos', {
+        fields: this._draftFields,
+        filters: {
+          documentid: this._state.documentId
+        }
+      });
+
+      const row = rows && rows.length ? rows[0] : null;
+      if (!row) {
+        return;
+      }
+
+      this.applyDraftRow(row);
+    } catch (error) {
+      console.error('[newSolicitation] Error loading draft:', error);
+      this.showNotification({
+        borderClass: 'border-red-500',
+        iconClass: 'fa-triangle-exclamation text-red-500',
+        title: 'Erro ao carregar rascunho',
+        message: 'Nao foi possivel carregar os dados salvos desta solicitacao.'
+      });
+    }
+  },
+
+  applyDraftRow: function (row) {
+    const objectives = this.parseTableJson(row.tblObjetivosEstrategicosNS)
+      .map((item) => this.asText(item && item.descricaoobjetivoNS))
+      .filter(Boolean);
+    const risks = this.parseTableJson(row.tblRiscosIniciaisNS)
+      .map((item) => this.asText(item && item.riscoPotencialNS))
+      .filter(Boolean);
+    const stakeholders = this.parseTableJson(row.tblStakeholdersNS)
+      .map((item) => this.asText(item && item.valorstakeholdersNS))
+      .filter(Boolean);
+    const attachments = this.parseAttachmentMetadata(row.anexosNS);
+
+    this._state.documentId = this.asText(row.documentid) || this._state.documentId;
+    this.setFieldValue('#titulo', row.titulodoprojetoNS);
+    this.setFieldValue('#area', row.areaUnidadeNS);
+    this.setFieldValue('#centro-custo', row.centrodecustoNS);
+    this.setFieldValue('#patrocinador', row.patrocinadorNS);
+    this.setFieldValue('#objetivo', row.objetivodoprojetoNS);
+    this.setFieldValue('#problema', row.problemaOportunidadeNS);
+    this.setFieldValue('#beneficios', row.beneficiosesperadosNS);
+    this.getContainer().find('#alinhamento').prop('checked', this.asText(row.alinhadobevapNS) === 'true');
+    this.getContainer().find('input[name="prioridade"]').filter((index, element) => {
+      return this.asText($(element).val()) === this.asText(row.prioridadeNS);
+    }).first().prop('checked', true);
+    this.setFieldValue('#escopo-inicial', row.escopoinicialNS);
+    this.setFieldValue('[data-field="out-of-scope"]', row.foradeescopoNS);
+    this.setFieldValue('[data-field="dependencies"]', row.dependenciasNS);
+    this.setFieldValue('#observacoes', row.observacoesadicionaisNS);
+
+    this.renderStrategicObjectives(objectives);
+    this.renderInitialRisks(risks);
+    this.renderStakeholderList(stakeholders);
+    this.restorePersistedAttachments(attachments);
+    this.toggleStrategicObjectives();
+    this.renderAttachments();
+    this.updateSummaryPriority();
+    this.updateSummaryDetails();
+    this.updateChecklist();
   },
 
   escapeHtml: function (value) {
@@ -622,10 +833,13 @@ const newSolicitationController = {
     }
 
     const rows = this._state.attachments.map((attachment) => {
-      const file = attachment.file;
-      const safeName = this.escapeHtml(file.name);
-      const size = this.formatAttachmentSize(file.size);
-      const iconClass = this.getAttachmentIconClass(file.name);
+      const fileName = attachment.file ? attachment.file.name : attachment.fileName;
+      const safeName = this.escapeHtml(fileName);
+      const fileSize = attachment.file ? attachment.file.size : attachment.fileSize;
+      const size = attachment.persisted && isNaN(Number(fileSize))
+        ? this.asText(fileSize) || 'Arquivo salvo'
+        : this.formatAttachmentSize(fileSize);
+      const iconClass = this.getAttachmentIconClass(fileName);
 
       return `
         <div class="flex items-center justify-between p-3 bg-white border border-gray-200 rounded-lg">
@@ -662,7 +876,7 @@ const newSolicitationController = {
   },
 
   collectAttachmentsPayload: async function () {
-    const items = this._state.attachments.slice();
+    const items = this._state.attachments.filter((attachment) => attachment.file);
     if (!items.length) return [];
 
     const attachmentPayload = await Promise.all(items.map(async (attachment) => {
@@ -670,20 +884,29 @@ const newSolicitationController = {
       const fileContent = await this.readFileAsBase64(file);
       return {
         fileName: String(file.name || '').trim(),
-        fileContent: String(fileContent || '').trim()
+        fileContent: String(fileContent || '').trim(),
+        fileSize: String(file.size || '').trim()
       };
     }));
 
     return attachmentPayload.filter((item) => item.fileName && item.fileContent);
   },
 
-  saveDraft: function () {
-    this.showNotification({
-      borderClass: 'border-bevap-green',
-      iconClass: 'fa-check-circle text-bevap-green',
-      title: 'Rascunho salvo!',
-      message: 'Suas alteracoes foram salvas automaticamente.'
-    });
+  buildAttachmentMetadata: function () {
+    return this._state.attachments.map((attachment) => {
+      if (attachment.file) {
+        return {
+          fileName: this.asText(attachment.file.name),
+          fileSize: String(attachment.file.size || '').trim()
+        };
+      }
+
+      return {
+        fileName: this.asText(attachment.fileName),
+        fileSize: this.asText(attachment.fileSize),
+        persisted: true
+      };
+    }).filter((attachment) => attachment.fileName);
   },
 
   buildSubmissionPayload: async function () {
@@ -714,6 +937,7 @@ const newSolicitationController = {
       .filter(value => value !== "");
 
     const attachments = await this.collectAttachmentsPayload();
+    const attachmentsMetadata = this.buildAttachmentMetadata();
 
     return {
       titulo: getValue("#titulo"),
@@ -732,15 +956,16 @@ const newSolicitationController = {
       objetivosEstrategicos: objetivosEstrategicos,
       riscosIniciais: riscosIniciais,
       stakeholders: stakeholders,
-      attachments: attachments
+      attachments: attachments,
+      attachmentsMetadata: attachmentsMetadata
     };
   },
 
-  createSubmitLoading: function () {
+  createSubmitLoading: function (title, message) {
     if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
       return modalLoadingService.show({
-        title: 'Enviando solicitacao',
-        message: 'Aguarde enquanto a solicitacao e criada no Fluig...'
+        title: title || 'Enviando solicitacao',
+        message: message || 'Aguarde enquanto a solicitacao e criada no Fluig...'
       });
     }
 
@@ -753,6 +978,96 @@ const newSolicitationController = {
       },
       updateMessage: function () {}
     };
+  },
+
+  updateDraftHash: function () {
+    if (!this._state.documentId || !window.history || typeof window.history.replaceState !== 'function') {
+      return;
+    }
+
+    const nextHash = `#newSolicitation?documentId=${encodeURIComponent(this._state.documentId)}`;
+    const url = `${window.location.pathname}${window.location.search}${nextHash}`;
+    window.history.replaceState(null, '', url);
+  },
+
+  resolveProcessInstanceId: async function () {
+    if (this._state.processInstanceId) {
+      return this._state.processInstanceId;
+    }
+
+    if (!this._state.documentId) {
+      throw new Error('Nao foi possivel identificar a solicitacao atual');
+    }
+
+    const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._state.documentId);
+    this._state.processInstanceId = this.asText(processInstanceId);
+    return this._state.processInstanceId;
+  },
+
+  toTaskFields: function (cardData) {
+    return Object.keys(cardData || {}).map((fieldName) => {
+      return {
+        name: fieldName,
+        value: cardData[fieldName]
+      };
+    });
+  },
+
+  saveDraft: async function () {
+    if (this._state.isSubmitting) return;
+
+    const loading = this.createSubmitLoading('Salvando rascunho', 'Aguarde enquanto o rascunho e salvo...');
+    this._state.isSubmitting = true;
+
+    try {
+      loading.updateMessage('Preparando dados do rascunho...');
+      await this.waitForUiPaint();
+      const payload = await this.buildSubmissionPayload();
+
+      if (this._state.documentId) {
+        loading.updateMessage('Atualizando rascunho existente...');
+        await this.waitForUiPaint();
+        await fluigService.saveDraft({
+          mode: 'updateCardDraft',
+          documentId: this._state.documentId,
+          cardData: fluigService.buildProjectSolicitationCardData(payload)
+        });
+      } else {
+        loading.updateMessage('Criando rascunho inicial no Fluig...');
+        await this.waitForUiPaint();
+        const result = await fluigService.saveDraft({
+          mode: 'startProcessDraft',
+          formData: payload
+        });
+
+        this._state.documentId = this.asText(result.documentId);
+        this._state.processInstanceId = this.asText(result.processInstanceId);
+        this._state.numSolicitacao = this._state.processInstanceId;
+        this.updateDraftHash();
+      }
+
+      this.showNotification({
+        borderClass: 'border-bevap-green',
+        iconClass: 'fa-check-circle text-bevap-green',
+        title: 'Rascunho salvo!',
+        message: 'Os dados informados foram salvos com sucesso.'
+      });
+
+      setTimeout(() => {
+        location.hash = '#dashboard';
+      }, 150);
+    } catch (error) {
+      console.error('[newSolicitation] Error saving draft:', error);
+      this.showNotification({
+        borderClass: 'border-red-500',
+        iconClass: 'fa-triangle-exclamation text-red-500',
+        title: 'Erro ao salvar rascunho',
+        message: error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.'
+      });
+    } finally {
+      this._state.isSubmitting = false;
+      loading.hide();
+    }
   },
 
   waitForUiPaint: function () {
@@ -786,10 +1101,31 @@ const newSolicitationController = {
       loading.updateMessage('Preparando dados do formulario...');
       await this.waitForUiPaint();
       const payload = await this.buildSubmissionPayload();
-      loading.updateMessage('Enviando para o processo no Fluig...');
-      await this.waitForUiPaint();
-      const result = await fluigService.createProjectSolicitation(payload);
-      this._state.numSolicitacao = String(result.numSolicitacao || "").trim();
+
+      if (this._state.documentId) {
+        loading.updateMessage('Atualizando rascunho antes do envio...');
+        await this.waitForUiPaint();
+        const processInstanceId = await this.resolveProcessInstanceId();
+        const taskFields = this.toTaskFields(fluigService.buildProjectSolicitationCardData(payload));
+
+        loading.updateMessage('Concluindo envio da solicitacao...');
+        await this.waitForUiPaint();
+        await fluigService.saveAndSendTask({
+          id: processInstanceId,
+          numState: 5,
+          documentId: this._state.documentId,
+          datasetName: 'DSFormSolicitacaoProjetos'
+        }, taskFields);
+        this._state.numSolicitacao = this.asText(processInstanceId);
+      } else {
+        loading.updateMessage('Enviando para o processo no Fluig...');
+        await this.waitForUiPaint();
+        const result = await fluigService.createProjectSolicitation(payload, {
+          completeTask: true
+        });
+        this._state.numSolicitacao = String(result.numSolicitacao || "").trim();
+      }
+
       this.getContainer().find('#success-modal').removeClass('hidden');
     } catch (error) {
       console.error("Error submitting project solicitation:", error);
@@ -841,6 +1177,14 @@ const newSolicitationController = {
     });
   },
 
+  asText: function (value) {
+    if (value === null || value === undefined || value === 'null') {
+      return '';
+    }
+
+    return String(value).trim();
+  },
+
   showNotification: function (config) {
     const notification = $(`
       <div class="fixed top-20 right-4 bg-white border-l-4 ${config.borderClass} shadow-lg rounded-lg p-4 z-50 animate-slide-in">
@@ -861,3 +1205,68 @@ const newSolicitationController = {
     }, 3000);
   }
 };
+
+function loadZoom() {
+  String.prototype.replaceAll = String.prototype.replaceAll || function (needle, replacement) {
+    return this.split(needle).join(replacement);
+  };
+
+  $('input[type="zoom"]').each(function () {
+    if (!$(this).prop('readonly')) {
+      if (typeof loadZoomForInput === 'function') {
+        loadZoomForInput(this);
+      }
+    } else {
+      $(this).prop('type', 'text').addClass('form-control');
+    }
+  });
+}
+
+function setZoomHiddenValue(fieldId, value) {
+  if (typeof Util !== 'undefined' && Util && typeof Util.setVal === 'function') {
+    Util.setVal(fieldId, value || '');
+    return;
+  }
+
+  $(`#${fieldId}`).val(value || '');
+}
+
+function setSelectedZoomItem(zoomItem) {
+  const idSelecionado = String(
+    (zoomItem && (zoomItem.inputId || zoomItem.inputName || zoomItem.id)) || ''
+  ).trim();
+
+  // Coligada
+  if (idSelecionado === 'coligada') {
+    setZoomHiddenValue('cod-coligada', zoomItem && (zoomItem.CODCOLIGADA || zoomItem.codigo || ''));
+  }
+
+  // Area/Unidade
+  if (idSelecionado === 'area') {
+    setZoomHiddenValue('cod-area', zoomItem && (zoomItem.CODIGO || zoomItem.codigo || ''));
+  }
+
+  // Centro de Custo
+  if (idSelecionado === 'centro-custo') {
+    setZoomHiddenValue('cod-centro-custo', zoomItem && (zoomItem.CODIGO || zoomItem.codigo || ''));
+  }
+}
+
+function removedZoomItem(removedItem) {
+  const idSelecionado = String(
+    (removedItem && (removedItem.inputId || removedItem.inputName || removedItem.id)) || ''
+  ).trim();
+
+  // Limpa hidden quando usuario remove selecao do zoom.
+  if (idSelecionado === 'coligada') {
+    setZoomHiddenValue('cod-coligada', '');
+  }
+
+  if (idSelecionado === 'area') {
+    setZoomHiddenValue('cod-area', '');
+  }
+
+  if (idSelecionado === 'centro-custo') {
+    setZoomHiddenValue('cod-centro-custo', '');
+  }
+}
