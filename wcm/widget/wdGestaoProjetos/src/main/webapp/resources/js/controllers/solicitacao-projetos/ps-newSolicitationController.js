@@ -723,6 +723,75 @@ const newSolicitationController = {
     }).filter((item) => item.fileName);
   },
 
+  getDraftUiCacheKey: function (documentId) {
+    const finalDocumentId = this.asText(documentId);
+    return finalDocumentId ? `gp:new-solicitation:draft:${finalDocumentId}` : '';
+  },
+
+  readDraftUiCache: function (documentId) {
+    const cacheKey = this.getDraftUiCacheKey(documentId);
+    if (!cacheKey || typeof window === 'undefined' || !window.localStorage) {
+      return {};
+    }
+
+    try {
+      const raw = window.localStorage.getItem(cacheKey);
+      return raw ? JSON.parse(raw) : {};
+    } catch (error) {
+      return {};
+    }
+  },
+
+  writeDraftUiCache: function (documentId, payload) {
+    const cacheKey = this.getDraftUiCacheKey(documentId);
+    if (!cacheKey || typeof window === 'undefined' || !window.localStorage) {
+      return;
+    }
+
+    try {
+      window.localStorage.setItem(cacheKey, JSON.stringify({
+        "centro-custo": this.asText(payload && payload["centro-custo"]),
+        stakeholders: Array.isArray(payload && payload.stakeholders) ? payload.stakeholders : [],
+        declaracao: !!(payload && payload.declaracao)
+      }));
+    } catch (error) {}
+  },
+
+  clearDraftUiCache: function (documentId) {
+    const cacheKey = this.getDraftUiCacheKey(documentId);
+    if (!cacheKey || typeof window === 'undefined' || !window.localStorage) {
+      return;
+    }
+
+    try {
+      window.localStorage.removeItem(cacheKey);
+    } catch (error) {}
+  },
+
+  normalizeStringArray: function (items) {
+    return (Array.isArray(items) ? items : [])
+      .map((item) => this.asText(item))
+      .filter(Boolean);
+  },
+
+  setZoomDisplayValue: function (inputSelector, hiddenSelector, value) {
+    const finalValue = this.asText(value);
+    const container = this.getContainer();
+    const field = container.find(inputSelector).first();
+    if (field.length) {
+      field.val(finalValue);
+      field.attr('value', finalValue);
+      field.trigger('change');
+    }
+
+    if (hiddenSelector) {
+      const hidden = container.find(hiddenSelector).first();
+      if (hidden.length) {
+        hidden.val(finalValue);
+      }
+    }
+  },
+
   loadDraftFromDataset: async function () {
     if (!this._state.documentId) {
       return;
@@ -754,21 +823,28 @@ const newSolicitationController = {
   },
 
   applyDraftRow: function (row) {
+    const currentDocumentId = this.asText(row.documentid) || this._state.documentId;
+    const cachedUiState = this.readDraftUiCache(currentDocumentId);
     const objectives = this.parseTableJson(row.tblObjetivosEstrategicosNS)
       .map((item) => this.asText(item && item.descricaoobjetivoNS))
       .filter(Boolean);
     const risks = this.parseTableJson(row.tblRiscosIniciaisNS)
       .map((item) => this.asText(item && item.riscoPotencialNS))
       .filter(Boolean);
-    const stakeholders = this.parseTableJson(row.tblStakeholdersNS)
+    const stakeholdersFromDataset = this.parseTableJson(row.tblStakeholdersNS || row.tblstakeholdersNS)
       .map((item) => this.asText(item && item.valorstakeholdersNS))
       .filter(Boolean);
+    const stakeholders = stakeholdersFromDataset.length
+      ? stakeholdersFromDataset
+      : this.normalizeStringArray(cachedUiState.stakeholders);
     const attachments = this.parseAttachmentMetadata(row.anexosNS);
+    const centroCusto = this.asText(row.centrodecustoNS) || this.asText(cachedUiState["centro-custo"]);
+    const declaracao = cachedUiState.declaracao === true;
 
-    this._state.documentId = this.asText(row.documentid) || this._state.documentId;
+    this._state.documentId = currentDocumentId;
     this.setFieldValue('#titulo', row.titulodoprojetoNS);
     this.setFieldValue('#area', row.areaUnidadeNS);
-    this.setFieldValue('#centro-custo', row.centrodecustoNS);
+    this.setZoomDisplayValue('#centro-custo', '#cod-centro-custo', centroCusto);
     this.setFieldValue('#patrocinador', row.patrocinadorNS);
     this.setFieldValue('#objetivo', row.objetivodoprojetoNS);
     this.setFieldValue('#problema', row.problemaOportunidadeNS);
@@ -781,6 +857,7 @@ const newSolicitationController = {
     this.setFieldValue('[data-field="out-of-scope"]', row.foradeescopoNS);
     this.setFieldValue('[data-field="dependencies"]', row.dependenciasNS);
     this.setFieldValue('#observacoes', row.observacoesadicionaisNS);
+    this.getContainer().find('#declaracao').prop('checked', declaracao);
 
     this.renderStrategicObjectives(objectives);
     this.renderInitialRisks(risks);
@@ -953,6 +1030,7 @@ const newSolicitationController = {
       "out-of-scope": getValue('[data-field="out-of-scope"]'),
       dependencies: getValue('[data-field="dependencies"]'),
       observacoes: getValue("#observacoes"),
+      declaracao: getChecked("#declaracao"),
       objetivosEstrategicos: objetivosEstrategicos,
       riscosIniciais: riscosIniciais,
       stakeholders: stakeholders,
@@ -1046,6 +1124,8 @@ const newSolicitationController = {
         this.updateDraftHash();
       }
 
+      this.writeDraftUiCache(this._state.documentId, payload);
+
       this.showNotification({
         borderClass: 'border-bevap-green',
         iconClass: 'fa-check-circle text-bevap-green',
@@ -1117,6 +1197,7 @@ const newSolicitationController = {
           datasetName: 'DSFormSolicitacaoProjetos'
         }, taskFields);
         this._state.numSolicitacao = this.asText(processInstanceId);
+        this.clearDraftUiCache(this._state.documentId);
       } else {
         loading.updateMessage('Enviando para o processo no Fluig...');
         await this.waitForUiPaint();
