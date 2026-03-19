@@ -892,10 +892,7 @@
                                         <span class="${task.done ? 'inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white' : 'inline-flex h-5 w-5 items-center justify-center text-gray-500'}">
                                             <i class="${task.done ? 'fa-solid fa-check text-[10px]' : 'fa-regular fa-clock text-[11px]'}"></i>
                                         </span>
-                                        <a href="${taskRequestLink}" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
-                                            <span class="truncate">${task.name}</span>
-                                            <i class="fa-solid fa-link text-[11px] shrink-0"></i>
-                                        </a>
+                                        <p class="text-sm font-semibold text-bevap-navy leading-5">${task.name}</p>
                                     </div>
                                     <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
                                         <span class="inline-flex items-center px-2 py-1 rounded-full border ${theme.responsible.textClass} whitespace-nowrap" style="${getChipInlineStyle(theme.responsible)}">
@@ -935,6 +932,12 @@
                                         <span class="font-semibold" style="${remainingValueStyle}">${remainingValue}</span>
                                     </span>
                                 </div>
+                            </div>
+                            <div class="mt-2 flex justify-start">
+                                <a href="${taskRequestLink}" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-bevap-navy border border-bevap-navy rounded-md hover:bg-blue-50 transition-colors">
+                                    <i class="fa-solid fa-link text-[11px]"></i>
+                                    <span>Solicitação da Tarefa</span>
+                                </a>
                             </div>
                         </div>
                         `;

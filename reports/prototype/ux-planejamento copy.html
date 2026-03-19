@@ -28,15 +28,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
-    <style>
-        ::-webkit-scrollbar { display: none;}
-        .daterangepicker { z-index: 9999 !important; }
-    </style>
+    <style>::-webkit-scrollbar { display: none;}</style>
 </head>
 <body class="bg-gray-50 font-inter">
 
@@ -54,10 +47,7 @@
                 <button class="text-white hover:text-bevap-gold transition-colors" title="Notificações">
                     <i class="fa-regular fa-bell text-xl"></i>
                 </button>
-                <div class="relative">
-                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Compras" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
-                    <button type="button" onclick="clearMockedPhasesData()" class="absolute inset-0 rounded-full bg-transparent" title="Remover dados mockados das fases" aria-label="Remover dados mockados das fases"></button>
-                </div>
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Compras" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
             </div>
         </div>
     </div>
@@ -129,23 +119,17 @@
                         Estrutura Analítica do Projeto (EAP/WBS)
                     </h3>
 
-                    <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-center gap-2">
-                        <i class="fa-solid fa-circle-exclamation text-blue-600"></i>
-                        <p class="text-sm text-gray-700">
-                            Este bloco é para o planejamento da estrutura do projeto na EAP/WBS. Organize o trabalho em fases sequenciais e objetivas; em cada fase, defina o objetivo, atribua o responsável, informe esforço (h) e duração (dias), registre dependências e detalhe as tarefas para que a EAP/WBS fique completa e pronta para execução.
-                        </p>
-                    </div>
-
                     <div id="wbs-container" class="space-y-4">
                         <div class="wbs-item border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
-                            <div class="panel-toggle-header flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200 cursor-pointer">
-                                <div class="w-full min-w-0">
+                            <div class="flex items-start justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+                                <div class="w-full">
+                                    <label class="block text-sm text-gray-600 mb-1">Descrição da Fase</label>
                                     <div class="flex items-center gap-2">
                                         <span class="wbs-number text-gray-500">1.</span>
-                                        <input type="text" value="Descoberta e Análise" class="wbs-phase-name-input w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white" placeholder="Informe a Descrição da Fase">
+                                        <input type="text" value="Descoberta e Análise" class="wbs-phase-name-input w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white" placeholder="Descrição da fase">
                                     </div>
                                 </div>
-                                <div class="flex items-center space-x-2 pl-3 shrink-0">
+                                <div class="flex items-center space-x-2">
                                     <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600" title="Remover">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
@@ -155,8 +139,8 @@
                                 </div>
                             </div>
 
-                            <div class="wbs-panel-content p-4">
-                                <div class="grid grid-cols-1 lg:grid-cols-[3fr_1fr_1fr] gap-4">
+                            <div class="p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm text-gray-600 mb-1">Responsável</label>
                                     <div class="responsible-search-field relative">
@@ -220,14 +204,15 @@
                         </div>
                         
                         <div class="wbs-item border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
-                            <div class="panel-toggle-header flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200 cursor-pointer">
-                                <div class="w-full min-w-0">
+                            <div class="flex items-start justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+                                <div class="w-full">
+                                    <label class="block text-sm text-gray-600 mb-1">Descrição da fase</label>
                                     <div class="flex items-center gap-2">
                                         <span class="wbs-number text-gray-500">2.</span>
-                                        <input type="text" value="Implementação SSO" class="wbs-phase-name-input w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white" placeholder="Descrição da fase">
+                                        <input type="text" value="Implementação SSO" class="wbs-phase-name-input w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white" placeholder="Descrição da fase">
                                     </div>
                                 </div>
-                                <div class="flex items-center space-x-2 pl-3 shrink-0">
+                                <div class="flex items-center space-x-2">
                                     <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600" title="Remover">
                                         <i class="fa-solid fa-trash"></i>
                                     </button>
@@ -237,8 +222,8 @@
                                 </div>
                             </div>
 
-                            <div class="wbs-panel-content p-4">
-                                <div class="grid grid-cols-1 lg:grid-cols-[3fr_1fr_1fr] gap-4">
+                            <div class="p-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-sm text-gray-600 mb-1">Responsável</label>
                                     <div class="responsible-search-field relative">
@@ -336,29 +321,28 @@
                         </div>
                         
                         <div id="milestones-container" class="space-y-4">
-                            <div class="milestone-card border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
-                                <div class="panel-toggle-header flex items-end justify-between gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 cursor-pointer">
-                                    <div class="flex items-end gap-4 flex-1 min-w-0">
-                                        <div class="flex-1 min-w-0">
-                                            <label class="block text-sm text-gray-600 mb-1 cursor-pointer">Marco</label>
-                                            <input type="text" value="" class="milestone-phase-input w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Preencha o marco">
+                            <div class="milestone-card border border-gray-200 rounded-lg bg-white p-4">
+                                <div class="flex items-start justify-between gap-4 mb-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+                                        <div>
+                                            <label class="block text-sm text-gray-600 mb-1">Marco</label>
+                                            <input type="text" value="" class="milestone-phase-input w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Preencha o marco">
                                         </div>
-                                        <div class="w-64 shrink-0">
-                                            <label class="block text-sm text-gray-600 mb-1 cursor-pointer">Período do Marco</label>
-                                            <input type="text" value="2026-02-05 até 2026-02-10" class="milestone-period-input w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Selecione um período">
+                                        <div>
+                                            <label class="block text-sm text-gray-600 mb-1">Data</label>
+                                            <input type="date" value="2026-02-05" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-2 pl-3 shrink-0 self-end">
-                                        <button onclick="removeMilestone(this)" class="text-red-400 hover:text-red-600 inline-flex items-center justify-center h-9" title="Remover">
+                                    <div class="flex items-center gap-2 mt-7">
+                                        <button onclick="removeMilestone(this)" class="text-red-400 hover:text-red-600" title="Remover">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
-                                        <button class="milestone-handle text-gray-400 hover:text-gray-600 cursor-grab inline-flex items-center justify-center h-9" title="Mover">
+                                        <button class="milestone-handle text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
                                             <i class="fa-solid fa-grip-vertical"></i>
                                         </button>
                                     </div>
                                 </div>
-                                <div class="milestone-panel-content p-4">
-                                <div class="milestone-criteria-field">
+                                <div class="milestone-criteria-field mt-4">
                                     <div class="flex items-center justify-between mb-1">
                                         <label class="block text-sm text-gray-600">Critérios de Aceite</label>
                                         <button onclick="addMilestoneCriteria(this)" class="text-sm text-bevap-green hover:text-green-700 font-medium">
@@ -367,40 +351,40 @@
                                     </div>
                                     <div class="milestone-criteria-list space-y-2 mb-3"></div>
                                 </div>
-                                <div class="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                                    <h5 class="milestone-tasks-title text-sm font-semibold text-bevap-navy mb-3">Tarefa do Marco</h5>
-                                    <div class="milestone-tasks-list space-y-3"></div>
-                                    <div class="mt-3 flex justify-start">
-                                        <button onclick="addMilestoneTask(this)" class="text-sm text-bevap-green hover:text-green-700 font-medium inline-flex items-center gap-1" title="Adicionar Tarefa">
-                                            <i class="fa-solid fa-plus text-xs"></i> Adicionar Tarefa
-                                        </button>
-                                    </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-2">
+                                    <label class="milestone-tasks-title lg:col-span-7 block text-sm text-gray-600">Tarefa do Marco</label>
+                                    <label class="lg:col-span-4 block text-sm text-gray-600">Data de Entrega</label>
+                                    <div class="lg:col-span-1"></div>
                                 </div>
+                                <div class="milestone-tasks-list space-y-3"></div>
+                                <div class="mt-3 flex justify-end">
+                                    <button onclick="addMilestoneTask(this)" class="text-sm text-bevap-green hover:text-green-700 font-medium inline-flex items-center gap-1" title="Adicionar Tarefa">
+                                        <i class="fa-solid fa-plus text-xs"></i> Adicionar Tarefa
+                                    </button>
                                 </div>
                             </div>
-                            <div class="milestone-card border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm">
-                                <div class="panel-toggle-header flex items-end justify-between gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 cursor-pointer">
-                                    <div class="flex items-end gap-4 flex-1 min-w-0">
-                                        <div class="flex-1 min-w-0">
-                                            <label class="block text-sm text-gray-600 mb-1 cursor-pointer">Marco</label>
-                                            <input type="text" value="" class="milestone-phase-input w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Preencha o marco">
+                            <div class="milestone-card border border-gray-200 rounded-lg bg-white p-4">
+                                <div class="flex items-start justify-between gap-4 mb-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+                                        <div>
+                                            <label class="block text-sm text-gray-600 mb-1">Marco</label>
+                                            <input type="text" value="" class="milestone-phase-input w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Preencha o marco">
                                         </div>
-                                        <div class="w-64 shrink-0">
-                                            <label class="block text-sm text-gray-600 mb-1 cursor-pointer">Período do Marco</label>
-                                            <input type="text" value="2026-02-28 até 2026-03-04" class="milestone-period-input w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Selecione um período">
+                                        <div>
+                                            <label class="block text-sm text-gray-600 mb-1">Data</label>
+                                            <input type="date" value="2026-02-28" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
                                         </div>
                                     </div>
-                                    <div class="flex items-center gap-2 pl-3 shrink-0 self-end">
-                                        <button onclick="removeMilestone(this)" class="text-red-400 hover:text-red-600 inline-flex items-center justify-center h-9" title="Remover">
+                                    <div class="flex items-center gap-2 mt-7">
+                                        <button onclick="removeMilestone(this)" class="text-red-400 hover:text-red-600" title="Remover">
                                             <i class="fa-solid fa-trash"></i>
                                         </button>
-                                        <button class="milestone-handle text-gray-400 hover:text-gray-600 cursor-grab inline-flex items-center justify-center h-9" title="Mover">
+                                        <button class="milestone-handle text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
                                             <i class="fa-solid fa-grip-vertical"></i>
                                         </button>
                                     </div>
                                 </div>
-                                <div class="milestone-panel-content p-4">
-                                <div class="milestone-criteria-field">
+                                <div class="milestone-criteria-field mt-4">
                                     <div class="flex items-center justify-between mb-1">
                                         <label class="block text-sm text-gray-600">Critérios de Aceite</label>
                                         <button onclick="addMilestoneCriteria(this)" class="text-sm text-bevap-green hover:text-green-700 font-medium">
@@ -409,15 +393,16 @@
                                     </div>
                                     <div class="milestone-criteria-list space-y-2 mb-3"></div>
                                 </div>
-                                <div class="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                                    <h5 class="milestone-tasks-title text-sm font-semibold text-bevap-navy mb-3">Tarefa do Marco</h5>
-                                    <div class="milestone-tasks-list space-y-3"></div>
-                                    <div class="mt-3 flex justify-start">
-                                        <button onclick="addMilestoneTask(this)" class="text-sm text-bevap-green hover:text-green-700 font-medium inline-flex items-center gap-1" title="Adicionar Tarefa">
-                                            <i class="fa-solid fa-plus text-xs"></i> Adicionar Tarefa
-                                        </button>
-                                    </div>
+                                <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-2">
+                                    <label class="milestone-tasks-title lg:col-span-7 block text-sm text-gray-600">Tarefa do Marco</label>
+                                    <label class="lg:col-span-4 block text-sm text-gray-600">Data de Entrega</label>
+                                    <div class="lg:col-span-1"></div>
                                 </div>
+                                <div class="milestone-tasks-list space-y-3"></div>
+                                <div class="mt-3 flex justify-end">
+                                    <button onclick="addMilestoneTask(this)" class="text-sm text-bevap-green hover:text-green-700 font-medium inline-flex items-center gap-1" title="Adicionar Tarefa">
+                                        <i class="fa-solid fa-plus text-xs"></i> Adicionar Tarefa
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -554,12 +539,12 @@
                                 </button>
                             </div>
                             <div class="overflow-x-auto">
-                                <table class="w-full text-sm border border-gray-200 table-fixed">
+                                <table class="w-full text-sm border border-gray-200">
                                     <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-3 py-2 text-left text-gray-700 font-medium border-r border-gray-200">Público</th>
-                                            <th class="w-36 px-3 py-2 text-left text-gray-700 font-medium border-r border-gray-200">Canal</th>
-                                            <th class="w-36 px-3 py-2 text-left text-gray-700 font-medium border-r border-gray-200">Periodicidade</th>
+                                            <th class="px-3 py-2 text-left text-gray-700 font-medium border-r border-gray-200">Canal</th>
+                                            <th class="px-3 py-2 text-left text-gray-700 font-medium border-r border-gray-200">Periodicidade</th>
                                             <th class="px-3 py-2 text-center text-gray-700 font-medium w-12"></th>
                                         </tr>
                                     </thead>
@@ -1236,14 +1221,15 @@
         const nextNumber = (container?.querySelectorAll('.wbs-item')?.length || 0) + 1;
         
         phase.innerHTML = `
-            <div class="panel-toggle-header flex items-center justify-between px-4 py-3 bg-gray-50 border-b border-gray-200 cursor-pointer">
-                <div class="w-full min-w-0">
+            <div class="flex items-start justify-between px-4 py-3 bg-gray-50 border-b border-gray-200">
+                <div class="w-full">
+                    // <label class="block text-sm text-gray-600 mb-1">Descrição da fase</label>
                     <div class="flex items-center gap-2">
                         <span class="wbs-number text-gray-500">${nextNumber}.</span>
-                        <input type="text" value="" class="wbs-phase-name-input w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white" placeholder="Informe a Descrição da Fase">
+                        <input type="text" value="Nova Fase" class="wbs-phase-name-input w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white" placeholder="Descrição da fase">
                     </div>
                 </div>
-                <div class="flex items-center space-x-2 pl-3 shrink-0">
+                <div class="flex items-center space-x-2 pl-3">
                     <button onclick="removeItem(this)" class="text-red-400 hover:text-red-600" title="Remover">
                         <i class="fa-solid fa-trash"></i>
                     </button>
@@ -1252,8 +1238,8 @@
                     </button>
                 </div>
             </div>
-            <div class="wbs-panel-content p-4">
-            <div class="grid grid-cols-1 lg:grid-cols-[3fr_1fr_1fr] gap-4">
+            <div class="p-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
                     <label class="block text-sm text-gray-600 mb-1">Responsável</label>
                     ${getResponsibleSearchFieldHTML('Ana Costa')}
@@ -1299,29 +1285,6 @@
         items.forEach((item, index) => {
             const numberEl = item.querySelector('.wbs-number');
             if (numberEl) numberEl.textContent = `${index + 1}.`;
-        });
-    }
-
-    function getPanelContent(panelItem) {
-        return panelItem.querySelector(':scope > .wbs-panel-content') || panelItem.querySelector(':scope > .milestone-panel-content');
-    }
-
-    function togglePanelByHeader(headerElement) {
-        const panelItem = headerElement.closest('.wbs-item, .milestone-card');
-        if (!panelItem) return;
-
-        const panelContent = getPanelContent(panelItem);
-        if (!panelContent) return;
-
-        panelContent.classList.toggle('hidden');
-    }
-
-    function bindPanelHeaderToggle() {
-        document.addEventListener('click', (event) => {
-            const headerElement = event.target.closest('.panel-toggle-header');
-            if (!headerElement) return;
-            if (event.target.closest('input, textarea, select, button, a, [contenteditable="true"]')) return;
-            togglePanelByHeader(headerElement);
         });
     }
 
@@ -1459,7 +1422,6 @@
         mockPhases.forEach((phaseData, phaseIndex) => {
             const phaseItem = phaseItems[phaseIndex];
             if (!phaseItem) return;
-            phaseItem.dataset.mockedPhase = 'true';
 
             const headerNameInput = phaseItem.querySelector('.wbs-phase-name-input');
             if (headerNameInput) headerNameInput.value = phaseData.name;
@@ -1495,19 +1457,6 @@
 
         updateWbsNumbers();
         refreshMilestoneConfiguration();
-    }
-
-    function clearMockedPhasesData() {
-        const mockedPhases = Array.from(document.querySelectorAll('#wbs-container > .wbs-item[data-mocked-phase="true"]'));
-        if (!mockedPhases.length) {
-            showToast('Não há componentes mockados para remover.', 'info');
-            return;
-        }
-
-        mockedPhases.forEach((phase) => phase.remove());
-        updateWbsNumbers();
-        refreshMilestoneConfiguration();
-        showToast('Componentes mockados das fases removidos.', 'success');
     }
 
     function addDependencyItem(buttonElement) {
@@ -1626,34 +1575,30 @@
     function getMilestoneTaskRowHTML(rowData = {}) {
         const taskDate = rowData.date || '';
         return `
-            <div class="milestone-task-row border border-gray-200 rounded-lg bg-white p-4">
-                <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_190px_auto] gap-3 items-start">
-                    <div class="w-full min-w-0 relative">
-                        <label class="block text-sm text-gray-600 mb-1">Descrição da Tarefa</label>
-                        <div class="relative">
-                            <input type="text" value="${escapeHtml(rowData.taskLabel || '')}" class="milestone-task-search w-full px-3 py-2 pr-16 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Pesquisar tarefa...">
-                            <button type="button" class="milestone-task-clear hidden absolute top-1/2 right-8 -translate-y-1/2 text-red-500 hover:text-red-700 px-1" title="Limpar">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                            <button type="button" class="milestone-task-toggle absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 hover:text-gray-700 px-1" title="Abrir opções">
-                                <i class="fa-solid fa-chevron-down text-xs"></i>
-                            </button>
-                        </div>
-                        <div class="milestone-task-dropdown hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-56 overflow-y-auto"></div>
-                        <div class="milestone-task-phase hidden mt-1 text-xs text-gray-500"></div>
-                    </div>
-                    <div class="w-full lg:w-auto">
-                        <label class="block text-sm text-gray-600 mb-1">Data de Entrega</label>
-                        <input type="date" value="${taskDate}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
-                    </div>
-                    <div class="flex items-center justify-end space-x-2 shrink-0 pt-6">
-                        <button class="milestone-task-handle text-gray-400 hover:text-gray-600 cursor-grab px-1 py-1" title="Mover Tarefa">
-                            <i class="fa-solid fa-grip-vertical"></i>
+            <div class="milestone-task-row grid grid-cols-1 lg:grid-cols-12 lg:items-start gap-3">
+                <div class="lg:col-span-7 relative">
+                    <div class="relative">
+                        <input type="text" value="${escapeHtml(rowData.taskLabel || '')}" class="milestone-task-search w-full px-3 py-2 pr-16 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Pesquisar tarefa...">
+                        <button type="button" class="milestone-task-clear hidden absolute top-1/2 right-8 -translate-y-1/2 text-red-500 hover:text-red-700 px-1" title="Limpar">
+                            <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button onclick="removeMilestoneTask(this)" class="text-red-400 hover:text-red-600 px-1 py-1" title="Remover Tarefa">
-                            <i class="fa-solid fa-trash"></i>
+                        <button type="button" class="milestone-task-toggle absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 hover:text-gray-700 px-1" title="Abrir opções">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
                         </button>
                     </div>
+                    <div class="milestone-task-dropdown hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-56 overflow-y-auto"></div>
+                    <div class="milestone-task-phase hidden mt-1 text-xs text-gray-500"></div>
+                </div>
+                <div class="lg:col-span-4">
+                    <input type="date" value="${taskDate}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+                </div>
+                <div class="lg:col-span-1 flex items-end lg:items-start justify-end gap-1">
+                    <button onclick="removeMilestoneTask(this)" class="text-red-400 hover:text-red-600 px-2 py-2" title="Remover Tarefa">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                    <button class="milestone-task-handle text-gray-400 hover:text-gray-600 cursor-grab px-2 py-2" title="Mover Tarefa">
+                        <i class="fa-solid fa-grip-vertical"></i>
+                    </button>
                 </div>
             </div>
         `;
@@ -1663,28 +1608,27 @@
         const date = data.date || '';
         const phase = data.phase || '';
         return `
-            <div class="panel-toggle-header flex items-end justify-between gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 cursor-pointer">
-                <div class="flex items-end gap-4 flex-1 min-w-0">
-                    <div class="flex-1 min-w-0">
-                        <label class="block text-sm text-gray-600 mb-1 cursor-pointer">Marco</label>
-                        <input type="text" value="${phase}" class="milestone-phase-input w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Preencha o marco">
+            <div class="flex items-start justify-between gap-4 mb-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1">
+                    <div>
+                        <label class="block text-sm text-gray-600 mb-1">Marco</label>
+                        <input type="text" value="${phase}" class="milestone-phase-input w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Preencha o marco">
                     </div>
-                    <div class="w-64 shrink-0">
-                        <label class="block text-sm text-gray-600 mb-1 cursor-pointer">Período do Marco</label>
-                        <input type="text" value="${date}" class="milestone-period-input w-full px-3 py-1.5 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Selecione um período">
+                    <div>
+                        <label class="block text-sm text-gray-600 mb-1">Data</label>
+                        <input type="date" value="${date}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
                     </div>
                 </div>
-                <div class="flex items-center gap-2 pl-3 shrink-0 self-end">
-                    <button onclick="removeMilestone(this)" class="text-red-400 hover:text-red-600 inline-flex items-center justify-center h-9" title="Remover">
+                <div class="flex items-center gap-2 mt-7">
+                    <button onclick="removeMilestone(this)" class="text-red-400 hover:text-red-600" title="Remover">
                         <i class="fa-solid fa-trash"></i>
                     </button>
-                    <button class="milestone-handle text-gray-400 hover:text-gray-600 cursor-grab inline-flex items-center justify-center h-9" title="Mover">
+                    <button class="milestone-handle text-gray-400 hover:text-gray-600 cursor-grab" title="Mover">
                         <i class="fa-solid fa-grip-vertical"></i>
                     </button>
                 </div>
             </div>
-            <div class="milestone-panel-content p-4">
-            <div class="milestone-criteria-field">
+            <div class="milestone-criteria-field mt-4">
                 <div class="flex items-center justify-between mb-1">
                     <label class="block text-sm text-gray-600">Critérios de Aceite</label>
                     <button onclick="addMilestoneCriteria(this)" class="text-sm text-bevap-green hover:text-green-700 font-medium">
@@ -1693,15 +1637,16 @@
                 </div>
                 <div class="milestone-criteria-list space-y-2 mb-3"></div>
             </div>
-            <div class="mt-4 p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                <h5 class="milestone-tasks-title text-sm font-semibold text-bevap-navy mb-3">Tarefa do Marco</h5>
-                <div class="milestone-tasks-list space-y-3"></div>
-                <div class="mt-3 flex justify-start">
-                    <button onclick="addMilestoneTask(this)" class="text-sm text-bevap-green hover:text-green-700 font-medium inline-flex items-center gap-1" title="Adicionar Tarefa">
-                        <i class="fa-solid fa-plus text-xs"></i> Adicionar Tarefa
-                    </button>
-                </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-2">
+                <label class="milestone-tasks-title lg:col-span-7 block text-sm text-gray-600">Tarefa do Marco</label>
+                <label class="lg:col-span-4 block text-sm text-gray-600">Data de Entrega</label>
+                <div class="lg:col-span-1"></div>
             </div>
+            <div class="milestone-tasks-list space-y-3"></div>
+            <div class="mt-3 flex justify-end">
+                <button onclick="addMilestoneTask(this)" class="text-sm text-bevap-green hover:text-green-700 font-medium inline-flex items-center gap-1" title="Adicionar Tarefa">
+                    <i class="fa-solid fa-plus text-xs"></i> Adicionar Tarefa
+                </button>
             </div>
         `;
     }
@@ -1926,33 +1871,6 @@
         return `${day}/${month}/${year}`;
     }
 
-    function parseMilestonePeriod(periodValue) {
-        if (!periodValue) return { start: '', end: '' };
-        const separator = periodValue.includes(' - ') ? ' - ' : ' até ';
-        const [start = '', end = ''] = periodValue.split(separator).map((value) => value.trim());
-        return { start, end: end || start };
-    }
-
-    function normalizePeriodDateToIso(dateValue) {
-        if (!dateValue) return '';
-        const parsedDate = window.moment(dateValue, ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD/MM/YYYY'], true);
-        return parsedDate.isValid() ? parsedDate.format('YYYY-MM-DD') : '';
-    }
-
-    function getMilestonePrimaryDate(periodValue) {
-        const period = parseMilestonePeriod(periodValue);
-        return normalizePeriodDateToIso(period.end || period.start || '');
-    }
-
-    function formatMilestonePeriodBr(periodValue) {
-        const period = parseMilestonePeriod(periodValue);
-        const startIso = normalizePeriodDateToIso(period.start);
-        const endIso = normalizePeriodDateToIso(period.end);
-        if (!startIso) return 'Sem período definido';
-        if (!endIso || endIso === startIso) return formatDateBr(startIso);
-        return `${formatDateBr(startIso)} até ${formatDateBr(endIso)}`;
-    }
-
     function escapeHtml(value) {
         const content = String(value ?? '');
         return content
@@ -1967,10 +1885,9 @@
         return Array.from(document.querySelectorAll('.milestone-card'))
             .map((milestoneCard) => {
                 const phaseInput = milestoneCard.querySelector('.milestone-phase-input');
-                const milestoneDateInput = milestoneCard.querySelector('.milestone-period-input');
+                const milestoneDateInput = milestoneCard.querySelector('.flex.items-start input[type="date"]');
                 const phaseName = phaseInput?.value?.trim() || 'Marco sem nome';
-                const period = milestoneDateInput?.value || '';
-                const date = getMilestonePrimaryDate(period);
+                const date = milestoneDateInput?.value || '';
                 const acceptanceCriteria = Array.from(milestoneCard.querySelectorAll('.milestone-criteria-row input[type="text"]'))
                     .map((criteriaInput) => criteriaInput.value?.trim() || '')
                     .filter(Boolean);
@@ -2006,7 +1923,6 @@
                 return {
                     phaseName,
                     date,
-                    period,
                     acceptanceCriteria,
                     tasks,
                     sortDate: date ? new Date(`${date}T00:00:00`) : null
@@ -2066,7 +1982,7 @@
             }
 
             const whenLabel = getTimelineWhenLabel(item.date);
-            const currentDateFormatted = formatMilestonePeriodBr(item.period || item.date);
+            const currentDateFormatted = item.date ? formatDateBr(item.date) : 'Sem data definida';
             const taskCount = item.tasks.length;
             const previewTasks = item.tasks.slice(0, 2).map((task) => task.taskName).filter(Boolean);
             const taskPreviewText = previewTasks.length ? previewTasks.join(' • ') : 'Sem tarefas vinculadas';
@@ -2116,7 +2032,7 @@
             if (milestoneCard.dataset.eventsReady === 'true') return;
 
             const phaseInput = milestoneCard.querySelector('.milestone-phase-input');
-            const milestoneDateInput = milestoneCard.querySelector('.milestone-period-input');
+            const milestoneDateInput = milestoneCard.querySelector('.flex.items-start input[type="date"]');
             const criteriaList = milestoneCard.querySelector('.milestone-criteria-list');
 
             phaseInput?.addEventListener('input', () => renderMilestoneTimeline());
@@ -2127,71 +2043,6 @@
             criteriaList?.addEventListener('change', () => renderMilestoneTimeline());
 
             milestoneCard.dataset.eventsReady = 'true';
-        });
-    }
-
-    function initMilestonePeriodPickers(rootElement = document) {
-        if (typeof window.jQuery !== 'function' || typeof window.moment !== 'function') return;
-        const $ = window.jQuery;
-        if (typeof $.fn.daterangepicker !== 'function') return;
-
-        rootElement.querySelectorAll('.milestone-period-input').forEach((inputElement) => {
-            if (!inputElement || inputElement.dataset.periodPickerReady === 'true') return;
-            const initialPeriod = parseMilestonePeriod(inputElement.value?.trim() || '');
-            const startMoment = initialPeriod.start
-                ? window.moment(initialPeriod.start, ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD/MM/YYYY'], true)
-                : window.moment();
-            const endMoment = initialPeriod.end
-                ? window.moment(initialPeriod.end, ['YYYY-MM-DD', 'MM/DD/YYYY', 'DD/MM/YYYY'], true)
-                : startMoment.clone();
-            const safeStartMoment = startMoment.isValid() ? startMoment : window.moment();
-            const safeEndMoment = endMoment.isValid() ? endMoment : safeStartMoment.clone();
-
-            const applyPeriodValue = (startDate, endDate) => {
-                inputElement.value = `${startDate.format('MM/DD/YYYY')} - ${endDate.format('MM/DD/YYYY')}`;
-                inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-                inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-            };
-
-            $(inputElement).daterangepicker({
-                startDate: safeStartMoment,
-                endDate: safeEndMoment,
-                autoUpdateInput: false,
-                autoApply: true,
-                alwaysShowCalendars: true,
-                linkedCalendars: false,
-                opens: 'left',
-                showDropdowns: true,
-                locale: {
-                    format: 'MM/DD/YYYY',
-                    separator: ' - ',
-                    applyLabel: 'Aplicar',
-                    cancelLabel: 'Cancelar',
-                    customRangeLabel: 'Período personalizado',
-                    daysOfWeek: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
-                    monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-                    firstDay: 0
-                },
-                ranges: {
-                    'Hoje': [window.moment(), window.moment()],
-                    'Ontem': [window.moment().subtract(1, 'days'), window.moment().subtract(1, 'days')],
-                    'Últimos 7 dias': [window.moment().subtract(6, 'days'), window.moment()],
-                    'Últimos 30 dias': [window.moment().subtract(29, 'days'), window.moment()],
-                    'Este mês': [window.moment().startOf('month'), window.moment().endOf('month')],
-                    'Mês passado': [window.moment().subtract(1, 'month').startOf('month'), window.moment().subtract(1, 'month').endOf('month')]
-                }
-            });
-
-            applyPeriodValue(safeStartMoment, safeEndMoment);
-            $(inputElement).on('apply.daterangepicker', (_, picker) => {
-                applyPeriodValue(picker.startDate, picker.endDate);
-            });
-            $(inputElement).on('cancel.daterangepicker', () => {
-                inputElement.value = '';
-                inputElement.dispatchEvent(new Event('input', { bubbles: true }));
-                inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-            });
-            inputElement.dataset.periodPickerReady = 'true';
         });
     }
 
@@ -2231,7 +2082,6 @@
     }
 
     function refreshMilestoneConfiguration() {
-        initMilestonePeriodPickers();
         initMilestoneSortables();
         initMilestoneTaskSortables();
         bindMilestoneCardEvents();
@@ -2323,12 +2173,13 @@
         if (!container) return;
 
         const milestone = document.createElement('div');
-        milestone.className = 'milestone-card border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm';
+        milestone.className = 'milestone-card border border-gray-200 rounded-lg bg-white p-4';
         milestone.innerHTML = getMilestoneCardHTML({
             date: '',
             phase: ''
         });
         container.appendChild(milestone);
+
         const addTaskButton = milestone.querySelector('button[onclick="addMilestoneTask(this)"]');
         if (addTaskButton) {
             addMilestoneTask(addTaskButton);
@@ -2357,7 +2208,7 @@
         const mockMilestones = [
             {
                 phase: 'Concluir descoberta e baseline técnico',
-                date: '2026-02-05 até 2026-02-10',
+                date: '2026-02-05',
                 criteria: [
                     'Escopo funcional validado com negócio e TI.',
                     'Matriz de sistemas impactados aprovada.'
@@ -2370,7 +2221,7 @@
             },
             {
                 phase: 'Entrega da implementação SSO em homologação',
-                date: '2026-03-10 até 2026-03-18',
+                date: '2026-03-18',
                 criteria: [
                     'Federação com AD funcionando para usuários piloto.',
                     'Políticas de segurança aplicadas e auditadas.'
@@ -2384,7 +2235,7 @@
             },
             {
                 phase: 'Go-live e estabilização inicial',
-                date: '2026-03-14 até 2026-03-20',
+                date: '2026-03-14',
                 criteria: [
                     'UAT concluído sem pendências críticas abertas.',
                     'Checklist de produção aprovado pelas áreas responsáveis.'
@@ -2402,7 +2253,7 @@
 
         mockMilestones.forEach((milestoneData) => {
             const milestoneCard = document.createElement('div');
-            milestoneCard.className = 'milestone-card border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm';
+            milestoneCard.className = 'milestone-card border border-gray-200 rounded-lg bg-white p-4';
             milestoneCard.innerHTML = getMilestoneCardHTML({
                 date: milestoneData.date,
                 phase: milestoneData.phase
@@ -2527,10 +2378,10 @@
                 <strong>Plano B:</strong> ${escapeHtml(fallback || 'Não informado')}
             </div>
             <div class="flex justify-end items-center gap-2 mt-2">
-                <button onclick="startEditRiskCard(this)" class="text-blue-500 hover:text-blue-700" title="Editar risco">
+                <button onclick="startEditRiskCard(this)" class="text-gray-400 hover:text-bevap-navy" title="Editar risco">
                     <i class="fa-solid fa-pen"></i>
                 </button>
-                <button onclick="requestRemoveRiskCard(this)" class="text-red-400 hover:text-red-600" title="Remover risco">
+                <button onclick="requestRemoveRiskCard(this)" class="text-gray-400 hover:text-gray-600" title="Remover risco">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
@@ -2549,7 +2400,7 @@
         card.innerHTML = `
             <div class="flex items-center justify-between gap-2 mb-2">
                 <input data-field="risk-title" type="text" value="${escapeHtml(title)}" placeholder="Novo risco" class="font-medium text-bevap-navy bg-transparent border-none p-0 focus:outline-none w-full">
-                <button onclick="requestRemoveRiskCard(this)" class="text-red-400 hover:text-red-600" title="Remover risco">
+                <button onclick="requestRemoveRiskCard(this)" class="text-gray-400 hover:text-gray-600" title="Remover risco">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
@@ -2694,10 +2545,10 @@
                 <strong>Plano B:</strong> ${escapeHtml(fallback || 'Não informado')}
             </div>
             <div class="flex justify-end items-center gap-2 mt-2">
-                <button onclick="startEditDependencyCard(this)" class="text-blue-500 hover:text-blue-700" title="Editar dependência">
+                <button onclick="startEditDependencyCard(this)" class="text-gray-400 hover:text-bevap-navy" title="Editar dependência">
                     <i class="fa-solid fa-pen"></i>
                 </button>
-                <button onclick="requestRemoveDependencyCard(this)" class="text-red-400 hover:text-red-600" title="Remover dependência">
+                <button onclick="requestRemoveDependencyCard(this)" class="text-gray-400 hover:text-gray-600" title="Remover dependência">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
@@ -2715,7 +2566,7 @@
         card.innerHTML = `
             <div class="flex items-center justify-between gap-2 mb-2">
                 <input data-field="dependency-title" type="text" value="${escapeHtml(title)}" placeholder="Nova dependência" class="font-medium text-bevap-navy bg-transparent border-none p-0 focus:outline-none w-full">
-                <button onclick="requestRemoveDependencyCard(this)" class="text-red-400 hover:text-red-600" title="Remover dependência">
+                <button onclick="requestRemoveDependencyCard(this)" class="text-gray-400 hover:text-gray-600" title="Remover dependência">
                     <i class="fa-solid fa-trash"></i>
                 </button>
             </div>
@@ -3037,7 +2888,7 @@
         return `
             <div class="raci-stakeholder-search-field relative" data-raci-index="${index}" data-raci-field="${field}">
                 <div class="relative">
-                    <input type="search" class="raci-stakeholder-search-input w-full px-2 py-1 pr-14 border border-gray-300 rounded text-xs bg-white focus:outline-none" placeholder="Pesquisar Pessoa...">
+                    <input type="search" class="raci-stakeholder-search-input w-full px-2 py-1 pr-14 border border-gray-300 rounded text-xs bg-white focus:outline-none" placeholder="Pesquisar pessoa...">
                     <button type="button" class="raci-stakeholder-search-clear hidden absolute top-1/2 right-7 -translate-y-1/2 text-red-500 hover:text-red-700 px-1" title="Limpar">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
@@ -3070,7 +2921,7 @@
         return `
             <div class="communication-audience-search-field relative" data-communication-index="${index}">
                 <div class="relative">
-                    <input type="search" class="communication-audience-search-input w-full px-2 py-1 pr-14 border border-gray-300 rounded text-xs bg-white focus:outline-none" placeholder="Pesquisar Pessoa...">
+                    <input type="search" class="communication-audience-search-input w-full px-2 py-1 pr-14 border border-gray-300 rounded text-xs bg-white focus:outline-none" placeholder="Pesquisar pessoa...">
                     <button type="button" class="communication-audience-search-clear hidden absolute top-1/2 right-7 -translate-y-1/2 text-red-500 hover:text-red-700 px-1" title="Limpar">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
@@ -3086,9 +2937,20 @@
     function formatStakeholderDisplayName(name) {
         const fullName = String(name ?? '').trim();
         if (!fullName) return '';
-        const maxLength = 14;
-        if (fullName.length <= maxLength) return fullName;
-        return `${fullName.slice(0, maxLength - 1)}…`;
+        const nameParts = fullName.split(/\s+/).filter(Boolean);
+        const cleanPart = (value) => value.replace(/[^A-Za-zÀ-ÿ]/g, '');
+        if (nameParts.length === 1) {
+            const single = cleanPart(nameParts[0]) || nameParts[0];
+            const halfLength = Math.max(1, Math.ceil(single.length / 2));
+            return single.slice(0, halfLength);
+        }
+        const firstPart = nameParts[0];
+        const sourcePart = nameParts.length >= 3 ? nameParts[nameParts.length - 1] : nameParts[1];
+        const tailPart = cleanPart(sourcePart);
+        if (!tailPart) {
+            return nameParts[0];
+        }
+        return `${firstPart} ${tailPart.slice(0, 3)}.`;
     }
 
     function getRaciStakeholderChipsHTML(index, field, names) {
@@ -3096,12 +2958,12 @@
             return '<span class="text-xs text-gray-400">Nenhum selecionado</span>';
         }
         return names.map((name) => `
-            <div onclick="event.stopPropagation()" title="${escapeHtml(name)}" class="flex items-center justify-between gap-2 w-full px-2 py-1 rounded-md border border-gray-200 bg-white text-xs text-gray-700">
-                <span class="block text-left whitespace-normal break-words flex-1">${escapeHtml(name)}</span>
-                <button onclick="event.stopPropagation(); removeRaciStakeholder(${index}, '${field}', '${escapeHtml(name)}')" class="shrink-0 text-red-500 hover:text-red-700" title="Remover">
-                    <i class="fa-solid fa-xmark text-[11px]"></i>
+            <span onclick="event.stopPropagation()" title="${escapeHtml(name)}" class="inline-flex items-center justify-center text-center px-1.5 py-0.5 rounded-full text-sm leading-tight bg-bevap-navy text-white">
+                ${escapeHtml(formatStakeholderDisplayName(name))}
+                <button onclick="event.stopPropagation(); removeRaciStakeholder(${index}, '${field}', '${escapeHtml(name)}')" class="ml-0.5 hover:text-red-300">
+                    <i class="fa-solid fa-times text-[10px]"></i>
                 </button>
-            </div>
+            </span>
         `).join('');
     }
 
@@ -3110,12 +2972,12 @@
             return '<span class="text-xs text-gray-400">Nenhum selecionado</span>';
         }
         return names.map((name) => `
-            <div onclick="event.stopPropagation()" title="${escapeHtml(name)}" class="flex items-center justify-between gap-2 w-full px-2 py-1 rounded-md border border-gray-200 bg-white text-xs text-gray-700">
-                <span class="block text-left whitespace-normal break-words flex-1">${escapeHtml(name)}</span>
-                <button onclick="event.stopPropagation(); removeCommunicationAudience(${index}, '${escapeHtml(name)}')" class="shrink-0 text-red-500 hover:text-red-700" title="Remover">
-                    <i class="fa-solid fa-xmark text-[11px]"></i>
+            <span onclick="event.stopPropagation()" title="${escapeHtml(name)}" class="inline-flex items-center justify-center text-center px-1.5 py-0.5 rounded-full text-sm leading-tight bg-bevap-navy text-white">
+                ${escapeHtml(formatStakeholderDisplayName(name))}
+                <button onclick="event.stopPropagation(); removeCommunicationAudience(${index}, '${escapeHtml(name)}')" class="ml-0.5 hover:text-red-300">
+                    <i class="fa-solid fa-times text-[10px]"></i>
                 </button>
-            </div>
+            </span>
         `).join('');
     }
 
@@ -3136,14 +2998,18 @@
         body.innerHTML = raciMatrixData.map((row, index) => `
             <div class="border border-gray-200 rounded-lg">
                 <div class="px-3 py-2 bg-gray-50 border-b border-gray-200">
-                    <p class="text-base text-gray-700"><span class="font-semibold text-gray-600">Marco:</span> ${escapeHtml(row.phase)}</p>
+                    <label class="block text-sm text-gray-600 mb-1">Descrição do Marco</label>
+                    <div class="flex items-center gap-2">
+                        <span class="text-gray-500">${index + 1}.</span>
+                        <input type="text" value="${escapeHtml(row.phase)}" oninput="updateRaciMatrixField(${index}, 'phase', this.value)" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white" placeholder="Descrição do marco">
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-4">
                     <div class="p-2 border-b md:border-b-0 md:border-r border-gray-200 align-top">
                         <div class="text-xs font-semibold text-gray-600 mb-1 text-center">R</div>
                         <div class="space-y-1.5">
                             ${getRaciStakeholderSearchFieldHTML(index, 'r')}
-                            <div class="space-y-1 min-h-[34px]">
+                            <div class="flex flex-wrap gap-0.5 justify-center min-h-[34px]">
                                 ${getRaciStakeholderChipsHTML(index, 'r', normalizeStakeholderField(row.r))}
                             </div>
                         </div>
@@ -3152,7 +3018,7 @@
                         <div class="text-xs font-semibold text-gray-600 mb-1 text-center">A</div>
                         <div class="space-y-1.5">
                             ${getRaciStakeholderSearchFieldHTML(index, 'a')}
-                            <div class="space-y-1 min-h-[34px]">
+                            <div class="flex flex-wrap gap-0.5 justify-center min-h-[34px]">
                                 ${getRaciStakeholderChipsHTML(index, 'a', normalizeStakeholderField(row.a))}
                             </div>
                         </div>
@@ -3161,7 +3027,7 @@
                         <div class="text-xs font-semibold text-gray-600 mb-1 text-center">C</div>
                         <div class="space-y-1.5">
                             ${getRaciStakeholderSearchFieldHTML(index, 'c')}
-                            <div class="space-y-1 min-h-[34px]">
+                            <div class="flex flex-wrap gap-0.5 justify-center min-h-[34px]">
                                 ${getRaciStakeholderChipsHTML(index, 'c', normalizeStakeholderField(row.c))}
                             </div>
                         </div>
@@ -3170,7 +3036,7 @@
                         <div class="text-xs font-semibold text-gray-600 mb-1 text-center">I</div>
                         <div class="space-y-1.5">
                             ${getRaciStakeholderSearchFieldHTML(index, 'i')}
-                            <div class="space-y-1 min-h-[34px]">
+                            <div class="flex flex-wrap gap-0.5 justify-center min-h-[34px]">
                                 ${getRaciStakeholderChipsHTML(index, 'i', normalizeStakeholderField(row.i))}
                             </div>
                         </div>
@@ -3430,23 +3296,23 @@
                 <td class="px-3 py-2 align-top border-r border-gray-200">
                     ${getCommunicationAudienceSearchFieldHTML(index)}
                     <div class="mt-2 min-h-[32px]">
-                        <div class="space-y-1">
+                        <div class="flex flex-wrap gap-1">
                             ${getCommunicationAudienceChipsHTML(index, normalizeStakeholderField(row.audience))}
                         </div>
                     </div>
                 </td>
-                <td class="w-36 px-3 py-2 align-top border-r border-gray-200">
+                <td class="px-3 py-2 align-top border-r border-gray-200">
                     <select onchange="updateCommunicationPlanField(${index}, 'channel', this.value)" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white focus:outline-none">
                         ${getOptionsHTML(communicationChannelOptions, row.channel)}
                     </select>
                 </td>
-                <td class="w-36 px-3 py-2 align-top border-r border-gray-200">
+                <td class="px-3 py-2 align-top border-r border-gray-200">
                     <select onchange="updateCommunicationPlanField(${index}, 'frequency', this.value)" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white focus:outline-none">
                         ${getOptionsHTML(communicationFrequencyOptions, row.frequency)}
                     </select>
                 </td>
                 <td class="px-2 py-2 text-center align-top">
-                    <button onclick="removeCommunicationPlanRow(${index})" class="text-red-400 hover:text-red-600" title="Remover linha">
+                    <button onclick="removeCommunicationPlanRow(${index})" class="text-gray-400 hover:text-red-600" title="Remover linha">
                         <i class="fa-solid fa-trash"></i>
                     </button>
                 </td>
@@ -3774,7 +3640,6 @@
         document.querySelectorAll('.wbs-subtask').forEach((subtask) => initTaskControls(subtask));
 
         seedMockMilestones();
-        bindPanelHeaderToggle();
 
         document.querySelectorAll('.milestone-card').forEach((milestoneCard) => {
             const addTaskButton = milestoneCard.querySelector('button[onclick="addMilestoneTask(this)"]');
