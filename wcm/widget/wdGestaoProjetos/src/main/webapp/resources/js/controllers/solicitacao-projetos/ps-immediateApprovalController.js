@@ -626,6 +626,9 @@ const immediateApprovalController = {
         cardData: this.collectImmediateCardData()
       });
       this.showToast('Rascunho salvo', 'As alteracoes foram salvas com sucesso.', 'success');
+      setTimeout(() => {
+        location.hash = '#dashboard';
+      }, 150);
     } catch (error) {
       console.error('[immediateApproval] Error saving draft:', error);
       this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.', 'error');
