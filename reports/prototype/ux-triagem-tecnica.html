@@ -377,7 +377,7 @@
                 <div id="tab-content-decisao" class="triagem-tab-content hidden">
                 
                 <div class="mb-8 p-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Execução do Projeto</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Execução do Projeto <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                         <label class="relative cursor-pointer">
@@ -404,10 +404,10 @@
                 </div>
 
                 <div class="mb-8 p-6">
-                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Motivo da Decisão *</h3>
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Motivo da Decisão <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></h3>
                     
                     <div class="mb-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Categoria</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Categoria <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
                         <select id="motivo-categoria" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                             <option value="">Selecione uma categoria</option>
                             <option value="capacidade">Capacidade da Equipe</option>
@@ -420,13 +420,13 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição *</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Descrição <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
                         <textarea id="motivo-descricao" rows="3" required placeholder="Descreva o motivo da decisão..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
                     </div>
                 </div>
 
                 <div class="mb-8 p-6">
-                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Capacidade e Janela</h3>
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Capacidade e Janela <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -445,7 +445,7 @@
                             </div>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Data Desejada de Início</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Data Desejada de Início <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
                             <input type="date" required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                         </div>
                     </div>
@@ -482,18 +482,18 @@
                 <div id="external-section" class="mb-8 hidden p-6">
                     <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
                         <i class="fa-solid fa-building mr-2 text-bevap-gold"></i>
-                        Informações para Execução Externa
+                        Informações para Execução Externa <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span>
                     </h3>
                     
                     <div class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Fornecedor Recomendado</label>
-                                <input type="text" placeholder="Nome do fornecedor ou 'A definir'" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Fornecedor Recomendado <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
+                                <input type="text" required placeholder="Nome do fornecedor ou 'A definir'" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                             </div>
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Contratação</label>
-                                <select class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de Contratação <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
+                                <select required class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                                     <option value="">Selecione</option>
                                     <option value="licitacao">Licitação</option>
                                     <option value="dispensa">Dispensa</option>
@@ -504,8 +504,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Justificativa para Execução Externa *</label>
-                            <textarea rows="3" placeholder="Explique por que a execução deve ser externa..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Justificativa para Execução Externa <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
+                            <textarea rows="3" required placeholder="Explique por que a execução deve ser externa..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
                         </div>
 
                         <div>

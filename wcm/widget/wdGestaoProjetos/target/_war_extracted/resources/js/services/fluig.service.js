@@ -92,7 +92,7 @@ var fluigService = {
                     return;
                 }
 
-                // Se jÃƒÆ’Ã‚Â¡ vier como array de objetos, mantÃƒÆ’Ã‚Â©m.
+                // Se já vier como array de objetos, mantém.
                 resolve(values);
             } catch (error) {
                 reject(error);
@@ -526,6 +526,15 @@ var fluigService = {
                     await fluigService.updateCard(taskData.parentId || taskData.datasetName || '', documentId, cardData);
                 }
 
+                var attachmentsPayload = '';
+                if (taskData.attachments && Array.isArray(taskData.attachments) && taskData.attachments.length) {
+                    try {
+                        attachmentsPayload = JSON.stringify(taskData.attachments);
+                    } catch (e) {
+                        attachmentsPayload = '';
+                    }
+                }
+
                 var fields = [
                     taskId,
                     numState,
@@ -533,20 +542,13 @@ var fluigService = {
                     '',
                     '14cdc0c0-a710-4412-81dd-d94fe3abe00a',
                     'true',
-                    'true'
+                    'false',
+                    ''
                 ];
 
-                var serializedAttachments = '';
-                if (taskData && taskData.attachments) {
-                    var normalized = fluigService.normalizeProcessAttachments(taskData.attachments);
-                    if (normalized && normalized.length) {
-                        serializedAttachments = JSON.stringify(normalized);
-                    }
-                }
-
-                // O dataset lê anexos em fields[8]
-                if (serializedAttachments) {
-                    fields[8] = serializedAttachments;
+                // O dataset historicamente lê em fields[8] (mantemos o placeholder em fields[7]).
+                if (attachmentsPayload) {
+                    fields.push(attachmentsPayload);
                 }
                 var constraints = [];
 
@@ -676,7 +678,7 @@ var fluigService = {
                     resolve(null);
                 }
             } catch (error) {
-                console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Erro ao consultar dados do card:', error);
+                console.error('Erro ao consultar dados do card:', error);
                 reject(error);
             }
         });
@@ -703,7 +705,7 @@ var fluigService = {
                     resolve(null);
                 }
             } catch (error) {
-                console.error('ÃƒÂ¢Ã‚ÂÃ…â€™ Erro ao consultar atividade do processo:', error);
+                console.error('Erro ao consultar atividade do processo:', error);
                 reject(error);
             }
         });

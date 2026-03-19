@@ -48,6 +48,13 @@ function createDataset(fields, constraints, sortFields) {
         var serviceTaskArray = ECMWorkflowEngine.instantiate('com.totvs.technology.ecm.workflow.ws.ProcessTaskAppointmentDtoArray');
         var serviceAttArray = ECMWorkflowEngine.instantiate('com.totvs.technology.ecm.workflow.ws.ProcessAttachmentDtoArray');
 
+        var workflowObjFactory = null;
+        try {
+            workflowObjFactory = ECMWorkflowEngine.instantiate('com.totvs.technology.ecm.workflow.ws.ObjectFactory');
+        } catch (factoryError) {
+            workflowObjFactory = null;
+        }
+
 
         //Array de colleagueIds da solicitação
         var colleague = serviceObj.createStringArray();
@@ -80,9 +87,49 @@ function createDataset(fields, constraints, sortFields) {
 
         log.warn("Rodando ds Send Task --- terminou CardData")
 
+        if (anexos && anexos.length) {
+            for (var i = 0; i < anexos.length; i++) {
+                var nomeArquivo = anexos[i].fileName ? String(anexos[i].fileName) : "";
+                var conteudoArquivo = anexos[i].fileContent ? String(anexos[i].fileContent) : "";
+
+                if (nomeArquivo === "" || conteudoArquivo === "") {
+                    continue;
+                }
+
+                var attachmentDto = null;
+                var attachment = null;
+
+                try {
+                    if (workflowObjFactory != null) {
+                        attachmentDto = workflowObjFactory.createProcessAttachmentDto();
+                        attachment = workflowObjFactory.createAttachment();
+                    }
+                } catch (factoryItemError) {
+                    attachmentDto = null;
+                    attachment = null;
+                }
+
+                if (attachmentDto == null || attachment == null) {
+                    attachmentDto = ECMWorkflowEngine.instantiate('com.totvs.technology.ecm.workflow.ws.ProcessAttachmentDto');
+                    attachment = ECMWorkflowEngine.instantiate('com.totvs.technology.ecm.workflow.ws.Attachment');
+                }
+
+                var fileBytes = java.util.Base64.getDecoder().decode(
+                    new java.lang.String(conteudoArquivo).getBytes('UTF-8')
+                );
+
+                attachment.setFileName(nomeArquivo);
+                attachment.setFilecontent(fileBytes);
+                attachmentDto.getAttachments().add(attachment);
+                attachmentDto.setDescription(nomeArquivo);
+                attachmentDto.setNewAttach(true);
+                serviceAttArray.getItem().add(attachmentDto);
+            }
+        }
+
         var result2 = service.saveAndSendTask('vflows.ext.vinicius', '}tPHIJifgSx7NT1@', parseInt(1),
-        		parseInt(processInstanceId), parseInt(choosedState), colleague, comments, userId, true, serviceAttArray, 
-        		cardData, serviceTaskArray, false, parseInt(0));       
+			parseInt(processInstanceId), parseInt(choosedState), colleague, comments, userId, true, serviceAttArray, 
+			cardData, serviceTaskArray, false, parseInt(0));       
         
         
         log.warn("Rodando ds Send Task --- Chamou SendTask")
