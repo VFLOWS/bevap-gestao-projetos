@@ -40,7 +40,6 @@ const newSolicitationController = {
     requiredFields: [
       'titulo',
       'coligada',
-      'area',
       'centro-custo',
       'patrocinador',
       'objetivo',
@@ -54,7 +53,6 @@ const newSolicitationController = {
     completionFields: [
       'titulo',
       'coligada',
-      'area',
       'centro-custo',
       'patrocinador',
       'objetivo',
@@ -69,7 +67,6 @@ const newSolicitationController = {
     requiredFieldLabels: {
       titulo: 'Titulo do Projeto',
       coligada: 'Coligada',
-      area: 'Area/Unidade',
       'centro-custo': 'Centro de Custo',
       patrocinador: 'Patrocinador',
       objetivo: 'Objetivo do Projeto',
@@ -83,7 +80,7 @@ const newSolicitationController = {
     checklistSections: [
       {
         step: 1,
-        fields: ['titulo', 'coligada', 'area', 'centro-custo', 'patrocinador', 'objetivo', 'problema', 'beneficios']
+        fields: ['titulo', 'coligada', 'centro-custo', 'patrocinador', 'objetivo', 'problema', 'beneficios']
       },
       {
         step: 2,
@@ -276,12 +273,16 @@ const newSolicitationController = {
 
     const centroCfg = (this._state.tagFilterConfigs || []).find((cfg) => cfg.key === 'centro-custo');
     const centroFilter = this._state.tagFilters && this._state.tagFilters['centro-custo'];
+    const currentCentroCode = String(this.getContainer().find('#cod-centro-custo').val() || '').trim();
+    const shouldPreserveCentroSelection = !finalForce
+      && previousCode === ''
+      && currentCentroCode !== '';
     if (!centroCfg || !centroFilter) {
       return;
     }
 
     // Se a coligada mudou (ou foi limpa), limpa o centro de custo.
-    if (finalForce || previousCode !== coligadaCode) {
+    if ((finalForce || previousCode !== coligadaCode) && !shouldPreserveCentroSelection) {
       if (typeof centroFilter.removeAll === 'function') {
         centroFilter.removeAll();
       }
@@ -1090,7 +1091,6 @@ const newSolicitationController = {
 
     this._state.documentId = currentDocumentId;
     this.setFieldValue('#titulo', row.titulodoprojetoNS);
-<<<<<<< HEAD
     // A partir de agora os campos do card guardam os CODIGOS; a descricao e reidratada via TagInputFilter.
     this.setFieldValue('#cod-coligada', row.ColigadaNS);
     this.setFieldValue('#cod-area', row.areaUnidadeNS);
@@ -1099,10 +1099,6 @@ const newSolicitationController = {
     this.setFieldValue('#coligada', '');
     this.setFieldValue('#area', '');
     this.setFieldValue('#centro-custo', '');
-=======
-    this.setFieldValue('#area', row.areaUnidadeNS);
-    this.setZoomDisplayValue('#centro-custo', '#cod-centro-custo', centroCusto);
->>>>>>> temp
     this.setFieldValue('#patrocinador', row.patrocinadorNS);
     this.setFieldValue('#objetivo', row.objetivodoprojetoNS);
     this.setFieldValue('#problema', row.problemaOportunidadeNS);
