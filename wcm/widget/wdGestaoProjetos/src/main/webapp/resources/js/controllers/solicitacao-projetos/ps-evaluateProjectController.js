@@ -11,6 +11,7 @@ const evaluateProjectController = {
     'objetivodoprojetoNS',
     'problemaOportunidadeNS',
     'beneficiosesperadosNS',
+    'tblBeneficiosEsperadosNS.beneficioEsperadoNS',
     'alinhadobevapNS',
     'prioridadeNS',
     'escopoinicialNS',
@@ -589,6 +590,7 @@ const evaluateProjectController = {
       if (!el.length) return;
       el.val(value === null || value === undefined || value === 'null' ? '' : String(value));
     };
+    const beneficiosEsperados = this.getExpectedBenefitsFromRow(row);
 
     setVal('documentid', row.documentid);
     setVal('estadoProcesso', row.estadoProcesso);
@@ -598,7 +600,8 @@ const evaluateProjectController = {
     setVal('patrocinadorNS', row.patrocinadorNS);
     setVal('objetivodoprojetoNS', row.objetivodoprojetoNS);
     setVal('problemaOportunidadeNS', row.problemaOportunidadeNS);
-    setVal('beneficiosesperadosNS', row.beneficiosesperadosNS);
+    setVal('beneficiosesperadosNS', beneficiosEsperados.join('\n'));
+    setVal('tblBeneficiosEsperadosNS', row.tblBeneficiosEsperadosNS);
     setVal('escopoinicialNS', row.escopoinicialNS);
     setVal('foradeescopoNS', row.foradeescopoNS);
     setVal('dependenciasNS', row.dependenciasNS);
@@ -1131,6 +1134,30 @@ const evaluateProjectController = {
       console.warn('[evaluateProject] Invalid child table JSON:', error);
       return [];
     }
+  },
+
+  getExpectedBenefitsFromRow: function (row) {
+    const fromTable = this.parseTableJson(row && row.tblBeneficiosEsperadosNS)
+      .map((item) => this.asText(item && item.beneficioEsperadoNS))
+      .filter(Boolean);
+
+    if (fromTable.length) {
+      return fromTable;
+    }
+
+    const legacy = this.asText(row && row.beneficiosesperadosNS);
+    if (!legacy) {
+      return [];
+    }
+
+    if (legacy.indexOf('\n') === -1 && legacy.indexOf('\r') === -1) {
+      return [legacy];
+    }
+
+    return legacy
+      .split(/\r?\n/)
+      .map((item) => this.asText(item))
+      .filter(Boolean);
   },
 
   asText: function (value) {
