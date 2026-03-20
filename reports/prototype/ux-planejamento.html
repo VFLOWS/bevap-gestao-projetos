@@ -835,6 +835,27 @@
     </div>
 </div>
 
+<div id="conclude-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fa-solid fa-check-circle text-bevap-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Conclusão</h3>
+        </div>
+        <p class="text-gray-700 mb-6">Você está concluindo o planejamento do projeto <strong>PRJ-2026-033 • Implantar SSO corporativo</strong>.</p>
+        <p class="text-sm text-gray-600 mb-6">Ao confirmar, o projeto seguirá para <strong>Execução do Projeto</strong>.</p>
+        <div class="flex justify-end space-x-3">
+            <button onclick="closeConcludeModal()" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button onclick="confirmConcludePlanning()" class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                Confirmar Conclusão
+            </button>
+        </div>
+    </div>
+</div>
+
 <div id="delete-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-md shadow-lg max-w-sm w-full p-4">
         <p id="delete-modal-message" class="text-sm text-gray-700 mb-4">Confirmar exclusão?</p>
@@ -3750,7 +3771,19 @@
     }
 
     function concludePlanning() {
-        alert('Planejamento concluído com sucesso!');
+        document.getElementById('conclude-modal').classList.remove('hidden');
+    }
+
+    function closeConcludeModal() {
+        document.getElementById('conclude-modal').classList.add('hidden');
+    }
+
+    function confirmConcludePlanning() {
+        closeConcludeModal();
+        showToast('Planejamento concluído! O projeto seguirá para Execução do Projeto.', 'success');
+        setTimeout(() => {
+            window.open('http://127.0.0.1:5500/reports/prototype/ux-execucao-projeto.html', '_blank');
+        }, 1200);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
