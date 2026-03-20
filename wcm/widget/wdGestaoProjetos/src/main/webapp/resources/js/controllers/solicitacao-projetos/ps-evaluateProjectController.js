@@ -619,42 +619,65 @@ const evaluateProjectController = {
 
   fillEvaluateFieldsFromRow: function (row) {
     const root = this.getContainer();
-    const setTextarea = (selector, value) => {
+    const setTextarea = (selector, value, blockIndex) => {
       const field = root.find(selector).first();
       if (field.length) {
         field.val(this.asText(value));
+        return;
+      }
+
+      const fallbackField = this.getAnalysisFieldBlocks().eq(blockIndex).find('textarea').first();
+      if (fallbackField.length) {
+        fallbackField.val(this.asText(value));
       }
     };
-    const setNumber = (selector, value) => {
+    const setNumber = (selector, value, inputIndex) => {
       const field = root.find(selector).first();
       if (field.length) {
         field.val(this.asText(value));
+        return;
+      }
+
+      const fallbackField = this.getAnalysisFieldBlocks()
+        .eq(2)
+        .find('input[type="number"]')
+        .eq(inputIndex || 0);
+      if (fallbackField.length) {
+        fallbackField.val(this.asText(value));
       }
     };
 
     root.find('input[name="viabilidade"]').prop('checked', false)
       .filter(`[value="${this.asText(row.visibilidadetecnicaAPTI)}"]`).prop('checked', true);
-    setTextarea('#alternatives-considered-input', row.alternativasconsideradasAPTI);
-    setNumber('#estimated-hours-input', row.esforcoestimadohorasAPTI);
-    setNumber('#estimated-points-input', row.esforcoestimadopontosAPTI);
-    setTextarea('#technical-dependencies-input', row.dependenciastecnicasAPTI);
-    setTextarea('#analysis-observations-input', row.observacoesdaanaliseAPTI);
+    setTextarea('#alternatives-considered-input', row.alternativasconsideradasAPTI, 1);
+    setNumber('#estimated-hours-input', row.esforcoestimadohorasAPTI, 0);
+    setNumber('#estimated-points-input', row.esforcoestimadopontosAPTI, 1);
+    setTextarea('#technical-dependencies-input', row.dependenciastecnicasAPTI, 4);
+    setTextarea('#analysis-observations-input', row.observacoesdaanaliseAPTI, 5);
 
-    this.setChecklistFieldValue('#objective-defined-check', row.objetivoClaramenteDefinidoAPTI);
-    this.setChecklistFieldValue('#scope-delimited-check', row.escopoBemDelimitadoAPTI);
-    this.setChecklistFieldValue('#documentation-adequate-check', row.documentacaoTecnicaAdeqAPTI);
-    this.setChecklistFieldValue('#sponsor-identified-check', row.patrocinadoridentificadoAPTI);
-    this.setChecklistFieldValue('#strategic-alignment-check', row.alinhEstratConfAPTI);
-    this.setChecklistFieldValue('#technical-resources-check', row.recursosTecDispAPTI);
-    this.setChecklistFieldValue('#essential-attachments-check', row.anexosessenciaispresentesAPTI);
+    this.setChecklistFieldValue('#objective-defined-check', row.objetivoClaramenteDefinidoAPTI, 0);
+    this.setChecklistFieldValue('#scope-delimited-check', row.escopoBemDelimitadoAPTI, 1);
+    this.setChecklistFieldValue('#documentation-adequate-check', row.documentacaoTecnicaAdeqAPTI, 2);
+    this.setChecklistFieldValue('#sponsor-identified-check', row.patrocinadoridentificadoAPTI, 3);
+    this.setChecklistFieldValue('#strategic-alignment-check', row.alinhEstratConfAPTI, 4);
+    this.setChecklistFieldValue('#technical-resources-check', row.recursosTecDispAPTI, 5);
+    this.setChecklistFieldValue('#essential-attachments-check', row.anexosessenciaispresentesAPTI, 6);
     this.renderIdentifiedRisks(row.tblRiscosIdentificadosAPTI);
     this.updateChecklistProgress();
   },
 
-  setChecklistFieldValue: function (selector, value) {
+  setChecklistFieldValue: function (selector, value, index) {
+    const shouldCheck = this.parseBooleanLike(value) === true;
     const field = this.getContainer().find(selector).first();
-    if (!field.length) return;
-    field.prop('checked', this.parseBooleanLike(value) === true);
+    if (field.length) {
+      field.prop('checked', shouldCheck);
+      return;
+    }
+
+    const fallbackField = this.getContainer().find('#tab-content-checklist input[type="checkbox"]').eq(index);
+    if (fallbackField.length) {
+      fallbackField.prop('checked', shouldCheck);
+    }
   },
 
   renderIdentifiedRisks: function (value) {
@@ -1005,6 +1028,9 @@ const evaluateProjectController = {
         taskFields: this.collectEvaluateTaskFields()
       });
       this.showToast('Rascunho salvo', 'As alteracoes foram salvas com sucesso.', 'success');
+      setTimeout(() => {
+        location.hash = '#dashboard';
+      }, 150);
     } catch (error) {
       console.error('[evaluateProject] Error saving draft:', error);
       this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.', 'error');

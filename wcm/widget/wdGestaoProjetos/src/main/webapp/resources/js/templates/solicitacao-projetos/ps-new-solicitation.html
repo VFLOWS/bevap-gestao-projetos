@@ -68,10 +68,10 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Área/Unidade <span class="text-red-500">*</span>
+                                Área/Unidade
                             </label>
                             <div id="area-tag-filter"></div>
-                            <input type="hidden" id="area" name="area" class="field-input" data-field="area" required>
+                            <input type="hidden" id="area" name="area" class="field-input" data-field="area">
                             <input type="hidden" id="cod-area" name="cod-area">
                         </div>
                     </div>
@@ -293,7 +293,7 @@
             <div class="sticky top-24 space-y-4">
                 
                 <div id="summary-card" class="bg-white rounded-lg shadow-md p-5">
-                    <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                    <h3 id="summary-card-title" class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
                         <i class="fa-solid fa-clipboard-list mr-2 text-bevap-gold"></i>
                         Resumo da Solicitação
                     </h3>
@@ -357,8 +357,8 @@
                     <div class="flex items-start">
                         <i class="fa-solid fa-lightbulb text-blue-500 mt-1 mr-3"></i>
                         <div class="text-sm text-blue-800">
-                            <p class="font-medium mb-1">Dica</p>
-                            <p class="text-xs">Preencha todos os campos obrigatórios para enviar sua solicitação. Seus dados são salvos automaticamente.</p>
+                            <p id="context-tip-title" class="font-medium mb-1">Dica</p>
+                            <p id="context-tip-message" class="text-xs">Preencha todos os campos obrigatórios para enviar sua solicitação. Seus dados são salvos automaticamente.</p>
                         </div>
                     </div>
                 </div>
@@ -380,7 +380,7 @@
                 <button data-action="cancel-form" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
                     <i class="fa-solid fa-ban mr-2"></i> Cancelar
                 </button>
-                <button data-action="submit-form" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
+                <button id="submit-form-button" data-action="submit-form" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
                     <i class="fa-solid fa-paper-plane mr-2"></i> Enviar para Avaliação TI
                 </button>
             </div>
@@ -393,8 +393,8 @@
         <div class="w-20 h-20 bg-bevap-green rounded-full flex items-center justify-center mx-auto mb-6">
             <i class="fa-solid fa-check text-white text-4xl"></i>
         </div>
-        <h2 class="text-3xl font-montserrat font-bold text-bevap-navy mb-3">Solicitação Enviada!</h2>
-        <p class="text-gray-600 mb-6">Sua solicitação foi enviada com sucesso e será avaliada pela equipe de TI.</p>
+        <h2 id="success-modal-title" class="text-3xl font-montserrat font-bold text-bevap-navy mb-3">Solicitação Enviada!</h2>
+        <p id="success-modal-message" class="text-gray-600 mb-6">Sua solicitação foi enviada com sucesso e será avaliada pela equipe de TI.</p>
         
         <div class="bg-gray-50 rounded-lg p-4 mb-6 text-left">
             <div class="flex items-center mb-2">
@@ -403,7 +403,7 @@
             </div>
             <div class="flex items-center text-sm text-gray-600">
                 <i class="fa-solid fa-arrow-right text-bevap-green mr-2"></i>
-                <span>TI – Avaliar Projeto</span>
+                <span id="success-modal-next-step">TI – Avaliar Projeto</span>
             </div>
         </div>
 
@@ -427,7 +427,7 @@
             </div>
             <h2 class="text-2xl font-montserrat font-bold text-bevap-navy ml-4">Campos Obrigatórios</h2>
         </div>
-        <p class="text-gray-600 mb-4">Por favor, preencha todos os campos obrigatórios marcados com <span class="text-red-500 font-semibold">*</span> antes de enviar sua solicitação.</p>
+        <p id="validation-modal-message" class="text-gray-600 mb-4">Por favor, preencha todos os campos obrigatórios marcados com <span class="text-red-500 font-semibold">*</span> antes de enviar sua solicitação.</p>
         
         <div id="missing-fields" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
             <!-- Campos faltantes serão listados aqui -->

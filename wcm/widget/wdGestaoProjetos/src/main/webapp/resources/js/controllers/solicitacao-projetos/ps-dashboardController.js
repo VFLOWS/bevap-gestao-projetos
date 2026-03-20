@@ -138,6 +138,8 @@ const dashboardController = {
           ? 'Abrir Triagem'
         : actionConfig.route === 'committeeApproval'
           ? 'Abrir Comitê'
+        : actionConfig.route === 'correction'
+          ? 'Corrigir Agora'
         : actionConfig.route === 'newSolicitation'
           ? 'Continuar Rascunho'
         : actionConfig.enabled
@@ -230,6 +232,14 @@ const dashboardController = {
         enabled: true,
         route: 'evaluateProject',
         label: 'Avaliar Agora'
+      };
+    }
+
+    if (activity === 15) {
+      return {
+        enabled: true,
+        route: 'correction',
+        label: 'Corrigir Agora'
       };
     }
 
