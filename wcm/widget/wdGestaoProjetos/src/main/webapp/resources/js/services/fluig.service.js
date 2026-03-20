@@ -341,7 +341,6 @@ var fluigService = {
             { formField: "patrocinador", fluigField: "patrocinadorNS" },
             { formField: "objetivo", fluigField: "objetivodoprojetoNS" },
             { formField: "problema", fluigField: "problemaOportunidadeNS" },
-            { formField: "beneficios", fluigField: "beneficiosesperadosNS" },
             { formField: "prioridade", fluigField: "prioridadeNS" },
             { formField: "escopo-inicial", fluigField: "escopoinicialNS" },
             { formField: "out-of-scope", fluigField: "foradeescopoNS" },
@@ -354,6 +353,7 @@ var fluigService = {
         });
 
         cardData.alinhadobevapNS = self.asBooleanString(formData.alinhamento);
+        cardData.beneficiosesperadosNS = self.normalizeRows(formData.beneficiosEsperados).join("\n");
         cardData.anexosNS = JSON.stringify(
             self.normalizeAttachmentMetadata(formData.attachmentsMetadata || formData.attachments)
         );
@@ -364,6 +364,10 @@ var fluigService = {
 
         self.normalizeRows(formData.riscosIniciais).forEach(function (value, index) {
             cardData["riscoPotencialNS___" + (index + 1)] = value;
+        });
+
+        self.normalizeRows(formData.beneficiosEsperados).forEach(function (value, index) {
+            cardData["beneficioEsperadoNS___" + (index + 1)] = value;
         });
 
         self.normalizeRows(formData.stakeholders).forEach(function (value, index) {

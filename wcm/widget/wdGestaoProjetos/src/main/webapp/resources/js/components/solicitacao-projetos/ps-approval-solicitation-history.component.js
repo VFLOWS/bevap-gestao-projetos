@@ -12,6 +12,7 @@
     'objetivodoprojetoNS',
     'problemaOportunidadeNS',
     'beneficiosesperadosNS',
+    'tblBeneficiosEsperadosNS.beneficioEsperadoNS',
     'alinhadobevapNS',
     'prioridadeNS',
     'escopoinicialNS',
@@ -157,6 +158,34 @@
     }).join('');
   }
 
+  function renderExpectedBenefits(items) {
+    if (!items.length) {
+      return '<div class="text-sm text-gray-500">Nenhum benefício informado.</div>';
+    }
+
+    return items.map((item) => {
+      return `
+        <div class="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-gray-700">
+          ${escapeHtml(item)}
+        </div>
+      `;
+    }).join('');
+  }
+
+  function parseLegacyExpectedBenefits(value) {
+    const text = asText(value);
+    if (!text) return [];
+
+    if (text.indexOf('\n') === -1 && text.indexOf('\r') === -1) {
+      return [text];
+    }
+
+    return text
+      .split(/\r?\n/)
+      .map((item) => asText(item))
+      .filter(Boolean);
+  }
+
   async function loadSolicitationRow(documentId) {
     const rows = await fluigService.getDatasetRows(DATASET_ID, {
       fields: FIELDS,
@@ -172,18 +201,25 @@
     const objectives = parseTableJson(row.tblObjetivosEstrategicosNS)
       .map((item) => asText(item && item.descricaoobjetivoNS))
       .filter(Boolean);
+    const expectedBenefitsFromTable = parseTableJson(row.tblBeneficiosEsperadosNS)
+      .map((item) => asText(item && item.beneficioEsperadoNS))
+      .filter(Boolean);
     const risks = parseTableJson(row.tblRiscosIniciaisNS)
       .map((item) => asText(item && item.riscoPotencialNS))
       .filter(Boolean);
     const stakeholders = parseTableJson(row.tblStakeholdersNS)
       .map((item) => asText(item && item.valorstakeholdersNS))
       .filter(Boolean);
+    const expectedBenefits = expectedBenefitsFromTable.length
+      ? expectedBenefitsFromTable
+      : parseLegacyExpectedBenefits(row.beneficiosesperadosNS);
     const priority = getPriorityInfo(row.prioridadeNS);
     const isAligned = parseBooleanLike(row.alinhadobevapNS) === true;
 
     return {
       row,
       objectives,
+      expectedBenefits,
       risks,
       stakeholders,
       priority,
@@ -194,6 +230,7 @@
   function renderHtml(model) {
     const row = model.row;
     const objectives = model.objectives;
+    const expectedBenefits = model.expectedBenefits;
     const risks = model.risks;
     const stakeholders = model.stakeholders;
     const priority = model.priority;
@@ -237,7 +274,16 @@
 
         ${renderTextCard('fa-solid fa-bullseye text-bevap-green', 'Objetivo do Projeto', row.objetivodoprojetoNS)}
         ${renderTextCard('fa-solid fa-circle-exclamation text-bevap-gold', 'Problema/Oportunidade', row.problemaOportunidadeNS)}
-        ${renderTextCard('fa-solid fa-chart-line text-bevap-green', 'Beneficios Esperados', row.beneficiosesperadosNS)}
+
+        <div class="p-5 bg-white border border-gray-200 rounded-lg">
+          <div class="flex items-center mb-3">
+            <i class="fa-solid fa-chart-line text-bevap-green mr-2"></i>
+            <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Beneficios Esperados</h3>
+          </div>
+          <div class="space-y-2">
+            ${renderExpectedBenefits(expectedBenefits)}
+          </div>
+        </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           ${renderTextCard('fa-solid fa-list-check text-bevap-navy', 'Escopo Inicial', row.escopoinicialNS)}

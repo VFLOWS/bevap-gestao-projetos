@@ -6,6 +6,8 @@ patrocinadorNS
 objetivodoprojetoNS
 problemaOportunidadeNS
 beneficiosesperadosNS
+-tblBeneficiosEsperadosNS (PAI x FILHO)
+ - beneficioEsperadoNS (CAMPO PAIxFILHO)
 alinhadobevapNS
 -tblObjetivosEstrategicosNS (PAI x FILHO)
  - descricaoobjetivoNS (CAMPO PAIxFILHO)

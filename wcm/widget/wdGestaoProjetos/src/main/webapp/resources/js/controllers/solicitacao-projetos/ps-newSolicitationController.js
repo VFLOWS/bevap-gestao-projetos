@@ -24,6 +24,7 @@ const newSolicitationController = {
     'objetivodoprojetoNS',
     'problemaOportunidadeNS',
     'beneficiosesperadosNS',
+    'tblBeneficiosEsperadosNS.beneficioEsperadoNS',
     'alinhadobevapNS',
     'prioridadeNS',
     'escopoinicialNS',
@@ -138,6 +139,7 @@ const newSolicitationController = {
     this.onColigadaChanged(true);
     this._state.currentStep = 1;
     this._state.attachments = [];
+    this.renderExpectedBenefits(['']);
     this.updateStepper();
     this.updateChecklist();
     this.toggleStrategicObjectives();
@@ -434,6 +436,16 @@ const newSolicitationController = {
       this.updateChecklist();
     });
 
+    container.on(`click${ns}`, '[data-action="add-expected-benefit"]', (event) => {
+      event.preventDefault();
+      this.addExpectedBenefit();
+    });
+
+    container.on(`click${ns}`, '[data-action="remove-expected-benefit"]', (event) => {
+      event.preventDefault();
+      this.removeExpectedBenefit(event.currentTarget);
+    });
+
     container.on(`click${ns}`, '[data-action="add-strategic-objective"]', (event) => {
       event.preventDefault();
       this.addStrategicObjective();
@@ -577,12 +589,17 @@ const newSolicitationController = {
     return String(field.val() || '').trim() !== '';
   },
 
+  isFieldIdFilled: function (fieldId) {
+    if (fieldId === 'beneficios') {
+      return this.collectExpectedBenefits().length > 0;
+    }
+
+    return this.isFieldFilled(this.getField(fieldId));
+  },
+
   validateForm: function () {
     return this._constants.requiredFields.reduce((missing, fieldId) => {
-      const field = this.getField(fieldId);
-      if (!field) return missing;
-
-      if (!this.isFieldFilled(field)) {
+      if (!this.isFieldIdFilled(fieldId)) {
         missing.push(this._constants.requiredFieldLabels[fieldId] || fieldId);
       }
 
@@ -614,7 +631,7 @@ const newSolicitationController = {
     const allCompleted = { 1: false, 2: false, 3: false };
 
     this._constants.checklistSections.forEach((section) => {
-      const sectionCompleted = section.fields.every((fieldId) => this.isFieldFilled(this.getField(fieldId)));
+      const sectionCompleted = section.fields.every((fieldId) => this.isFieldIdFilled(fieldId));
       allCompleted[section.step] = sectionCompleted;
     });
 
@@ -636,7 +653,7 @@ const newSolicitationController = {
 
     const totalRequired = this._constants.completionFields.length;
     const filledRequired = this._constants.completionFields.reduce((count, fieldId) => {
-      return count + (this.isFieldFilled(this.getField(fieldId)) ? 1 : 0);
+      return count + (this.isFieldIdFilled(fieldId) ? 1 : 0);
     }, 0);
 
     const progress = totalRequired > 0 ? Math.round((filledRequired / totalRequired) * 100) : 0;
@@ -727,6 +744,43 @@ const newSolicitationController = {
     `);
 
     this.updateChecklist();
+  },
+
+  getExpectedBenefitMarkup: function (value) {
+    return `
+      <div class="expected-benefit-item flex items-center gap-2 p-3 bg-white border border-green-200 rounded-lg">
+        <input type="text" placeholder="Descreva um beneficio esperado..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="beneficios" value="${this.escapeHtml(value)}">
+        <button data-action="remove-expected-benefit" class="text-red-500 hover:text-red-700">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+    `;
+  },
+
+  addExpectedBenefit: function () {
+    const list = this.getContainer().find('#beneficios-list');
+    if (!list.length) return;
+
+    list.append(this.getExpectedBenefitMarkup(''));
+    this.updateChecklist();
+    this.updateSummaryDetails();
+  },
+
+  removeExpectedBenefit: function (trigger) {
+    const list = this.getContainer().find('#beneficios-list');
+    if (!list.length) return;
+
+    const item = $(trigger).closest('.expected-benefit-item');
+    if (!item.length) return;
+
+    if (list.children('.expected-benefit-item').length <= 1) {
+      this.renderExpectedBenefits(['']);
+    } else {
+      item.remove();
+    }
+
+    this.updateChecklist();
+    this.updateSummaryDetails();
   },
 
   toggleStrategicObjectives: function () {
@@ -944,6 +998,14 @@ const newSolicitationController = {
     }).join(''));
   },
 
+  renderExpectedBenefits: function (items) {
+    const list = this.getContainer().find('#beneficios-list');
+    if (!list.length) return;
+
+    const rows = (items || []).length ? items : [''];
+    list.html(rows.map((value) => this.getExpectedBenefitMarkup(value)).join(''));
+  },
+
   renderStakeholderList: function (items) {
     const list = this.getContainer().find('#stakeholders-list');
     if (!list.length) return;
@@ -1022,6 +1084,20 @@ const newSolicitationController = {
       .filter(Boolean);
   },
 
+  normalizeExpectedBenefitsFromLegacyField: function (value) {
+    const text = this.asText(value);
+    if (!text) return [];
+
+    if (text.indexOf('\n') === -1 && text.indexOf('\r') === -1) {
+      return [text];
+    }
+
+    return text
+      .split(/\r?\n/)
+      .map((item) => this.asText(item))
+      .filter(Boolean);
+  },
+
   setZoomDisplayValue: function (inputSelector, hiddenSelector, value) {
     const finalValue = this.asText(value);
     const container = this.getContainer();
@@ -1076,6 +1152,9 @@ const newSolicitationController = {
     const objectives = this.parseTableJson(row.tblObjetivosEstrategicosNS)
       .map((item) => this.asText(item && item.descricaoobjetivoNS))
       .filter(Boolean);
+    const expectedBenefitsFromDataset = this.parseTableJson(row.tblBeneficiosEsperadosNS)
+      .map((item) => this.asText(item && item.beneficioEsperadoNS))
+      .filter(Boolean);
     const risks = this.parseTableJson(row.tblRiscosIniciaisNS)
       .map((item) => this.asText(item && item.riscoPotencialNS))
       .filter(Boolean);
@@ -1085,6 +1164,9 @@ const newSolicitationController = {
     const stakeholders = stakeholdersFromDataset.length
       ? stakeholdersFromDataset
       : this.normalizeStringArray(cachedUiState.stakeholders);
+    const expectedBenefits = expectedBenefitsFromDataset.length
+      ? expectedBenefitsFromDataset
+      : this.normalizeExpectedBenefitsFromLegacyField(row.beneficiosesperadosNS);
     const attachments = this.parseAttachmentMetadata(row.anexosNS);
     const centroCusto = this.asText(row.centrodecustoNS) || this.asText(cachedUiState["centro-custo"]);
     const declaracao = cachedUiState.declaracao === true;
@@ -1102,7 +1184,6 @@ const newSolicitationController = {
     this.setFieldValue('#patrocinador', row.patrocinadorNS);
     this.setFieldValue('#objetivo', row.objetivodoprojetoNS);
     this.setFieldValue('#problema', row.problemaOportunidadeNS);
-    this.setFieldValue('#beneficios', row.beneficiosesperadosNS);
     this.getContainer().find('#alinhamento').prop('checked', this.asText(row.alinhadobevapNS) === 'true');
     this.getContainer().find('input[name="prioridade"]').filter((index, element) => {
       return this.asText($(element).val()) === this.asText(row.prioridadeNS);
@@ -1114,6 +1195,7 @@ const newSolicitationController = {
     this.getContainer().find('#declaracao').prop('checked', declaracao);
 
     this.renderStrategicObjectives(objectives);
+    this.renderExpectedBenefits(expectedBenefits);
     this.renderInitialRisks(risks);
     this.renderStakeholderList(stakeholders);
     this.restorePersistedAttachments(attachments);
@@ -1242,6 +1324,16 @@ const newSolicitationController = {
     }).filter((attachment) => attachment.fileName);
   },
 
+  collectExpectedBenefits: function () {
+    return this.getContainer()
+      .find('#beneficios-list [data-field="beneficios"]')
+      .map(function () {
+        return String($(this).val() || '').trim();
+      })
+      .get()
+      .filter((value) => value !== '');
+  },
+
   buildSubmissionPayload: async function () {
     const container = this.getContainer();
     const getValue = (selector) => String(container.find(selector).val() || "").trim();
@@ -1268,6 +1360,7 @@ const newSolicitationController = {
       })
       .get()
       .filter(value => value !== "");
+    const beneficiosEsperados = this.collectExpectedBenefits();
 
     const attachments = await this.collectAttachmentsPayload();
     const attachmentsMetadata = this.buildAttachmentMetadata();
@@ -1281,7 +1374,7 @@ const newSolicitationController = {
       patrocinador: getValue("#patrocinador"),
       objetivo: getValue("#objetivo"),
       problema: getValue("#problema"),
-      beneficios: getValue("#beneficios"),
+      beneficiosEsperados: beneficiosEsperados,
       alinhamento: getChecked("#alinhamento"),
       prioridade: String(container.find('input[name="prioridade"]:checked').val() || "").trim(),
       "escopo-inicial": getValue("#escopo-inicial"),
