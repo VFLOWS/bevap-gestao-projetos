@@ -128,24 +128,35 @@
           </div>
 
           <div class="mb-8 p-6">
-            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Riscos e Dependências</h3>
+            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Riscos &amp; Dependências</h3>
 
-            <div class="space-y-4">
+            <div class="grid grid-cols-1 gap-6">
               <div>
-                <div id="risks-list" class="space-y-2 mb-3"></div>
-                <button data-action="add-risk" class="text-sm text-bevap-green hover:text-green-700 font-medium">
-                  <i class="fa-solid fa-plus mr-1"></i> Adicionar Risco / Dependência
-                </button>
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-lg font-semibold text-bevap-navy">Matriz de Riscos</h4>
+                  <button type="button" data-action="add-risk-matrix" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                    <i class="fa-solid fa-plus mr-2"></i>
+                    Adicionar
+                  </button>
+                </div>
+
+                <div id="risk-matrix-list" class="space-y-3"></div>
+                <div id="risk-matrix-empty" class="text-sm text-gray-500 hidden">Nenhum risco informado.</div>
+              </div>
+
+              <div>
+                <div class="flex items-center justify-between mb-4">
+                  <h4 class="text-lg font-semibold text-bevap-navy">Dependências Internas/Externas</h4>
+                  <button type="button" data-action="add-dependency" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                    <i class="fa-solid fa-plus mr-2"></i>
+                    Adicionar
+                  </button>
+                </div>
+
+                <div id="dependencies-list" class="space-y-3"></div>
+                <div id="dependencies-empty" class="text-sm text-gray-500 hidden">Nenhuma dependência informada.</div>
               </div>
             </div>
-          </div>
-
-          <div id="external-section" class="mb-8 hidden p-6">
-            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
-              <i class="fa-solid fa-building mr-2 text-bevap-gold"></i>
-              Informações para Execução Externa <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span>
-            </h3>
-
             <div class="space-y-6">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>

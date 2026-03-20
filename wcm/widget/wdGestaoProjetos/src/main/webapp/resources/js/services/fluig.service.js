@@ -530,7 +530,7 @@ var fluigService = {
                     taskId,
                     numState,
                     '14cdc0c0-a710-4412-81dd-d94fe3abe00a',
-                    '',
+                    taskData && taskData.comments !== null && taskData.comments !== undefined ? String(taskData.comments) : '',
                     '14cdc0c0-a710-4412-81dd-d94fe3abe00a',
                     'true',
                     'true'

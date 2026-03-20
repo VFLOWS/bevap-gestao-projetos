@@ -175,6 +175,23 @@
       const ns = '.gpTabs' + String(Date.now()) + String(Math.floor(Math.random() * 100000));
       $root.data('gpTabsNs', ns);
 
+      const $scroller = $root.find('[data-tabs-scroll]').first();
+      const updateScrollArrows = this._createScrollArrowUpdater($root, $scroller);
+      $root.data('gpTabsScrollUpdate', updateScrollArrows);
+
+      if ($scroller.length) {
+        $scroller.on(`scroll${ns}`, () => {
+          updateScrollArrows();
+        });
+
+        $(window).on(`resize${ns}`, () => {
+          updateScrollArrows();
+        });
+
+        // Estado inicial (depois do paint do DOM)
+        window.setTimeout(updateScrollArrows, 0);
+      }
+
       $root.on(`click${ns}`, '[data-tab]', (event) => {
         event.preventDefault();
         const tabName = String($(event.currentTarget).attr('data-tab') || '').trim();
@@ -182,6 +199,33 @@
 
         this.setActive($root, tabName, { activeClasses, inactiveClasses, hiddenClass, hideNoticeOnOpen });
         if (onChange) onChange(tabName);
+      });
+
+      // Setas (scroll horizontal) — somente se existir markup no template.
+      $root.on(`click${ns}`, '[data-tabs-scroll-arrow]', (event) => {
+        event.preventDefault();
+        if (!$scroller.length) return;
+
+        const direction = String($(event.currentTarget).attr('data-tabs-scroll-arrow') || '').trim();
+        if (!direction) return;
+
+        const el = $scroller.get(0);
+        if (!el) return;
+
+        const delta = Math.max(120, Math.floor(el.clientWidth * 0.8));
+        const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
+
+        const target = direction === 'left'
+          ? Math.max(0, el.scrollLeft - delta)
+          : Math.min(maxScroll, el.scrollLeft + delta);
+
+        try {
+          el.scrollTo({ left: target, behavior: 'smooth' });
+        } catch (e) {
+          el.scrollLeft = target;
+        }
+
+        window.setTimeout(updateScrollArrows, 360);
       });
 
       const firstTab = String($root.find('[data-tab]').first().attr('data-tab') || '').trim();
@@ -199,8 +243,12 @@
       const ns = $root.data('gpTabsNs');
       if (ns) {
         $root.off(ns);
+        $root.find('[data-tabs-scroll]').off(ns);
+        $(window).off(ns);
         $root.removeData('gpTabsNs');
       }
+
+      $root.removeData('gpTabsScrollUpdate');
     },
 
     setActive: function (rootEl, tabName, options) {
@@ -242,6 +290,55 @@
           $panel.addClass(hiddenClass);
         }
       });
+
+      // Se houver scroller, tenta manter a tab ativa visível.
+      const $scroller = $root.find('[data-tabs-scroll]').first();
+      if ($scroller.length) {
+        const $activeBtn = $root.find(`[data-tab="${tabName}"]`).first();
+        const activeEl = $activeBtn.get(0);
+        if (activeEl && typeof activeEl.scrollIntoView === 'function') {
+          try {
+            activeEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          } catch (e) {
+            // silencioso
+          }
+        }
+
+        const updateScrollArrows = $root.data('gpTabsScrollUpdate');
+        if (typeof updateScrollArrows === 'function') {
+          window.setTimeout(updateScrollArrows, 360);
+        }
+      }
+    },
+
+    _createScrollArrowUpdater: function ($root, $scroller) {
+      const getButton = (direction) => {
+        return $root.find(`[data-tabs-scroll-arrow="${direction}"]`).first();
+      };
+
+      return function () {
+        if (!$scroller || !$scroller.length) return;
+        const el = $scroller.get(0);
+        if (!el) return;
+
+        const maxScroll = Math.max(0, el.scrollWidth - el.clientWidth);
+        const hasOverflow = maxScroll > 2;
+        const atStart = el.scrollLeft <= 2;
+        const atEnd = el.scrollLeft >= maxScroll - 2;
+
+        const $left = getButton('left');
+        const $right = getButton('right');
+
+        if ($left.length) {
+          $left.toggleClass('opacity-0', !hasOverflow || atStart);
+          $left.toggleClass('pointer-events-none', !hasOverflow || atStart);
+        }
+
+        if ($right.length) {
+          $right.toggleClass('opacity-0', !hasOverflow || atEnd);
+          $right.toggleClass('pointer-events-none', !hasOverflow || atEnd);
+        }
+      };
     },
 
     _getAttr: function ($root, name) {

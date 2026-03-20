@@ -272,23 +272,13 @@
                         </div>
 
                         <div>
-                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos Identificados</h3>
-                            <div class="space-y-3">
-                                <div class="flex items-start p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-yellow-200 text-yellow-800 font-medium mr-3">Médio</span>
-                                    <div class="text-sm">
-                                        <div class="font-medium text-gray-900">Disponibilidade de Ambientes</div>
-                                        <p class="text-gray-700 mt-1">Necessário ambiente de homologação dedicado para testes de integração.</p>
-                                    </div>
-                                </div>
-                                <div class="flex items-start p-3 bg-green-50 border border-green-200 rounded-lg">
-                                    <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-green-200 text-green-800 font-medium mr-3">Baixo</span>
-                                    <div class="text-sm">
-                                        <div class="font-medium text-gray-900">Complexidade das APIs</div>
-                                        <p class="text-gray-700 mt-1">APIs GLPI são bem documentadas e equipe já possui experiência.</p>
-                                    </div>
-                                </div>
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos Identificados</h3>
+                                <button type="button" onclick="addRiskItem()" class="inline-flex items-center px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
+                                    <i class="fa-solid fa-plus mr-2"></i>Adicionar risco
+                                </button>
                             </div>
+                            <div id="risks-container" class="space-y-3"></div>
                         </div>
 
                         <div>
@@ -452,29 +442,85 @@
                 </div>
 
                 <div class="mb-8 p-6">
-                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Riscos e Dependências</h3>
-                    
-                    <div class="space-y-4">
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Riscos & Dependências</h3>
+                    <div class="grid grid-cols-1 gap-6">
                         <div>
-                            <div id="risks-list" class="space-y-2 mb-3">
-                                <div class="triagem-risk-item flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
-                                    <input type="text" placeholder="Descreva um risco potencial..." class="flex-1 bg-transparent border-none focus:outline-none text-sm" value="Dependência de atualização do servidor">
-                                    <button onclick="removeRisk(this)" class="text-red-500 hover:text-red-700" title="Remover">
-                                        <i class="fa-solid fa-times"></i>
-                                    </button>
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-bevap-navy">Matriz de Riscos</h4>
+                                <button onclick="addRisk()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fa-solid fa-plus mr-2"></i>
+                                    Adicionar
+                                </button>
+                            </div>
+                            <div id="risk-matrix-list" class="space-y-3">
+                                <div class="border border-red-300 rounded-lg p-4 bg-white">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="font-medium text-red-900">Integração SSO com legado</h5>
+                                        <span class="px-2 py-1 bg-red-200 text-red-900 text-xs rounded">Alto</span>
+                                    </div>
+                                    <div class="text-sm text-red-800 mb-2">Probabilidade: Alta | Impacto: Alto</div>
+                                    <div class="text-sm text-gray-700 mb-2">
+                                        <strong>Mitigação:</strong> Teste antecipado com sistemas legados
+                                    </div>
+                                    <div class="text-sm text-gray-700">
+                                        <strong>Plano B:</strong> Implementação gradual por sistema
+                                    </div>
                                 </div>
-                                <div class="triagem-risk-item flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                                    <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
-                                    <input type="text" placeholder="Descreva um risco potencial..." class="flex-1 bg-transparent border-none focus:outline-none text-sm" value="Validação com área de negócio">
-                                    <button onclick="removeRisk(this)" class="text-red-500 hover:text-red-700" title="Remover">
-                                        <i class="fa-solid fa-times"></i>
-                                    </button>
+                                <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="font-medium text-yellow-800">Disponibilidade da equipe</h5>
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Médio</span>
+                                    </div>
+                                    <div class="text-sm text-yellow-700 mb-2">Probabilidade: Média | Impacto: Médio</div>
+                                    <div class="text-sm text-gray-700 mb-2">
+                                        <strong>Mitigação:</strong> Backup de recursos internos
+                                    </div>
+                                    <div class="text-sm text-gray-700">
+                                        <strong>Plano B:</strong> Extensão de prazo se necessário
+                                    </div>
                                 </div>
                             </div>
-                            <button onclick="addRisk()" class="text-sm text-bevap-green hover:text-green-700 font-medium">
-                                <i class="fa-solid fa-plus mr-1"></i> Adicionar Risco / Dependências
-                            </button>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="text-lg font-semibold text-bevap-navy">Dependências Internas/Externas</h4>
+                                <button onclick="addDependency()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fa-solid fa-plus mr-2"></i>
+                                    Adicionar
+                                </button>
+                            </div>
+                            <div id="external-dependencies-list" class="space-y-3">
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="font-medium text-bevap-navy">Acesso ao Active Directory</h5>
+                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">
+                                            <i class="fa-solid fa-clock mr-1"></i>Pendente
+                                        </span>
+                                    </div>
+                                    <div class="text-sm text-gray-600 mb-1">Responsável: TI Infraestrutura</div>
+                                    <div class="text-sm text-gray-700 mb-1">
+                                        <strong>Mitigação:</strong> Follow-up diário com time de infraestrutura até liberação final
+                                    </div>
+                                    <div class="text-sm text-gray-700">
+                                        <strong>Plano B:</strong> Provisionar acesso temporário via ambiente de homologação espelhado
+                                    </div>
+                                </div>
+                                <div class="border border-gray-200 rounded-lg p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h5 class="font-medium text-bevap-navy">Homologação Segurança</h5>
+                                        <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">
+                                            <i class="fa-solid fa-ban mr-1"></i>Bloqueada
+                                        </span>
+                                    </div>
+                                    <div class="text-sm text-gray-600 mb-1">Responsável: Segurança da Informação</div>
+                                    <div class="text-sm text-gray-700 mb-1">
+                                        <strong>Mitigação:</strong> Escalar aprovação com comitê de segurança e gestor da área
+                                    </div>
+                                    <div class="text-sm text-gray-700">
+                                        <strong>Plano B:</strong> Replanejar rollout por ondas iniciando pelos módulos não críticos
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -879,68 +925,426 @@ function updateTeamCapacity(value) {
     document.getElementById('team-capacity-value').textContent = value + '%';
 }
 
-function initRisksDependencies() {
-    const risksList = document.getElementById('risks-list');
-    if (!risksList) return;
+function addRiskItem() {
+    const container = document.getElementById('risks-container');
+    if (!container) return;
 
-    risksList.querySelectorAll('input').forEach(input => {
-        input.addEventListener('input', ensureEmptyRiskRow);
-        input.addEventListener('change', ensureEmptyRiskRow);
-    });
-
-    ensureEmptyRiskRow();
-}
-
-function createRiskRow(initialValue = '') {
-    const riskDiv = document.createElement('div');
-    riskDiv.className = 'triagem-risk-item flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg';
-    riskDiv.innerHTML = `
-        <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
-        <input type="text" placeholder="Descreva um risco potencial..." class="flex-1 bg-transparent border-none focus:outline-none text-sm">
-        <button onclick="removeRisk(this)" class="text-red-500 hover:text-red-700" title="Remover">
-            <i class="fa-solid fa-times"></i>
-        </button>
+    const riskItem = document.createElement('div');
+    riskItem.className = 'risk-item grid grid-cols-1 md:grid-cols-12 gap-3 items-start p-3 border border-gray-200 rounded-lg bg-gray-50';
+    riskItem.innerHTML = `
+        <div class="md:col-span-3">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Nível de Risco</label>
+            <select class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all text-sm">
+                <option selected value="">Selecione</option>
+                <option value="baixo">Baixo</option>
+                <option value="medio">Médio</option>
+                <option value="alto">Alto</option>
+            </select>
+        </div>
+        <div class="md:col-span-4">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Descrição do Risco</label>
+            <textarea rows="2" placeholder="Descreva o risco técnico identificado..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm"></textarea>
+        </div>
+        <div class="md:col-span-4">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Mitigação</label>
+            <textarea rows="2" placeholder="Descreva a estratégia de mitigação..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm"></textarea>
+        </div>
+        <div class="md:col-span-1 flex md:justify-end md:pt-6">
+            <button type="button" onclick="removeRiskItem(this)" class="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors" title="Remover risco">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
     `;
 
-    const input = riskDiv.querySelector('input');
-    if (input) {
-        input.value = initialValue;
-        input.addEventListener('input', ensureEmptyRiskRow);
-        input.addEventListener('change', ensureEmptyRiskRow);
-    }
-
-    return riskDiv;
+    container.appendChild(riskItem);
 }
 
-function ensureEmptyRiskRow() {
-    const risksList = document.getElementById('risks-list');
-    if (!risksList) return;
+function removeRiskItem(button) {
+    const container = document.getElementById('risks-container');
+    const item = button.closest('.risk-item');
+    if (!container || !item) return;
+    item.remove();
+}
 
-    const inputs = Array.from(risksList.querySelectorAll('input'));
-    const hasEmpty = inputs.some(input => input.value.trim() === '');
+function initRisksDependencies() {
+    const riskList = document.getElementById('risk-matrix-list');
+    const dependencyList = document.getElementById('external-dependencies-list');
+    if (!riskList || !dependencyList) return;
 
-    if (!hasEmpty) {
-        risksList.appendChild(createRiskRow(''));
+    Array.from(riskList.children).forEach((card) => {
+        card.classList.add('risk-item');
+        hydrateRiskCardData(card);
+        renderRiskReadOnlyCard(card);
+    });
+
+    Array.from(dependencyList.children).forEach((card) => {
+        card.classList.add('dependency-item');
+        hydrateDependencyCardData(card);
+        renderDependencyReadOnlyCard(card);
+    });
+}
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function getRiskVisual(level) {
+    if (level === 'Baixo') {
+        return {
+            card: 'border border-green-200 rounded-lg p-4 bg-white',
+            title: 'text-green-800',
+            badge: 'px-2 py-1 bg-green-100 text-green-800 text-xs rounded',
+            meta: 'text-sm text-green-700 mb-2'
+        };
     }
+    if (level === 'Médio') {
+        return {
+            card: 'border border-yellow-200 rounded-lg p-4 bg-yellow-50',
+            title: 'text-yellow-800',
+            badge: 'px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded',
+            meta: 'text-sm text-yellow-700 mb-2'
+        };
+    }
+    return {
+        card: 'border border-red-300 rounded-lg p-4 bg-white',
+        title: 'text-red-900',
+        badge: 'px-2 py-1 bg-red-200 text-red-900 text-xs rounded',
+        meta: 'text-sm text-red-800 mb-2'
+    };
+}
+
+function requestRemoveRiskCard(buttonElement) {
+    const card = buttonElement.closest('.risk-item');
+    if (!card) return;
+    card.remove();
+    showToast('success', 'Risco removido', 'O risco foi removido com sucesso.');
+}
+
+function requestRemoveDependencyCard(buttonElement) {
+    const card = buttonElement.closest('.dependency-item');
+    if (!card) return;
+    card.remove();
+    showToast('success', 'Dependência removida', 'A dependência foi removida com sucesso.');
+}
+
+function setRiskCardData(card, data) {
+    card.dataset.riskTitle = data.title || '';
+    card.dataset.riskLevel = data.level || 'Alto';
+    card.dataset.riskProbability = data.probability || 'Alta';
+    card.dataset.riskImpact = data.impact || 'Alto';
+    card.dataset.riskMitigation = data.mitigation || '';
+    card.dataset.riskFallback = data.fallback || '';
+}
+
+function hydrateRiskCardData(card) {
+    if (card.dataset.riskTitle) return;
+    const title = card.querySelector('h5')?.textContent?.trim() || '';
+    const level = card.querySelector('span')?.textContent?.trim() || 'Alto';
+    const metaText = card.querySelector('div.text-sm')?.textContent?.trim() || '';
+    const metaMatch = metaText.match(/Probabilidade:\s*([^|]+)\|\s*Impacto:\s*(.+)/i);
+    const probability = metaMatch?.[1]?.trim() || 'Alta';
+    const impact = metaMatch?.[2]?.trim() || 'Alto';
+    const detailLines = Array.from(card.querySelectorAll('div.text-sm.text-gray-700'));
+    const mitigation = detailLines[0]?.textContent?.replace('Mitigação:', '').trim() || '';
+    const fallback = detailLines[1]?.textContent?.replace('Plano B:', '').trim() || '';
+    setRiskCardData(card, { title, level, probability, impact, mitigation, fallback });
+}
+
+function renderRiskReadOnlyCard(card) {
+    const title = card.dataset.riskTitle || '';
+    const level = card.dataset.riskLevel || 'Alto';
+    const probability = card.dataset.riskProbability || 'Alta';
+    const impact = card.dataset.riskImpact || 'Alto';
+    const mitigation = card.dataset.riskMitigation || '';
+    const fallback = card.dataset.riskFallback || '';
+    const riskVisual = getRiskVisual(level);
+
+    card.className = `${riskVisual.card} risk-item`;
+    card.innerHTML = `
+        <div class="flex items-start justify-between gap-3 mb-2">
+            <h5 class="font-medium ${riskVisual.title} break-all">${escapeHtml(title)}</h5>
+            <span class="${riskVisual.badge} shrink-0">${escapeHtml(level)}</span>
+        </div>
+        <div class="${riskVisual.meta} break-all">Probabilidade: ${escapeHtml(probability)} | Impacto: ${escapeHtml(impact)}</div>
+        <div class="text-sm text-gray-700 mb-2 break-all">
+            <strong>Mitigação:</strong> ${escapeHtml(mitigation || 'Não informado')}
+        </div>
+        <div class="text-sm text-gray-700 break-all">
+            <strong>Plano B:</strong> ${escapeHtml(fallback || 'Não informado')}
+        </div>
+        <div class="flex justify-end items-center gap-2 mt-2">
+            <button onclick="startEditRiskCard(this)" class="text-blue-500 hover:text-blue-700" title="Editar risco">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+            <button onclick="requestRemoveRiskCard(this)" class="text-red-400 hover:text-red-600" title="Remover risco">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+    `;
+}
+
+function renderRiskEditCard(card) {
+    const title = card.dataset.riskTitle || '';
+    const level = card.dataset.riskLevel || 'Alto';
+    const probability = card.dataset.riskProbability || 'Alta';
+    const impact = card.dataset.riskImpact || 'Alto';
+    const mitigation = card.dataset.riskMitigation || '';
+    const fallback = card.dataset.riskFallback || '';
+
+    card.className = 'border border-gray-200 rounded-lg p-4 bg-white risk-item';
+    card.innerHTML = `
+        <div class="flex items-center justify-between gap-2 mb-2">
+            <input data-field="risk-title" type="text" value="${escapeHtml(title)}" placeholder="Novo risco" class="font-medium text-bevap-navy bg-transparent border-none p-0 focus:outline-none w-full">
+            <button onclick="requestRemoveRiskCard(this)" class="text-red-400 hover:text-red-600" title="Remover risco">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+        <div class="space-y-3 text-sm">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-600 min-w-[84px]">Nível:</span>
+                    <select data-field="risk-level" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none">
+                        <option ${level === 'Baixo' ? 'selected' : ''}>Baixo</option>
+                        <option ${level === 'Médio' ? 'selected' : ''}>Médio</option>
+                        <option ${level === 'Alto' ? 'selected' : ''}>Alto</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2 text-gray-600">
+                    <span class="min-w-[84px]">Probabilidade:</span>
+                    <select data-field="risk-probability" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none">
+                        <option ${probability === 'Baixa' ? 'selected' : ''}>Baixa</option>
+                        <option ${probability === 'Média' ? 'selected' : ''}>Média</option>
+                        <option ${probability === 'Alta' ? 'selected' : ''}>Alta</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2 text-gray-600">
+                    <span class="min-w-[84px]">Impacto:</span>
+                    <select data-field="risk-impact" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none">
+                        <option ${impact === 'Baixo' ? 'selected' : ''}>Baixo</option>
+                        <option ${impact === 'Médio' ? 'selected' : ''}>Médio</option>
+                        <option ${impact === 'Alto' ? 'selected' : ''}>Alto</option>
+                    </select>
+                </div>
+            </div>
+            <div class="space-y-1 text-gray-700">
+                <strong class="block">Mitigação:</strong>
+                <textarea data-field="risk-mitigation" placeholder="Descreva a mitigação..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${escapeHtml(mitigation)}</textarea>
+            </div>
+            <div class="space-y-1 text-gray-700">
+                <strong class="block">Plano B:</strong>
+                <textarea data-field="risk-fallback" placeholder="Descreva o plano B..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${escapeHtml(fallback)}</textarea>
+            </div>
+            <button onclick="confirmRiskCard(this)" class="px-3 py-1.5 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors text-sm shrink-0">
+                <i class="fa-solid fa-check mr-1"></i>Confirmar
+            </button>
+        </div>
+    `;
+}
+
+function startEditRiskCard(buttonElement) {
+    const card = buttonElement.closest('.risk-item');
+    if (!card) return;
+    hydrateRiskCardData(card);
+    renderRiskEditCard(card);
+}
+
+function confirmRiskCard(buttonElement) {
+    const card = buttonElement.closest('.risk-item');
+    if (!card) return;
+
+    const title = card.querySelector('[data-field="risk-title"]')?.value?.trim() || '';
+    const level = card.querySelector('[data-field="risk-level"]')?.value || 'Alto';
+    const probability = card.querySelector('[data-field="risk-probability"]')?.value || 'Alta';
+    const impact = card.querySelector('[data-field="risk-impact"]')?.value || 'Alto';
+    const mitigation = card.querySelector('[data-field="risk-mitigation"]')?.value?.trim() || '';
+    const fallback = card.querySelector('[data-field="risk-fallback"]')?.value?.trim() || '';
+
+    if (!title) {
+        showToast('warning', 'Campo obrigatório', 'Preencha a descrição do risco antes de confirmar.');
+        return;
+    }
+
+    setRiskCardData(card, { title, level, probability, impact, mitigation, fallback });
+    renderRiskReadOnlyCard(card);
+    showToast('success', 'Risco confirmado', 'Risco confirmado com sucesso.');
 }
 
 function addRisk() {
-    const risksList = document.getElementById('risks-list');
-
-    if (!risksList) return;
-
-    const riskDiv = createRiskRow('');
-    risksList.appendChild(riskDiv);
-
-    const input = riskDiv.querySelector('input');
-    if (input) input.focus();
+    const container = document.getElementById('risk-matrix-list');
+    if (!container) return;
+    const risk = document.createElement('div');
+    risk.classList.add('risk-item');
+    setRiskCardData(risk, {
+        title: '',
+        level: 'Alto',
+        probability: 'Alta',
+        impact: 'Alto',
+        mitigation: '',
+        fallback: ''
+    });
+    renderRiskEditCard(risk);
+    container.appendChild(risk);
 }
 
-function removeRisk(button) {
-    const item = button.closest('.triagem-risk-item');
-    if (item) item.remove();
+function getDependencyStatusBadge(status) {
+    if (status === 'Concluída') {
+        return '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded"><i class="fa-solid fa-check mr-1"></i>Concluída</span>';
+    }
+    if (status === 'Em andamento') {
+        return '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded"><i class="fa-solid fa-spinner mr-1"></i>Em andamento</span>';
+    }
+    if (status === 'Bloqueada') {
+        return '<span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded"><i class="fa-solid fa-ban mr-1"></i>Bloqueada</span>';
+    }
+    return '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded"><i class="fa-solid fa-clock mr-1"></i>Pendente</span>';
+}
 
-    ensureEmptyRiskRow();
+function setDependencyCardData(card, data) {
+    card.dataset.dependencyTitle = data.title || '';
+    card.dataset.dependencyStatus = data.status || 'Pendente';
+    card.dataset.dependencyOwner = data.owner || '';
+    card.dataset.dependencyMitigation = data.mitigation || '';
+    card.dataset.dependencyFallback = data.fallback || '';
+}
+
+function hydrateDependencyCardData(card) {
+    if (card.dataset.dependencyTitle) return;
+    const title = card.querySelector('h5')?.textContent?.trim() || '';
+    const status = card.querySelector('span')?.textContent?.replace(/\s+/g, ' ')?.trim() || 'Pendente';
+    const normalizedStatus = status
+        .replace('Concluída', 'Concluída')
+        .replace('Em andamento', 'Em andamento')
+        .replace('Bloqueada', 'Bloqueada')
+        .includes('Bloqueada') ? 'Bloqueada' : status.includes('Concluída') ? 'Concluída' : status.includes('Em andamento') ? 'Em andamento' : 'Pendente';
+    const ownerLine = card.querySelector('div.text-sm.text-gray-600')?.textContent || '';
+    const owner = ownerLine.replace('Responsável:', '').trim();
+    const detailLines = Array.from(card.querySelectorAll('div.text-sm.text-gray-700'));
+    const mitigation = detailLines[0]?.textContent?.replace('Mitigação:', '').trim() || '';
+    const fallback = detailLines[1]?.textContent?.replace('Plano B:', '').trim() || '';
+    setDependencyCardData(card, { title, status: normalizedStatus, owner, mitigation, fallback });
+}
+
+function renderDependencyReadOnlyCard(card) {
+    const title = card.dataset.dependencyTitle || '';
+    const status = card.dataset.dependencyStatus || 'Pendente';
+    const owner = card.dataset.dependencyOwner || '';
+    const mitigation = card.dataset.dependencyMitigation || '';
+    const fallback = card.dataset.dependencyFallback || '';
+
+    card.className = 'border border-gray-200 rounded-lg p-4 dependency-item';
+    card.innerHTML = `
+        <div class="flex items-start justify-between gap-3 mb-2">
+            <h5 class="font-medium text-bevap-navy break-all">${escapeHtml(title)}</h5>
+            ${getDependencyStatusBadge(status)}
+        </div>
+        <div class="text-sm text-gray-600 mb-1 break-all">Responsável: ${escapeHtml(owner || 'Não informado')}</div>
+        <div class="text-sm text-gray-700 mb-1 break-all">
+            <strong>Mitigação:</strong> ${escapeHtml(mitigation || 'Não informado')}
+        </div>
+        <div class="text-sm text-gray-700 break-all">
+            <strong>Plano B:</strong> ${escapeHtml(fallback || 'Não informado')}
+        </div>
+        <div class="flex justify-end items-center gap-2 mt-2">
+            <button onclick="startEditDependencyCard(this)" class="text-blue-500 hover:text-blue-700" title="Editar dependência">
+                <i class="fa-solid fa-pen"></i>
+            </button>
+            <button onclick="requestRemoveDependencyCard(this)" class="text-red-400 hover:text-red-600" title="Remover dependência">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+    `;
+}
+
+function renderDependencyEditCard(card) {
+    const title = card.dataset.dependencyTitle || '';
+    const status = card.dataset.dependencyStatus || 'Pendente';
+    const owner = card.dataset.dependencyOwner || '';
+    const mitigation = card.dataset.dependencyMitigation || '';
+    const fallback = card.dataset.dependencyFallback || '';
+
+    card.className = 'border border-gray-200 rounded-lg p-4 dependency-item';
+    card.innerHTML = `
+        <div class="flex items-center justify-between gap-2 mb-2">
+            <input data-field="dependency-title" type="text" value="${escapeHtml(title)}" placeholder="Nova dependência" class="font-medium text-bevap-navy bg-transparent border-none p-0 focus:outline-none w-full">
+            <button onclick="requestRemoveDependencyCard(this)" class="text-red-400 hover:text-red-600" title="Remover dependência">
+                <i class="fa-solid fa-trash"></i>
+            </button>
+        </div>
+        <div class="space-y-3 text-sm">
+            <div class="flex items-center gap-2">
+                <span class="text-gray-600 min-w-[84px]">Status:</span>
+                <select data-field="dependency-status" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none">
+                    <option ${status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+                    <option ${status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+                    <option ${status === 'Bloqueada' ? 'selected' : ''}>Bloqueada</option>
+                    <option ${status === 'Concluída' ? 'selected' : ''}>Concluída</option>
+                </select>
+            </div>
+            <div class="space-y-1 text-gray-600">
+                <span class="block">Responsável:</span>
+                <input data-field="dependency-owner" type="text" value="${escapeHtml(owner)}" placeholder="Informe o responsável" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">
+            </div>
+            <div class="space-y-1 text-gray-700">
+                <strong class="block">Mitigação:</strong>
+                <textarea data-field="dependency-mitigation" placeholder="Descreva a mitigação..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${escapeHtml(mitigation)}</textarea>
+            </div>
+            <div class="space-y-1 text-gray-700">
+                <strong class="block">Plano B:</strong>
+                <textarea data-field="dependency-fallback" placeholder="Descreva o plano B..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${escapeHtml(fallback)}</textarea>
+            </div>
+            <button onclick="confirmDependencyCard(this)" class="px-3 py-1.5 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors text-sm shrink-0">
+                <i class="fa-solid fa-check mr-1"></i>Confirmar
+            </button>
+        </div>
+    `;
+}
+
+function startEditDependencyCard(buttonElement) {
+    const card = buttonElement.closest('.dependency-item');
+    if (!card) return;
+    hydrateDependencyCardData(card);
+    renderDependencyEditCard(card);
+}
+
+function confirmDependencyCard(buttonElement) {
+    const card = buttonElement.closest('.dependency-item');
+    if (!card) return;
+
+    const title = card.querySelector('[data-field="dependency-title"]')?.value?.trim() || '';
+    const status = card.querySelector('[data-field="dependency-status"]')?.value || 'Pendente';
+    const owner = card.querySelector('[data-field="dependency-owner"]')?.value?.trim() || '';
+    const mitigation = card.querySelector('[data-field="dependency-mitigation"]')?.value?.trim() || '';
+    const fallback = card.querySelector('[data-field="dependency-fallback"]')?.value?.trim() || '';
+
+    if (!title) {
+        showToast('warning', 'Campo obrigatório', 'Preencha a dependência antes de confirmar.');
+        return;
+    }
+
+    setDependencyCardData(card, { title, status, owner, mitigation, fallback });
+    renderDependencyReadOnlyCard(card);
+    showToast('success', 'Dependência confirmada', 'Dependência confirmada com sucesso.');
+}
+
+function addDependency() {
+    const container = document.getElementById('external-dependencies-list');
+    if (!container) return;
+    const dependency = document.createElement('div');
+    dependency.classList.add('dependency-item');
+    setDependencyCardData(dependency, {
+        title: '',
+        status: 'Pendente',
+        owner: '',
+        mitigation: '',
+        fallback: ''
+    });
+    renderDependencyEditCard(dependency);
+    container.appendChild(dependency);
 }
 
 function saveDraft() {
@@ -1003,7 +1407,7 @@ function confirmApprove() {
     void descricao;
 
     const execucao = document.querySelector('input[name="execucao"]:checked')?.value || 'interno';
-    const nextUrl = execucao === 'externo' ? 'ux-proposta-comercial.html' : 'ux-aprovacao-comite.html';
+    const nextUrl = execucao === 'externo' ? 'ux-proposta-comercial.html' : 'ux-aprovacao-comite-interno.html';
     const nextLabel = execucao === 'externo' ? 'Proposta Comercial' : 'Análise do Comitê';
 
     closeApproveModal();

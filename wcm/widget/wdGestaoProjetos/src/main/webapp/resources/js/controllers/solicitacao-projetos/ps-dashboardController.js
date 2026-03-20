@@ -136,6 +136,8 @@ const dashboardController = {
         ? 'Abrir Aprovacao'
         : actionConfig.route === 'technicalTriage'
           ? 'Abrir Triagem'
+        : actionConfig.route === 'committeeApproval'
+          ? 'Abrir Comitê'
         : actionConfig.route === 'newSolicitation'
           ? 'Continuar Rascunho'
         : actionConfig.enabled
@@ -244,6 +246,14 @@ const dashboardController = {
         enabled: true,
         route: 'technicalTriage',
         label: 'Abrir Triagem'
+      };
+    }
+
+    if (activity === 36) {
+      return {
+        enabled: true,
+        route: 'committeeApproval',
+        label: 'Abrir Comitê'
       };
     }
 

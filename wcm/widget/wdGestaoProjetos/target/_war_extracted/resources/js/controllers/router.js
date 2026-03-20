@@ -57,6 +57,10 @@ const router = {
         technicalTriage: {
           controller: technicalTriageController,
           handler: () => technicalTriageController.load(params)
+        },
+        committeeApproval: {
+          controller: committeeApprovalController,
+          handler: () => committeeApprovalController.load(params)
         }
       };
 

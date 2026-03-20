@@ -67,6 +67,20 @@
 		</tbody>
 	</table>
 
+	<label>BeneficiosEsperados</label>
+	<table class="table table-bordered" id="tblBeneficiosEsperadosNS" tablename="tblBeneficiosEsperadosNS" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>DescriÃ§Ã£o do benefício</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="beneficioEsperadoNS" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
 	<label>prioridade</label>
 	<input type="text" name="prioridadeNS" id="prioridadeNS">
 
@@ -213,16 +227,46 @@
 	<label>DataDesejadadeInÃ­cio</label>
 	<input type="text" name="dataDesejadaInicioTITT" id="dataDesejadaInicioTITT">
 
-	<label>Riscos / DependÃªncias</label>
-	<table class="table table-bordered" id="tblRiscosDependenciasTITT" tablename="tblRiscosDependenciasTITT" noaddbutton="true" nodeletebutton="true"  >
+	<label>Riscos Identificados</label>
+	<table class="table table-bordered" id="tblRiscosIdentificadosTITT" tablename="tblRiscosIdentificadosTITT" noaddbutton="true" nodeletebutton="true">
 		<thead>
 			<tr>
-				<th>Risco potencial</th>
+				<th>TÃ­tulo</th>
+				<th>DescriÃ§Ã£o</th>
+				<th>MitigaÃ§Ã£o</th>
+				<th>NÃ­vel do Risco</th>
+				<th>Impacto</th>
+				<th>Probabilidade</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
-				<td><input type="text" name="riscoPotencialTITT" class="form-control"></td>
+				<td><input type="text" name="tituloRiscoTITT" class="form-control"></td>
+				<td><input type="text" name="descricaoRiscoTITT" class="form-control"></td>
+				<td><input type="text" name="mitigacaoRiscoTITT" class="form-control"></td>
+				<td><input type="text" name="nivelRiscoTITT" class="form-control"></td>
+				<td><input type="text" name="impactoRiscoTITT" class="form-control"></td>
+				<td><input type="text" name="probabilidadeRiscoTITT" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>DependÃªncias Internas/Externas</label>
+	<table class="table table-bordered" id="tblDependenciasTITT" tablename="tblDependenciasTITT" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>TÃ­tulo</th>
+				<th>Status</th>
+				<th>ResponsÃ¡vel</th>
+				<th>MitigaÃ§Ã£o</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="tituloDependenciaTITT" class="form-control"></td>
+				<td><input type="text" name="statusDependenciaTITT" class="form-control"></td>
+				<td><input type="text" name="responsavelDependenciaTITT" class="form-control"></td>
+				<td><input type="text" name="mitigacaoDependenciaTITT" class="form-control"></td>
 			</tr>
 		</tbody>
 	</table>

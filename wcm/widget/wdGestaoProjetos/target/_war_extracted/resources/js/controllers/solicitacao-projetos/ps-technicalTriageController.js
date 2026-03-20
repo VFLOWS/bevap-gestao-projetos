@@ -22,7 +22,16 @@ const technicalTriageController = {
     'motivoDecisaoDescricaoTITT',
     'disponibilidadedaEquipeTITT',
     'dataDesejadaInicioTITT',
-    'tblRiscosDependenciasTITT.riscoPotencialTITT',
+    'tblRiscosIdentificadosTITT.tituloRiscoTITT',
+    'tblRiscosIdentificadosTITT.descricaoRiscoTITT',
+    'tblRiscosIdentificadosTITT.mitigacaoRiscoTITT',
+    'tblRiscosIdentificadosTITT.nivelRiscoTITT',
+    'tblRiscosIdentificadosTITT.impactoRiscoTITT',
+    'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT',
+    'tblDependenciasTITT.tituloDependenciaTITT',
+    'tblDependenciasTITT.statusDependenciaTITT',
+    'tblDependenciasTITT.responsavelDependenciaTITT',
+    'tblDependenciasTITT.mitigacaoDependenciaTITT',
     'fornecedorRecomendadoTITT',
     'tipoContratacaoTITT',
     'justifExecucaoExtTITT',
@@ -61,7 +70,7 @@ const technicalTriageController = {
         this.renderSidebarSkeleton();
         this.initializeTabs();
         this.bindEvents();
-        this.ensureDefaultRiskItem();
+        this.ensureInitialRiskDependencyState();
         this.updateCapacityLabel();
         this.toggleExternalSection();
         this.updateChecklistProgress();
@@ -201,14 +210,24 @@ const technicalTriageController = {
       this.toggleExternalSection();
     });
 
-    container.on(`click${ns}`, '[data-action="add-risk"]', (event) => {
+    container.on(`click${ns}`, '[data-action="add-risk-matrix"]', (event) => {
       event.preventDefault();
-      this.addRiskItem('');
+      this.addRiskMatrixItem({});
     });
 
-    container.on(`click${ns}`, '[data-action="remove-risk"]', (event) => {
+    container.on(`click${ns}`, '[data-action="remove-risk-matrix"]', (event) => {
       event.preventDefault();
-      this.removeRiskItem(event.currentTarget);
+      this.removeRiskMatrixItem(event.currentTarget);
+    });
+
+    container.on(`click${ns}`, '[data-action="add-dependency"]', (event) => {
+      event.preventDefault();
+      this.addDependencyItem({});
+    });
+
+    container.on(`click${ns}`, '[data-action="remove-dependency"]', (event) => {
+      event.preventDefault();
+      this.removeDependencyItem(event.currentTarget);
     });
 
     container.on(`change${ns}`, '.triagem-checklist-item', () => {
@@ -530,7 +549,8 @@ const technicalTriageController = {
     setCheck('#check-decision-documented', row.decisaoExecucaoDocumentadaTITT);
     setCheck('#check-risks-mapped', row.riscosDependenciasMapeadosTITT);
 
-    this.renderRisksFromRow(row.tblRiscosDependenciasTITT);
+    this.renderRiskMatrixFromRow(row.tblRiscosIdentificadosTITT || row['tblRiscosIdentificadosTITT']);
+    this.renderDependenciesFromRow(row.tblDependenciasTITT || row['tblDependenciasTITT']);
 
     this.toggleExternalSection();
     this.updateChecklistProgress();
@@ -559,60 +579,226 @@ const technicalTriageController = {
     }
   },
 
-  ensureDefaultRiskItem: function () {
-    const list = this.getContainer().find('#risks-list');
+  ensureInitialRiskDependencyState: function () {
+    const riskEmpty = this.getContainer().find('#risk-matrix-empty');
+    const depEmpty = this.getContainer().find('#dependencies-empty');
+
+    if (riskEmpty.length) riskEmpty.removeClass('hidden');
+    if (depEmpty.length) depEmpty.removeClass('hidden');
+  },
+
+  renderRiskMatrixFromRow: function (tblValue) {
+    const list = this.getContainer().find('#risk-matrix-list');
+    const empty = this.getContainer().find('#risk-matrix-empty');
     if (!list.length) return;
 
-    if (list.find('.triagem-risk-item').length === 0) {
-      this.addRiskItem('');
+    const rows = this.parseTableJson(tblValue);
+    list.empty();
+
+    const risks = rows.map((item) => {
+      return {
+        title: this.asText(item && item.tituloRiscoTITT),
+        description: this.asText(item && item.descricaoRiscoTITT),
+        mitigation: this.asText(item && item.mitigacaoRiscoTITT),
+        level: this.asText(item && item.nivelRiscoTITT),
+        impact: this.asText(item && item.impactoRiscoTITT),
+        probability: this.asText(item && item.probabilidadeRiscoTITT)
+      };
+    }).filter((item) => {
+      return item.title || item.description || item.mitigation || item.level || item.impact || item.probability;
+    });
+
+    if (risks.length) {
+      risks.forEach((risk) => this.addRiskMatrixItem(risk));
+      if (empty.length) empty.addClass('hidden');
+    } else {
+      if (empty.length) empty.removeClass('hidden');
     }
   },
 
-  addRiskItem: function (value) {
-    const list = this.getContainer().find('#risks-list');
+  renderDependenciesFromRow: function (tblValue) {
+    const list = this.getContainer().find('#dependencies-list');
+    const empty = this.getContainer().find('#dependencies-empty');
     if (!list.length) return;
 
-    const safeValue = this.asText(value);
+    const rows = this.parseTableJson(tblValue);
+    list.empty();
+
+    const deps = rows.map((item) => {
+      return {
+        title: this.asText(item && item.tituloDependenciaTITT),
+        status: this.asText(item && item.statusDependenciaTITT),
+        owner: this.asText(item && item.responsavelDependenciaTITT),
+        mitigation: this.asText(item && item.mitigacaoDependenciaTITT)
+      };
+    }).filter((item) => {
+      return item.title || item.status || item.owner || item.mitigation;
+    });
+
+    if (deps.length) {
+      deps.forEach((dep) => this.addDependencyItem(dep));
+      if (empty.length) empty.addClass('hidden');
+    } else {
+      if (empty.length) empty.removeClass('hidden');
+    }
+  },
+
+  addRiskMatrixItem: function (data) {
+    const list = this.getContainer().find('#risk-matrix-list');
+    const empty = this.getContainer().find('#risk-matrix-empty');
+    if (!list.length) return;
+
+    const title = this.escapeHtml(this.asText(data && data.title));
+    const description = this.escapeHtml(this.asText(data && data.description));
+    const mitigation = this.escapeHtml(this.asText(data && data.mitigation));
+    const level = this.asText(data && data.level);
+    const impact = this.asText(data && data.impact);
+    const probability = this.asText(data && data.probability);
 
     const html = `
-      <div class="triagem-risk-item flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-        <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
-        <input type="text" class="flex-1 bg-transparent border-none focus:outline-none text-sm" placeholder="Descreva um risco potencial..." value="${this.escapeHtml(safeValue)}">
-        <button data-action="remove-risk" type="button" class="text-red-500 hover:text-red-700" title="Remover">
-          <i class="fa-solid fa-times"></i>
-        </button>
+      <div class="titt-risk-item border border-gray-200 rounded-lg p-4 bg-white">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div class="flex-1">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Título</label>
+            <input type="text" data-field="risk-title" value="${title}" placeholder="Ex: Integração SSO com legado" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
+          </div>
+
+          <div class="w-full md:w-48">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Nível do Risco</label>
+            <select data-field="risk-level" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
+              <option value="">Selecione</option>
+              <option value="Baixo">Baixo</option>
+              <option value="Médio">Médio</option>
+              <option value="Alto">Alto</option>
+            </select>
+          </div>
+
+          <div class="flex md:items-end md:pb-0 pt-1">
+            <button type="button" data-action="remove-risk-matrix" class="w-10 h-10 inline-flex items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors" title="Remover risco">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div class="hidden">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Probabilidade</label>
+            <select data-field="risk-probability" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+              <option value="Baixa">Baixa</option>
+              <option value="Média">Média</option>
+              <option value="Alta">Alta</option>
+            </select>
+          </div>
+          <div class="hidden">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Impacto</label>
+            <select data-field="risk-impact" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
+              <option value="Baixo">Baixo</option>
+              <option value="Médio">Médio</option>
+              <option value="Alto">Alto</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Descrição</label>
+          <textarea rows="2" data-field="risk-description" placeholder="Descreva o risco identificado..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm">${description}</textarea>
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Mitigação</label>
+          <textarea rows="2" data-field="risk-mitigation" placeholder="Descreva a estratégia de mitigação..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm">${mitigation}</textarea>
+        </div>
       </div>
     `;
 
     list.append(html);
+
+    const $item = list.find('.titt-risk-item').last();
+    $item.find('[data-field="risk-level"]').val(level);
+    $item.find('[data-field="risk-impact"]').val(impact || 'Médio');
+    $item.find('[data-field="risk-probability"]').val(probability || 'Média');
+
+    if (empty.length) empty.addClass('hidden');
   },
 
-  removeRiskItem: function (target) {
-    const row = $(target).closest('.triagem-risk-item');
-    if (!row.length) return;
+  removeRiskMatrixItem: function (target) {
+    const item = $(target).closest('.titt-risk-item');
+    if (!item.length) return;
+    item.remove();
 
-    row.remove();
-
-    const list = this.getContainer().find('#risks-list');
-    if (list.length && list.find('.triagem-risk-item').length === 0) {
-      this.addRiskItem('');
+    const list = this.getContainer().find('#risk-matrix-list');
+    const empty = this.getContainer().find('#risk-matrix-empty');
+    if (list.length && empty.length) {
+      empty.toggleClass('hidden', list.find('.titt-risk-item').length > 0);
     }
   },
 
-  renderRisksFromRow: function (tblValue) {
-    const list = this.getContainer().find('#risks-list');
+  addDependencyItem: function (data) {
+    const list = this.getContainer().find('#dependencies-list');
+    const empty = this.getContainer().find('#dependencies-empty');
     if (!list.length) return;
 
-    const risks = this.parseTableJson(tblValue)
-      .map((item) => this.asText(item && item.riscoPotencialTITT))
-      .filter(Boolean);
+    const title = this.escapeHtml(this.asText(data && data.title));
+    const status = this.asText(data && data.status);
+    const owner = this.escapeHtml(this.asText(data && data.owner));
+    const mitigation = this.escapeHtml(this.asText(data && data.mitigation));
 
-    list.empty();
+    const html = `
+      <div class="titt-dependency-item border border-gray-200 rounded-lg p-4 bg-white">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+          <div class="flex-1">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Título</label>
+            <input type="text" data-field="dep-title" value="${title}" placeholder="Ex: Homologação Segurança" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
+          </div>
 
-    if (risks.length) {
-      risks.forEach((risk) => this.addRiskItem(risk));
-    } else {
-      this.addRiskItem('');
+          <div class="w-full md:w-48">
+            <label class="block text-xs font-medium text-gray-600 mb-1">Status</label>
+            <select data-field="dep-status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
+              <option value="">Selecione</option>
+              <option value="Pendente">Pendente</option>
+              <option value="Bloqueada">Bloqueada</option>
+              <option value="Concluída">Concluída</option>
+            </select>
+          </div>
+
+          <div class="flex md:items-end pt-1">
+            <button type="button" data-action="remove-dependency" class="w-10 h-10 inline-flex items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors" title="Remover dependência">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-1">Responsável</label>
+            <input type="text" data-field="dep-owner" value="${owner}" placeholder="Ex: TI Infraestrutura" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
+          </div>
+        </div>
+
+        <div class="mt-4">
+          <label class="block text-xs font-medium text-gray-600 mb-1">Mitigação</label>
+          <textarea rows="2" data-field="dep-mitigation" placeholder="Descreva a estratégia de mitigação..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm">${mitigation}</textarea>
+        </div>
+      </div>
+    `;
+
+    list.append(html);
+
+    const $item = list.find('.titt-dependency-item').last();
+    $item.find('[data-field="dep-status"]').val(status);
+
+    if (empty.length) empty.addClass('hidden');
+  },
+
+  removeDependencyItem: function (target) {
+    const item = $(target).closest('.titt-dependency-item');
+    if (!item.length) return;
+    item.remove();
+
+    const list = this.getContainer().find('#dependencies-list');
+    const empty = this.getContainer().find('#dependencies-empty');
+    if (list.length && empty.length) {
+      empty.toggleClass('hidden', list.find('.titt-dependency-item').length > 0);
     }
   },
 
@@ -807,9 +993,48 @@ const technicalTriageController = {
       riscosDependenciasMapeadosTITT: this.getBooleanFieldValue('#check-risks-mapped')
     };
 
-    const risks = root.find('#risks-list input[type="text"]').map((_, el) => this.asText($(el).val())).get().filter(Boolean);
+    const risks = root.find('#risk-matrix-list .titt-risk-item').map((_, el) => {
+      const $el = $(el);
+      return {
+        title: this.asText($el.find('[data-field="risk-title"]').val()),
+        description: this.asText($el.find('[data-field="risk-description"]').val()),
+        mitigation: this.asText($el.find('[data-field="risk-mitigation"]').val()),
+        level: this.asText($el.find('[data-field="risk-level"]').val()),
+        impact: this.asText($el.find('[data-field="risk-impact"]').val()),
+        probability: this.asText($el.find('[data-field="risk-probability"]').val())
+      };
+    }).get().filter((item) => {
+      return item.title || item.description || item.mitigation || item.level || item.impact || item.probability;
+    });
+
     risks.forEach((risk, index) => {
-      cardData[`riscoPotencialTITT___${index + 1}`] = risk;
+      const i = index + 1;
+      cardData[`tituloRiscoTITT___${i}`] = risk.title;
+      cardData[`descricaoRiscoTITT___${i}`] = risk.description;
+      cardData[`mitigacaoRiscoTITT___${i}`] = risk.mitigation;
+      cardData[`nivelRiscoTITT___${i}`] = risk.level;
+      cardData[`impactoRiscoTITT___${i}`] = risk.impact;
+      cardData[`probabilidadeRiscoTITT___${i}`] = risk.probability;
+    });
+
+    const dependencies = root.find('#dependencies-list .titt-dependency-item').map((_, el) => {
+      const $el = $(el);
+      return {
+        title: this.asText($el.find('[data-field="dep-title"]').val()),
+        status: this.asText($el.find('[data-field="dep-status"]').val()),
+        owner: this.asText($el.find('[data-field="dep-owner"]').val()),
+        mitigation: this.asText($el.find('[data-field="dep-mitigation"]').val())
+      };
+    }).get().filter((item) => {
+      return item.title || item.status || item.owner || item.mitigation;
+    });
+
+    dependencies.forEach((dep, index) => {
+      const i = index + 1;
+      cardData[`tituloDependenciaTITT___${i}`] = dep.title;
+      cardData[`statusDependenciaTITT___${i}`] = dep.status;
+      cardData[`responsavelDependenciaTITT___${i}`] = dep.owner;
+      cardData[`mitigacaoDependenciaTITT___${i}`] = dep.mitigation;
     });
 
     return Object.keys(cardData).map((fieldName) => {
