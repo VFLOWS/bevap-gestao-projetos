@@ -423,19 +423,63 @@
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <h4 class="text-sm font-semibold text-bevap-navy mb-2 flex items-center">
+                    <div class="bg-white border border-slate-200 rounded-xl p-5">
+                        <h4 class="text-lg font-semibold text-bevap-navy mb-5 flex items-center">
                             <i class="fa-solid fa-shield-halved text-bevap-gold mr-2"></i>
-                            Riscos e Dependências Monitoradas
+                            Riscos & Dependências Monitoradas
                         </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                            <div class="flex items-start bg-white border border-yellow-200 rounded-lg p-3">
-                                <i class="fa-solid fa-triangle-exclamation text-bevap-gold mr-2 mt-0.5"></i>
-                                <span class="text-gray-700">Dependência de atualização do servidor antes do kickoff técnico.</span>
+                        <div class="space-y-6">
+                            <div>
+                                <h5 class="text-lg font-semibold text-bevap-navy mb-3 flex items-center">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-500 mr-2"></i>
+                                    Matriz de Riscos
+                                </h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div class="border border-yellow-300 rounded-xl p-4 bg-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                        <div class="flex items-start justify-between mb-2 gap-3">
+                                            <h6 class="font-medium text-bevap-navy">Integração SSO com legado</h6>
+                                            <span class="text-red-700 text-xs font-semibold">Alto</span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-2">Probabilidade: Alta | Impacto: Alto</div>
+                                        <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Teste antecipado com sistemas legados</div>
+                                        <div class="text-sm text-gray-700"><strong>Plano B:</strong> Implementação gradual por sistema</div>
+                                    </div>
+                                    <div class="border border-yellow-300 rounded-xl p-4 bg-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                        <div class="flex items-start justify-between mb-2 gap-3">
+                                            <h6 class="font-medium text-bevap-navy">Disponibilidade da equipe</h6>
+                                            <span class="text-yellow-700 text-xs font-semibold">Médio</span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-2">Probabilidade: Média | Impacto: Médio</div>
+                                        <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Backup de recursos internos</div>
+                                        <div class="text-sm text-gray-700"><strong>Plano B:</strong> Extensão de prazo se necessário</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex items-start bg-white border border-yellow-200 rounded-lg p-3">
-                                <i class="fa-solid fa-triangle-exclamation text-bevap-gold mr-2 mt-0.5"></i>
-                                <span class="text-gray-700">Validação com área de negócio para fechamento de escopo contratual.</span>
+                            <div>
+                                <h5 class="text-lg font-semibold text-bevap-navy mb-3 flex items-center">
+                                    <i class="fa-solid fa-link text-blue-600 mr-2"></i>
+                                    Dependências Internas/Externas
+                                </h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                        <div class="flex items-start justify-between mb-2 gap-3">
+                                            <h6 class="font-medium text-bevap-navy">Acesso ao Active Directory</h6>
+                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Pendente</span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-1"><strong>Responsável:</strong> TI Infraestrutura</div>
+                                        <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Follow-up diário com time de infraestrutura até liberação final</div>
+                                        <div class="text-sm text-gray-700"><strong>Plano B:</strong> Provisionar acesso temporário via ambiente de homologação espelhado</div>
+                                    </div>
+                                    <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                        <div class="flex items-start justify-between mb-2 gap-3">
+                                            <h6 class="font-medium text-bevap-navy">Homologação Segurança</h6>
+                                            <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Bloqueada</span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-1"><strong>Responsável:</strong> Segurança da Informação</div>
+                                        <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Escalar aprovação com comitê de segurança e gestor da área</div>
+                                        <div class="text-sm text-gray-700"><strong>Plano B:</strong> Replanejar rollout por ondas iniciando pelos módulos não críticos</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -465,7 +509,11 @@
                     <div>
                         <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Alinhamento Estratégico</h3>
                         <div class="bg-bevap-navy text-white rounded-lg p-4 flex items-center">
-                            <p class="text-sm text-blue-200">Este projeto contribui diretamente para o objetivo de digitalizar 80% dos processos de fornecedores até Q4/2026, alinhado com a estratégia de transformação digital da BEVAP.</p>
+                            <ul class="text-sm text-blue-200 list-disc pl-5 space-y-2">
+                                <li>Este projeto contribui diretamente para o objetivo de digitalizar 80% dos processos de fornecedores até Q4/2026, alinhado com a estratégia de transformação digital da BEVAP.</li>
+                                <li>Suporta a meta de elevar para 95% a rastreabilidade ponta a ponta das solicitações de fornecedores até o fim de 2026.</li>
+                                <li>Fortalece o plano de governança digital com padronização de fluxos e redução de retrabalho entre TI, Compras e áreas solicitantes.</li>
+                            </ul>
                         </div>
                     </div>
                     
