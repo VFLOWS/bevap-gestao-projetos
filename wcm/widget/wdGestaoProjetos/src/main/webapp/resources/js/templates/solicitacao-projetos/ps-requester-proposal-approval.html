@@ -1,0 +1,174 @@
+<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div id="context-banner" class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start">
+            <i class="fa-solid fa-file-invoice-dollar text-blue-600 mt-0.5 mr-3"></i>
+            <div class="text-sm text-blue-800">
+                <p class="font-medium mb-1">Proposta comercial disponível</p>
+                <p>Analise as informações e registre seu feedback antes de aprovar.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div id="content-section" class="lg:col-span-2">
+            <div id="tabs-container" class="bg-white rounded-lg shadow-md" data-component="tabs" data-tabs-default="solicitacao">
+                <div class="border-b border-gray-200">
+                    <div class="relative">
+                        <div class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2" data-tabs-scroll>
+                            <button type="button" data-tab="solicitacao" id="tab-solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-file-lines mr-2"></i>Solicitacao
+                            </button>
+                            <button type="button" data-tab="analise-ti" id="tab-analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-microscope mr-2"></i>Analise TI
+                            </button>
+                            <button type="button" data-tab="impacto" id="tab-impacto" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Area
+                            </button>
+                            <button type="button" data-tab="triagem-ti" id="tab-triagem-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-route mr-2"></i>Triagem TI
+                            </button>
+                            <button type="button" data-tab="proposta-fornecedor" id="tab-proposta-fornecedor" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
+                                    <i class="fa-solid fa-exclamation text-[10px]"></i>
+                                </span>
+                                <i class="fa-solid fa-handshake mr-2"></i>Proposta do Fornecedor
+                            </button>
+                        </div>
+
+                        <button type="button" data-tabs-scroll-arrow="left" aria-label="Rolar abas para esquerda" class="absolute left-0 top-0 bottom-0 w-24 rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-start pl-2">
+                            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/90 border border-gray-200">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                        </button>
+
+                        <button type="button" data-tabs-scroll-arrow="right" aria-label="Rolar abas para direita" class="absolute right-0 top-0 bottom-0 w-24 rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-end pr-2">
+                            <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/90 border border-gray-200">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="tab-content-solicitacao" class="p-6 hidden" data-tab-panel="solicitacao">
+                    <div data-component="tab-solicitacao-history" class="text-sm text-gray-500">
+                        Carregando conteudo da solicitacao...
+                    </div>
+                </div>
+
+                <div id="tab-content-analise-ti" class="p-6 hidden" data-tab-panel="analise-ti">
+                    <div data-component="tab-analise-ti-history" class="text-sm text-gray-500">
+                        Carregando conteudo da analise TI...
+                    </div>
+                </div>
+
+                <div id="tab-content-impacto" class="p-6 hidden" data-tab-panel="impacto">
+                    <div data-component="tab-impacto-history" class="text-sm text-gray-500">
+                        Carregando conteudo de impacto...
+                    </div>
+                </div>
+
+                <div id="tab-content-triagem-ti" class="p-6 hidden" data-tab-panel="triagem-ti">
+                    <div data-component="tab-triagem-ti-history" class="text-sm text-gray-500">
+                        Carregando conteudo da triagem...
+                    </div>
+                </div>
+
+                <div id="tab-content-proposta-fornecedor" class="p-6 hidden" data-tab-panel="proposta-fornecedor">
+                    <div data-component="tab-proposta-fornecedor" class="text-sm text-gray-500">
+                        Carregando proposta do fornecedor...
+                    </div>
+                </div>
+            </div>
+
+            <div id="feedback-panel" class="bg-white rounded-lg shadow-md p-6 mt-6">
+                <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
+                    Seu Feedback
+                </h3>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2" for="sap-feedback-input">Observacoes / Negociacao</label>
+                    <textarea id="sap-feedback-input" data-field="observacoesNegociacaoSAP" rows="4" placeholder="Adicione comentarios, sugestoes de ajustes ou pontos para negociacao..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+                </div>
+
+                <div class="mb-2">
+                    <label class="flex items-start" for="sap-li-concordo-check">
+                        <input id="sap-li-concordo-check" data-field="liConcordoPropostaComercialSAP" type="checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
+                        <span class="text-sm text-gray-700">Li e concordo com a proposta comercial apresentada e suas condicoes gerais *</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div id="sidebar-summary" class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                <div data-component="project-summary"></div>
+                <div data-component="progress-status"></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center justify-between">
+            <button data-action="save-draft" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
+                <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
+            </button>
+            <div class="flex items-center space-x-3">
+                <button data-action="open-return-modal" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
+                    <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correcao
+                </button>
+                <button data-action="open-approve-modal" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
+                    <i class="fa-solid fa-check mr-2"></i> Aprovar Proposta
+                </button>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div id="approve-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fa-solid fa-check-circle text-bevap-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovacao</h3>
+        </div>
+        <p class="text-gray-700 mb-3">Voce esta aprovando a proposta comercial para o projeto <strong id="approve-project-label">Projeto selecionado</strong>.</p>
+        <p class="text-sm text-gray-600 mb-6">Ao confirmar, o processo seguira para a proxima etapa.</p>
+        <div class="flex justify-end space-x-3">
+            <button data-action="close-modal" data-modal-id="approve-modal" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button data-action="confirm-approve" class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correcao</h3>
+        <p class="text-sm text-gray-600 mb-4">Descreva os pontos que precisam ser corrigidos pela TI/fornecedor:</p>
+        <textarea id="return-reason-input" rows="4" placeholder="Motivo da devolucao..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+        <div class="flex justify-end space-x-3">
+            <button data-action="close-modal" data-modal-id="modal-return" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+            <button data-action="confirm-return" class="px-4 py-2 text-sm text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-all">Devolver</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="hidden fixed top-20 right-4 bg-white shadow-xl rounded-lg p-4 z-50 max-w-md border-l-4">
+    <div class="flex items-start">
+        <i id="toast-icon" class="text-2xl mr-3 mt-0.5"></i>
+        <div class="flex-1">
+            <p id="toast-title" class="font-semibold text-gray-900"></p>
+            <p id="toast-message" class="text-sm text-gray-600 mt-1"></p>
+        </div>
+        <button id="toast-close" class="text-gray-400 hover:text-gray-600 ml-4">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+</div>

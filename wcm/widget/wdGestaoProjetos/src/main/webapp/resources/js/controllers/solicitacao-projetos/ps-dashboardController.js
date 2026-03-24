@@ -134,6 +134,8 @@ const dashboardController = {
       const actionConfig = this.getPendencyActionConfig(pendency.processState);
       const buttonLabel = actionConfig.route === 'immediateApproval'
         ? 'Abrir Aprovacao'
+        : actionConfig.route === 'requesterProposalApproval'
+          ? 'Abrir Proposta'
         : actionConfig.route === 'technicalTriage'
           ? 'Abrir Triagem'
         : actionConfig.route === 'committeeApproval'
@@ -264,6 +266,14 @@ const dashboardController = {
         enabled: true,
         route: 'committeeApproval',
         label: 'Abrir Comitê'
+      };
+    }
+
+    if (activity === 40) {
+      return {
+        enabled: true,
+        route: 'requesterProposalApproval',
+        label: 'Abrir Proposta'
       };
     }
 

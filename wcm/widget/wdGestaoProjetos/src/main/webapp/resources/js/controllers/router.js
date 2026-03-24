@@ -65,6 +65,10 @@ const router = {
         committeeApproval: {
           controller: committeeApprovalController,
           handler: () => committeeApprovalController.load(params)
+        },
+        requesterProposalApproval: {
+          controller: requesterProposalApprovalController,
+          handler: () => requesterProposalApprovalController.load(params)
         }
       };
 
