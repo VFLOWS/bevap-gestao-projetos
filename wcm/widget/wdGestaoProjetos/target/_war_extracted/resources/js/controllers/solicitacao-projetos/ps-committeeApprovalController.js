@@ -9,6 +9,11 @@ const committeeApprovalController = {
     'prioridadeNS',
     'estadoProcesso',
     'anexosNS',
+    'anexosApoioTITT',
+    'beneficiosesperadosNS',
+    'tblBeneficiosEsperadosNS.beneficioEsperadoNS',
+    'alinhadobevapNS',
+    'tblObjetivosEstrategicosNS.descricaoobjetivoNS',
     'dataHoraCAP',
     'anotacoesCAP',
     'anexarAtaReuniaoCAP',
@@ -200,6 +205,63 @@ const committeeApprovalController = {
       this.saveDraft();
     });
 
+    container.on(`click${ns}`, '[data-action="committee-approve"]', (event) => {
+      event.preventDefault();
+      this.handleTaskAction({
+        action: 'Aprovar Projeto',
+        choosedState: 45,
+        decisionValue: 'aprovado'
+      });
+    });
+
+    container.on(`click${ns}`, '[data-action="open-return-modal"]', (event) => {
+      event.preventDefault();
+      this.openModal('modal-return');
+    });
+
+    container.on(`click${ns}`, '[data-action="open-reject-modal"]', (event) => {
+      event.preventDefault();
+      this.openModal('modal-reject');
+    });
+
+    container.on(`click${ns}`, '[data-action="close-modal"]', (event) => {
+      event.preventDefault();
+      const modalId = String($(event.currentTarget).attr('data-modal-id') || '').trim();
+      if (!modalId) return;
+      this.closeModal(modalId);
+    });
+
+    container.on(`click${ns}`, '[data-action="confirm-return"]', (event) => {
+      event.preventDefault();
+      const justification = this.asText(this.getContainer().find('#cap-justification-return').val());
+      this.handleTaskAction({
+        modalId: 'modal-return',
+        action: 'Devolver para Correção',
+        choosedState: 45,
+        decisionValue: 'correcao',
+        justification: justification,
+        requireJustification: true
+      });
+    });
+
+    container.on(`click${ns}`, '[data-action="confirm-reject"]', (event) => {
+      event.preventDefault();
+      const justification = this.asText(this.getContainer().find('#cap-justification-reject').val());
+      this.handleTaskAction({
+        modalId: 'modal-reject',
+        action: 'Reprovar',
+        choosedState: 45,
+        decisionValue: 'cancelado',
+        justification: justification,
+        requireJustification: true
+      });
+    });
+
+    container.on(`click${ns}`, '#modal-return, #modal-reject', (event) => {
+      if (event.target !== event.currentTarget) return;
+      $(event.currentTarget).addClass('hidden');
+    });
+
     container.on(`click${ns}`, '#cap-add-participant', (event) => {
       event.preventDefault();
       this.addParticipantFromInput();
@@ -231,21 +293,29 @@ const committeeApprovalController = {
       if (!id) return;
       this.removeAttachment(id);
     });
+  },
 
-    container.on(`click${ns}`, '#cap-btn-approve', (event) => {
-      event.preventDefault();
-      this.handleTaskAction({ action: 'Aprovar', choosedState: 45 });
-    });
+  openModal: function (modalId) {
+    const id = this.asText(modalId);
+    if (!id) return;
+    const modal = this.getContainer().find(`#${id}`).first();
+    if (!modal.length) return;
+    modal.removeClass('hidden');
 
-    container.on(`click${ns}`, '#cap-btn-return', (event) => {
-      event.preventDefault();
-      this.handleTaskAction({ action: 'Devolver', choosedState: 45 });
-    });
+    if (id === 'modal-return') {
+      modal.find('#cap-justification-return').trigger('focus');
+    }
+    if (id === 'modal-reject') {
+      modal.find('#cap-justification-reject').trigger('focus');
+    }
+  },
 
-    container.on(`click${ns}`, '#cap-btn-no-continuity', (event) => {
-      event.preventDefault();
-      this.handleTaskAction({ action: 'Não Continuidade', choosedState: 45 });
-    });
+  closeModal: function (modalId) {
+    const id = this.asText(modalId);
+    if (!id) return;
+    const modal = this.getContainer().find(`#${id}`).first();
+    if (!modal.length) return;
+    modal.addClass('hidden');
   },
 
   saveDraft: async function () {
@@ -327,7 +397,9 @@ const committeeApprovalController = {
     if (!component || typeof component.mountAttachments !== 'function') return;
     try {
       component.mountAttachments(tabRootEl, { documentId: this._state.documentId });
-    } catch (error) {}
+    } catch (error) {
+      // silencioso
+    }
   },
 
   loadBaseContext: async function () {
@@ -353,9 +425,125 @@ const committeeApprovalController = {
       this.renderSidebarFromRow(row);
       this.fillCapFieldsFromRow(row);
       this.renderRiskComplianceFromRow(row);
+      this.renderBusinessCaseFromRow(row);
+      this.renderDocumentsFromRow(row);
     } catch (error) {
       console.error('[committeeApproval] Error loading base context:', error);
       this.showToast('Erro ao carregar', 'Não foi possível carregar os dados do Comitê.', 'error');
+    }
+  },
+
+  renderBusinessCaseFromRow: function (row) {
+    const root = this.getContainer();
+    const benefitsGrid = root.find('#cap-benefits-grid').first();
+    const alignmentCard = root.find('#cap-alignment-card').first();
+
+    if (!benefitsGrid.length && !alignmentCard.length) return;
+
+    const legacyBenefits = this.parseLegacyRows(this.asText(row && row.beneficiosesperadosNS));
+    const benefitsFromIndexedFields = this.collectIndexedFieldValues(row, 'beneficioEsperadoNS');
+    const benefitsFromTable = this.parseTableJson(row && row.tblBeneficiosEsperadosNS)
+      .map((item) => this.asText(item && item.beneficioEsperadoNS))
+      .filter(Boolean);
+    const benefits = benefitsFromIndexedFields.length
+      ? benefitsFromIndexedFields
+      : (benefitsFromTable.length ? benefitsFromTable : legacyBenefits);
+
+    const palette = [
+      { bg: 'bg-green-50', border: 'border border-green-200', icon: 'fa-chart-line text-bevap-green', title: 'text-green-900', text: 'text-green-800' },
+      { bg: 'bg-blue-50', border: 'border border-blue-200', icon: 'fa-users text-blue-600', title: 'text-blue-900', text: 'text-blue-800' },
+      { bg: 'bg-yellow-50', border: 'border border-yellow-200', icon: 'fa-dollar-sign text-bevap-gold', title: 'text-yellow-900', text: 'text-yellow-800' },
+      { bg: 'bg-purple-50', border: 'border border-purple-200', icon: 'fa-database text-purple-600', title: 'text-purple-900', text: 'text-purple-800' }
+    ];
+
+    if (benefitsGrid.length) {
+      if (!benefits.length) {
+        benefitsGrid.html('<div class="text-sm text-gray-500 md:col-span-2">Nenhum benefício informado.</div>');
+      } else {
+        benefitsGrid.html(benefits.map((text, index) => {
+          const theme = palette[index % palette.length];
+          const title = `Benefício ${index + 1}`;
+          return `
+            <div class="${this.escapeHtml(theme.bg)} ${this.escapeHtml(theme.border)} rounded-lg p-4">
+              <div class="flex items-center mb-2">
+                <i class="fa-solid ${this.escapeHtml(theme.icon)} mr-2"></i>
+                <span class="font-medium ${this.escapeHtml(theme.title)}">${this.escapeHtml(title)}</span>
+              </div>
+              <p class="text-sm ${this.escapeHtml(theme.text)} whitespace-pre-line">${this.escapeHtml(text)}</p>
+            </div>
+          `;
+        }).join(''));
+      }
+    }
+
+    const objectivesFromIndexedFields = this.collectIndexedFieldValues(row, 'descricaoobjetivoNS');
+    const objectivesFromTable = this.parseTableJson(row && row.tblObjetivosEstrategicosNS)
+      .map((item) => this.asText(item && item.descricaoobjetivoNS))
+      .filter(Boolean);
+    const objectives = objectivesFromIndexedFields.length ? objectivesFromIndexedFields : objectivesFromTable;
+    const isAligned = this.parseBooleanLike(row && row.alinhadobevapNS) === true;
+
+    if (alignmentCard.length) {
+      const title = isAligned ? 'Alinhamento estratégico confirmado' : 'Alinhamento estratégico não confirmado';
+      const desc = objectives.length
+        ? objectives.map((item) => `<li class="text-sm text-blue-200 whitespace-pre-line">${this.escapeHtml(item)}</li>`).join('')
+        : '<div class="text-sm text-blue-200">Nenhum objetivo estratégico informado.</div>';
+
+      alignmentCard.html(`
+        <div class="flex items-center mb-2">
+          <i class="fa-solid fa-target text-bevap-gold mr-2"></i>
+          <span class="font-semibold">${this.escapeHtml(title)}</span>
+        </div>
+        ${objectives.length
+          ? `<ul class="list-disc pl-5 space-y-1">${desc}</ul>`
+          : desc
+        }
+      `);
+    }
+  },
+
+  renderDocumentsFromRow: async function (row) {
+    const root = this.getContainer();
+    const target = root.find('#cap-documents-attachments').first();
+    if (!target.length) return;
+
+    const ui = this.getUiComponents();
+    if (!ui || !ui.attachments || typeof ui.attachments.render !== 'function') {
+      target.html('<div class="py-2 text-sm text-gray-500">Componente de anexos indisponível.</div>');
+      return;
+    }
+
+    const items = [];
+    const pushNormalized = (raw) => {
+      const documentId = this.asText(raw && (raw.documentId || raw.documentID || raw.id));
+      const fileName = this.asText(raw && (raw.fileName || raw.filename || raw.name));
+      if (!documentId || !fileName) return;
+
+      const rawSize = raw && (raw.fileSize !== undefined ? raw.fileSize : raw.size);
+      const fileSize = this.normalizeFileSizeToMb(rawSize);
+
+      items.push({ documentId, fileName, fileSize });
+    };
+
+    this.parseJsonArraySafe(row && row.anexosNS).forEach(pushNormalized);
+    this.parseJsonArraySafe(row && row.anexosApoioTITT).forEach(pushNormalized);
+
+    const uniqueById = {};
+    const merged = items.filter((att) => {
+      const key = this.asText(att && att.documentId);
+      if (!key) return false;
+      if (uniqueById[key]) return false;
+      uniqueById[key] = true;
+      return true;
+    });
+
+    try {
+      await ui.attachments.render(target, {
+        value: merged,
+        emptyHtml: '<div class="py-2 text-sm text-gray-500">Nenhum documento anexado.</div>'
+      });
+    } catch (error) {
+      target.html('<div class="py-2 text-sm text-gray-500">Não foi possível carregar anexos.</div>');
     }
   },
 
@@ -599,6 +787,7 @@ const committeeApprovalController = {
     this._state.participants = participants;
     this.renderParticipants();
 
+    // Ata: aqui só renderizamos itens locais (selecionados na tela).
     this._state.attachments = [];
     this.renderAttachmentsList();
   },
@@ -660,12 +849,12 @@ const committeeApprovalController = {
       const safeName = this.escapeHtml(p.name);
       const safeId = this.escapeHtml(p.id);
       return `
-        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-2">
-          <div class="text-sm text-gray-900">${safeName}</div>
-          <button type="button" data-action="remove-cap-participant" data-participant-id="${safeId}" class="text-red-500 hover:text-red-700" title="Remover">
-            <i class="fa-solid fa-trash"></i>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">
+          ${safeName}
+          <button type="button" data-action="remove-cap-participant" data-participant-id="${safeId}" class="ml-2 hover:text-red-300" aria-label="Remover participante" title="Remover">
+            <i class="fa-solid fa-times text-xs"></i>
           </button>
-        </div>
+        </span>
       `;
     }).join(''));
   },
@@ -862,6 +1051,26 @@ const committeeApprovalController = {
       }
 
       const taskFields = this.collectCommitteeTaskFields();
+      const decisionValue = this.asText(config && config.decisionValue);
+      const justification = this.asText(config && config.justification);
+
+      if (config && config.requireJustification === true && !justification) {
+        this.showToast('Justificativa', 'Informe a justificativa para continuar.', 'warning');
+        return;
+      }
+
+      if (decisionValue) {
+        taskFields.push({ name: 'decisaocomite1', value: decisionValue });
+        if (decisionValue === 'aprovado') {
+          taskFields.push({ name: 'justificativacomite1', value: '' });
+        } else {
+          taskFields.push({ name: 'justificativacomite1', value: justification });
+        }
+      }
+
+      if (config && config.modalId) {
+        this.closeModal(config.modalId);
+      }
       const attachments = await this.collectAttachmentsPayload();
 
       loading.updateMessage('Enviando movimentação para o Fluig...');
@@ -990,6 +1199,78 @@ const committeeApprovalController = {
     } catch (error) {
       return [];
     }
+  },
+
+  parseJsonArraySafe: function (value) {
+    if (Array.isArray(value)) return value;
+    const text = this.asText(value);
+    if (!text) return [];
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  },
+
+  parseLegacyRows: function (textValue) {
+    const text = this.asText(textValue);
+    if (!text) return [];
+    return text
+      .split(/\r?\n/)
+      .map((item) => this.asText(item))
+      .filter(Boolean);
+  },
+
+  collectIndexedFieldValues: function (row, fieldBaseName) {
+    const base = this.asText(fieldBaseName);
+    if (!base) return [];
+
+    const data = row && typeof row === 'object' ? row : {};
+    const prefix = `${base}___`;
+    const items = [];
+
+    Object.keys(data).forEach((key) => {
+      if (key.indexOf(prefix) !== 0) return;
+      const idx = Number(String(key).slice(prefix.length));
+      if (!Number.isInteger(idx) || idx <= 0) return;
+      const value = this.asText(data[key]);
+      if (!value) return;
+      items.push({ idx, value });
+    });
+
+    items.sort((a, b) => a.idx - b.idx);
+    return items.map((item) => item.value);
+  },
+
+  parseBooleanLike: function (value) {
+    if (value === true) return true;
+    if (value === false) return false;
+
+    const normalized = this.asText(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    if (!normalized) return null;
+    if (['1', 'true', 'sim', 's', 'yes', 'on'].indexOf(normalized) >= 0) return true;
+    if (['0', 'false', 'nao', 'n', 'no', 'off'].indexOf(normalized) >= 0) return false;
+    return null;
+  },
+
+  normalizeFileSizeToMb: function (rawSize) {
+    if (rawSize === null || rawSize === undefined || rawSize === '') return undefined;
+
+    const num = Number(rawSize);
+    if (!isFinite(num) || num <= 0) return undefined;
+
+    // Heurística: anexosNS usa MB (float). anexosApoioTITT pode vir em bytes.
+    // Se for muito grande, trata como bytes e converte para MB.
+    if (num > 2048) {
+      return Number((num / 1024 / 1024).toFixed(3));
+    }
+
+    return num;
   },
 
   escapeHtml: function (value) {

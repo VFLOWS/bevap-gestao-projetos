@@ -1,7 +1,7 @@
 function afterStateLeave(sequenceId) {
     var atividade = getValue("WKNumState");
 
-    if (atividade != 26) {
+    if (atividade != 26 && atividade != 36) {
         return;
     }
 
@@ -10,6 +10,8 @@ function afterStateLeave(sequenceId) {
         var attachments = hAPI.listAttachments();
 
         var baseJson = String(hAPI.getCardValue("anexosNS") || "");
+        var apoioJson = String(hAPI.getCardValue("anexosApoioTITT") || "");
+        var ataJson = String(hAPI.getCardValue("anexarAtaReuniaoCAP") || "");
 
         function safeParseArray(text) {
             var raw = String(text || "").trim();
@@ -43,6 +45,26 @@ function afterStateLeave(sequenceId) {
 
         var baseIds = extractDocumentIds(safeParseArray(baseJson));
 
+        // Sempre ignoramos anexos já registrados como ATA, para evitar duplicidade
+        // quando o processo retorna ao Comitê ou quando outra atividade captura anexos.
+        var ataIds = extractDocumentIds(safeParseArray(ataJson));
+        for (var ataKey in ataIds) {
+            if (ataIds.hasOwnProperty(ataKey)) {
+                baseIds[ataKey] = true;
+            }
+        }
+
+        if (atividade == 36) {
+            // No Comitê, a ata deve conter apenas anexos desta atividade.
+            // Então removemos do universo todos os anexos já existentes em anexosNS e anexosApoioTITT.
+            var apoioIds = extractDocumentIds(safeParseArray(apoioJson));
+            for (var key in apoioIds) {
+                if (apoioIds.hasOwnProperty(key)) {
+                    baseIds[key] = true;
+                }
+            }
+        }
+
         var jsonAttachments = [];
 
         for (var j = 0; j < attachments.size(); j++) {
@@ -62,10 +84,15 @@ function afterStateLeave(sequenceId) {
         }
 
         var attachmentsString = gson.toJson(jsonAttachments);
-        hAPI.setCardValue("anexosApoioTITT", attachmentsString);
 
-        log.info("[afterStateLeave] Triagem (26): anexos novos salvos em anexosApoioTITT = " + jsonAttachments.length);
+        if (atividade == 26) {
+            hAPI.setCardValue("anexosApoioTITT", attachmentsString);
+            log.info("[afterStateLeave] Triagem (26): anexos novos salvos em anexosApoioTITT = " + jsonAttachments.length);
+        } else if (atividade == 36) {
+            hAPI.setCardValue("anexarAtaReuniaoCAP", attachmentsString);
+            log.info("[afterStateLeave] Comitê (36): ata salva em anexarAtaReuniaoCAP = " + jsonAttachments.length);
+        }
     } catch (error) {
-        log.error("[afterStateLeave] Erro ao capturar anexos da triagem (26): " + error);
+        log.error("[afterStateLeave] Erro ao capturar anexos (atividade " + atividade + "): " + error);
     }
 }

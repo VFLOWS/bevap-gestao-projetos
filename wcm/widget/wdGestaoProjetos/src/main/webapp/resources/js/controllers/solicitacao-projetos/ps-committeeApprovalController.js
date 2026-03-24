@@ -9,6 +9,12 @@ const committeeApprovalController = {
     'prioridadeNS',
     'estadoProcesso',
     'anexosNS',
+    'anexosApoioTITT',
+    'beneficiosesperadosNS',
+    'tblBeneficiosEsperadosNS.beneficioEsperadoNS',
+    'alinhadobevapNS',
+    'tblObjetivosEstrategicosNS.descricaoobjetivoNS',
+    'categoriajusticomite1',
     'dataHoraCAP',
     'anotacoesCAP',
     'anexarAtaReuniaoCAP',
@@ -200,6 +206,28 @@ const committeeApprovalController = {
       this.saveDraft();
     });
 
+    container.on(`click${ns}`, '[data-action="open-return-modal"]', (event) => {
+      event.preventDefault();
+      this.openModal('modal-return');
+    });
+
+    container.on(`click${ns}`, '[data-action="open-reject-modal"]', (event) => {
+      event.preventDefault();
+      this.openModal('modal-reject');
+    });
+
+    container.on(`click${ns}`, '[data-action="open-approve-modal"]', (event) => {
+      event.preventDefault();
+      this.openModal('approve-modal');
+    });
+
+    container.on(`click${ns}`, '[data-action="close-modal"]', (event) => {
+      event.preventDefault();
+      const modalId = String($(event.currentTarget).attr('data-modal-id') || '').trim();
+      if (!modalId) return;
+      this.closeModal(modalId);
+    });
+
     container.on(`click${ns}`, '#cap-add-participant', (event) => {
       event.preventDefault();
       this.addParticipantFromInput();
@@ -232,19 +260,68 @@ const committeeApprovalController = {
       this.removeAttachment(id);
     });
 
-    container.on(`click${ns}`, '#cap-btn-approve', (event) => {
+    container.on(`click${ns}`, '[data-action="confirm-approve"]', (event) => {
       event.preventDefault();
-      this.handleTaskAction({ action: 'Aprovar', choosedState: 45 });
+      this.handleTaskAction({
+        action: 'Aprovar',
+        choosedState: 45,
+        modalId: 'approve-modal',
+        decisionField: 'decisaocomite1',
+        decisionValue: 'aprovado',
+        justification: ''
+      });
     });
 
-    container.on(`click${ns}`, '#cap-btn-return', (event) => {
+    container.on(`click${ns}`, '[data-action="confirm-return"]', (event) => {
       event.preventDefault();
-      this.handleTaskAction({ action: 'Devolver', choosedState: 45 });
+      const justification = this.asText(container.find('#cap-justification-return').val());
+      if (!justification) {
+        this.showToast('Justificativa', 'Informe o motivo da devolução.', 'warning');
+        container.find('#cap-justification-return').trigger('focus');
+        return;
+      }
+
+      this.handleTaskAction({
+        action: 'Devolver para Correção',
+        choosedState: 45,
+        modalId: 'modal-return',
+        decisionField: 'decisaocomite1',
+        decisionValue: 'correcao',
+        justification: justification
+      });
     });
 
-    container.on(`click${ns}`, '#cap-btn-no-continuity', (event) => {
+    container.on(`click${ns}`, '[data-action="confirm-reject"]', (event) => {
       event.preventDefault();
-      this.handleTaskAction({ action: 'Não Continuidade', choosedState: 45 });
+
+      const category = this.asText(container.find('#cap-reject-category').val());
+      if (!category) {
+        this.showToast('Categoria', 'Selecione a categoria da reprovação.', 'warning');
+        container.find('#cap-reject-category').trigger('focus');
+        return;
+      }
+
+      const justification = this.asText(container.find('#cap-justification-reject').val());
+      if (!justification) {
+        this.showToast('Justificativa', 'Informe a justificativa da reprovação.', 'warning');
+        container.find('#cap-justification-reject').trigger('focus');
+        return;
+      }
+
+      this.handleTaskAction({
+        action: 'Reprovar',
+        choosedState: 45,
+        modalId: 'modal-reject',
+        decisionField: 'decisaocomite1',
+        decisionValue: 'cancelado',
+        justification: justification,
+        extraCardData: { categoriajusticomite1: category }
+      });
+    });
+
+    container.on(`click${ns}`, '#approve-modal, #modal-return, #modal-reject', (event) => {
+      if (event.target !== event.currentTarget) return;
+      $(event.currentTarget).addClass('hidden');
     });
   },
 
@@ -278,12 +355,27 @@ const committeeApprovalController = {
     this.getContainer().off(this._eventNamespace);
   },
 
+  openModal: function (modalId) {
+    const modal = this.getContainer().find(`#${modalId}`);
+    if (!modal.length) return;
+    modal.removeClass('hidden');
+  },
+
+  closeModal: function (modalId) {
+    const modal = this.getContainer().find(`#${modalId}`);
+    if (!modal.length) return;
+    modal.addClass('hidden');
+  },
+
   getReadOnlyTabConfig: function (tabName) {
     const configMap = {
       solicitacao: { key: 'solicitationHistory', mount: 'tab-solicitacao-history' },
       'analise-ti': { key: 'tiAnalysisHistory', mount: 'tab-analise-ti-history' },
       impacto: { key: 'areaImpactHistory', mount: 'tab-impacto-history' },
-      'triagem-ti': { key: 'tiTriageHistory', mount: 'tab-triagem-ti-history' }
+      'triagem-ti': { key: 'tiTriageHistory', mount: 'tab-triagem-ti-history' },
+      'business-case': { key: 'committeeBusinessCase', mount: 'tab-business-case' },
+      'risk-compliance': { key: 'committeeRiskCompliance', mount: 'tab-risk-compliance' },
+      documents: { key: 'committeeDocuments', mount: 'tab-documents' }
     };
 
     return configMap[tabName] || null;
@@ -299,9 +391,14 @@ const committeeApprovalController = {
     const components = this.getTabComponents();
     const component = components[config.key];
 
+    const componentOptions = {
+      documentId: this._state.documentId,
+      row: this._state.baseRow || null
+    };
+
     if (this._state.historyCache[tabName]) {
       target.html(this._state.historyCache[tabName]);
-      this.mountAttachmentsInTab(target, component);
+      this.mountAttachmentsInTab(target, component, componentOptions);
       return;
     }
 
@@ -313,20 +410,27 @@ const committeeApprovalController = {
     target.html('<div class="text-sm text-gray-500">Carregando conteúdo...</div>');
 
     try {
-      const html = await component.render({ documentId: this._state.documentId });
+      const html = typeof component.renderInto === 'function'
+        ? await component.renderInto(target, componentOptions)
+        : await component.render(componentOptions);
       this._state.historyCache[tabName] = html;
-      target.html(html);
-      this.mountAttachmentsInTab(target, component);
+
+      // Se usou renderInto, o componente pode já ter escrito o HTML.
+      if (typeof component.renderInto !== 'function') {
+        target.html(html);
+      }
+
+      this.mountAttachmentsInTab(target, component, componentOptions);
     } catch (error) {
       console.error(`[committeeApproval] Error loading tab ${tabName}:`, error);
       target.html('<div class="text-sm text-red-600">Não foi possível carregar esta aba.</div>');
     }
   },
 
-  mountAttachmentsInTab: function (tabRootEl, component) {
+  mountAttachmentsInTab: function (tabRootEl, component, options) {
     if (!component || typeof component.mountAttachments !== 'function') return;
     try {
-      component.mountAttachments(tabRootEl, { documentId: this._state.documentId });
+      component.mountAttachments(tabRootEl, Object.assign({ documentId: this._state.documentId }, options));
     } catch (error) {
       // silencioso
     }
@@ -354,137 +458,25 @@ const committeeApprovalController = {
 
       this.renderSidebarFromRow(row);
       this.fillCapFieldsFromRow(row);
-      this.renderRiskComplianceFromRow(row);
+      this.renderApproveModalFromRow(row);
     } catch (error) {
       console.error('[committeeApproval] Error loading base context:', error);
       this.showToast('Erro ao carregar', 'Não foi possível carregar os dados do Comitê.', 'error');
     }
   },
 
-  renderRiskComplianceFromRow: function (row) {
+  renderApproveModalFromRow: function (row) {
     const root = this.getContainer();
-    const matrix = root.find('#committee-risk-matrix').first();
-    const list = root.find('#committee-risk-identified').first();
-    if (!matrix.length && !list.length) return;
+    const strong = root.find('#cap-approve-project').first();
+    if (!strong.length) return;
 
-    const risks = this.parseTableJson(row && (row.tblRiscosIdentificadosTITT || row['tblRiscosIdentificadosTITT']))
-      .map((item) => {
-        return {
-          title: this.asText(item && item.tituloRiscoTITT),
-          description: this.asText(item && item.descricaoRiscoTITT),
-          mitigation: this.asText(item && item.mitigacaoRiscoTITT),
-          level: this.asText(item && item.nivelRiscoTITT),
-          impact: this.asText(item && item.impactoRiscoTITT),
-          probability: this.asText(item && item.probabilidadeRiscoTITT)
-        };
-      })
-      .filter((risk) => risk.title || risk.description || risk.mitigation || risk.level || risk.impact || risk.probability);
-
-    const legacyRisks = this.parseTableJson(row && row.tblRiscosDependenciasTITT)
-      .map((item) => this.asText(item && item.riscoPotencialTITT))
-      .filter(Boolean);
-
-    const scoreFromLabel = (value) => {
-      const normalized = this.asText(value)
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '');
-
-      if (!normalized) return null;
-      if (normalized === 'baixo' || normalized === 'baixa') return 1;
-      if (normalized === 'medio' || normalized === 'media') return 2;
-      if (normalized === 'alto' || normalized === 'alta') return 5;
-      return null;
-    };
-
-    const mean = (values) => {
-      const nums = Array.isArray(values) ? values.filter((n) => typeof n === 'number' && isFinite(n)) : [];
-      if (!nums.length) return null;
-      return nums.reduce((acc, n) => acc + n, 0) / nums.length;
-    };
-
-    const bucketFromMean = (avg) => {
-      if (avg === null || avg === undefined || !isFinite(avg)) {
-        return { label: 'Não informado', badgeClasses: 'bg-slate-100 border border-slate-200 text-slate-700', iconClass: 'fa-solid fa-circle-info text-slate-500' };
-      }
-
-      const candidates = [
-        { score: 1, label: 'Baixo', badgeClasses: 'bg-green-100 border border-green-200 text-green-800', iconClass: 'fa-solid fa-shield text-green-700' },
-        { score: 2, label: 'Médio', badgeClasses: 'bg-yellow-100 border border-yellow-300 text-yellow-800', iconClass: 'fa-solid fa-triangle-exclamation text-yellow-600' },
-        { score: 5, label: 'Alto', badgeClasses: 'bg-red-100 border border-red-200 text-red-800', iconClass: 'fa-solid fa-triangle-exclamation text-red-700' }
-      ];
-
-      let best = candidates[0];
-      let bestDiff = Math.abs(avg - best.score);
-      for (let i = 1; i < candidates.length; i += 1) {
-        const diff = Math.abs(avg - candidates[i].score);
-        if (diff < bestDiff) {
-          best = candidates[i];
-          bestDiff = diff;
-        }
-      }
-      return best;
-    };
-
-    const riskAvg = mean(risks.map((r) => scoreFromLabel(r.level)).filter((n) => n !== null));
-    const impactAvg = mean(risks.map((r) => scoreFromLabel(r.impact)).filter((n) => n !== null));
-    const probAvg = mean(risks.map((r) => scoreFromLabel(r.probability)).filter((n) => n !== null));
-
-    const riskBucket = bucketFromMean(riskAvg);
-    const impactBucket = bucketFromMean(impactAvg);
-    const probBucket = bucketFromMean(probAvg);
-
-    if (matrix.length) {
-      matrix.html(`
-        <div class="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
-          <div class="flex flex-wrap items-center gap-2">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${this.escapeHtml(riskBucket.badgeClasses)}">
-              <i class="${this.escapeHtml(riskBucket.iconClass)} mr-2"></i>Risco ${this.escapeHtml(riskBucket.label)}
-            </span>
-            <span class="text-sm text-gray-600">Probabilidade: <span class="font-semibold text-gray-900">${this.escapeHtml(probBucket.label)}</span></span>
-            <span class="text-sm text-gray-400">•</span>
-            <span class="text-sm text-gray-600">Impacto: <span class="font-semibold text-gray-900">${this.escapeHtml(impactBucket.label)}</span></span>
-          </div>
-          <span class="text-xs text-gray-500">Visão geral</span>
-        </div>
-      `);
-    }
-
-    if (list.length) {
-      if (risks.length) {
-        list.html(risks.map((risk) => {
-          const levelBucket = bucketFromMean(scoreFromLabel(risk.level));
-          const title = this.escapeHtml(risk.title || 'Risco');
-          const desc = this.escapeHtml(risk.description);
-          const miti = this.escapeHtml(risk.mitigation);
-
-          return `
-            <div class="p-4">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <h4 class="font-medium text-gray-900">${title}</h4>
-                <span class="inline-flex items-center px-2 py-1 ${this.escapeHtml(levelBucket.badgeClasses)} text-xs font-medium rounded">${this.escapeHtml(levelBucket.label)}</span>
-              </div>
-              ${desc ? `<p class="text-sm text-gray-700 mt-2 whitespace-pre-line">${desc}</p>` : ''}
-              ${miti ? `<p class="text-xs text-gray-600 mt-2 whitespace-pre-line"><strong>Mitigação:</strong> ${miti}</p>` : ''}
-            </div>
-          `;
-        }).join(''));
-      } else if (legacyRisks.length) {
-        list.html(legacyRisks.map((text) => {
-          return `
-            <div class="p-4">
-              <div class="flex items-start gap-3">
-                <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
-                <div class="text-sm text-gray-700 whitespace-pre-line">${this.escapeHtml(text)}</div>
-              </div>
-            </div>
-          `;
-        }).join(''));
-      } else {
-        list.html('<div class="p-4 text-sm text-gray-500">Nenhum risco identificado.</div>');
-      }
-    }
+    const code = this.asText(row && row.documentid);
+    const title = this.asText(row && row.titulodoprojetoNS);
+    const label = [code, title].filter(Boolean).join(' • ');
+    strong.text(label || '—');
   },
+
+  // (aba Business Case / Risco & Compliance / Documentos migradas para gpApprovalTabComponents)
 
   renderSidebarSkeleton: function () {
     const ui = this.getUiComponents();
@@ -544,10 +536,11 @@ const committeeApprovalController = {
 
   getProgressItems: function () {
     return [
-      { style: 'success', label: 'Solicitação recebida', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Solicitação aprovada', iconClass: 'fa-solid fa-check-circle' },
       { style: 'success', label: 'Análise TI concluída', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Impacto na área concluído', iconClass: 'fa-solid fa-check-circle' },
       { style: 'success', label: 'Triagem técnica concluída', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'warning', label: 'Decisão do comitê pendente', iconClass: 'fa-solid fa-exclamation-circle' }
+      { style: 'warning', label: 'Análise do comitê em andamento', iconClass: 'fa-solid fa-clock' }
     ];
   },
 
@@ -592,6 +585,12 @@ const committeeApprovalController = {
     if (dt) root.find('#cap-datetime').val(dt);
 
     root.find('#cap-notes').val(this.asText(row.anotacoesCAP));
+
+    const rejectCategory = this.asText(row && row.categoriajusticomite1);
+    if (rejectCategory) {
+      const select = root.find('#cap-reject-category').first();
+      if (select.length) select.val(rejectCategory);
+    }
 
     const participants = this.parseTableJson(row.tblParticipantesCAP)
       .map((item) => this.asText(item && item.nomeParticipanteCAP))
@@ -663,12 +662,12 @@ const committeeApprovalController = {
       const safeName = this.escapeHtml(p.name);
       const safeId = this.escapeHtml(p.id);
       return `
-        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg mb-2">
-          <div class="text-sm text-gray-900">${safeName}</div>
-          <button type="button" data-action="remove-cap-participant" data-participant-id="${safeId}" class="text-red-500 hover:text-red-700" title="Remover">
-            <i class="fa-solid fa-trash"></i>
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">
+          ${safeName}
+          <button type="button" data-action="remove-cap-participant" data-participant-id="${safeId}" class="ml-2 hover:text-red-300" aria-label="Remover participante" title="Remover">
+            <i class="fa-solid fa-times text-xs"></i>
           </button>
-        </div>
+        </span>
       `;
     }).join(''));
   },
@@ -778,7 +777,7 @@ const committeeApprovalController = {
     return payload.filter((item) => item.fileName && item.fileContent);
   },
 
-  collectCommitteeTaskFields: function () {
+  collectCommitteeCardData: function (decisionField, decisionValue, justificationValue, extraCardData) {
     const root = this.getContainer();
     const inputDateTime = this.asText(root.find('#cap-datetime').val());
 
@@ -792,6 +791,28 @@ const committeeApprovalController = {
     names.forEach((name, index) => {
       cardData[`nomeParticipanteCAP___${index + 1}`] = name;
     });
+
+    if (decisionField) {
+      cardData[decisionField] = this.asText(decisionValue);
+    }
+
+    if (justificationValue !== undefined) {
+      cardData.justificativacomite1 = this.asText(justificationValue);
+    }
+
+    if (extraCardData && typeof extraCardData === 'object') {
+      Object.keys(extraCardData).forEach((key) => {
+        const name = this.asText(key);
+        if (!name) return;
+        cardData[name] = this.asText(extraCardData[key]);
+      });
+    }
+
+    return cardData;
+  },
+
+  collectCommitteeTaskFields: function (decisionField, decisionValue, justificationValue, extraCardData) {
+    const cardData = this.collectCommitteeCardData(decisionField, decisionValue, justificationValue, extraCardData);
 
     return Object.keys(cardData).map((fieldName) => {
       return { name: fieldName, value: cardData[fieldName] };
@@ -864,7 +885,12 @@ const committeeApprovalController = {
         throw new Error('Número da atividade destino é obrigatório');
       }
 
-      const taskFields = this.collectCommitteeTaskFields();
+      const taskFields = this.collectCommitteeTaskFields(
+        config && config.decisionField,
+        config && config.decisionValue,
+        config && config.justification,
+        config && config.extraCardData
+      );
       const attachments = await this.collectAttachmentsPayload();
 
       loading.updateMessage('Enviando movimentação para o Fluig...');
@@ -878,6 +904,10 @@ const committeeApprovalController = {
         comments: `Comitê: ${this.asText(config && config.action)}`,
         attachments: attachments
       }, taskFields);
+
+      if (config && config.modalId) {
+        this.closeModal(config.modalId);
+      }
 
       this.showToast('Sucesso', `Ação registrada: ${this.asText(config && config.action)}.`, 'success');
       setTimeout(() => {
@@ -993,6 +1023,57 @@ const committeeApprovalController = {
     } catch (error) {
       return [];
     }
+  },
+
+  parseJsonArraySafe: function (value) {
+    if (Array.isArray(value)) return value;
+    const text = this.asText(value);
+    if (!text) return [];
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  },
+
+  parseLegacyRows: function (textValue) {
+    const text = this.asText(textValue);
+    if (!text) return [];
+    return text
+      .split(/\r?\n/)
+      .map((item) => this.asText(item))
+      .filter(Boolean);
+  },
+
+  parseBooleanLike: function (value) {
+    if (value === true) return true;
+    if (value === false) return false;
+
+    const normalized = this.asText(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    if (!normalized) return null;
+    if (['1', 'true', 'sim', 's', 'yes', 'on'].indexOf(normalized) >= 0) return true;
+    if (['0', 'false', 'nao', 'n', 'no', 'off'].indexOf(normalized) >= 0) return false;
+    return null;
+  },
+
+  normalizeFileSizeToMb: function (rawSize) {
+    if (rawSize === null || rawSize === undefined || rawSize === '') return undefined;
+
+    const num = Number(rawSize);
+    if (!isFinite(num) || num <= 0) return undefined;
+
+    // Heurística: anexosNS usa MB (float). anexosApoioTITT pode vir em bytes.
+    // Se for muito grande, trata como bytes e converte para MB.
+    if (num > 2048) {
+      return Number((num / 1024 / 1024).toFixed(3));
+    }
+
+    return num;
   },
 
   escapeHtml: function (value) {

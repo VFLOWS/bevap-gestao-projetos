@@ -140,6 +140,7 @@ dataHoraACP
 anotacoesACP
 anexarAtaReuniaoACP
 
+
 *COMPRAS - REALIZAR CONTRATACAO - CRC
 tipoContratacaoCRC
 numeroPedidoContratoCRC
