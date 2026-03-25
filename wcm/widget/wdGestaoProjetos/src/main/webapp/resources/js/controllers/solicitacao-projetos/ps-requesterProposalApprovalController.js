@@ -7,6 +7,9 @@ const requesterProposalApprovalController = {
     'areaUnidadeNS',
     'patrocinadorNS',
     'prioridadeNS',
+    'nomeFornecedorTIPC',
+    'valortotalTIPC',
+    'prazoEstimadoTIPC',
     'estadoProcesso',
     'anexosNS',
     'anexosPropostaTIPC',
@@ -202,6 +205,11 @@ const requesterProposalApprovalController = {
       this.openModal('modal-return');
     });
 
+    container.on(`click${ns}`, '[data-action="open-discontinue-modal"]', (event) => {
+      event.preventDefault();
+      this.openModal('modal-discontinue');
+    });
+
     container.on(`click${ns}`, '[data-action="close-modal"]', (event) => {
       event.preventDefault();
       const modalId = String($(event.currentTarget).attr('data-modal-id') || '').trim();
@@ -219,7 +227,12 @@ const requesterProposalApprovalController = {
       this.handleReturn();
     });
 
-    container.on(`click${ns}`, '#approve-modal, #modal-return', (event) => {
+    container.on(`click${ns}`, '[data-action="confirm-discontinue"]', (event) => {
+      event.preventDefault();
+      this.handleDiscontinue();
+    });
+
+    container.on(`click${ns}`, '#approve-modal, #modal-return, #modal-discontinue', (event) => {
       if (event.target !== event.currentTarget) return;
       $(event.currentTarget).addClass('hidden');
     });
@@ -296,16 +309,21 @@ const requesterProposalApprovalController = {
       sponsor: 'N/A',
       attachmentsCount: 0,
       priority: { label: 'N/A', iconClass: 'fa-solid fa-star', badgeClasses: 'bg-gray-100 text-gray-800' },
+      customRows: [
+        { variant: 'block', label: 'Fornecedor Recomendado', value: 'N/A' },
+        {
+          variant: 'kvList',
+          label: 'Estimativa Original',
+          items: [
+            { label: 'Custo:', value: 'N/A' },
+            { label: 'Prazo:', value: 'N/A' }
+          ]
+        }
+      ],
       status: { label: 'N/A', iconClass: 'fa-solid fa-clock', badgeClasses: 'bg-gray-100 text-gray-800' }
     });
 
-    ui.sidebar.renderProgress(progressTarget, {
-      items: [
-        { style: 'success', label: 'Solicitacao completa', iconClass: 'fa-solid fa-check-circle' },
-        { style: 'success', label: 'Analise TI concluida', iconClass: 'fa-solid fa-check-circle' },
-        { style: 'warning', label: 'Aprovacao do solicitante pendente', iconClass: 'fa-solid fa-exclamation-circle' }
-      ]
-    });
+    ui.sidebar.renderProgress(progressTarget, { items: this.getProgressItems() });
   },
 
   loadBaseContext: async function () {
@@ -359,6 +377,21 @@ const requesterProposalApprovalController = {
         iconClass: 'fa-solid fa-star',
         badgeClasses: this.getPriorityBadgeClasses(row.prioridadeNS)
       },
+      customRows: [
+        {
+          variant: 'block',
+          label: 'Fornecedor Recomendado',
+          value: this.asText(row.nomeFornecedorTIPC) || 'Nao informado'
+        },
+        {
+          variant: 'kvList',
+          label: 'Estimativa Original',
+          items: [
+            { label: 'Custo:', value: this.asText(row.valortotalTIPC) || 'Nao informado' },
+            { label: 'Prazo:', value: this.asText(row.prazoEstimadoTIPC) || 'Nao informado' }
+          ]
+        }
+      ],
       status: {
         label: this.getEstadoProcessoLabel(row.estadoProcesso) || 'N/A',
         iconClass: 'fa-solid fa-clock',
@@ -366,13 +399,18 @@ const requesterProposalApprovalController = {
       }
     });
 
-    ui.sidebar.renderProgress(progressTarget, {
-      items: [
-        { style: 'success', label: 'Solicitacao completa', iconClass: 'fa-solid fa-check-circle' },
-        { style: 'success', label: 'Analise TI concluida', iconClass: 'fa-solid fa-check-circle' },
-        { style: 'warning', label: 'Aprovacao do solicitante pendente', iconClass: 'fa-solid fa-exclamation-circle' }
-      ]
-    });
+    ui.sidebar.renderProgress(progressTarget, { items: this.getProgressItems() });
+  },
+
+  getProgressItems: function () {
+    return [
+      { style: 'success', label: 'Solicitação aprovada', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Análise TI concluída', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Impacto na área concluído', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Triagem técnica (Externo)', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Proposta comercial validada', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'warning', label: 'Aprovação do solicitante', iconClass: 'fa-solid fa-exclamation-circle' }
+    ];
   },
 
   fillSapFieldsFromRow: function (row) {
@@ -513,14 +551,30 @@ const requesterProposalApprovalController = {
 
     return {
       observacoesNegociacaoSAP: obs,
-      liConcordoPropostaComercialSAP: 'true'
+      liConcordoPropostaComercialSAP: 'true',
+      decisaoPropostaSAP: 'aprovado',
+      justificativaPropostaSAP: '',
+      categoriajustiPropostaSAP: ''
     };
   },
 
   collectReturnCardData: function (reason) {
     return {
-      observacoesNegociacaoSAP: this.asText(reason),
-      liConcordoPropostaComercialSAP: 'false'
+      observacoesNegociacaoSAP: this.collectSapCardData().observacoesNegociacaoSAP,
+      liConcordoPropostaComercialSAP: 'false',
+      decisaoPropostaSAP: 'correcao',
+      justificativaPropostaSAP: this.asText(reason),
+      categoriajustiPropostaSAP: ''
+    };
+  },
+
+  collectDiscontinueCardData: function (category, reason) {
+    return {
+      observacoesNegociacaoSAP: this.collectSapCardData().observacoesNegociacaoSAP,
+      liConcordoPropostaComercialSAP: 'false',
+      decisaoPropostaSAP: 'cancelado',
+      justificativaPropostaSAP: this.asText(reason),
+      categoriajustiPropostaSAP: this.asText(category)
     };
   },
 
@@ -689,6 +743,62 @@ const requesterProposalApprovalController = {
     } catch (error) {
       console.error('[requesterProposalApproval] Error returning proposal:', error);
       this.showToast('Erro ao devolver', error && error.message ? error.message : 'Nao foi possivel devolver para correcao.', 'error');
+    } finally {
+      this._state.isSubmitting = false;
+      loading.hide();
+    }
+  },
+
+  handleDiscontinue: async function () {
+    if (this._state.isSubmitting) return;
+
+    const root = this.getContainer();
+    const category = this.asText(root.find('#discontinue-category-input').val());
+    if (!category) {
+      this.showToast('Categoria', 'Selecione a categoria da nao continuidade.', 'warning');
+      root.find('#discontinue-category-input').trigger('focus');
+      return;
+    }
+
+    const reason = this.asText(root.find('#discontinue-reason-input').val());
+    if (!reason) {
+      this.showToast('Justificativa', 'Informe a justificativa da nao continuidade.', 'warning');
+      root.find('#discontinue-reason-input').trigger('focus');
+      return;
+    }
+
+    const loading = this.createActionLoading();
+    this._state.isSubmitting = true;
+
+    try {
+      loading.updateMessage('Preparando nao continuidade...');
+      await this.waitForUiPaint();
+
+      const processInstanceId = await this.resolveProcessInstanceId();
+      const cardData = this.collectDiscontinueCardData(category, reason);
+      const taskFields = Object.keys(cardData).map((fieldName) => {
+        return { name: fieldName, value: cardData[fieldName] };
+      });
+
+      loading.updateMessage('Enviando nao continuidade para o Fluig...');
+      await this.waitForUiPaint();
+
+      await fluigService.saveAndSendTask({
+        id: processInstanceId,
+        numState: 42,
+        documentId: this._state.documentId,
+        datasetName: 'DSFormSolicitacaoProjetos'
+      }, taskFields);
+
+      this.closeModal('modal-discontinue');
+      this.showToast('Sucesso', 'Nao continuidade registrada.', 'success');
+
+      setTimeout(() => {
+        location.hash = '#dashboard';
+      }, 600);
+    } catch (error) {
+      console.error('[requesterProposalApproval] Error discontinuing project:', error);
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel registrar a nao continuidade.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();

@@ -103,6 +103,9 @@
       const $target = $(targetEl);
       if (!$target.length) return;
 
+      const variantFromAttr = asText($target.attr('data-variant'));
+      const variant = asText(options.variant) || variantFromAttr;
+
       const fieldName = asText(options.fieldName);
       const datasetId = asText(options.datasetId);
       const documentId = asText(options.documentId);
@@ -150,6 +153,8 @@
 
       const urlsById = await resolveAttachmentUrls(items.map((a) => a.documentId));
 
+      const isPrototypeCards = variant === 'prototype-cards';
+
       const rowsHtml = items.map((att) => {
         const safeName = escapeHtml(att.fileName);
         const sizeLabel = escapeHtml(formatAttachmentSizeFromMb(att.fileSize));
@@ -158,6 +163,40 @@
         const url = asText(urlsById[att.documentId]);
         const safeUrl = escapeHtml(url);
         const disabled = !url;
+
+        if (isPrototypeCards) {
+          const viewNode = disabled
+            ? `<button disabled aria-disabled="true" class="text-bevap-green opacity-50 cursor-not-allowed" title="Visualizar">
+                <i class="fa-solid fa-eye"></i>
+              </button>`
+            : `<a href="${safeUrl}" target="_blank" rel="noopener" class="text-bevap-green hover:text-green-700" title="Visualizar">
+                <i class="fa-solid fa-eye"></i>
+              </a>`;
+
+          const downloadNode = disabled
+            ? `<button disabled aria-disabled="true" class="text-bevap-navy opacity-50 cursor-not-allowed" title="Baixar">
+                <i class="fa-solid fa-download"></i>
+              </button>`
+            : `<a href="${safeUrl}" download="${safeName}" class="text-bevap-navy hover:text-blue-700" title="Baixar">
+                <i class="fa-solid fa-download"></i>
+              </a>`;
+
+          return `
+            <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+              <div class="flex items-center min-w-0">
+                <i class="fa-solid ${iconClass} text-xl mr-3"></i>
+                <div class="min-w-0">
+                  <div class="font-medium text-sm text-gray-900 truncate">${safeName}</div>
+                  <div class="text-xs text-gray-500">${sizeLabel}</div>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2">
+                ${viewNode}
+                ${downloadNode}
+              </div>
+            </div>
+          `;
+        }
 
         const viewNode = disabled
           ? `<button disabled aria-disabled="true" class="px-3 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg opacity-50 cursor-not-allowed" title="Visualizar">
@@ -192,7 +231,7 @@
         `;
       }).join('');
 
-      $target.html(rowsHtml);
+      $target.html(isPrototypeCards ? `<div class="space-y-2">${rowsHtml}</div>` : rowsHtml);
     }
   };
 

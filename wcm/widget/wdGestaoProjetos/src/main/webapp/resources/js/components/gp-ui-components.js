@@ -176,7 +176,7 @@
       $root.data('gpTabsNs', ns);
 
       const $scroller = $root.find('[data-tabs-scroll]').first();
-      const updateScrollArrows = this._createScrollArrowUpdater($root, $scroller);
+      const updateScrollArrows = this._createScrollArrowUpdater($root, $scroller, hiddenClass);
       $root.data('gpTabsScrollUpdate', updateScrollArrows);
 
       if ($scroller.length) {
@@ -311,9 +311,48 @@
       }
     },
 
-    _createScrollArrowUpdater: function ($root, $scroller) {
+    _createScrollArrowUpdater: function ($root, $scroller, hiddenClass) {
       const getButton = (direction) => {
         return $root.find(`[data-tabs-scroll-arrow="${direction}"]`).first();
+      };
+
+      const hidden = (hiddenClass || 'hidden').trim() || 'hidden';
+
+      const setArrowBadgeVisible = ($btn, visible) => {
+        if (!$btn || !$btn.length) return;
+        const $badge = $btn.find('.tab-notice-badge').first();
+        if (!$badge.length) return;
+        $badge.toggleClass(hidden, !visible);
+      };
+
+      const computeBadgeVisibility = (scrollerEl) => {
+        const result = { left: false, right: false };
+
+        if (!scrollerEl || !$scroller || !$scroller.length) return result;
+        const scrollerRect = scrollerEl.getBoundingClientRect();
+        if (!scrollerRect) return result;
+
+        $scroller.find('.tab-notice-badge').each((_, badgeEl) => {
+          const $badge = $(badgeEl);
+          if ($badge.hasClass(hidden)) return;
+
+          const btnEl = $badge.closest('[data-tab]').get(0);
+          if (!btnEl) return;
+
+          const btnRect = btnEl.getBoundingClientRect();
+          if (!btnRect) return;
+
+          // Fora do viewport do scroller (total ou parcial)
+          if (btnRect.left < scrollerRect.left + 2) {
+            result.left = true;
+          }
+
+          if (btnRect.right > scrollerRect.right - 2) {
+            result.right = true;
+          }
+        });
+
+        return result;
       };
 
       return function () {
@@ -338,6 +377,18 @@
           $right.toggleClass('opacity-0', !hasOverflow || atEnd);
           $right.toggleClass('pointer-events-none', !hasOverflow || atEnd);
         }
+
+        // Badge nas setas: se houver uma tab com bolinha laranja fora do viewport,
+        // mostra a bolinha na seta correspondente (padrão do protótipo).
+        if (!hasOverflow) {
+          setArrowBadgeVisible($left, false);
+          setArrowBadgeVisible($right, false);
+          return;
+        }
+
+        const badgeVisibility = computeBadgeVisibility(el);
+        setArrowBadgeVisible($left, badgeVisibility.left && !atStart);
+        setArrowBadgeVisible($right, badgeVisibility.right && !atEnd);
       };
     },
 
@@ -369,6 +420,54 @@
 
       const priority = d.priority || { label: '—', iconClass: 'fa-solid fa-star', badgeClasses: 'bg-gray-100 text-gray-800' };
       const status = d.status || { label: '—', iconClass: 'fa-solid fa-clock', badgeClasses: 'bg-gray-100 text-gray-800' };
+
+      const customRows = Array.isArray(d.customRows) ? d.customRows : [];
+
+      const customRowsHtml = customRows.map((row) => {
+        const variant = row && row.variant ? String(row.variant) : 'inline';
+        const label = row && row.label ? String(row.label) : '—';
+
+        if (variant === 'block') {
+          const value = row && row.value !== undefined ? String(row.value) : '—';
+          return `
+            <div class="pb-2 border-b">
+              <span class="text-gray-600">${this._escape(label)}</span>
+              <p class="font-medium text-gray-900 mt-1">${this._escape(value)}</p>
+            </div>
+          `;
+        }
+
+        if (variant === 'kvList') {
+          const items = row && Array.isArray(row.items) ? row.items : [];
+          const itemsHtml = items.map((item) => {
+            const itemLabel = item && item.label ? String(item.label) : '';
+            const itemValue = item && item.value !== undefined ? String(item.value) : '—';
+            return `
+              <div class="flex justify-between text-xs">
+                <span class="text-gray-500">${this._escape(itemLabel)}</span>
+                <span class="font-medium">${this._escape(itemValue)}</span>
+              </div>
+            `;
+          }).join('');
+
+          return `
+            <div class="pb-2 border-b">
+              <span class="text-gray-600">${this._escape(label)}</span>
+              <div class="mt-2 space-y-1">
+                ${itemsHtml || '<div class="text-xs text-gray-500">—</div>'}
+              </div>
+            </div>
+          `;
+        }
+
+        const value = row && row.value !== undefined ? String(row.value) : '—';
+        return `
+          <div class="flex items-center justify-between pb-2 border-b">
+            <span class="text-gray-600">${this._escape(label)}</span>
+            <span class="font-medium text-gray-900">${this._escape(value)}</span>
+          </div>
+        `;
+      }).join('');
 
       const html = `
         <div class="bg-white rounded-lg shadow-md p-5" data-gp-component="project-summary">
@@ -404,6 +503,7 @@
                 <i class="${this._escape(priority.iconClass || 'fa-solid fa-star')} mr-1"></i> ${this._escape(priority.label || '—')}
               </span>
             </div>
+            ${customRowsHtml}
             <div class="flex items-center justify-between">
               <span class="text-gray-600">Status</span>
               <span class="inline-flex items-center px-2 py-1 rounded-full text-xs ${this._escape(status.badgeClasses || '')} font-medium">

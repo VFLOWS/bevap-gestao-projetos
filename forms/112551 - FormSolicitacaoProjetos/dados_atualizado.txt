@@ -114,6 +114,7 @@ documentosAnexCompTIPC
 *SOLICITANTE APROVAR PROPOSTA - SAP
 observacoesNegociacaoSAP
 liConcordoPropostaComercialSAP
+decisaoPropostaSAP
 
 *GCC - APROVAR CUSTO - GCC
 capexGCC

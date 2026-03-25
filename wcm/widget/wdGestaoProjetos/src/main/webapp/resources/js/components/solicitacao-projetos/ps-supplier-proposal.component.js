@@ -71,39 +71,39 @@
     return rows && rows.length ? rows[0] : null;
   }
 
-  function renderField(label, value) {
-    return `
-      <div>
-        <label class="block text-xs font-medium text-gray-500 mb-1">${escapeHtml(label)}</label>
-        <p class="text-sm text-gray-800">${escapeHtml(value || 'Nao informado')}</p>
-      </div>
-    `;
+  function formatDays(value) {
+    const text = asText(value);
+    if (!text) return '';
+
+    if (/^\d+$/.test(text)) {
+      return `${text} dias`;
+    }
+
+    return text;
   }
 
   function renderItems(items) {
     if (!items.length) {
-      return '<div class="text-sm text-gray-500">Nenhum item informado (mockado).</div>';
+      return '<div class="text-sm text-gray-500">Nenhum item informado.</div>';
     }
 
     return `
       <div class="overflow-x-auto">
-        <table class="min-w-full text-sm">
-          <thead>
-            <tr class="text-left text-gray-500">
-              <th class="py-2 pr-3">Descricao</th>
-              <th class="py-2 pr-3">Qtd.</th>
-              <th class="py-2 pr-3">Valor Unit.</th>
-              <th class="py-2">Total</th>
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="px-4 py-2 text-left text-gray-700 font-medium">Descrição</th>
+              <th class="px-4 py-2 text-center text-gray-700 font-medium">Qty</th>
+              <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor</th>
             </tr>
           </thead>
-          <tbody class="divide-y">
+          <tbody class="divide-y divide-gray-200">
             ${items.map((item) => {
               return `
                 <tr>
-                  <td class="py-2 pr-3 text-gray-800">${escapeHtml(item.descricao || '—')}</td>
-                  <td class="py-2 pr-3 text-gray-800">${escapeHtml(item.quantidade || '—')}</td>
-                  <td class="py-2 pr-3 text-gray-800">${escapeHtml(item.valorUnitario || '—')}</td>
-                  <td class="py-2 text-gray-800">${escapeHtml(item.total || '—')}</td>
+                  <td class="px-4 py-3">${escapeHtml(item.descricao || '—')}</td>
+                  <td class="px-4 py-3 text-center">${escapeHtml(item.quantidade || '—')}</td>
+                  <td class="px-4 py-3 text-right font-medium">${escapeHtml(item.valor || '—')}</td>
                 </tr>
               `;
             }).join('')}
@@ -118,62 +118,127 @@
       return '<div class="text-sm text-gray-500">Nao foi possivel carregar a proposta do fornecedor.</div>';
     }
 
-    const itens = parseTableJson(row.tblItensServicosTIPC).map((item) => {
+    const itens = parseTableJson(row.tblItensServicosTIPC || row['tblItensServicosTIPC']).map((item) => {
+      const total = asText(item && item.totalItemServicoTIPC);
+      const unit = asText(item && item.valorUnitarioItemServicoTIPC);
+
       return {
         descricao: asText(item && item.descricaoItemServicoTIPC),
         quantidade: asText(item && item.quantidadeItemServicoTIPC),
-        valorUnitario: asText(item && item.valorUnitarioItemServicoTIPC),
-        total: asText(item && item.totalItemServicoTIPC)
+        valor: total || unit
       };
     });
 
+    const supplierName = asText(row.nomeFornecedorTIPC) || 'Nao informado';
+    const supplierCnpj = asText(row.cnpjTIPC) || 'Nao informado';
+
+    const contactName = asText(row.nomeContatoTIPC) || 'Nao informado';
+    const contactEmail = asText(row.emailTIPC);
+    const contactPhone = asText(row.telefoneTIPC);
+
+    const totalValue = asText(row.valortotalTIPC) || 'Nao informado';
+    const currency = asText(row.moedaTIPC);
+
+    const paymentCondition = asText(row.condicaoPagamentoTIPC) || 'Nao informado';
+    const deadline = asText(row.prazoEstimadoTIPC) || 'Nao informado';
+    const validity = formatDays(row.vigenciaDiasTIPC) || 'Nao informado';
+
+    const scope = asText(row.escopoResumidoTIPC) || 'Nao informado';
+
     return `
       <div class="space-y-6">
-        <div class="p-5 bg-white border border-gray-200 rounded-lg">
-          <div class="flex items-center mb-3">
-            <i class="fa-solid fa-handshake text-bevap-green mr-2"></i>
-            <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Resumo da Proposta (TIPC)</h3>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            ${renderField('Fornecedor', row.nomeFornecedorTIPC || 'Mockado')}
-            ${renderField('CNPJ', row.cnpjTIPC || 'Mockado')}
-            ${renderField('Contato', row.nomeContatoTIPC || 'Mockado')}
-            ${renderField('E-mail', row.emailTIPC || 'Mockado')}
-            ${renderField('Telefone', row.telefoneTIPC || 'Mockado')}
-            ${renderField('Nº/Ref. Proposta', row.numeroRefPropostaTIPC || 'Mockado')}
-            ${renderField('Vigencia (dias)', row.vigenciaDiasTIPC || 'Mockado')}
-            ${renderField('Valor total', row.valortotalTIPC || 'Mockado')}
-            ${renderField('Moeda', row.moedaTIPC || 'Mockado')}
-            ${renderField('Prazo estimado', row.prazoEstimadoTIPC || 'Mockado')}
-            ${renderField('Condicao de pagamento', row.condicaoPagamentoTIPC || 'Mockado')}
-          </div>
-        </div>
+        <div>
+          <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+            <i class="fa-solid fa-handshake mr-3 text-bevap-gold"></i>
+            Proposta do Fornecedor
+          </h2>
 
-        <div class="p-5 bg-white border border-gray-200 rounded-lg">
-          <div class="flex items-center mb-2">
-            <i class="fa-solid fa-align-left text-bevap-green mr-2"></i>
-            <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Escopo resumido</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Fornecedor</h3>
+              <div class="space-y-2 text-sm">
+                <div class="font-medium text-gray-900">${escapeHtml(supplierName)}</div>
+                <div class="text-gray-600">CNPJ: ${escapeHtml(supplierCnpj)}</div>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Contato Principal</h3>
+              <div class="space-y-1 text-sm">
+                <div class="font-medium text-gray-900">${escapeHtml(contactName)}</div>
+                ${contactEmail ? `<div class="text-gray-600">${escapeHtml(contactEmail)}</div>` : ''}
+                ${contactPhone ? `<div class="text-gray-600">${escapeHtml(contactPhone)}</div>` : ''}
+              </div>
+            </div>
           </div>
-          <p class="text-sm text-gray-700 whitespace-pre-line">${escapeHtml(row.escopoResumidoTIPC || 'Mockado')}</p>
-        </div>
 
-        <div class="p-5 bg-white border border-gray-200 rounded-lg">
-          <div class="flex items-center mb-3">
-            <i class="fa-solid fa-list text-bevap-green mr-2"></i>
-            <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Itens / Servicos</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
+              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(totalValue)}</div>
+              ${currency ? `<div class="text-xs text-green-600">${escapeHtml(currency)}</div>` : ''}
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-xs text-gray-500 uppercase tracking-wide">Condição</div>
+              <div class="text-sm font-medium text-gray-900">${escapeHtml(paymentCondition)}</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo</div>
+              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(deadline)}</div>
+            </div>
+            <div class="bg-gray-50 p-4 rounded-lg">
+              <div class="text-xs text-gray-500 uppercase tracking-wide">Vigência</div>
+              <div class="text-sm font-medium text-gray-900">${escapeHtml(validity)}</div>
+            </div>
           </div>
-          ${renderItems(itens)}
-        </div>
 
-        <div class="p-5 bg-white border border-gray-200 rounded-lg">
-          <div class="flex items-center mb-3">
-            <i class="fa-solid fa-paperclip text-bevap-green mr-2"></i>
-            <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Anexos da Proposta</h3>
+          <div class="mb-6">
+            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo Resumido</h3>
+            <p class="text-gray-700 text-sm leading-relaxed whitespace-pre-line">${escapeHtml(scope)}</p>
           </div>
-          <div data-gp-attachments data-field="anexosPropostaTIPC"></div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Itens e Serviços</h3>
+            ${renderItems(itens)}
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
+              <i class="fa-solid fa-paperclip mr-2 text-bevap-gold"></i>
+              Documentos da Proposta
+            </h3>
+            <div data-gp-attachments data-field="anexosPropostaTIPC" data-variant="prototype-cards"></div>
+          </div>
         </div>
       </div>
     `;
+  }
+
+  async function mountAttachments($root, params) {
+    if (!$root || !$root.length) return;
+
+    const ui = $(document).data('gpUiComponents');
+    if (!ui || !ui.attachments || typeof ui.attachments.render !== 'function') return;
+
+    const documentId = params && params.documentId ? String(params.documentId) : '';
+    if (!documentId) return;
+
+    let row;
+    try {
+      row = await loadRow(documentId);
+    } catch (e) {
+      row = null;
+    }
+
+    const value = row ? (row.anexosPropostaTIPC || row['anexosPropostaTIPC']) : null;
+
+    $root.find('[data-gp-attachments]').each((_, el) => {
+      const $el = $(el);
+      if ($el.data('gpAttachmentsMounted')) return;
+      $el.data('gpAttachmentsMounted', true);
+
+      const fieldName = String($el.attr('data-field') || '').trim() || 'anexosPropostaTIPC';
+      ui.attachments.render($el, { fieldName, value });
+    });
   }
 
   async function render(params) {
@@ -188,6 +253,7 @@
 
   const registry = getRegistry();
   registry.supplierProposal = {
-    render
+    render,
+    mountAttachments
   };
 })();
