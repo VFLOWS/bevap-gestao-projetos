@@ -360,7 +360,9 @@
               <i class="fa-solid fa-paperclip mr-2 text-bevap-gold"></i>
               Documentos da Proposta
             </h3>
-            <div data-gp-attachments data-field="anexosPropostaTIPC" data-variant="prototype-cards"></div>
+            <div data-gp-attachments data-field="anexosPropostaTIPC" class="divide-y">
+              <div class="py-2 text-sm text-gray-500">—</div>
+            </div>
           </div>
 
           ${hasCommercialApprovalFeedback ? `

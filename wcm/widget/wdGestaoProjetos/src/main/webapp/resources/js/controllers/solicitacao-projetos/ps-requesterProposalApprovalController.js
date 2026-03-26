@@ -7,6 +7,7 @@ const requesterProposalApprovalController = {
     'areaUnidadeNS',
     'patrocinadorNS',
     'prioridadeNS',
+    'fornecedorRecomendadoTITT',
     'nomeFornecedorTIPC',
     'valortotalTIPC',
     'prazoEstimadoTIPC',
@@ -381,7 +382,7 @@ const requesterProposalApprovalController = {
         {
           variant: 'block',
           label: 'Fornecedor Recomendado',
-          value: this.asText(row.nomeFornecedorTIPC) || 'Nao informado'
+          value: this.asText(row.fornecedorRecomendadoTITT) || 'Nao informado'
         },
         {
           variant: 'kvList',
