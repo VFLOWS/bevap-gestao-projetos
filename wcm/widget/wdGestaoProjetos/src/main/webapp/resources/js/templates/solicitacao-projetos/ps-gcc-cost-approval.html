@@ -1,0 +1,277 @@
+<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto" data-page="gccCostApproval">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div id="content-section" class="lg:col-span-2">
+      <div id="alert-banner" class="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div class="flex items-start">
+          <i class="fa-solid fa-circle-dollar-to-slot text-blue-600 mt-0.5 mr-3"></i>
+          <div class="text-sm text-blue-800">
+            <p class="font-medium mb-1">Gerente do Centro de Custo - Aprovar Custo do Projeto</p>
+            <p>Revise o historico das etapas anteriores, avalie a composicao financeira da proposta comercial e registre sua decisao para o gateway do GCC.</p>
+          </div>
+        </div>
+      </div>
+
+      <div id="gcc-form" class="bg-white rounded-lg shadow-md" data-component="tabs" data-tabs-default="solicitacao">
+        <div class="border-b border-gray-200">
+          <div class="relative">
+            <div class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2" data-tabs-scroll>
+              <button type="button" data-tab="solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                <i class="fa-solid fa-file-lines mr-2"></i>Solicitacao
+              </button>
+              <button type="button" data-tab="analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                <i class="fa-solid fa-microscope mr-2"></i>Analise TI
+              </button>
+              <button type="button" data-tab="impacto" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                <i class="fa-solid fa-chart-line mr-2"></i>Impacto
+              </button>
+              <button type="button" data-tab="triagem-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                <i class="fa-solid fa-route mr-2"></i>Triagem TI
+              </button>
+              <button type="button" data-tab="proposta-fornecedor" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                <i class="fa-solid fa-handshake mr-2"></i>Proposta do Fornecedor
+              </button>
+              <button type="button" data-tab="financeiro" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
+                  <i class="fa-solid fa-exclamation text-[10px]"></i>
+                </span>
+                <i class="fa-solid fa-sack-dollar mr-2"></i>Financeiro
+              </button>
+            </div>
+
+            <button type="button" data-tabs-scroll-arrow="left" aria-label="Rolar abas para esquerda" class="absolute left-0 top-0 bottom-0 w-24 rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-start pl-2">
+              <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/90 border border-gray-200">
+                <i class="fa-solid fa-chevron-left"></i>
+              </span>
+            </button>
+
+            <button type="button" data-tabs-scroll-arrow="right" aria-label="Rolar abas para direita" class="absolute right-0 top-0 bottom-0 w-24 rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-end pr-2">
+              <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/90 border border-gray-200">
+                <i class="fa-solid fa-chevron-right"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+
+        <div class="p-6 hidden" data-tab-panel="solicitacao">
+          <div data-component="tab-solicitacao-history" class="text-sm text-gray-500">Carregando conteudo da solicitacao...</div>
+        </div>
+
+        <div class="p-6 hidden" data-tab-panel="analise-ti">
+          <div data-component="tab-analise-ti-history" class="text-sm text-gray-500">Carregando conteudo da analise TI...</div>
+        </div>
+
+        <div class="p-6 hidden" data-tab-panel="impacto">
+          <div data-component="tab-impacto-history" class="text-sm text-gray-500">Carregando impacto na area...</div>
+        </div>
+
+        <div class="p-6 hidden" data-tab-panel="triagem-ti">
+          <div data-component="tab-triagem-ti-history" class="text-sm text-gray-500">Carregando Triagem TI...</div>
+        </div>
+
+        <div class="p-6 hidden" data-tab-panel="proposta-fornecedor">
+          <div data-component="tab-proposta-fornecedor" class="text-sm text-gray-500">Carregando proposta do fornecedor...</div>
+        </div>
+
+        <div class="p-6 hidden" data-tab-panel="financeiro">
+          <div class="space-y-6">
+            <div class="bg-slate-50 border border-slate-200 rounded-lg p-5">
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy flex items-center">
+                  <i class="fa-solid fa-coins mr-3 text-bevap-gold"></i>
+                  Painel Financeiro GCC
+                </h2>
+                <span class="text-xs uppercase tracking-wide text-slate-500">Baseado na proposta comercial aprovada</span>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                  <div class="text-xs text-gray-500 uppercase tracking-wide">Fornecedor</div>
+                  <div id="gcc-summary-supplier" class="mt-1 font-medium text-gray-900">Nao informado</div>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                  <div class="text-xs text-gray-500 uppercase tracking-wide">No/Ref. Proposta</div>
+                  <div id="gcc-summary-reference" class="mt-1 font-medium text-gray-900">Nao informado</div>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                  <div class="text-xs text-gray-500 uppercase tracking-wide">Vigencia</div>
+                  <div id="gcc-summary-validity" class="mt-1 font-medium text-gray-900">Nao informado</div>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                  <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
+                  <div id="gcc-summary-total" class="mt-1 font-medium text-gray-900">Nao informado</div>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                  <div class="text-xs text-gray-500 uppercase tracking-wide">Condicao de Pagamento</div>
+                  <div id="gcc-summary-condition" class="mt-1 font-medium text-gray-900">Nao informado</div>
+                </div>
+                <div class="bg-white rounded-lg border border-gray-200 p-4">
+                  <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo Estimado</div>
+                  <div id="gcc-summary-deadline" class="mt-1 font-medium text-gray-900">Nao informado</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-lg p-5">
+              <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Distribuicao CAPEX / OPEX</h3>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <div class="flex items-center justify-between mb-2">
+                    <label for="gcc-capex-percent" class="text-sm font-medium text-gray-700">CAPEX</label>
+                    <span id="gcc-capex-percent-label" class="text-sm font-semibold text-bevap-green">0%</span>
+                  </div>
+                  <input type="number" min="0" max="100" step="0.01" id="gcc-capex-percent" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" placeholder="0" />
+                </div>
+
+                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
+                  <div class="flex items-center justify-between mb-2">
+                    <label for="gcc-opex-percent" class="text-sm font-medium text-gray-700">OPEX</label>
+                    <span id="gcc-opex-percent-label" class="text-sm font-semibold text-bevap-green">0%</span>
+                  </div>
+                  <input type="number" min="0" max="100" step="0.01" id="gcc-opex-percent" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" placeholder="0" />
+                </div>
+              </div>
+
+              <p class="text-xs text-gray-500 mt-3">Ao alterar um percentual, o outro e ajustado automaticamente para manter o total em 100%.</p>
+            </div>
+
+            <div id="gcc-capex-wrapper" class="bg-white border border-gray-200 rounded-lg p-5 hidden">
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Rateio CAPEX</h3>
+                  <p class="text-xs text-gray-500">Informe os centros de custo e a conta contabil para a parcela CAPEX.</p>
+                </div>
+                <button type="button" data-action="add-capex-row" class="px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-all">
+                  <i class="fa-solid fa-plus mr-1"></i> Adicionar linha
+                </button>
+              </div>
+              <div id="gcc-capex-rows" class="space-y-3"></div>
+            </div>
+
+            <div id="gcc-opex-wrapper" class="bg-white border border-gray-200 rounded-lg p-5 hidden">
+              <div class="flex items-center justify-between gap-3 mb-4">
+                <div>
+                  <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Rateio OPEX</h3>
+                  <p class="text-xs text-gray-500">Informe os centros de custo e a conta contabil para a parcela OPEX.</p>
+                </div>
+                <button type="button" data-action="add-opex-row" class="px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-all">
+                  <i class="fa-solid fa-plus mr-1"></i> Adicionar linha
+                </button>
+              </div>
+              <div id="gcc-opex-rows" class="space-y-3"></div>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-lg p-5">
+              <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Planejamento Financeiro</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label for="gcc-competence" class="block text-sm font-medium text-gray-700 mb-2">Competencia *</label>
+                  <input type="month" id="gcc-competence" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
+                </div>
+              </div>
+              <div>
+                <label for="gcc-observations" class="block text-sm font-medium text-gray-700 mb-2">Observacoes / Negociacao</label>
+                <textarea id="gcc-observations" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm resize-none" placeholder="Observacoes do GCC sobre a composicao financeira, saldos e acordos realizados..."></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sidebar-summary" class="lg:col-span-1">
+      <div class="sticky top-24 space-y-4">
+        <div data-component="project-summary"></div>
+        <div data-component="progress-status"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div class="flex items-center justify-between">
+        <button data-action="save-draft" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
+          <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
+        </button>
+        <div class="flex items-center space-x-3">
+          <button data-action="open-reject-modal" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
+            <i class="fa-solid fa-ban mr-2"></i> Reprovar
+          </button>
+          <button data-action="open-return-modal" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
+            <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correcao
+          </button>
+          <button data-action="open-approve-modal" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
+            <i class="fa-solid fa-check mr-2"></i> Aprovar
+          </button>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div id="approve-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+      <div class="flex items-center mb-4">
+        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+          <i class="fa-solid fa-check-circle text-bevap-green text-2xl"></i>
+        </div>
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovacao</h3>
+      </div>
+      <p class="text-gray-700 mb-6">Voce esta aprovando o custo do projeto <strong id="gcc-approve-project">-</strong>.</p>
+      <p class="text-sm text-gray-600 mb-6">Ao confirmar, a solicitacao sera encaminhada ao <strong>Comite - Aprovar Custo Projeto</strong>.</p>
+      <div class="flex justify-end space-x-3">
+        <button data-action="close-modal" data-modal-id="approve-modal" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Cancelar</button>
+        <button data-action="confirm-approve" class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+      <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correcao</h3>
+      <p class="text-sm text-gray-600 mb-4">Descreva os pontos que precisam ser corrigidos antes de uma nova avaliacao do GCC:</p>
+      <textarea id="gcc-justification-return" rows="4" placeholder="Motivo da devolucao..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+      <div class="flex justify-end space-x-3">
+        <button data-action="close-modal" data-modal-id="modal-return" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+        <button data-action="confirm-return" class="px-4 py-2 text-sm text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-all">Devolver</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="modal-reject" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+      <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Reprovar Custo do Projeto</h3>
+      <p class="text-sm text-gray-600 mb-4">Informe a categoria e a justificativa da reprovacao para registrar a decisao do GCC.</p>
+      <select id="gcc-reject-category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
+        <option value="">Selecione a categoria</option>
+        <option value="orcamento">Orcamento</option>
+        <option value="rateio">Rateio inconsistente</option>
+        <option value="capacidade-financeira">Capacidade financeira</option>
+        <option value="risco">Risco</option>
+        <option value="outro">Outro</option>
+      </select>
+      <textarea id="gcc-justification-reject" rows="4" placeholder="Descricao detalhada..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+      <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+        <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> O processo sera encerrado quando a reprovacao for confirmada.</p>
+      </div>
+      <div class="flex justify-end space-x-3">
+        <button data-action="close-modal" data-modal-id="modal-reject" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+        <button data-action="confirm-reject" class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden fixed top-20 right-4 z-50 bg-white rounded-lg shadow-xl border-l-4 p-4 max-w-md">
+    <div class="flex items-start">
+      <i id="toast-icon" class="fa-solid fa-info-circle text-blue-500 text-2xl mr-3"></i>
+      <div class="flex-1">
+        <div class="flex items-center justify-between">
+          <h4 id="toast-title" class="font-semibold text-gray-900">Mensagem</h4>
+          <button type="button" id="toast-close" class="text-gray-400 hover:text-gray-600" aria-label="Fechar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        <p id="toast-message" class="text-sm text-gray-600 mt-1"></p>
+      </div>
+    </div>
+  </div>
+</main>

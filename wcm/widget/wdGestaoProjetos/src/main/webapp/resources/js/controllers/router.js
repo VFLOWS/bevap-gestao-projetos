@@ -70,6 +70,10 @@ const router = {
           controller: commercialProposalController,
           handler: () => commercialProposalController.load(params)
         },
+        gccCostApproval: {
+          controller: gccCostApprovalController,
+          handler: () => gccCostApprovalController.load(params)
+        },
         committeeCostApproval: {
           controller: committeeCostApprovalController,
           handler: () => committeeCostApprovalController.load(params)

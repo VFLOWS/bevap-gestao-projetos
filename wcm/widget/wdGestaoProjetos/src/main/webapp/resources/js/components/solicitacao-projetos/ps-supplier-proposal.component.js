@@ -26,6 +26,9 @@
     'garantiasSlaEspecificadosTIPC',
     'vigenciaPropostaConfirmadaTIPC',
     'documentosAnexCompTIPC',
+    'decisaoPropostaSAP',
+    'observacoesNegociacaoSAP',
+    'liConcordoPropostaComercialSAP',
     'tblItensServicosTIPC.descricaoItemServicoTIPC',
     'tblItensServicosTIPC.quantidadeItemServicoTIPC',
     'tblItensServicosTIPC.valorUnitarioItemServicoTIPC',
@@ -205,6 +208,14 @@
     `;
   }
 
+  function getProposalDecisionBadge(value) {
+    const normalized = asText(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized === 'aprovado') return { label: 'Aprovado', classes: 'bg-green-100 text-green-800' };
+    if (normalized === 'correcao') return { label: 'Correcao', classes: 'bg-yellow-100 text-yellow-800' };
+    if (normalized === 'reprovado' || normalized === 'cancelado') return { label: 'Reprovado', classes: 'bg-red-100 text-red-800' };
+    return { label: asText(value) || 'Nao informado', classes: 'bg-slate-100 text-slate-700' };
+  }
+
   function renderHtml(row) {
     if (!row) {
       return '<div class="text-sm text-gray-500">Nao foi possivel carregar a proposta do fornecedor.</div>';
@@ -248,6 +259,14 @@
       asText(row.email2TIPC),
       asText(row.telefone2TIPC)
     ].filter(Boolean);
+
+    const hasCommercialApprovalFeedback = [
+      row.decisaoPropostaSAP,
+      row.observacoesNegociacaoSAP,
+      row.liConcordoPropostaComercialSAP
+    ].some((value) => asText(value));
+    const proposalDecisionBadge = getProposalDecisionBadge(row.decisaoPropostaSAP);
+    const agreementValue = parseBooleanLike(row.liConcordoPropostaComercialSAP);
 
     return `
       <div class="space-y-6">
@@ -343,6 +362,31 @@
             </h3>
             <div data-gp-attachments data-field="anexosPropostaTIPC" data-variant="prototype-cards"></div>
           </div>
+
+          ${hasCommercialApprovalFeedback ? `
+            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+              <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
+                <i class="fa-solid fa-comment-dots mr-2 text-bevap-gold"></i>
+                Feedback da Aprovacao Comercial
+              </h3>
+              <div class="space-y-3 text-sm">
+                <div class="flex items-center justify-between gap-3">
+                  <span class="text-gray-600">Decisao do solicitante</span>
+                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${proposalDecisionBadge.classes}">${escapeHtml(proposalDecisionBadge.label)}</span>
+                </div>
+                <div class="flex items-center justify-between gap-3">
+                  <span class="text-gray-600">Concorda com a proposta</span>
+                  <span class="font-medium text-gray-900">${agreementValue === true ? 'Sim' : agreementValue === false ? 'Nao' : 'Nao informado'}</span>
+                </div>
+                ${asText(row.observacoesNegociacaoSAP) ? `
+                  <div class="bg-white border border-green-200 rounded-lg p-4">
+                    <div class="text-xs uppercase tracking-wide text-gray-500 mb-2">Observacoes / Negociacao</div>
+                    <p class="text-sm text-green-900 whitespace-pre-line">${escapeHtml(row.observacoesNegociacaoSAP)}</p>
+                  </div>
+                ` : ''}
+              </div>
+            </div>
+          ` : ''}
         </div>
       </div>
     `;

@@ -138,6 +138,10 @@ const dashboardController = {
           ? 'Abrir Proposta'
         : actionConfig.route === 'commercialProposal'
           ? 'Abrir Proposta'
+        : actionConfig.route === 'gccCostApproval'
+          ? 'Abrir GCC'
+        : actionConfig.route === 'committeeCostApproval'
+          ? 'Abrir Comitê (Custo)'
         : actionConfig.route === 'technicalTriage'
           ? 'Abrir Triagem'
         : actionConfig.route === 'committeeApproval'
@@ -284,6 +288,14 @@ const dashboardController = {
         enabled: true,
         route: 'requesterProposalApproval',
         label: 'Abrir Proposta'
+      };
+    }
+
+    if (activity === 54) {
+      return {
+        enabled: true,
+        route: 'gccCostApproval',
+        label: 'Abrir GCC'
       };
     }
 

@@ -142,6 +142,9 @@ opexGCC
  - saldoAposCompromissoOpexGCC (CAMPO PAIxFILHO)
 competenciaGCC
 observacoesNegociacaoGCC
+decisaoGCC
+justificativaGCC
+categoriaJustificativaGCC
 
 *COMITE - APROVAR CUSTO PROJETO - ACP
 dataHoraACP
