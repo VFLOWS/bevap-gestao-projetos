@@ -136,6 +136,8 @@ const dashboardController = {
         ? 'Abrir Aprovacao'
         : actionConfig.route === 'requesterProposalApproval'
           ? 'Abrir Proposta'
+        : actionConfig.route === 'commercialProposal'
+          ? 'Abrir Proposta'
         : actionConfig.route === 'technicalTriage'
           ? 'Abrir Triagem'
         : actionConfig.route === 'committeeApproval'
@@ -269,11 +271,27 @@ const dashboardController = {
       };
     }
 
+    if (activity === 38) {
+      return {
+        enabled: true,
+        route: 'commercialProposal',
+        label: 'Abrir Proposta'
+      };
+    }
+
     if (activity === 40) {
       return {
         enabled: true,
         route: 'requesterProposalApproval',
         label: 'Abrir Proposta'
+      };
+    }
+
+    if (activity === 61) {
+      return {
+        enabled: true,
+        route: 'committeeCostApproval',
+        label: 'Abrir Comitê (Custo)'
       };
     }
 

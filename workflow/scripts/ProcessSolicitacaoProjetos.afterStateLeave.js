@@ -1,7 +1,7 @@
 function afterStateLeave(sequenceId) {
     var atividade = getValue("WKNumState");
 
-    if (atividade != 26 && atividade != 36) {
+    if (atividade != 26 && atividade != 36 && atividade != 38) {
         return;
     }
 
@@ -65,6 +65,15 @@ function afterStateLeave(sequenceId) {
             }
         }
 
+        if (atividade == 38) {
+            var apoioIds38 = extractDocumentIds(safeParseArray(apoioJson));
+            for (var key38 in apoioIds38) {
+                if (apoioIds38.hasOwnProperty(key38)) {
+                    baseIds[key38] = true;
+                }
+            }
+        }
+
         var jsonAttachments = [];
 
         for (var j = 0; j < attachments.size(); j++) {
@@ -88,6 +97,9 @@ function afterStateLeave(sequenceId) {
         if (atividade == 26) {
             hAPI.setCardValue("anexosApoioTITT", attachmentsString);
             log.info("[afterStateLeave] Triagem (26): anexos novos salvos em anexosApoioTITT = " + jsonAttachments.length);
+        } else if (atividade == 38) {
+            hAPI.setCardValue("anexosPropostaTIPC", attachmentsString);
+            log.info("[afterStateLeave] Proposta Comercial (38): anexos novos salvos em anexosPropostaTIPC = " + jsonAttachments.length);
         } else if (atividade == 36) {
             hAPI.setCardValue("anexarAtaReuniaoCAP", attachmentsString);
             log.info("[afterStateLeave] Comitê (36): ata salva em anexarAtaReuniaoCAP = " + jsonAttachments.length);

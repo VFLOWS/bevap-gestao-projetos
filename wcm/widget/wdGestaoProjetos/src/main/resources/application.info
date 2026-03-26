@@ -38,6 +38,8 @@ application.resource.js.21=/resources/js/components/solicitacao-projetos/ps-comm
 application.resource.js.22=/resources/js/controllers/solicitacao-projetos/ps-committeeApprovalController.js
 application.resource.js.23=/resources/js/components/solicitacao-projetos/ps-supplier-proposal.component.js
 application.resource.js.24=/resources/js/controllers/solicitacao-projetos/ps-requesterProposalApprovalController.js
+application.resource.js.25=/resources/js/controllers/solicitacao-projetos/ps-committeeCostApprovalController.js
+application.resource.js.26=/resources/js/controllers/solicitacao-projetos/ps-commercialProposalController.js
 application.resource.css.2=/resources/css/wdGestaoProjetos.css
 hash=4a16315e9e66fa7d797b3f6b1fb365b69f9a4ce2
 

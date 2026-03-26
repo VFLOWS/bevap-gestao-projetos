@@ -9,6 +9,9 @@
     'nomeContatoTIPC',
     'emailTIPC',
     'telefoneTIPC',
+    'nomeContato2TIPC',
+    'email2TIPC',
+    'telefone2TIPC',
     'numeroRefPropostaTIPC',
     'vigenciaDiasTIPC',
     'valortotalTIPC',
@@ -17,10 +20,24 @@
     'condicaoPagamentoTIPC',
     'escopoResumidoTIPC',
     'anexosPropostaTIPC',
+    'escopoClaroDetalhadoTIPC',
+    'impostosTaxasInclusosTIPC',
+    'prazosEntregaDefinidosTIPC',
+    'garantiasSlaEspecificadosTIPC',
+    'vigenciaPropostaConfirmadaTIPC',
+    'documentosAnexCompTIPC',
     'tblItensServicosTIPC.descricaoItemServicoTIPC',
     'tblItensServicosTIPC.quantidadeItemServicoTIPC',
     'tblItensServicosTIPC.valorUnitarioItemServicoTIPC',
-    'tblItensServicosTIPC.totalItemServicoTIPC'
+    'tblItensServicosTIPC.totalItemServicoTIPC',
+    'tblRiscosIniciaisTIPC.tituloRiscoTIPC',
+    'tblRiscosIniciaisTIPC.descricaoRiscoTIPC',
+    'tblRiscosIniciaisTIPC.mitigacaoRiscoTIPC',
+    'tblRiscosIniciaisTIPC.nivelRiscoTIPC',
+    'tblRiscosIniciaisTIPC.impactoRiscoTIPC',
+    'tblRiscosIniciaisTIPC.probabilidadeRiscoTIPC',
+    'tblRiscosIniciaisTIPC.riscoPotencialTIPC',
+    'tblPreRequisitosTIPC.preRequisitoTIPC'
   ];
 
   function getRegistry() {
@@ -31,10 +48,7 @@
   }
 
   function asText(value) {
-    if (value === null || value === undefined || value === 'null') {
-      return '';
-    }
-
+    if (value === null || value === undefined || value === 'null') return '';
     return String(value).trim();
   }
 
@@ -60,12 +74,22 @@
     }
   }
 
+  function parseBooleanLike(value) {
+    const normalized = asText(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+    if (!normalized) return null;
+    if (['true', '1', 'sim', 'yes', 'on'].indexOf(normalized) >= 0) return true;
+    if (['false', '0', 'nao', 'no', 'off'].indexOf(normalized) >= 0) return false;
+    return null;
+  }
+
   async function loadRow(documentId) {
     const rows = await fluigService.getDatasetRows(DATASET_ID, {
       fields: FIELDS,
-      filters: {
-        documentid: documentId
-      }
+      filters: { documentid: documentId }
     });
 
     return rows && rows.length ? rows[0] : null;
@@ -74,12 +98,16 @@
   function formatDays(value) {
     const text = asText(value);
     if (!text) return '';
-
-    if (/^\d+$/.test(text)) {
-      return `${text} dias`;
-    }
-
+    if (/^\d+$/.test(text)) return `${text} dias`;
     return text;
+  }
+
+  function getRiskBadge(level) {
+    const normalized = asText(level).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized === 'alto') return { label: 'Alto', classes: 'bg-red-100 text-red-800' };
+    if (normalized === 'medio') return { label: 'Medio', classes: 'bg-yellow-100 text-yellow-800' };
+    if (normalized === 'baixo') return { label: 'Baixo', classes: 'bg-green-100 text-green-800' };
+    return { label: asText(level) || 'Nao informado', classes: 'bg-slate-100 text-slate-700' };
   }
 
   function renderItems(items) {
@@ -92,23 +120,87 @@
         <table class="w-full text-sm">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-4 py-2 text-left text-gray-700 font-medium">Descrição</th>
-              <th class="px-4 py-2 text-center text-gray-700 font-medium">Qty</th>
+              <th class="px-4 py-2 text-left text-gray-700 font-medium">Descricao</th>
+              <th class="px-4 py-2 text-center text-gray-700 font-medium">Qtd</th>
               <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200">
-            ${items.map((item) => {
-              return `
-                <tr>
-                  <td class="px-4 py-3">${escapeHtml(item.descricao || '—')}</td>
-                  <td class="px-4 py-3 text-center">${escapeHtml(item.quantidade || '—')}</td>
-                  <td class="px-4 py-3 text-right font-medium">${escapeHtml(item.valor || '—')}</td>
-                </tr>
-              `;
-            }).join('')}
+            ${items.map((item) => `
+              <tr>
+                <td class="px-4 py-3">${escapeHtml(item.descricao || '-')}</td>
+                <td class="px-4 py-3 text-center">${escapeHtml(item.quantidade || '-')}</td>
+                <td class="px-4 py-3 text-right font-medium">${escapeHtml(item.valor || '-')}</td>
+              </tr>
+            `).join('')}
           </tbody>
         </table>
+      </div>
+    `;
+  }
+
+  function renderRisks(items) {
+    if (!items.length) {
+      return '<div class="text-sm text-gray-500">Nenhum risco informado.</div>';
+    }
+
+    return `
+      <div class="space-y-3">
+        ${items.map((risk) => {
+      const badge = getRiskBadge(risk.level);
+      return `
+            <div class="border border-gray-200 rounded-lg p-4 bg-white">
+              <div class="flex items-center justify-between gap-3">
+                <div class="font-medium text-gray-900">${escapeHtml(risk.title || 'Risco')}</div>
+                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium ${escapeHtml(badge.classes)}">${escapeHtml(badge.label)}</span>
+              </div>
+              ${risk.description ? `<p class="text-sm text-gray-700 mt-2 whitespace-pre-line">${escapeHtml(risk.description)}</p>` : ''}
+              ${risk.mitigation ? `<p class="text-xs text-gray-600 mt-2 whitespace-pre-line"><strong>Mitigacao:</strong> ${escapeHtml(risk.mitigation)}</p>` : ''}
+            </div>
+          `;
+    }).join('')}
+      </div>
+    `;
+  }
+
+  function renderPrerequisites(items) {
+    if (!items.length) {
+      return '<div class="text-sm text-gray-500">Nenhum pre-requisito informado.</div>';
+    }
+
+    return `
+      <div class="space-y-2">
+        ${items.map((item) => `
+          <div class="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+            <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
+            <span class="text-sm text-gray-700">${escapeHtml(item)}</span>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }
+
+  function renderChecklist(items) {
+    return `
+      <div class="space-y-2">
+        ${items.map((item) => {
+      const parsed = parseBooleanLike(item.value);
+      const badge = parsed === true
+        ? { label: 'Sim', classes: 'bg-green-100 text-green-700', icon: 'fa-circle-check text-bevap-green' }
+        : parsed === false
+          ? { label: 'Nao', classes: 'bg-red-100 text-red-700', icon: 'fa-circle-xmark text-red-500' }
+          : { label: 'Nao informado', classes: 'bg-slate-100 text-slate-700', icon: 'fa-circle-info text-slate-500' };
+
+      return `
+            <div class="flex items-center justify-between gap-4 p-3 border border-gray-200 rounded-lg bg-white">
+              <div class="flex items-center text-sm text-gray-700">
+                <i class="fa-solid ${badge.icon} mr-2"></i>
+                <span>${escapeHtml(item.label)}</span>
+              </div>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${badge.classes}">${badge.label}</span>
+            </div>
+          `;
+    }).join('')}
       </div>
     `;
   }
@@ -118,32 +210,44 @@
       return '<div class="text-sm text-gray-500">Nao foi possivel carregar a proposta do fornecedor.</div>';
     }
 
-    const itens = parseTableJson(row.tblItensServicosTIPC || row['tblItensServicosTIPC']).map((item) => {
-      const total = asText(item && item.totalItemServicoTIPC);
-      const unit = asText(item && item.valorUnitarioItemServicoTIPC);
-
+    const items = parseTableJson(row.tblItensServicosTIPC || row['tblItensServicosTIPC']).map((item) => {
       return {
         descricao: asText(item && item.descricaoItemServicoTIPC),
         quantidade: asText(item && item.quantidadeItemServicoTIPC),
-        valor: total || unit
+        valor: asText(item && item.totalItemServicoTIPC) || asText(item && item.valorUnitarioItemServicoTIPC)
       };
-    });
+    }).filter((item) => item.descricao || item.quantidade || item.valor);
 
-    const supplierName = asText(row.nomeFornecedorTIPC) || 'Nao informado';
-    const supplierCnpj = asText(row.cnpjTIPC) || 'Nao informado';
+    const risks = parseTableJson(row.tblRiscosIniciaisTIPC || row['tblRiscosIniciaisTIPC']).map((item) => {
+      const legacy = asText(item && item.riscoPotencialTIPC);
+      return {
+        title: asText(item && item.tituloRiscoTIPC) || legacy,
+        description: asText(item && item.descricaoRiscoTIPC) || '',
+        mitigation: asText(item && item.mitigacaoRiscoTIPC),
+        level: asText(item && item.nivelRiscoTIPC),
+        impact: asText(item && item.impactoRiscoTIPC),
+        probability: asText(item && item.probabilidadeRiscoTIPC)
+      };
+    }).filter((item) => item.title || item.description || item.mitigation || item.level || item.impact || item.probability);
 
-    const contactName = asText(row.nomeContatoTIPC) || 'Nao informado';
-    const contactEmail = asText(row.emailTIPC);
-    const contactPhone = asText(row.telefoneTIPC);
+    const prerequisites = parseTableJson(row.tblPreRequisitosTIPC || row['tblPreRequisitosTIPC'])
+      .map((item) => asText(item && item.preRequisitoTIPC))
+      .filter(Boolean);
 
-    const totalValue = asText(row.valortotalTIPC) || 'Nao informado';
-    const currency = asText(row.moedaTIPC);
+    const checklistItems = [
+      { label: 'Escopo claro e detalhado', value: row.escopoClaroDetalhadoTIPC },
+      { label: 'Impostos e taxas inclusos', value: row.impostosTaxasInclusosTIPC },
+      { label: 'Prazos de entrega definidos', value: row.prazosEntregaDefinidosTIPC },
+      { label: 'Garantias e SLA especificados', value: row.garantiasSlaEspecificadosTIPC },
+      { label: 'Vigencia da proposta confirmada', value: row.vigenciaPropostaConfirmadaTIPC },
+      { label: 'Documentos anexados e completos', value: row.documentosAnexCompTIPC }
+    ];
 
-    const paymentCondition = asText(row.condicaoPagamentoTIPC) || 'Nao informado';
-    const deadline = asText(row.prazoEstimadoTIPC) || 'Nao informado';
-    const validity = formatDays(row.vigenciaDiasTIPC) || 'Nao informado';
-
-    const scope = asText(row.escopoResumidoTIPC) || 'Nao informado';
+    const additionalContact = [
+      asText(row.nomeContato2TIPC),
+      asText(row.email2TIPC),
+      asText(row.telefone2TIPC)
+    ].filter(Boolean);
 
     return `
       <div class="space-y-6">
@@ -157,48 +261,79 @@
             <div>
               <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Fornecedor</h3>
               <div class="space-y-2 text-sm">
-                <div class="font-medium text-gray-900">${escapeHtml(supplierName)}</div>
-                <div class="text-gray-600">CNPJ: ${escapeHtml(supplierCnpj)}</div>
+                <div class="font-medium text-gray-900">${escapeHtml(asText(row.nomeFornecedorTIPC) || 'Nao informado')}</div>
+                <div class="text-gray-600">CNPJ: ${escapeHtml(asText(row.cnpjTIPC) || 'Nao informado')}</div>
               </div>
             </div>
             <div>
               <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Contato Principal</h3>
               <div class="space-y-1 text-sm">
-                <div class="font-medium text-gray-900">${escapeHtml(contactName)}</div>
-                ${contactEmail ? `<div class="text-gray-600">${escapeHtml(contactEmail)}</div>` : ''}
-                ${contactPhone ? `<div class="text-gray-600">${escapeHtml(contactPhone)}</div>` : ''}
+                <div class="font-medium text-gray-900">${escapeHtml(asText(row.nomeContatoTIPC) || 'Nao informado')}</div>
+                ${asText(row.emailTIPC) ? `<div class="text-gray-600">${escapeHtml(row.emailTIPC)}</div>` : ''}
+                ${asText(row.telefoneTIPC) ? `<div class="text-gray-600">${escapeHtml(row.telefoneTIPC)}</div>` : ''}
               </div>
             </div>
           </div>
 
+          ${additionalContact.length ? `
+            <div class="mb-6">
+              <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Contato Adicional</h3>
+              <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm space-y-1">
+                ${asText(row.nomeContato2TIPC) ? `<div class="font-medium text-gray-900">${escapeHtml(row.nomeContato2TIPC)}</div>` : ''}
+                ${asText(row.email2TIPC) ? `<div class="text-gray-600">${escapeHtml(row.email2TIPC)}</div>` : ''}
+                ${asText(row.telefone2TIPC) ? `<div class="text-gray-600">${escapeHtml(row.telefone2TIPC)}</div>` : ''}
+              </div>
+            </div>
+          ` : ''}
+
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div class="bg-gray-50 p-4 rounded-lg">
               <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
-              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(totalValue)}</div>
-              ${currency ? `<div class="text-xs text-green-600">${escapeHtml(currency)}</div>` : ''}
+              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(asText(row.valortotalTIPC) || 'Nao informado')}</div>
+              ${asText(row.moedaTIPC) ? `<div class="text-xs text-green-600">${escapeHtml(row.moedaTIPC)}</div>` : ''}
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
-              <div class="text-xs text-gray-500 uppercase tracking-wide">Condição</div>
-              <div class="text-sm font-medium text-gray-900">${escapeHtml(paymentCondition)}</div>
+              <div class="text-xs text-gray-500 uppercase tracking-wide">Condicao</div>
+              <div class="text-sm font-medium text-gray-900">${escapeHtml(asText(row.condicaoPagamentoTIPC) || 'Nao informado')}</div>
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
               <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo</div>
-              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(deadline)}</div>
+              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(asText(row.prazoEstimadoTIPC) || 'Nao informado')}</div>
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
-              <div class="text-xs text-gray-500 uppercase tracking-wide">Vigência</div>
-              <div class="text-sm font-medium text-gray-900">${escapeHtml(validity)}</div>
+              <div class="text-xs text-gray-500 uppercase tracking-wide">Vigencia</div>
+              <div class="text-sm font-medium text-gray-900">${escapeHtml(formatDays(row.vigenciaDiasTIPC) || 'Nao informado')}</div>
             </div>
+          </div>
+
+          <div class="mb-6">
+            <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Referencia</div>
+            <div class="font-medium text-gray-900">${escapeHtml(asText(row.numeroRefPropostaTIPC) || 'Nao informado')}</div>
           </div>
 
           <div class="mb-6">
             <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo Resumido</h3>
-            <p class="text-gray-700 text-sm leading-relaxed whitespace-pre-line">${escapeHtml(scope)}</p>
+            <p class="text-gray-700 text-sm leading-relaxed whitespace-pre-line">${escapeHtml(asText(row.escopoResumidoTIPC) || 'Nao informado')}</p>
           </div>
 
           <div class="mb-6">
-            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Itens e Serviços</h3>
-            ${renderItems(itens)}
+            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Itens e Servicos</h3>
+            ${renderItems(items)}
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos Iniciais</h3>
+            ${renderRisks(risks)}
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Pre-requisitos</h3>
+            ${renderPrerequisites(prerequisites)}
+          </div>
+
+          <div class="mb-6">
+            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Checklist da Proposta</h3>
+            ${renderChecklist(checklistItems)}
           </div>
 
           <div class="mb-6">

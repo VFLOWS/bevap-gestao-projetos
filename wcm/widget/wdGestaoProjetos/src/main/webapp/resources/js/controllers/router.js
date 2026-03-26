@@ -66,6 +66,14 @@ const router = {
           controller: committeeApprovalController,
           handler: () => committeeApprovalController.load(params)
         },
+        commercialProposal: {
+          controller: commercialProposalController,
+          handler: () => commercialProposalController.load(params)
+        },
+        committeeCostApproval: {
+          controller: committeeCostApprovalController,
+          handler: () => committeeCostApprovalController.load(params)
+        },
         requesterProposalApproval: {
           controller: requesterProposalApprovalController,
           handler: () => requesterProposalApprovalController.load(params)

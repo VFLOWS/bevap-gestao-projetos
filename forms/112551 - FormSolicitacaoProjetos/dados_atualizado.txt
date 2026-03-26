@@ -80,6 +80,7 @@ anexarAtaReuniaoCAP
 
 *TI PROPOSTA COMERCIAL - TIPC
 nomeFornecedorTIPC
+codFornecedorTIPC
 cnpjTIPC
 nomeContatoTIPC
 emailTIPC
@@ -91,8 +92,10 @@ numeroRefPropostaTIPC
 vigenciaDiasTIPC
 valortotalTIPC
 moedaTIPC
+simboloMoedaTIPC
 prazoEstimadoTIPC
 condicaoPagamentoTIPC
+codigoCondicaoPagamentoTIPC
 escopoResumidoTIPC
 -tblItensServicosTIPC (PAI x FILHO)
  - descricaoItemServicoTIPC (CAMPO PAIxFILHO)
@@ -100,6 +103,12 @@ escopoResumidoTIPC
  - valorUnitarioItemServicoTIPC (CAMPO PAIxFILHO)
  - totalItemServicoTIPC (CAMPO PAIxFILHO)
 -tblRiscosIniciaisTIPC (PAI x FILHO)
+ - tituloRiscoTIPC (CAMPO PAIxFILHO)
+ - descricaoRiscoTIPC (CAMPO PAIxFILHO)
+ - mitigacaoRiscoTIPC (CAMPO PAIxFILHO)
+ - nivelRiscoTIPC (CAMPO PAIxFILHO)
+ - impactoRiscoTIPC (CAMPO PAIxFILHO)
+ - probabilidadeRiscoTIPC (CAMPO PAIxFILHO)
  - riscoPotencialTIPC (CAMPO PAIxFILHO)
 -tblPreRequisitosTIPC (PAI x FILHO)
  - preRequisitoTIPC (CAMPO PAIxFILHO)

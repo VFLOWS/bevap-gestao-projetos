@@ -338,6 +338,8 @@
 	<!-- TI PROPOSTA COMERCIAL - TIPC -->
 	<label>Nome do Fornecedor</label>
 	<input type="text" name="nomeFornecedorTIPC" id="nomeFornecedorTIPC">
+	<label>Código do Fornecedor</label>
+	<input type="text" name="codFornecedorTIPC" id="codFornecedorTIPC">
 
 	<label>CNPJ</label>
 	<input type="text" name="cnpjTIPC" id="cnpjTIPC">
@@ -371,12 +373,16 @@
 
 	<label>Moeda</label>
 	<input type="text" name="moedaTIPC" id="moedaTIPC">
+	<label>Símbolo da Moeda</label>
+	<input type="text" name="simboloMoedaTIPC" id="simboloMoedaTIPC">
 
 	<label>Prazo Estimado</label>
 	<input type="text" name="prazoEstimadoTIPC" id="prazoEstimadoTIPC">
 
 	<label>CondiÃ§Ã£o de Pagamento</label>
 	<input type="text" name="condicaoPagamentoTIPC" id="condicaoPagamentoTIPC">
+	<label>Código da Condição de Pagamento</label>
+	<input type="text" name="codigoCondicaoPagamentoTIPC" id="codigoCondicaoPagamentoTIPC">
 
 	<label>Escopo Resumido</label>
 	<input type="text" name="escopoResumidoTIPC" id="escopoResumidoTIPC">
@@ -405,11 +411,23 @@
 	<table class="table table-bordered" id="tblRiscosIniciaisTIPC" tablename="tblRiscosIniciaisTIPC" noaddbutton="true" nodeletebutton="true"  >
 		<thead>
 			<tr>
-				<th>Risco potencial</th>
+				<th>TÃ­tulo do risco</th>
+				<th>DescriÃ§Ã£o</th>
+				<th>MitigaÃ§Ã£o</th>
+				<th>NÃ­vel</th>
+				<th>Impacto</th>
+				<th>Probabilidade</th>
+				<th>Risco potencial (legado)</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
+				<td><input type="text" name="tituloRiscoTIPC" class="form-control"></td>
+				<td><input type="text" name="descricaoRiscoTIPC" class="form-control"></td>
+				<td><input type="text" name="mitigacaoRiscoTIPC" class="form-control"></td>
+				<td><input type="text" name="nivelRiscoTIPC" class="form-control"></td>
+				<td><input type="text" name="impactoRiscoTIPC" class="form-control"></td>
+				<td><input type="text" name="probabilidadeRiscoTIPC" class="form-control"></td>
 				<td><input type="text" name="riscoPotencialTIPC" class="form-control"></td>
 			</tr>
 		</tbody>

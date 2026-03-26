@@ -1,0 +1,351 @@
+<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div id="context-banner" class="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+        <div class="flex items-start">
+            <i class="fa-solid fa-file-invoice-dollar text-green-600 mt-0.5 mr-3"></i>
+            <div class="text-sm text-green-800">
+                <p class="font-medium mb-1">Execucao externa aprovada na triagem</p>
+                <p>Preencha os dados do fornecedor, anexe a proposta comercial e envie para validacao do solicitante.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div id="content-section" class="lg:col-span-2">
+            <div id="tabs-container" class="bg-white rounded-lg shadow-md" data-component="tabs" data-tabs-default="solicitacao">
+                <div class="border-b border-gray-200">
+                    <div class="relative">
+                        <div class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2" data-tabs-scroll>
+                            <button type="button" data-tab="solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-file-lines mr-2"></i>Solicitacao
+                            </button>
+                            <button type="button" data-tab="analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-microscope mr-2"></i>Analise TI
+                            </button>
+                            <button type="button" data-tab="impacto" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Area
+                            </button>
+                            <button type="button" data-tab="triagem-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-route mr-2"></i>Triagem TI
+                            </button>
+                            <button type="button" data-tab="fornecedor" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-building mr-2"></i>Fornecedor
+                            </button>
+                            <button type="button" data-tab="proposta" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-file-invoice-dollar mr-2"></i>Proposta
+                            </button>
+                            <button type="button" data-tab="checklist" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <i class="fa-solid fa-tasks mr-2"></i>Checklist
+                            </button>
+                        </div>
+
+                        <button type="button" data-tabs-scroll-arrow="left" aria-label="Rolar abas para esquerda" class="absolute left-0 top-0 bottom-0 w-24 rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-start pl-2">
+                            <span class="flex items-center gap-0 text-base leading-none">
+                                <i class="fa-solid fa-chevron-left"></i>
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </span>
+                        </button>
+
+                        <button type="button" data-tabs-scroll-arrow="right" aria-label="Rolar abas para direita" class="absolute right-0 top-0 bottom-0 w-24 rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-end pr-2">
+                            <span class="flex items-center gap-0 text-base leading-none">
+                                <i class="fa-solid fa-chevron-right"></i>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="p-6 hidden" data-tab-panel="solicitacao">
+                    <div data-component="tab-solicitacao-history" class="text-sm text-gray-500">Carregando conteudo da solicitacao...</div>
+                </div>
+
+                <div class="p-6 hidden" data-tab-panel="analise-ti">
+                    <div data-component="tab-analise-ti-history" class="text-sm text-gray-500">Carregando conteudo da analise TI...</div>
+                </div>
+
+                <div class="p-6 hidden" data-tab-panel="impacto">
+                    <div data-component="tab-impacto-history" class="text-sm text-gray-500">Carregando conteudo de impacto...</div>
+                </div>
+
+                <div class="p-6 hidden" data-tab-panel="triagem-ti">
+                    <div data-component="tab-triagem-ti-history" class="text-sm text-gray-500">Carregando conteudo da triagem...</div>
+                </div>
+
+                <div class="p-6 hidden" data-tab-panel="fornecedor">
+                    <div class="space-y-8">
+                        <section>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Dados do Fornecedor</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Fornecedor <span class="text-red-500">*</span></label>
+                                    <div id="proposal-supplier-filter"></div>
+                                    <input id="proposal-supplier-name" type="hidden">
+                                    <input id="proposal-supplier-code" type="hidden">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">CNPJ</label>
+                                    <input id="proposal-supplier-cnpj" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                            </div>
+                        </section>
+
+                        <section>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Contato Principal</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+                                    <input id="proposal-contact-name" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
+                                    <input id="proposal-contact-email" type="email" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+                                    <input id="proposal-contact-phone" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                            </div>
+                        </section>
+
+                        <section>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Contato Adicional</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nome</label>
+                                    <input id="proposal-contact2-name" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">E-mail</label>
+                                    <input id="proposal-contact2-email" type="email" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Telefone</label>
+                                    <input id="proposal-contact2-phone" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+
+                <div class="p-6 hidden" data-tab-panel="proposta">
+                    <div class="space-y-8">
+                        <section>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Dados da Proposta Comercial</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">No/Ref. da Proposta <span class="text-red-500">*</span></label>
+                                    <input id="proposal-reference-number" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Vigencia em Dias</label>
+                                    <input id="proposal-validity-days" type="number" min="1" step="1" inputmode="numeric" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Valor Total <span class="text-red-500">*</span></label>
+                                    <input id="proposal-total-value" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Moeda</label>
+                                    <div id="proposal-currency-filter"></div>
+                                    <input id="proposal-currency" type="hidden">
+                                    <input id="proposal-currency-symbol" type="hidden">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Prazo Estimado</label>
+                                    <input id="proposal-estimated-deadline" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                </div>
+                            </div>
+
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Condicao de Pagamento</label>
+                                <div id="proposal-payment-condition-filter"></div>
+                                <input id="proposal-payment-condition" type="hidden">
+                                <input id="proposal-payment-condition-code" type="hidden">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Escopo Resumido <span class="text-red-500">*</span></label>
+                                <textarea id="proposal-scope-summary" rows="4" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+                            </div>
+                        </section>
+
+                        <section>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Itens / Servicos</h3>
+                                <button type="button" data-action="add-proposal-item" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fa-solid fa-plus mr-2"></i>Adicionar
+                                </button>
+                            </div>
+
+                            <div class="overflow-x-auto">
+                                <table class="w-full border border-gray-300 rounded-lg">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Descricao</th>
+                                            <th class="px-4 py-3 text-center text-sm font-medium text-gray-700">Qtd</th>
+                                            <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Valor Unit.</th>
+                                            <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Total</th>
+                                            <th class="px-4 py-3 w-10"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="proposal-items-list"></tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Riscos Iniciais</h3>
+                                <button type="button" data-action="add-proposal-risk" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fa-solid fa-plus mr-2"></i>Adicionar
+                                </button>
+                            </div>
+                            <div id="proposal-risk-list" class="space-y-3"></div>
+                            <div id="proposal-risk-empty" class="text-sm text-gray-500 hidden">Nenhum risco informado.</div>
+                        </section>
+
+                        <section>
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Pre-requisitos</h3>
+                                <button type="button" data-action="add-proposal-prerequisite" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fa-solid fa-plus mr-2"></i>Adicionar
+                                </button>
+                            </div>
+                            <div id="proposal-prerequisite-list" class="space-y-2"></div>
+                            <div id="proposal-prerequisite-empty" class="text-sm text-gray-500 hidden">Nenhum pre-requisito informado.</div>
+                        </section>
+
+                        <section>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                                <i class="fa-solid fa-paperclip mr-2 text-bevap-gold"></i>
+                                Anexos da Proposta
+                            </h3>
+
+                            <label id="proposal-dropzone" for="proposal-attachments-input" class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-bevap-green transition-colors cursor-pointer block">
+                                <i class="fa-solid fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-600 mb-2">Arraste arquivos aqui ou clique para selecionar</p>
+                                <p class="text-xs text-gray-500">Proposta comercial, termos e anexos complementares</p>
+                            </label>
+                            <input id="proposal-attachments-input" type="file" class="sr-only" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
+
+                            <div id="proposal-attachments-list" class="mt-4 space-y-2"></div>
+                        </section>
+                    </div>
+                </div>
+
+                <div class="p-6 hidden" data-tab-panel="checklist">
+                    <div class="space-y-3">
+                        <label class="flex items-start">
+                            <input id="proposal-check-scope" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                            <span class="ml-3 text-sm text-gray-700">
+                                <span class="font-medium">Escopo esta claro e detalhado</span>
+                                <p class="text-gray-500 text-xs mt-1">Escopo e entregaveis estao descritos de forma objetiva.</p>
+                            </span>
+                        </label>
+                        <label class="flex items-start">
+                            <input id="proposal-check-taxes" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                            <span class="ml-3 text-sm text-gray-700">
+                                <span class="font-medium">Impostos e taxas estao inclusos no valor</span>
+                                <p class="text-gray-500 text-xs mt-1">A proposta ja considera encargos aplicaveis.</p>
+                            </span>
+                        </label>
+                        <label class="flex items-start">
+                            <input id="proposal-check-deadlines" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                            <span class="ml-3 text-sm text-gray-700">
+                                <span class="font-medium">Prazos de entrega definidos</span>
+                                <p class="text-gray-500 text-xs mt-1">Cronograma e marcos estao descritos.</p>
+                            </span>
+                        </label>
+                        <label class="flex items-start">
+                            <input id="proposal-check-sla" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                            <span class="ml-3 text-sm text-gray-700">
+                                <span class="font-medium">Garantias e SLA especificados</span>
+                                <p class="text-gray-500 text-xs mt-1">Condicoes de garantia, suporte e SLA estao claras.</p>
+                            </span>
+                        </label>
+                        <label class="flex items-start">
+                            <input id="proposal-check-validity" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                            <span class="ml-3 text-sm text-gray-700">
+                                <span class="font-medium">Vigencia da proposta confirmada</span>
+                                <p class="text-gray-500 text-xs mt-1">A validade comercial esta informada e vigente.</p>
+                            </span>
+                        </label>
+                        <label class="flex items-start">
+                            <input id="proposal-check-documents" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
+                            <span class="ml-3 text-sm text-gray-700">
+                                <span class="font-medium">Documentos anexados e completos</span>
+                                <p class="text-gray-500 text-xs mt-1">Proposta e anexos de apoio foram incluidos.</p>
+                            </span>
+                        </label>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t">
+                        <div class="flex items-center justify-between text-sm mb-2">
+                            <span class="text-gray-600">Completude do checklist</span>
+                            <span id="commercial-checklist-percentage" class="font-semibold text-bevap-navy">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div id="commercial-checklist-progress" class="bg-bevap-green h-2 rounded-full" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="sidebar-summary" class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                <div data-component="project-summary"></div>
+                <div data-component="progress-status"></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer id="footer" class="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex items-center justify-between">
+            <button data-action="save-draft" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
+                <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
+            </button>
+            <button data-action="open-approve-modal" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
+                <i class="fa-solid fa-paper-plane mr-2"></i> Enviar ao Solicitante
+            </button>
+        </div>
+    </div>
+</footer>
+
+<div id="approve-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+        <div class="flex items-center mb-4">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                <i class="fa-solid fa-paper-plane text-bevap-green text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar envio</h3>
+        </div>
+        <p class="text-gray-700 mb-3">Voce esta enviando a proposta comercial para o projeto <strong id="approve-project-label">Projeto selecionado</strong>.</p>
+        <p class="text-sm text-gray-600 mb-6">Ao confirmar, a solicitacao seguira para aprovacao do solicitante.</p>
+        <div class="flex justify-end space-x-3">
+            <button data-action="close-modal" data-modal-id="approve-modal" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                Cancelar
+            </button>
+            <button data-action="confirm-send" class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                Confirmar
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="hidden fixed top-20 right-4 z-50 bg-white rounded-lg shadow-xl border-l-4 p-4 max-w-md">
+    <div class="flex items-start">
+        <i id="toast-icon" class="text-2xl mr-3 mt-0.5"></i>
+        <div class="flex-1">
+            <p id="toast-title" class="font-semibold text-gray-900"></p>
+            <p id="toast-message" class="text-sm text-gray-600 mt-1"></p>
+        </div>
+        <button id="toast-close" class="text-gray-400 hover:text-gray-600 ml-4">
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
+</div>
