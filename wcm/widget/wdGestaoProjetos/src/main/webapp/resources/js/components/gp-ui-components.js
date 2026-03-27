@@ -417,6 +417,9 @@
       const requester = d.requester || '—';
       const area = d.area || '—';
       const sponsor = d.sponsor || '—';
+      const showRequester = d.showRequester !== false;
+      const showArea = d.showArea !== false;
+      const showSponsor = d.showSponsor !== false;
 
       const priority = d.priority || { label: '—', iconClass: 'fa-solid fa-star', badgeClasses: 'bg-gray-100 text-gray-800' };
       const status = d.status || { label: '—', iconClass: 'fa-solid fa-clock', badgeClasses: 'bg-gray-100 text-gray-800' };
@@ -426,6 +429,21 @@
       const customRowsHtml = customRows.map((row) => {
         const variant = row && row.variant ? String(row.variant) : 'inline';
         const label = row && row.label ? String(row.label) : '—';
+
+        if (variant === 'badge') {
+          const value = row && row.value !== undefined ? String(row.value) : '—';
+          const iconClass = row && row.iconClass ? String(row.iconClass) : '';
+          const badgeClasses = row && row.badgeClasses ? String(row.badgeClasses) : 'bg-gray-100 text-gray-800';
+
+          return `
+            <div class="flex items-center justify-between pb-2 border-b">
+              <span class="text-gray-600">${this._escape(label)}</span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs ${this._escape(badgeClasses)} font-medium">
+                ${iconClass ? `<i class="${this._escape(iconClass)} mr-1"></i>` : ''}${this._escape(value)}
+              </span>
+            </div>
+          `;
+        }
 
         if (variant === 'block') {
           const value = row && row.value !== undefined ? String(row.value) : '—';
@@ -485,18 +503,24 @@
               <span class="text-gray-600">Título</span>
               <p class="font-medium text-gray-900 mt-1">${this._escape(title)}</p>
             </div>
+            ${showRequester ? `
             <div class="flex items-center justify-between pb-2 border-b">
               <span class="text-gray-600">Solicitante</span>
               <span class="font-medium text-gray-900">${this._escape(requester)}</span>
             </div>
+            ` : ''}
+            ${showArea ? `
             <div class="flex items-center justify-between pb-2 border-b">
               <span class="text-gray-600">Área</span>
               <span class="font-medium text-gray-900">${this._escape(area)}</span>
             </div>
+            ` : ''}
+            ${showSponsor ? `
             <div class="flex items-center justify-between pb-2 border-b">
               <span class="text-gray-600">Patrocinador</span>
               <span class="font-medium text-gray-900">${this._escape(sponsor)}</span>
             </div>
+            ` : ''}
             <div class="flex items-center justify-between pb-2 border-b">
               <span class="text-gray-600">Prioridade</span>
               <span class="inline-flex items-center px-2 py-1 rounded-full text-xs ${this._escape(priority.badgeClasses || '')} font-medium">

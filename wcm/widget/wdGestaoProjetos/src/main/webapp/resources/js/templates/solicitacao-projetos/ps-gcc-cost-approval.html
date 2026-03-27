@@ -34,18 +34,23 @@
                 <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
                   <i class="fa-solid fa-exclamation text-[10px]"></i>
                 </span>
-                <i class="fa-solid fa-sack-dollar mr-2"></i>Financeiro
+                <i class="fa-solid fa-sack-dollar mr-2"></i>Painel financeiro
               </button>
             </div>
 
             <button type="button" data-tabs-scroll-arrow="left" aria-label="Rolar abas para esquerda" class="absolute left-0 top-0 bottom-0 w-24 rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-start pl-2">
-              <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/90 border border-gray-200">
+              <span class="flex items-center gap-0 text-base leading-none">
+                <i class="fa-solid fa-chevron-left"></i>
                 <i class="fa-solid fa-chevron-left"></i>
               </span>
             </button>
 
             <button type="button" data-tabs-scroll-arrow="right" aria-label="Rolar abas para direita" class="absolute right-0 top-0 bottom-0 w-24 rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-end pr-2">
-              <span class="inline-flex items-center justify-center w-9 h-9 rounded-full bg-white/90 border border-gray-200">
+              <span class="tab-notice-badge hidden absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
+                <i class="fa-solid fa-exclamation text-[10px]"></i>
+              </span>
+              <span class="flex items-center gap-0 text-base leading-none">
+                <i class="fa-solid fa-chevron-right"></i>
                 <i class="fa-solid fa-chevron-right"></i>
               </span>
             </button>
@@ -74,107 +79,289 @@
 
         <div class="p-6 hidden" data-tab-panel="financeiro">
           <div class="space-y-6">
-            <div class="bg-slate-50 border border-slate-200 rounded-lg p-5">
-              <div class="flex items-center justify-between gap-3 mb-4">
-                <h2 class="text-xl font-montserrat font-bold text-bevap-navy flex items-center">
-                  <i class="fa-solid fa-coins mr-3 text-bevap-gold"></i>
-                  Painel Financeiro GCC
-                </h2>
-                <span class="text-xs uppercase tracking-wide text-slate-500">Baseado na proposta comercial aprovada</span>
-              </div>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                <div class="bg-white rounded-lg border border-gray-200 p-4">
-                  <div class="text-xs text-gray-500 uppercase tracking-wide">Fornecedor</div>
-                  <div id="gcc-summary-supplier" class="mt-1 font-medium text-gray-900">Nao informado</div>
-                </div>
-                <div class="bg-white rounded-lg border border-gray-200 p-4">
-                  <div class="text-xs text-gray-500 uppercase tracking-wide">No/Ref. Proposta</div>
-                  <div id="gcc-summary-reference" class="mt-1 font-medium text-gray-900">Nao informado</div>
-                </div>
-                <div class="bg-white rounded-lg border border-gray-200 p-4">
-                  <div class="text-xs text-gray-500 uppercase tracking-wide">Vigencia</div>
-                  <div id="gcc-summary-validity" class="mt-1 font-medium text-gray-900">Nao informado</div>
-                </div>
-                <div class="bg-white rounded-lg border border-gray-200 p-4">
-                  <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
-                  <div id="gcc-summary-total" class="mt-1 font-medium text-gray-900">Nao informado</div>
-                </div>
-                <div class="bg-white rounded-lg border border-gray-200 p-4">
-                  <div class="text-xs text-gray-500 uppercase tracking-wide">Condicao de Pagamento</div>
-                  <div id="gcc-summary-condition" class="mt-1 font-medium text-gray-900">Nao informado</div>
-                </div>
-                <div class="bg-white rounded-lg border border-gray-200 p-4">
-                  <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo Estimado</div>
-                  <div id="gcc-summary-deadline" class="mt-1 font-medium text-gray-900">Nao informado</div>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
+              <div class="flex items-start">
+                <i class="fa-solid fa-dollar-sign text-yellow-600 mt-0.5 mr-3"></i>
+                <div class="text-sm text-yellow-800">
+                  <p class="font-medium mb-1">Analise Financeira - GCC</p>
+                  <p>Revise os valores, estrutura de custos e a classificacao contabil antes de aprovar.</p>
                 </div>
               </div>
             </div>
 
-            <div class="bg-white border border-gray-200 rounded-lg p-5">
-              <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Distribuicao CAPEX / OPEX</h3>
-
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                  <div class="flex items-center justify-between mb-2">
-                    <label for="gcc-capex-percent" class="text-sm font-medium text-gray-700">CAPEX</label>
-                    <span id="gcc-capex-percent-label" class="text-sm font-semibold text-bevap-green">0%</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div>
+                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Proposta Comercial</h3>
+                <div class="space-y-2 text-sm">
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Fornecedor:</span>
+                    <span id="gcc-summary-supplier" class="font-medium text-gray-900">Nao informado</span>
                   </div>
-                  <input type="number" min="0" max="100" step="0.01" id="gcc-capex-percent" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" placeholder="0" />
-                </div>
-
-                <div class="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                  <div class="flex items-center justify-between mb-2">
-                    <label for="gcc-opex-percent" class="text-sm font-medium text-gray-700">OPEX</label>
-                    <span id="gcc-opex-percent-label" class="text-sm font-semibold text-bevap-green">0%</span>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Nº Proposta:</span>
+                    <span id="gcc-summary-reference" class="font-mono font-medium text-gray-900">Nao informado</span>
                   </div>
-                  <input type="number" min="0" max="100" step="0.01" id="gcc-opex-percent" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" placeholder="0" />
-                </div>
-              </div>
-
-              <p class="text-xs text-gray-500 mt-3">Ao alterar um percentual, o outro e ajustado automaticamente para manter o total em 100%.</p>
-            </div>
-
-            <div id="gcc-capex-wrapper" class="bg-white border border-gray-200 rounded-lg p-5 hidden">
-              <div class="flex items-center justify-between gap-3 mb-4">
-                <div>
-                  <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Rateio CAPEX</h3>
-                  <p class="text-xs text-gray-500">Informe os centros de custo e a conta contabil para a parcela CAPEX.</p>
-                </div>
-                <button type="button" data-action="add-capex-row" class="px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-all">
-                  <i class="fa-solid fa-plus mr-1"></i> Adicionar linha
-                </button>
-              </div>
-              <div id="gcc-capex-rows" class="space-y-3"></div>
-            </div>
-
-            <div id="gcc-opex-wrapper" class="bg-white border border-gray-200 rounded-lg p-5 hidden">
-              <div class="flex items-center justify-between gap-3 mb-4">
-                <div>
-                  <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Rateio OPEX</h3>
-                  <p class="text-xs text-gray-500">Informe os centros de custo e a conta contabil para a parcela OPEX.</p>
-                </div>
-                <button type="button" data-action="add-opex-row" class="px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-all">
-                  <i class="fa-solid fa-plus mr-1"></i> Adicionar linha
-                </button>
-              </div>
-              <div id="gcc-opex-rows" class="space-y-3"></div>
-            </div>
-
-            <div class="bg-white border border-gray-200 rounded-lg p-5">
-              <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Planejamento Financeiro</h3>
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label for="gcc-competence" class="block text-sm font-medium text-gray-700 mb-2">Competencia *</label>
-                  <input type="month" id="gcc-competence" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Vigencia:</span>
+                    <span id="gcc-summary-validity" class="font-medium text-gray-900">Nao informado</span>
+                  </div>
                 </div>
               </div>
               <div>
-                <label for="gcc-observations" class="block text-sm font-medium text-gray-700 mb-2">Observacoes / Negociacao</label>
-                <textarea id="gcc-observations" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm resize-none" placeholder="Observacoes do GCC sobre a composicao financeira, saldos e acordos realizados..."></textarea>
+                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Valores e Prazo</h3>
+                <div class="space-y-2 text-sm">
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Valor Total:</span>
+                    <span id="gcc-summary-total" class="font-bold text-bevap-navy text-lg">Nao informado</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Condicao:</span>
+                    <span id="gcc-summary-condition" class="font-medium text-gray-900">Nao informado</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-600">Prazo:</span>
+                    <span id="gcc-summary-deadline" class="font-medium text-gray-900">Nao informado</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Estrutura de Custo</h3>
+                <button type="button" data-action="toggle-cost-table" class="text-bevap-green hover:text-green-700 text-sm font-medium">
+                  <i data-role="toggle-icon" class="fa-solid fa-chevron-up mr-1"></i>
+                  <span data-role="toggle-text">Recolher</span>
+                </button>
+              </div>
+              <div data-role="cost-table" class="overflow-x-auto">
+                <table class="w-full text-sm">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th class="px-4 py-3 text-left text-gray-700 font-medium">Item</th>
+                      <th class="px-4 py-3 text-center text-gray-700 font-medium">Qtd</th>
+                      <th class="px-4 py-3 text-right text-gray-700 font-medium">Valor Unit.</th>
+                      <th class="px-4 py-3 text-right text-gray-700 font-medium">Subtotal</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200" data-component="gcc-cost-structure">
+                    <tr>
+                      <td class="px-4 py-3 text-gray-500" colspan="4">Estrutura de custo indisponivel.</td>
+                    </tr>
+                  </tbody>
+                  <tfoot class="bg-gray-50 font-semibold">
+                    <tr>
+                      <td colspan="3" class="px-4 py-3 text-right text-gray-700">Total Geral:</td>
+                      <td id="gcc-cost-structure-total" class="px-4 py-3 text-right text-bevap-navy text-lg">—</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-lg p-5">
+              <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
+                Natureza do Custo *
+                <i class="fa-solid fa-info-circle text-gray-400 ml-2 cursor-help" title="Defina se o investimento sera CAPEX (bens duraveis) ou OPEX (despesas operacionais)"></i>
+              </label>
+
+              <div class="space-y-3">
+                <div class="block p-4 border-2 border-gray-300 rounded-lg hover:border-bevap-green hover:bg-green-50 transition-colors" data-cost-nature="capex" data-role="cost-nature-card">
+                  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                      <input id="gcc-cost-nature-capex" type="checkbox" value="capex" class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green" />
+                      <div class="inline-flex items-center align-middle">
+                        <span class="font-medium text-gray-900">CAPEX</span>
+                        <span id="gcc-capex-percent-label" class="text-sm text-gray-600 ml-2">0%</span>
+                        <input id="gcc-capex-percent" type="number" min="0" max="100" step="0.01" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" placeholder="0" />
+                        <span class="text-sm text-gray-600 ml-1">%</span>
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3 md:w-[420px]">
+                      <div class="px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                        <div class="text-[11px] text-gray-500 uppercase tracking-wide">Valor CAPEX</div>
+                        <div id="gcc-capex-total-value" class="text-sm font-semibold text-bevap-navy">R$ 0,00</div>
+                      </div>
+                      <div class="px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                        <div class="text-[11px] text-gray-500 uppercase tracking-wide">Valor Comprometido</div>
+                        <div id="gcc-capex-committed-total" class="text-sm font-semibold text-bevap-navy">R$ 0,00</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="gcc-capex-wrapper" class="mt-4 pt-4 border-t hidden">
+                    <div class="flex items-center justify-between mb-3">
+                      <span class="text-sm font-medium text-gray-700">Centro de Custo / Conta Contabil *</span>
+                      <button type="button" data-action="add-capex-row" class="px-3 py-1.5 text-xs font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fa-solid fa-plus mr-1"></i> Adicionar rateio
+                      </button>
+                    </div>
+
+                    <div>
+                      <table class="w-full text-sm">
+                        <tbody id="gcc-capex-rows"></tbody>
+                      </table>
+                    </div>
+
+                    <template id="gcc-capex-row-template">
+                      <tr class="gcc-allocation-row cost-allocation-row" data-kind="capex">
+                        <td class="py-3" colspan="6">
+                          <div class="p-4 bg-white border border-gray-200 rounded-lg">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Centro de Custo</label>
+                                <select data-field="costCenter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                  <option value="" selected>Selecione...</option>
+                                </select>
+                              </div>
+                              <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Conta Contabil</label>
+                                <select data-field="account" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                  <option value="" selected>Selecione...</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                              <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Valor Comprometido</label>
+                                <input type="text" inputmode="numeric" data-field="committed" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" placeholder="R$ 0,00" />
+                              </div>
+                              <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo</label>
+                                <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-medium text-gray-900">
+                                  <span data-field="balance">—</span>
+                                </div>
+                              </div>
+                              <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo apos compromisso</label>
+                                <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-semibold">
+                                  <span data-field="balanceAfter">—</span>
+                                </div>
+                              </div>
+                              <div class="flex md:justify-end">
+                                <button type="button" data-action="remove-allocation-row" class="px-3 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors" title="Remover">
+                                  <i class="fa-solid fa-trash"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                  </div>
+                </div>
+
+                <div class="block p-4 border-2 border-gray-300 rounded-lg hover:border-bevap-green hover:bg-green-50 transition-colors" data-cost-nature="opex" data-role="cost-nature-card">
+                  <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                    <div class="flex items-center gap-3">
+                      <input id="gcc-cost-nature-opex" type="checkbox" value="opex" class="w-4 h-4 text-bevap-green border-gray-300 focus:ring-bevap-green" />
+                      <div class="inline-flex items-center align-middle">
+                        <span class="font-medium text-gray-900">OPEX</span>
+                        <span id="gcc-opex-percent-label" class="text-sm text-gray-600 ml-2">0%</span>
+                        <input id="gcc-opex-percent" type="number" min="0" max="100" step="0.01" class="w-16 px-2 py-1 text-sm border border-gray-300 rounded ml-2" placeholder="0" />
+                        <span class="text-sm text-gray-600 ml-1">%</span>
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3 md:w-[420px]">
+                      <div class="px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                        <div class="text-[11px] text-gray-500 uppercase tracking-wide">Valor OPEX</div>
+                        <div id="gcc-opex-total-value" class="text-sm font-semibold text-bevap-navy">R$ 0,00</div>
+                      </div>
+                      <div class="px-3 py-2 rounded-lg border border-gray-200 bg-white">
+                        <div class="text-[11px] text-gray-500 uppercase tracking-wide">Valor Comprometido</div>
+                        <div id="gcc-opex-committed-total" class="text-sm font-semibold text-bevap-navy">R$ 0,00</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div id="gcc-opex-wrapper" class="mt-4 pt-4 border-t hidden">
+                    <div class="flex items-center justify-between mb-3">
+                      <span class="text-sm font-medium text-gray-700">Centro de Custo / Conta Contabil *</span>
+                      <button type="button" data-action="add-opex-row" class="px-3 py-1.5 text-xs font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                        <i class="fa-solid fa-plus mr-1"></i> Adicionar rateio
+                      </button>
+                    </div>
+
+                    <div>
+                      <table class="w-full text-sm">
+                        <tbody id="gcc-opex-rows"></tbody>
+                      </table>
+                    </div>
+
+                    <template id="gcc-opex-row-template">
+                      <tr class="gcc-allocation-row cost-allocation-row" data-kind="opex">
+                        <td class="py-3" colspan="6">
+                          <div class="p-4 bg-white border border-gray-200 rounded-lg">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                              <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Centro de Custo</label>
+                                <select data-field="costCenter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                  <option value="" selected>Selecione...</option>
+                                </select>
+                              </div>
+                              <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Conta Contabil</label>
+                                <select data-field="account" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                  <option value="" selected>Selecione...</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                              <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Valor Comprometido</label>
+                                <input type="text" inputmode="numeric" data-field="committed" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" placeholder="R$ 0,00" />
+                              </div>
+                              <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo</label>
+                                <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-medium text-gray-900">
+                                  <span data-field="balance">—</span>
+                                </div>
+                              </div>
+                              <div>
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo apos compromisso</label>
+                                <div class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-semibold">
+                                  <span data-field="balanceAfter">—</span>
+                                </div>
+                              </div>
+                              <div class="flex md:justify-end">
+                                <button type="button" data-action="remove-allocation-row" class="px-3 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors" title="Remover">
+                                  <i class="fa-solid fa-trash"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white border border-gray-200 rounded-lg p-5">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label for="gcc-competence" class="block text-sm font-medium text-gray-700 mb-2">Periodo Competencia *</label>
+                  <input type="month" id="gcc-competence" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
+                </div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6 mt-6">
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+          <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
+          Observacoes do Gerente do Centro de Custo
+        </h3>
+        <div>
+          <label for="gcc-observations" class="block text-sm font-medium text-gray-700 mb-2">Observacoes / Negociacao</label>
+          <textarea id="gcc-observations" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm resize-none" placeholder="Adicione observacoes sobre a aprovacao do custo, rateios, condicoes especiais e negociacao..."></textarea>
         </div>
       </div>
     </div>
@@ -182,7 +369,40 @@
     <div id="sidebar-summary" class="lg:col-span-1">
       <div class="sticky top-24 space-y-4">
         <div data-component="project-summary"></div>
-        <div data-component="progress-status"></div>
+        <div id="gcc-financial-impact" class="bg-gradient-to-br from-bevap-navy to-blue-900 rounded-lg shadow-md p-5 text-white">
+          <h3 class="font-montserrat font-bold text-base mb-4 flex items-center">
+            <i class="fa-solid fa-chart-pie mr-2 text-bevap-gold"></i>
+            Impacto Financeiro (Previsao)
+          </h3>
+          <div class="space-y-3">
+            <div>
+              <div class="text-xs text-blue-200 mb-1">Valor da Proposta</div>
+              <div id="impact-proposal-value" class="text-2xl font-bold">R$ 0,00</div>
+            </div>
+            <div class="h-px bg-blue-700"></div>
+            <div>
+              <div class="text-xs text-blue-200 mb-1">Saldo Disponivel CC</div>
+              <div id="impact-available-list" class="space-y-1 mb-2">
+                <div class="flex justify-between text-xs">
+                  <span class="text-blue-100">—</span>
+                  <span class="font-medium text-blue-50">—</span>
+                </div>
+              </div>
+              <div id="impact-available-balance" class="text-xl font-semibold text-bevap-gold">R$ 0,00</div>
+            </div>
+            <div class="h-px bg-blue-700"></div>
+            <div>
+              <div class="text-xs text-blue-200 mb-1">Saldo Apos Aprovacao</div>
+              <div id="impact-after-list" class="space-y-1 mb-2">
+                <div class="flex justify-between text-xs">
+                  <span class="text-blue-100">—</span>
+                  <span class="font-medium text-blue-50">—</span>
+                </div>
+              </div>
+              <div id="impact-balance-after" class="text-xl font-semibold text-green-300">R$ 0,00</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

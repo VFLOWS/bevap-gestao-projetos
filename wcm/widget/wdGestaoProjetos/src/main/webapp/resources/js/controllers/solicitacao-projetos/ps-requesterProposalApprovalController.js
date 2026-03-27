@@ -8,6 +8,7 @@ const requesterProposalApprovalController = {
     'patrocinadorNS',
     'prioridadeNS',
     'fornecedorRecomendadoTITT',
+    'execucaoProjetoTITT',
     'nomeFornecedorTIPC',
     'valortotalTIPC',
     'prazoEstimadoTIPC',
@@ -311,6 +312,13 @@ const requesterProposalApprovalController = {
       attachmentsCount: 0,
       priority: { label: 'N/A', iconClass: 'fa-solid fa-star', badgeClasses: 'bg-gray-100 text-gray-800' },
       customRows: [
+        {
+          variant: 'badge',
+          label: 'Tipo',
+          value: 'N/A',
+          iconClass: 'fa-solid fa-arrow-up-right-from-square',
+          badgeClasses: 'bg-gray-100 text-gray-800'
+        },
         { variant: 'block', label: 'Fornecedor Recomendado', value: 'N/A' },
         {
           variant: 'kvList',
@@ -369,7 +377,7 @@ const requesterProposalApprovalController = {
     ui.sidebar.renderProjectSummary(summaryTarget, {
       code: this.asText(row.documentid) || 'N/A',
       title: this.asText(row.titulodoprojetoNS) || 'N/A',
-      requester: 'Solicitante',
+      requester: 'N/A',
       area: this.asText(row.areaUnidadeNS) || 'N/A',
       sponsor: this.asText(row.patrocinadorNS) || 'N/A',
       attachmentsCount: this.countAttachments(row.anexosNS) + this.countAttachments(row.anexosPropostaTIPC),
@@ -380,6 +388,13 @@ const requesterProposalApprovalController = {
       },
       customRows: [
         {
+          variant: 'badge',
+          label: 'Tipo',
+          value: this.getExecutionTypeLabel(row.execucaoProjetoTITT) || 'N/A',
+          iconClass: 'fa-solid fa-arrow-up-right-from-square',
+          badgeClasses: this.getExecutionTypeBadgeClasses(row.execucaoProjetoTITT)
+        },
+        {
           variant: 'block',
           label: 'Fornecedor Recomendado',
           value: this.asText(row.fornecedorRecomendadoTITT) || 'Nao informado'
@@ -389,7 +404,7 @@ const requesterProposalApprovalController = {
           label: 'Estimativa Original',
           items: [
             { label: 'Custo:', value: this.asText(row.valortotalTIPC) || 'Nao informado' },
-            { label: 'Prazo:', value: this.asText(row.prazoEstimadoTIPC) || 'Nao informado' }
+            { label: 'Prazo:', value: this.formatWeeks(row.prazoEstimadoTIPC) || 'Nao informado' }
           ]
         }
       ],
@@ -401,6 +416,13 @@ const requesterProposalApprovalController = {
     });
 
     ui.sidebar.renderProgress(progressTarget, { items: this.getProgressItems() });
+  },
+
+  formatWeeks: function (value) {
+    const text = this.asText(value);
+    if (!text) return '';
+    if (/^\d+$/.test(text)) return `${text} Semana(s)`;
+    return text;
   },
 
   getProgressItems: function () {
@@ -527,7 +549,8 @@ const requesterProposalApprovalController = {
       const fieldName = String($el.attr('data-field') || '').trim() || 'anexosNS';
       ui.attachments.render($el, {
         documentId: this._state.documentId,
-        fieldName: fieldName
+        fieldName: fieldName,
+        datasetId: 'dsGetSolicitacaoProjetos'
       });
     });
   },
@@ -819,6 +842,21 @@ const requesterProposalApprovalController = {
     if (normalized.indexOf('critico') !== -1) return 'bg-red-100 text-red-800';
     if (normalized.indexOf('estrategico') !== -1) return 'bg-green-100 text-green-800';
     if (normalized.indexOf('operacional') !== -1) return 'bg-gray-100 text-gray-700';
+    return 'bg-gray-100 text-gray-800';
+  },
+
+  getExecutionTypeLabel: function (value) {
+    const raw = this.asText(value);
+    const normalized = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('extern') !== -1) return 'Externo';
+    if (normalized.indexOf('intern') !== -1) return 'Interno';
+    return raw || 'N/A';
+  },
+
+  getExecutionTypeBadgeClasses: function (value) {
+    const normalized = this.asText(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('extern') !== -1) return 'bg-purple-100 text-purple-800';
+    if (normalized.indexOf('intern') !== -1) return 'bg-blue-100 text-blue-800';
     return 'bg-gray-100 text-gray-800';
   },
 

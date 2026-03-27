@@ -31,7 +31,11 @@ const committeeApprovalController = {
     'tblDependenciasTITT.statusDependenciaTITT',
     'tblDependenciasTITT.responsavelDependenciaTITT',
     'tblDependenciasTITT.mitigacaoDependenciaTITT',
-    'tblRiscosDependenciasTITT.riscoPotencialTITT'
+    'tblRiscosDependenciasTITT.riscoPotencialTITT',
+    'execucaoProjetoTITT',
+    'fornecedorRecomendadoTITT',
+    'valortotalTIPC',
+    'prazoEstimadoTIPC'
   ],
   _uiComponentsKey: 'gpUiComponents',
   _tabComponentsKey: 'gpApprovalTabComponents',
@@ -490,10 +494,29 @@ const committeeApprovalController = {
       code: 'N/A',
       title: 'N/A',
       requester: 'N/A',
+      showRequester: false,
       area: 'N/A',
       sponsor: 'N/A',
       attachmentsCount: 0,
       priority: { label: 'N/A', iconClass: 'fa-solid fa-star', badgeClasses: 'bg-gray-100 text-gray-800' },
+      customRows: [
+        {
+          label: 'Tipo',
+          value: 'N/A',
+          variant: 'badge',
+          iconClass: 'fa-solid fa-arrow-up-right-from-square',
+          badgeClasses: 'bg-gray-100 text-gray-800'
+        },
+        { variant: 'block', label: 'Fornecedor Recomendado', value: 'N/A' },
+        {
+          variant: 'kvList',
+          label: 'Estimativa Original',
+          items: [
+            { label: 'Custo:', value: 'N/A' },
+            { label: 'Prazo:', value: 'N/A' }
+          ]
+        }
+      ],
       status: { label: 'N/A', iconClass: 'fa-solid fa-clock', badgeClasses: 'bg-gray-100 text-gray-800' }
     });
 
@@ -514,6 +537,7 @@ const committeeApprovalController = {
       code: this.asText(row && row.documentid) || 'N/A',
       title: this.asText(row && row.titulodoprojetoNS) || 'N/A',
       requester: 'N/A',
+      showRequester: false,
       area: this.asText(row && row.areaUnidadeNS) || 'N/A',
       sponsor: this.asText(row && row.patrocinadorNS) || 'N/A',
       attachmentsCount: this.countAttachments(row && row.anexosNS),
@@ -522,6 +546,28 @@ const committeeApprovalController = {
         iconClass: 'fa-solid fa-star',
         badgeClasses: this.getPriorityBadgeClasses(row && row.prioridadeNS)
       },
+      customRows: [
+        {
+          label: 'Tipo',
+          value: this.getExecutionTypeLabel(row && row.execucaoProjetoTITT) || 'N/A',
+          variant: 'badge',
+          iconClass: 'fa-solid fa-arrow-up-right-from-square',
+          badgeClasses: this.getExecutionTypeBadgeClasses(row && row.execucaoProjetoTITT)
+        },
+        {
+          variant: 'block',
+          label: 'Fornecedor Recomendado',
+          value: this.asText(row && row.fornecedorRecomendadoTITT) || 'Nao informado'
+        },
+        {
+          variant: 'kvList',
+          label: 'Estimativa Original',
+          items: [
+            { label: 'Custo:', value: this.asText(row && row.valortotalTIPC) || 'Nao informado' },
+            { label: 'Prazo:', value: this.asText(row && row.prazoEstimadoTIPC) || 'Nao informado' }
+          ]
+        }
+      ],
       status: {
         label: this.getEstadoProcessoLabel(row && row.estadoProcesso) || 'N/A',
         iconClass: 'fa-solid fa-clock',
@@ -557,6 +603,21 @@ const committeeApprovalController = {
     if (normalized.indexOf('critico') !== -1) return 'bg-red-100 text-red-800';
     if (normalized.indexOf('estrategico') !== -1) return 'bg-green-100 text-green-800';
     if (normalized.indexOf('operacional') !== -1) return 'bg-gray-100 text-gray-700';
+    return 'bg-gray-100 text-gray-800';
+  },
+
+  getExecutionTypeLabel: function (value) {
+    const raw = this.asText(value);
+    const normalized = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('extern') !== -1) return 'Externo';
+    if (normalized.indexOf('intern') !== -1) return 'Interno';
+    return raw || 'N/A';
+  },
+
+  getExecutionTypeBadgeClasses: function (value) {
+    const normalized = this.asText(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('extern') !== -1) return 'bg-purple-100 text-purple-800';
+    if (normalized.indexOf('intern') !== -1) return 'bg-blue-100 text-blue-800';
     return 'bg-gray-100 text-gray-800';
   },
 

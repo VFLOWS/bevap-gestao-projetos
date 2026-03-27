@@ -36,10 +36,16 @@
     'tblRiscosIniciaisTIPC.tituloRiscoTIPC',
     'tblRiscosIniciaisTIPC.descricaoRiscoTIPC',
     'tblRiscosIniciaisTIPC.mitigacaoRiscoTIPC',
+    'tblRiscosIniciaisTIPC.planoBRiscoTIPC',
     'tblRiscosIniciaisTIPC.nivelRiscoTIPC',
     'tblRiscosIniciaisTIPC.impactoRiscoTIPC',
     'tblRiscosIniciaisTIPC.probabilidadeRiscoTIPC',
     'tblRiscosIniciaisTIPC.riscoPotencialTIPC',
+    'tblPreRequisitosTIPC.tituloPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.statusPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.responsavelPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.mitigacaoPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.planoBPreRequisitoTIPC',
     'tblPreRequisitosTIPC.preRequisitoTIPC'
   ];
 
@@ -89,6 +95,19 @@
     return null;
   }
 
+  function parseAttachmentsJson(value) {
+    if (Array.isArray(value)) return value;
+    const text = asText(value);
+    if (!text) return [];
+
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
   async function loadRow(documentId) {
     const rows = await fluigService.getDatasetRows(DATASET_ID, {
       fields: FIELDS,
@@ -102,6 +121,13 @@
     const text = asText(value);
     if (!text) return '';
     if (/^\d+$/.test(text)) return `${text} dias`;
+    return text;
+  }
+
+  function formatWeeks(value) {
+    const text = asText(value);
+    if (!text) return '';
+    if (/^\d+$/.test(text)) return `${text} Semana(s)`;
     return text;
   }
 
@@ -148,22 +174,37 @@
     }
 
     return `
-      <div class="space-y-3">
+      <div class="grid grid-cols-1 gap-3">
         ${items.map((risk) => {
-      const badge = getRiskBadge(risk.level);
-      return `
-            <div class="border border-gray-200 rounded-lg p-4 bg-white">
-              <div class="flex items-center justify-between gap-3">
-                <div class="font-medium text-gray-900">${escapeHtml(risk.title || 'Risco')}</div>
-                <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium ${escapeHtml(badge.classes)}">${escapeHtml(badge.label)}</span>
-              </div>
-              ${risk.description ? `<p class="text-sm text-gray-700 mt-2 whitespace-pre-line">${escapeHtml(risk.description)}</p>` : ''}
-              ${risk.mitigation ? `<p class="text-xs text-gray-600 mt-2 whitespace-pre-line"><strong>Mitigacao:</strong> ${escapeHtml(risk.mitigation)}</p>` : ''}
+          const badge = getRiskBadge(risk.level);
+          return `
+              <div class="border border-yellow-300 rounded-xl p-4 bg-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                <div class="flex items-start justify-between mb-2 gap-3">
+                  <h6 class="font-medium text-bevap-navy">${escapeHtml(risk.title || 'Risco')}</h6>
+                  <span class="text-xs font-semibold ${escapeHtml(badge.classes)} px-1.5 py-0.5 rounded">${escapeHtml(badge.label)}</span>
+                </div>
+                <div class="text-sm text-gray-600 mb-2">Probabilidade: ${escapeHtml(risk.probability || 'Nao informado')} | Impacto: ${escapeHtml(risk.impact || 'Nao informado')}</div>
+                ${risk.mitigation ? `<div class="text-sm text-gray-700 mb-1"><strong>Mitigacao:</strong> ${escapeHtml(risk.mitigation)}</div>` : ''}
+                ${escapeHtml(risk.fallback || risk.planoB || risk.planB || '') ? `<div class="text-sm text-gray-700"><strong>Plano B:</strong> ${escapeHtml(risk.fallback || risk.planoB || risk.planB || '')}</div>` : ''}
             </div>
           `;
     }).join('')}
       </div>
     `;
+  }
+
+  function getPrerequisiteStatusBadge(status) {
+    const value = asText(status);
+    if (value === 'Concluida' || value === 'Concluída') {
+      return '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Concluida</span>';
+    }
+    if (value === 'Em andamento') {
+      return '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Em andamento</span>';
+    }
+    if (value === 'Bloqueada') {
+      return '<span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Bloqueada</span>';
+    }
+    return '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Pendente</span>';
   }
 
   function renderPrerequisites(items) {
@@ -172,13 +213,64 @@
     }
 
     return `
-      <div class="space-y-2">
-        ${items.map((item) => `
-          <div class="flex items-start gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <i class="fa-solid fa-triangle-exclamation text-yellow-600 mt-0.5"></i>
-            <span class="text-sm text-gray-700">${escapeHtml(item)}</span>
+      <div class="grid grid-cols-1 gap-3">
+        ${items.map((item) => {
+          const title = escapeHtml((item && (item.title || item.titulo)) || item.value || item || '');
+          const statusRaw = asText(item && (item.status || item.statusPreRequisitoTIPC));
+          const owner = escapeHtml((item && (item.owner || item.responsavel)) || '');
+          const mitigation = escapeHtml((item && (item.mitigation || item.mitigacao)) || '');
+          const fallback = escapeHtml((item && (item.fallback || item.planoB)) || '');
+
+          if (!title && !statusRaw && !owner && !mitigation && !fallback) return '';
+
+          return `
+            <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-bevap-navy">${title || '-'}</div>
+                </div>
+                ${getPrerequisiteStatusBadge(statusRaw)}
+              </div>
+              ${(owner || mitigation || fallback) ? `
+                <div class="mt-2 text-sm text-gray-600"><strong>Responsavel:</strong> ${owner || 'Nao informado'}</div>
+                ${mitigation ? `<div class="mt-1 text-sm text-gray-700"><strong>Mitigacao:</strong> ${mitigation}</div>` : ''}
+                ${fallback ? `<div class="mt-1 text-sm text-gray-700"><strong>Plano B:</strong> ${fallback}</div>` : ''}
+              ` : ''}
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function renderRisksAndPrerequisites(risks, prerequisites) {
+    return `
+      <div class="bg-white border border-slate-200 rounded-xl p-5">
+        <h4 class="text-lg font-semibold text-bevap-navy mb-5 flex items-center">
+          <i class="fa-solid fa-shield-halved text-bevap-gold mr-2"></i>
+          Riscos e Pré-requisitos
+        </h4>
+        <div class="space-y-6">
+          <div>
+            <div class="flex items-center mb-3">
+              <h5 class="text-lg font-semibold text-bevap-navy flex items-center">
+                <i class="fa-solid fa-triangle-exclamation text-yellow-500 mr-2"></i>
+                Matriz de Riscos
+              </h5>
+            </div>
+            ${renderRisks(risks)}
           </div>
-        `).join('')}
+
+          <div>
+            <div class="flex items-center mb-3">
+              <h5 class="text-lg font-semibold text-bevap-navy flex items-center">
+                <i class="fa-solid fa-list-check text-blue-600 mr-2"></i>
+                Pré-requisitos
+              </h5>
+            </div>
+            ${renderPrerequisites(prerequisites)}
+          </div>
+        </div>
       </div>
     `;
   }
@@ -235,15 +327,23 @@
         title: asText(item && item.tituloRiscoTIPC) || legacy,
         description: asText(item && item.descricaoRiscoTIPC) || '',
         mitigation: asText(item && item.mitigacaoRiscoTIPC),
+        fallback: asText(item && item.planoBRiscoTIPC),
         level: asText(item && item.nivelRiscoTIPC),
         impact: asText(item && item.impactoRiscoTIPC),
         probability: asText(item && item.probabilidadeRiscoTIPC)
       };
     }).filter((item) => item.title || item.description || item.mitigation || item.level || item.impact || item.probability);
 
-    const prerequisites = parseTableJson(row.tblPreRequisitosTIPC || row['tblPreRequisitosTIPC'])
-      .map((item) => asText(item && item.preRequisitoTIPC))
-      .filter(Boolean);
+    const prerequisites = parseTableJson(row.tblPreRequisitosTIPC || row['tblPreRequisitosTIPC']).map((item) => {
+      const legacy = asText(item && item.preRequisitoTIPC);
+      return {
+        title: asText(item && item.tituloPreRequisitoTIPC) || legacy,
+        status: asText(item && item.statusPreRequisitoTIPC),
+        owner: asText(item && item.responsavelPreRequisitoTIPC),
+        mitigation: asText(item && item.mitigacaoPreRequisitoTIPC),
+        fallback: asText(item && item.planoBPreRequisitoTIPC)
+      };
+    }).filter((item) => item.title || item.status || item.owner || item.mitigation || item.fallback);
 
     const checklistItems = [
       { label: 'Escopo claro e detalhado', value: row.escopoClaroDetalhadoTIPC },
@@ -267,6 +367,8 @@
     ].some((value) => asText(value));
     const proposalDecisionBadge = getProposalDecisionBadge(row.decisaoPropostaSAP);
     const agreementValue = parseBooleanLike(row.liConcordoPropostaComercialSAP);
+    const agreementLabel = agreementValue === true ? 'Sim' : agreementValue === false ? 'Nao' : 'Nao informado';
+    const feedbackBody = asText(row.observacoesNegociacaoSAP);
 
     return `
       <div class="space-y-6">
@@ -294,16 +396,7 @@
             </div>
           </div>
 
-          ${additionalContact.length ? `
-            <div class="mb-6">
-              <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Contato Adicional</h3>
-              <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm space-y-1">
-                ${asText(row.nomeContato2TIPC) ? `<div class="font-medium text-gray-900">${escapeHtml(row.nomeContato2TIPC)}</div>` : ''}
-                ${asText(row.email2TIPC) ? `<div class="text-gray-600">${escapeHtml(row.email2TIPC)}</div>` : ''}
-                ${asText(row.telefone2TIPC) ? `<div class="text-gray-600">${escapeHtml(row.telefone2TIPC)}</div>` : ''}
-              </div>
-            </div>
-          ` : ''}
+       
 
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div class="bg-gray-50 p-4 rounded-lg">
@@ -317,7 +410,7 @@
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
               <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo</div>
-              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(asText(row.prazoEstimadoTIPC) || 'Nao informado')}</div>
+              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(formatWeeks(row.prazoEstimadoTIPC) || 'Nao informado')}</div>
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
               <div class="text-xs text-gray-500 uppercase tracking-wide">Vigencia</div>
@@ -325,10 +418,7 @@
             </div>
           </div>
 
-          <div class="mb-6">
-            <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Referencia</div>
-            <div class="font-medium text-gray-900">${escapeHtml(asText(row.numeroRefPropostaTIPC) || 'Nao informado')}</div>
-          </div>
+        
 
           <div class="mb-6">
             <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo Resumido</h3>
@@ -341,19 +431,10 @@
           </div>
 
           <div class="mb-6">
-            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos Iniciais</h3>
-            ${renderRisks(risks)}
+            ${renderRisksAndPrerequisites(risks, prerequisites)}
           </div>
 
-          <div class="mb-6">
-            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Pre-requisitos</h3>
-            ${renderPrerequisites(prerequisites)}
-          </div>
-
-          <div class="mb-6">
-            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Checklist da Proposta</h3>
-            ${renderChecklist(checklistItems)}
-          </div>
+          
 
           <div class="mb-6">
             <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
@@ -367,25 +448,16 @@
 
           ${hasCommercialApprovalFeedback ? `
             <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-              <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
+              <h4 class="text-sm font-semibold text-bevap-navy mb-3 flex items-center">
                 <i class="fa-solid fa-comment-dots mr-2 text-bevap-gold"></i>
-                Feedback da Aprovacao Comercial
-              </h3>
-              <div class="space-y-3 text-sm">
-                <div class="flex items-center justify-between gap-3">
-                  <span class="text-gray-600">Decisao do solicitante</span>
-                  <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${proposalDecisionBadge.classes}">${escapeHtml(proposalDecisionBadge.label)}</span>
+                Feedback do Solicitante
+              </h4>
+              <div class="bg-white border border-green-200 rounded-lg p-4">
+                <div class="mb-3">
+                  <div class="font-semibold text-gray-900 text-sm">Solicitante</div>
+                  <div class="text-xs text-gray-500">Decisao: ${escapeHtml(proposalDecisionBadge.label)} • Concorda com a proposta: ${escapeHtml(agreementLabel)}</div>
                 </div>
-                <div class="flex items-center justify-between gap-3">
-                  <span class="text-gray-600">Concorda com a proposta</span>
-                  <span class="font-medium text-gray-900">${agreementValue === true ? 'Sim' : agreementValue === false ? 'Nao' : 'Nao informado'}</span>
-                </div>
-                ${asText(row.observacoesNegociacaoSAP) ? `
-                  <div class="bg-white border border-green-200 rounded-lg p-4">
-                    <div class="text-xs uppercase tracking-wide text-gray-500 mb-2">Observacoes / Negociacao</div>
-                    <p class="text-sm text-green-900 whitespace-pre-line">${escapeHtml(row.observacoesNegociacaoSAP)}</p>
-                  </div>
-                ` : ''}
+                <p class="text-sm text-green-800 leading-relaxed whitespace-pre-line">${escapeHtml(feedbackBody || 'Sem observacoes registradas pelo solicitante.')}</p>
               </div>
             </div>
           ` : ''}
@@ -418,7 +490,17 @@
       $el.data('gpAttachmentsMounted', true);
 
       const fieldName = String($el.attr('data-field') || '').trim() || 'anexosPropostaTIPC';
-      ui.attachments.render($el, { fieldName, value });
+
+      // Segue o mesmo padrão da aba de solicitação:
+      // - Se houver JSON de anexos válido, renderiza direto.
+      // - Caso contrário, deixa o componente buscar no dataset pelo documentId.
+      const parsed = parseAttachmentsJson(value);
+      if (parsed && parsed.length) {
+        ui.attachments.render($el, { fieldName, value: parsed });
+        return;
+      }
+
+      ui.attachments.render($el, { documentId, fieldName, datasetId: DATASET_ID });
     });
   }
 

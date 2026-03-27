@@ -32,6 +32,25 @@ const committeeCostApprovalController = {
     'tblDependenciasTITT.responsavelDependenciaTITT',
     'tblDependenciasTITT.mitigacaoDependenciaTITT',
     'tblRiscosDependenciasTITT.riscoPotencialTITT'
+    ,
+    // Resumo do Projeto (campos extras)
+    'execucaoProjetoTITT',
+    'fornecedorRecomendadoTITT',
+    'valortotalTIPC',
+    'prazoEstimadoTIPC',
+    // GCC (para aba Custo & Orcamento)
+    'capexGCC',
+    'opexGCC',
+    'tblNaturezaCustoCapexGCC.centroCustoCapexGCC',
+    'tblNaturezaCustoCapexGCC.contaContabilCapexGCC',
+    'tblNaturezaCustoCapexGCC.porcentagemCapexGCC',
+    'tblNaturezaCustoCapexGCC.saldoCapexGCC',
+    'tblNaturezaCustoCapexGCC.saldoAposCompromissoCapexGCC',
+    'tblNaturezaCustoOpexGCC.centroCustoOpexGCC',
+    'tblNaturezaCustoOpexGCC.contaContabilOpexGCC',
+    'tblNaturezaCustoOpexGCC.porcentagemOpexGCC',
+    'tblNaturezaCustoOpexGCC.saldoOpexGCC',
+    'tblNaturezaCustoOpexGCC.saldoAposCompromissoOpexGCC'
   ],
   _uiComponentsKey: 'gpUiComponents',
   _tabComponentsKey: 'gpApprovalTabComponents',
@@ -398,8 +417,10 @@ const committeeCostApprovalController = {
       'analise-ti': { key: 'tiAnalysisHistory', mount: 'tab-analise-ti-history' },
       impacto: { key: 'areaImpactHistory', mount: 'tab-impacto-history' },
       'triagem-ti': { key: 'tiTriageHistory', mount: 'tab-triagem-ti-history' },
+      'proposta-fornecedor': { key: 'supplierProposal', mount: 'tab-proposta-fornecedor' },
       'business-case': { key: 'committeeBusinessCase', mount: 'tab-business-case' },
       'risk-compliance': { key: 'committeeRiskCompliance', mount: 'tab-risk-compliance' },
+      'custo-orcamento': { key: 'committeeCostBudget', mount: 'tab-custo-orcamento' },
       documents: { key: 'committeeDocuments', mount: 'tab-documents' }
     };
 
@@ -512,10 +533,29 @@ const committeeCostApprovalController = {
       code: 'N/A',
       title: 'N/A',
       requester: 'N/A',
+      showRequester: false,
       area: 'N/A',
       sponsor: 'N/A',
       attachmentsCount: 0,
       priority: { label: 'N/A', iconClass: 'fa-solid fa-star', badgeClasses: 'bg-gray-100 text-gray-800' },
+      customRows: [
+        {
+          label: 'Tipo',
+          value: 'N/A',
+          variant: 'badge',
+          iconClass: 'fa-solid fa-users',
+          badgeClasses: 'bg-gray-100 text-gray-800'
+        },
+        { variant: 'block', label: 'Fornecedor Recomendado', value: 'N/A' },
+        {
+          variant: 'kvList',
+          label: 'Estimativa Original',
+          items: [
+            { label: 'Custo:', value: 'N/A' },
+            { label: 'Prazo:', value: 'N/A' }
+          ]
+        }
+      ],
       status: { label: 'N/A', iconClass: 'fa-solid fa-clock', badgeClasses: 'bg-gray-100 text-gray-800' }
     });
 
@@ -536,6 +576,7 @@ const committeeCostApprovalController = {
       code: this.asText(row && row.documentid) || 'N/A',
       title: this.asText(row && row.titulodoprojetoNS) || 'N/A',
       requester: 'N/A',
+      showRequester: false,
       area: this.asText(row && row.areaUnidadeNS) || 'N/A',
       sponsor: this.asText(row && row.patrocinadorNS) || 'N/A',
       attachmentsCount: this.countAttachments(row && row.anexosNS),
@@ -544,6 +585,28 @@ const committeeCostApprovalController = {
         iconClass: 'fa-solid fa-star',
         badgeClasses: this.getPriorityBadgeClasses(row && row.prioridadeNS)
       },
+      customRows: [
+        {
+          label: 'Tipo',
+          value: this.getExecucaoProjetoLabel(row && row.execucaoProjetoTITT) || 'N/A',
+          variant: 'badge',
+          iconClass: 'fa-solid fa-users',
+          badgeClasses: this.getExecucaoProjetoBadgeClasses(row && row.execucaoProjetoTITT)
+        },
+        {
+          variant: 'block',
+          label: 'Fornecedor Recomendado',
+          value: this.asText(row && row.fornecedorRecomendadoTITT) || 'Nao informado'
+        },
+        {
+          variant: 'kvList',
+          label: 'Estimativa Original',
+          items: [
+            { label: 'Custo:', value: this.formatMoney(row && row.valortotalTIPC) || 'N/A' },
+            { label: 'Prazo:', value: this.asText(row && row.prazoEstimadoTIPC) || 'N/A' }
+          ]
+        }
+      ],
       status: {
         label: this.getEstadoProcessoLabel(row && row.estadoProcesso) || 'N/A',
         iconClass: 'fa-solid fa-clock',
@@ -598,6 +661,49 @@ const committeeCostApprovalController = {
     } catch (error) {}
 
     return text.split(/\r?\n|;|,/).map((item) => this.asText(item)).filter(Boolean).length;
+  },
+
+  getExecucaoProjetoLabel: function (value) {
+    const text = this.asText(value);
+    if (!text) return '';
+
+    const normalized = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('intern') !== -1) return 'Interno';
+    if (normalized.indexOf('extern') !== -1) return 'Externo';
+    if (normalized.indexOf('misto') !== -1) return 'Misto';
+    return text;
+  },
+
+  getExecucaoProjetoBadgeClasses: function (value) {
+    const text = this.asText(value);
+    if (!text) return 'bg-gray-100 text-gray-800';
+
+    const normalized = text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('intern') !== -1) return 'bg-purple-100 text-purple-800';
+    if (normalized.indexOf('extern') !== -1) return 'bg-indigo-100 text-indigo-800';
+    if (normalized.indexOf('misto') !== -1) return 'bg-violet-100 text-violet-800';
+    return 'bg-gray-100 text-gray-800';
+  },
+
+  formatMoney: function (value) {
+    if (value === null || value === undefined) return '';
+    const raw = String(value).trim();
+    if (!raw) return '';
+
+    const normalized = raw
+      .replace(/\s/g, '')
+      .replace(/^R\$/i, '')
+      .replace(/\./g, '')
+      .replace(/,/g, '.');
+
+    const amount = Number(normalized);
+    if (!Number.isFinite(amount)) return raw;
+
+    try {
+      return amount.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    } catch (error) {
+      return `R$ ${amount.toFixed(2).replace('.', ',')}`;
+    }
   },
 
   fillAcpFieldsFromRow: function (row) {

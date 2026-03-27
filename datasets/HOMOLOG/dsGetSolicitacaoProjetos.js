@@ -28,16 +28,16 @@ function createDataset(fields, constraints, sortFields) {
     var childFieldsMap = {}; 
     
     if (fields != null && fields.length > 0) {
-    
+
         for (var f = 0; f < fields.length; f++) {
 
-            if(fieldName == "estadoProcesso")
+            var fieldName = fields[f] + "";
+
+            if (fieldName == "estadoProcesso")
             {
                 shouldReturnState = true;
                 continue
             }
-    
-            var fieldName = fields[f] + "";
     
             if (fieldName.indexOf(".") > -1) {
     

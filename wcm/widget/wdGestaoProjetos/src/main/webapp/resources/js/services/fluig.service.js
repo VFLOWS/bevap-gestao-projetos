@@ -511,6 +511,18 @@ var fluigService = {
                     ? ''
                     : String(taskData.documentId).trim();
 
+                try {
+                    console.group('[fluigService.saveAndSendTask] pre-update');
+                    console.log('[fluigService.saveAndSendTask] taskId:', taskId);
+                    console.log('[fluigService.saveAndSendTask] numState:', numState);
+                    console.log('[fluigService.saveAndSendTask] documentId:', documentId);
+                    console.log('[fluigService.saveAndSendTask] taskFields.length:', finalTaskFields.length);
+                    console.log('[fluigService.saveAndSendTask] first field names:', finalTaskFields.slice(0, 20).map(function (f) {
+                        return f && f.name ? String(f.name) : '';
+                    }));
+                    console.groupEnd();
+                } catch (e) {}
+
                 if (finalTaskFields.length > 0) {
                     if (!documentId) {
                         throw new Error('documentId e obrigatorio para atualizar o card antes da movimentacao');
@@ -527,7 +539,10 @@ var fluigService = {
                             : String(field.value);
                     });
 
-                    await fluigService.updateCard(taskData.parentId || taskData.datasetName || '', documentId, cardData);
+                    var updateResult = await fluigService.updateCard(taskData.parentId || taskData.datasetName || '', documentId, cardData);
+                    try {
+                        console.log('[fluigService.saveAndSendTask] updateCard result:', updateResult);
+                    } catch (e) {}
                 }
 
                 var fields = [

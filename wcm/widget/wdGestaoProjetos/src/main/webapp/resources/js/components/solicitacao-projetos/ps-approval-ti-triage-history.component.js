@@ -12,6 +12,7 @@
     'tblRiscosIdentificadosTITT.tituloRiscoTITT',
     'tblRiscosIdentificadosTITT.descricaoRiscoTITT',
     'tblRiscosIdentificadosTITT.mitigacaoRiscoTITT',
+    'tblRiscosIdentificadosTITT.planoBRiscoTITT',
     'tblRiscosIdentificadosTITT.nivelRiscoTITT',
     'tblRiscosIdentificadosTITT.impactoRiscoTITT',
     'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT',
@@ -19,6 +20,7 @@
     'tblDependenciasTITT.statusDependenciaTITT',
     'tblDependenciasTITT.responsavelDependenciaTITT',
     'tblDependenciasTITT.mitigacaoDependenciaTITT',
+    'tblDependenciasTITT.planoBDependenciaTITT',
     'tblRiscosDependenciasTITT.riscoPotencialTITT'
   ];
 
@@ -142,22 +144,38 @@
     }
 
     return `
-      <div class="divide-y divide-gray-200 border border-gray-200 rounded-lg bg-white">
+      <div class="grid grid-cols-1 gap-3">
         ${items.map((risk) => {
       const badge = getRiskLevelBadge(risk.level);
       return `
-            <div class="p-4">
-              <div class="flex flex-wrap items-center justify-between gap-2">
-                <h4 class="font-medium text-gray-900">${escapeHtml(risk.title || 'Risco')}</h4>
-                <span class="inline-flex items-center px-2 py-1 ${escapeHtml(badge.badgeClasses)} text-xs font-medium rounded">${escapeHtml(badge.label)}</span>
+            <div class="border border-yellow-300 rounded-xl p-4 bg-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+              <div class="flex items-start justify-between mb-2 gap-3">
+                <h6 class="font-medium text-bevap-navy">${escapeHtml(risk.title || 'Risco')}</h6>
+                <span class="text-xs font-semibold ${escapeHtml(badge.badgeClasses)} px-1.5 py-0.5 rounded">${escapeHtml(badge.label)}</span>
               </div>
-              ${risk.description ? `<p class="text-sm text-gray-700 mt-2 whitespace-pre-line">${escapeHtml(risk.description)}</p>` : ''}
-              ${risk.mitigation ? `<p class="text-xs text-gray-600 mt-2 whitespace-pre-line"><strong>Mitigação:</strong> ${escapeHtml(risk.mitigation)}</p>` : ''}
+              <div class="text-sm text-gray-600 mb-2">Probabilidade: ${escapeHtml(risk.probability || 'Nao informado')} | Impacto: ${escapeHtml(risk.impact || 'Nao informado')}</div>
+              ${risk.description ? `<div class="text-sm text-gray-700 mb-1"><strong>Descricao:</strong> ${escapeHtml(risk.description)}</div>` : ''}
+              ${risk.mitigation ? `<div class="text-sm text-gray-700 mb-1"><strong>Mitigacao:</strong> ${escapeHtml(risk.mitigation)}</div>` : ''}
+              ${risk.fallback ? `<div class="text-sm text-gray-700"><strong>Plano B:</strong> ${escapeHtml(risk.fallback)}</div>` : ''}
             </div>
           `;
     }).join('')}
       </div>
     `;
+  }
+
+  function getDependencyStatusBadge(status) {
+    const value = asText(status);
+    if (value === 'Concluida' || value === 'Concluída') {
+      return '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded">Concluida</span>';
+    }
+    if (value === 'Em andamento') {
+      return '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Em andamento</span>';
+    }
+    if (value === 'Bloqueada') {
+      return '<span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Bloqueada</span>';
+    }
+    return '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Pendente</span>';
   }
 
   function renderDependencies(items) {
@@ -166,14 +184,19 @@
     }
 
     return `
-      <div class="space-y-2">
+      <div class="grid grid-cols-1 gap-3">
         ${items.map((dep) => {
-      const subtitle = [dep.status, dep.owner].filter(Boolean).join(' • ');
       return `
-            <div class="p-4 bg-white border border-gray-200 rounded-lg">
-              <div class="font-medium text-gray-900">${escapeHtml(dep.title || 'Dependência')}</div>
-              ${subtitle ? `<div class="text-xs text-gray-600 mt-1">${escapeHtml(subtitle)}</div>` : ''}
-              ${dep.mitigation ? `<div class="text-xs text-gray-600 mt-2 whitespace-pre-line"><strong>Mitigação:</strong> ${escapeHtml(dep.mitigation)}</div>` : ''}
+            <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+              <div class="flex items-start justify-between gap-3">
+                <div class="flex-1">
+                  <div class="text-sm font-medium text-bevap-navy">${escapeHtml(dep.title || 'Dependencia')}</div>
+                </div>
+                ${getDependencyStatusBadge(dep.status)}
+              </div>
+              <div class="mt-2 text-sm text-gray-600"><strong>Responsavel:</strong> ${escapeHtml(dep.owner || 'Nao informado')}</div>
+              ${dep.mitigation ? `<div class="mt-1 text-sm text-gray-700"><strong>Mitigacao:</strong> ${escapeHtml(dep.mitigation)}</div>` : ''}
+              ${dep.fallback ? `<div class="mt-1 text-sm text-gray-700"><strong>Plano B:</strong> ${escapeHtml(dep.fallback)}</div>` : ''}
             </div>
           `;
     }).join('')}
@@ -210,12 +233,13 @@
           title: asText(item && item.tituloRiscoTITT),
           description: asText(item && item.descricaoRiscoTITT),
           mitigation: asText(item && item.mitigacaoRiscoTITT),
+          fallback: asText(item && item.planoBRiscoTITT),
           level: asText(item && item.nivelRiscoTITT),
           impact: asText(item && item.impactoRiscoTITT),
           probability: asText(item && item.probabilidadeRiscoTITT)
         };
       })
-      .filter((risk) => risk.title || risk.description || risk.mitigation || risk.level || risk.impact || risk.probability);
+      .filter((risk) => risk.title || risk.description || risk.mitigation || risk.fallback || risk.level || risk.impact || risk.probability);
 
     const legacyTableValue = row.tblRiscosDependenciasTITT || row['tblRiscosDependenciasTITT'] || row['tblRiscosDependenciasTITT.riscoPotencialTITT'];
     const legacyRisks = parseTableJson(legacyTableValue)
@@ -228,10 +252,11 @@
           title: asText(item && item.tituloDependenciaTITT),
           status: asText(item && item.statusDependenciaTITT),
           owner: asText(item && item.responsavelDependenciaTITT),
-          mitigation: asText(item && item.mitigacaoDependenciaTITT)
+          mitigation: asText(item && item.mitigacaoDependenciaTITT),
+          fallback: asText(item && item.planoBDependenciaTITT)
         };
       })
-      .filter((dep) => dep.title || dep.status || dep.owner || dep.mitigation);
+      .filter((dep) => dep.title || dep.status || dep.owner || dep.mitigation || dep.fallback);
 
     const descriptionText = descricao || 'Não informado.';
 
@@ -279,14 +304,19 @@
           </div>
         </div>
 
-        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-          <h4 class="text-sm font-semibold text-bevap-navy mb-2 flex items-center">
+        <div class="bg-white border border-slate-200 rounded-xl p-5">
+          <h4 class="text-lg font-semibold text-bevap-navy mb-5 flex items-center">
             <i class="fa-solid fa-shield-halved text-bevap-gold mr-2"></i>
             Riscos e Dependências Monitoradas
           </h4>
           <div class="space-y-4">
             <div>
-              <div class="text-xs font-semibold text-gray-700 mb-2">Riscos Identificados</div>
+              <div class="flex items-center mb-3">
+                <h5 class="text-lg font-semibold text-bevap-navy flex items-center">
+                  <i class="fa-solid fa-triangle-exclamation text-yellow-500 mr-2"></i>
+                  Riscos Identificados
+                </h5>
+              </div>
               ${identifiedRisks.length ? renderIdentifiedRisks(identifiedRisks) : legacyRisks.length ? `
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                   ${legacyRisks.map((text) => {
@@ -302,7 +332,12 @@
             </div>
 
             <div>
-              <div class="text-xs font-semibold text-gray-700 mb-2">Dependências Internas/Externas</div>
+              <div class="flex items-center mb-3">
+                <h5 class="text-lg font-semibold text-bevap-navy flex items-center">
+                  <i class="fa-solid fa-list-check text-blue-600 mr-2"></i>
+                  Dependências Internas/Externas
+                </h5>
+              </div>
               ${renderDependencies(dependencies)}
             </div>
           </div>

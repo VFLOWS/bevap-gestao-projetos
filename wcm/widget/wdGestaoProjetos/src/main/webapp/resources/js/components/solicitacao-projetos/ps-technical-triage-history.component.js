@@ -29,6 +29,7 @@
     'tblDependenciasTITT.statusDependenciaTITT',
     'tblDependenciasTITT.responsavelDependenciaTITT',
     'tblDependenciasTITT.mitigacaoDependenciaTITT',
+    'tblDependenciasTITT.planoBDependenciaTITT',
     'tblRiscosDependenciasTITT.riscoPotencialTITT'
   ];
 
@@ -185,14 +186,18 @@
     }
 
     return `
-      <div class="space-y-2">
+      <div class="grid grid-cols-1 gap-3">
         ${items.map((dep) => {
-      const subtitle = [dep.status, dep.owner].filter(Boolean).join(' • ');
+      const status = escapeHtml(dep.status || 'Pendente');
       return `
-            <div class="p-4 bg-white border border-gray-200 rounded-lg">
-              <div class="font-medium text-gray-900">${escapeHtml(dep.title || 'Dependência')}</div>
-              ${subtitle ? `<div class="text-xs text-gray-600 mt-1">${escapeHtml(subtitle)}</div>` : ''}
-              ${dep.mitigation ? `<div class="text-xs text-gray-600 mt-2 whitespace-pre-line"><strong>Mitigação:</strong> ${escapeHtml(dep.mitigation)}</div>` : ''}
+            <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+              <div class="flex items-start justify-between mb-2 gap-3">
+                <h6 class="font-medium text-bevap-navy">${escapeHtml(dep.title || 'Dependência')}</h6>
+                <span class="px-2 py-1 text-xs rounded ${status === 'Bloqueada' ? 'bg-red-100 text-red-800' : status === 'Concluída' || status === 'Concluida' ? 'bg-green-100 text-green-800' : status === 'Em andamento' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'}">${status}</span>
+              </div>
+              <div class="text-sm text-gray-600 mb-1"><strong>Responsável:</strong> ${escapeHtml(dep.owner || 'Não informado')}</div>
+              ${dep.mitigation ? `<div class="text-sm text-gray-700 mb-1 whitespace-pre-line"><strong>Mitigação:</strong> ${escapeHtml(dep.mitigation)}</div>` : ''}
+              ${dep.fallback ? `<div class="text-sm text-gray-700 whitespace-pre-line"><strong>Plano B:</strong> ${escapeHtml(dep.fallback)}</div>` : ''}
             </div>
           `;
     }).join('')}
@@ -275,10 +280,11 @@
           title: asText(item && item.tituloDependenciaTITT),
           status: asText(item && item.statusDependenciaTITT),
           owner: asText(item && item.responsavelDependenciaTITT),
-          mitigation: asText(item && item.mitigacaoDependenciaTITT)
+          mitigation: asText(item && item.mitigacaoDependenciaTITT),
+          fallback: asText(item && item.planoBDependenciaTITT)
         };
       })
-      .filter((dep) => dep.title || dep.status || dep.owner || dep.mitigation);
+      .filter((dep) => dep.title || dep.status || dep.owner || dep.mitigation || dep.fallback);
 
     const checklistRows = [
       { label: 'Escopo do projeto está claro e detalhado', value: row.escopoProjClaroDetTITT },

@@ -21,6 +21,8 @@ const gccCostApprovalController = {
     'valortotalTIPC',
     'condicaoPagamentoTIPC',
     'prazoEstimadoTIPC',
+    'fornecedorRecomendadoTITT',
+    'execucaoProjetoTITT',
     'capexGCC',
     'opexGCC',
     'competenciaGCC',
@@ -37,7 +39,11 @@ const gccCostApprovalController = {
     'tblNaturezaCustoOpexGCC.contaContabilOpexGCC',
     'tblNaturezaCustoOpexGCC.porcentagemOpexGCC',
     'tblNaturezaCustoOpexGCC.saldoOpexGCC',
-    'tblNaturezaCustoOpexGCC.saldoAposCompromissoOpexGCC'
+    'tblNaturezaCustoOpexGCC.saldoAposCompromissoOpexGCC',
+    'tblItensServicosTIPC.descricaoItemServicoTIPC',
+    'tblItensServicosTIPC.quantidadeItemServicoTIPC',
+    'tblItensServicosTIPC.valorUnitarioItemServicoTIPC',
+    'tblItensServicosTIPC.totalItemServicoTIPC'
   ],
   _state: {
     documentId: null,
@@ -46,7 +52,9 @@ const gccCostApprovalController = {
     baseRow: null,
     currentTab: 'solicitacao',
     historyCache: {},
-    isSubmitting: false
+    isSubmitting: false,
+    costCenterOptions: [],
+    allocationCostCenterFilters: {}
   },
 
   load: function (params = {}) {
@@ -65,6 +73,7 @@ const gccCostApprovalController = {
         this.renderSidebarSkeleton();
         this.initializeTabs(this._state.currentTab);
         this.bindEvents();
+        this.loadCostCenterOptions();
         this.updateAllocationVisibility();
         this.ensureVisibleAllocationRows();
         this.loadReadOnlyTab(this._state.currentTab);
@@ -93,6 +102,8 @@ const gccCostApprovalController = {
     this._state.currentTab = 'solicitacao';
     this._state.historyCache = {};
     this._state.isSubmitting = false;
+    this._state.costCenterOptions = [];
+    this._state.allocationCostCenterFilters = {};
   },
 
   getTemplateUrl: function () {
@@ -234,6 +245,9 @@ const gccCostApprovalController = {
     root.on(`input${ns}`, '#gcc-capex-percent', () => this.syncPercentages('capex'));
     root.on(`input${ns}`, '#gcc-opex-percent', () => this.syncPercentages('opex'));
 
+    root.on(`change${ns}`, '#gcc-cost-nature-capex', () => this.handleCostNatureToggle('capex'));
+    root.on(`change${ns}`, '#gcc-cost-nature-opex', () => this.handleCostNatureToggle('opex'));
+
     root.on(`click${ns}`, '[data-action="add-capex-row"]', (event) => {
       event.preventDefault();
       this.addAllocationRow('capex');
@@ -248,6 +262,73 @@ const gccCostApprovalController = {
       event.preventDefault();
       this.removeAllocationRow(event.currentTarget);
     });
+
+    root.on(`click${ns}`, '[data-action="toggle-cost-table"]', (event) => {
+      event.preventDefault();
+      this.toggleCostTable();
+    });
+
+    root.on(`input${ns}`, '#gcc-capex-rows [data-field="committed"], #gcc-capex-rows [data-field="balance"], #gcc-capex-rows [data-field="account"], #gcc-opex-rows [data-field="committed"], #gcc-opex-rows [data-field="balance"], #gcc-opex-rows [data-field="account"]', () => {
+      this.refreshFinancialImpact();
+    });
+
+    root.on(`blur${ns}`, '#gcc-capex-rows [data-field="committed"], #gcc-capex-rows [data-field="balance"], #gcc-opex-rows [data-field="committed"], #gcc-opex-rows [data-field="balance"]', (event) => {
+      this.normalizeCurrencyInput(event.currentTarget);
+      this.refreshFinancialImpact();
+    });
+  },
+
+  handleCostNatureToggle: function (kind) {
+    const root = this.getContainer();
+    const capexChecked = Boolean(root.find('#gcc-cost-nature-capex').prop('checked'));
+    const opexChecked = Boolean(root.find('#gcc-cost-nature-opex').prop('checked'));
+
+    if (capexChecked && !opexChecked) {
+      root.find('#gcc-capex-percent').val(100);
+      root.find('#gcc-opex-percent').val(0);
+    } else if (!capexChecked && opexChecked) {
+      root.find('#gcc-capex-percent').val(0);
+      root.find('#gcc-opex-percent').val(100);
+    } else if (!capexChecked && !opexChecked) {
+      root.find('#gcc-capex-percent').val(0);
+      root.find('#gcc-opex-percent').val(0);
+    }
+
+    this.syncPercentages(kind);
+    this.updateCostNatureCardStyles();
+  },
+
+  updateCostNatureCardStyles: function () {
+    const root = this.getContainer();
+    ['capex', 'opex'].forEach((kind) => {
+      const checkbox = root.find(kind === 'capex' ? '#gcc-cost-nature-capex' : '#gcc-cost-nature-opex').first();
+      const card = checkbox.closest('[data-role="cost-nature-card"]');
+      if (!card.length) return;
+
+      const checked = Boolean(checkbox.prop('checked'));
+      card.toggleClass('border-bevap-green bg-green-50', checked);
+      card.toggleClass('border-gray-300', !checked);
+    });
+  },
+
+  toggleCostTable: function () {
+    const root = this.getContainer();
+    const table = root.find('[data-role="cost-table"]').first();
+    const icon = root.find('[data-role="toggle-icon"]').first();
+    const text = root.find('[data-role="toggle-text"]').first();
+    if (!table.length) return;
+
+    const isHidden = table.hasClass('hidden');
+    table.toggleClass('hidden', !isHidden);
+
+    if (icon.length) {
+      icon.toggleClass('fa-chevron-up', isHidden);
+      icon.toggleClass('fa-chevron-down', !isHidden);
+    }
+
+    if (text.length) {
+      text.text(isHidden ? 'Recolher' : 'Expandir');
+    }
   },
 
   unbindEvents: function () {
@@ -336,21 +417,12 @@ const gccCostApprovalController = {
   },
 
   loadBaseContext: async function () {
-    if (!this._state.documentId) {
-      this.showToast('Sem solicitacao', 'Nenhum documentId foi informado para esta rota.', 'warning');
-      return;
-    }
-
     try {
-      const rows = await fluigService.getDatasetRows(this._datasetId, {
-        fields: this._baseFields,
-        filters: { documentid: this._state.documentId }
-      });
-
-      const row = rows && rows.length ? rows[0] : null;
+      const row = await this.findBaseRow();
       this._state.baseRow = row;
 
       if (!row) {
+        this.renderSidebarSkeleton();
         this.showToast('Nao encontrado', 'Nao foi possivel localizar dados da solicitacao.', 'warning');
         return;
       }
@@ -362,6 +434,36 @@ const gccCostApprovalController = {
       console.error('[gccCostApproval] Error loading base context:', error);
       this.showToast('Erro ao carregar', 'Nao foi possivel carregar os dados do GCC.', 'error');
     }
+  },
+
+  findBaseRow: async function () {
+    const fields = this._baseFields;
+
+    const docId = this.asText(this._state.documentId);
+    if (docId) {
+      const rows = await fluigService.getDatasetRows(this._datasetId, {
+        fields,
+        filters: { documentid: docId }
+      });
+      if (rows && rows.length) return rows[0];
+    }
+
+    const processId = this.asText(this._state.processInstanceId);
+    if (processId) {
+      const rows = await fluigService.getDatasetRows(this._datasetId, {
+        fields,
+        filters: { NUM_PROCES: processId }
+      });
+      if (rows && rows.length) {
+        const row = rows[0];
+        if (!docId) {
+          this._state.documentId = this.asText(row && row.documentid) || null;
+        }
+        return row;
+      }
+    }
+
+    return null;
   },
 
   updateApproveModalProject: function (row) {
@@ -377,7 +479,8 @@ const gccCostApprovalController = {
     ui.sidebar.renderProjectSummary(root.find('[data-component="project-summary"]').first(), {
       code: 'N/A',
       title: 'N/A',
-      requester: 'Solicitante',
+      requester: 'N/A',
+      showRequester: false,
       area: 'N/A',
       sponsor: 'N/A',
       attachmentsCount: 0,
@@ -386,7 +489,28 @@ const gccCostApprovalController = {
         iconClass: 'fa-solid fa-star',
         badgeClasses: 'bg-gray-100 text-gray-800'
       },
-      customRows: [{ variant: 'block', label: 'Fornecedor', value: 'Nao informado' }],
+      customRows: [
+        {
+          variant: 'badge',
+          label: 'Tipo',
+          value: 'N/A',
+          iconClass: 'fa-solid fa-arrow-up-right-from-square',
+          badgeClasses: 'bg-gray-100 text-gray-800'
+        },
+        {
+          variant: 'block',
+          label: 'Fornecedor Recomendado',
+          value: 'Nao informado'
+        },
+        {
+          variant: 'kvList',
+          label: 'Estimativa Original',
+          items: [
+            { label: 'Custo:', value: 'N/A' },
+            { label: 'Prazo:', value: 'N/A' }
+          ]
+        }
+      ],
       status: {
         label: 'N/A',
         iconClass: 'fa-solid fa-clock',
@@ -394,9 +518,7 @@ const gccCostApprovalController = {
       }
     });
 
-    ui.sidebar.renderProgress(root.find('[data-component="progress-status"]').first(), {
-      items: this.getProgressItems()
-    });
+    this.refreshFinancialImpact();
   },
 
   renderSidebarFromRow: function (row) {
@@ -407,7 +529,8 @@ const gccCostApprovalController = {
     ui.sidebar.renderProjectSummary(root.find('[data-component="project-summary"]').first(), {
       code: this.asText(row.documentid) || 'N/A',
       title: this.asText(row.titulodoprojetoNS) || 'N/A',
-      requester: 'Solicitante',
+      requester: 'N/A',
+      showRequester: false,
       area: this.asText(row.areaUnidadeNS) || 'N/A',
       sponsor: this.asText(row.patrocinadorNS) || 'N/A',
       attachmentsCount: this.countAttachments(row.anexosNS) + this.countAttachments(row.anexosPropostaTIPC),
@@ -416,7 +539,28 @@ const gccCostApprovalController = {
         iconClass: 'fa-solid fa-star',
         badgeClasses: this.getPriorityBadgeClasses(row.prioridadeNS)
       },
-      customRows: [{ variant: 'block', label: 'Fornecedor', value: this.asText(row.nomeFornecedorTIPC) || 'Nao informado' }],
+      customRows: [
+        {
+          variant: 'badge',
+          label: 'Tipo',
+          value: this.getExecutionTypeLabel(row.execucaoProjetoTITT) || 'N/A',
+          iconClass: 'fa-solid fa-arrow-up-right-from-square',
+          badgeClasses: this.getExecutionTypeBadgeClasses(row.execucaoProjetoTITT)
+        },
+        {
+          variant: 'block',
+          label: 'Fornecedor Recomendado',
+          value: this.asText(row.fornecedorRecomendadoTITT) || this.asText(row.nomeFornecedorTIPC) || 'Nao informado'
+        },
+        {
+          variant: 'kvList',
+          label: 'Estimativa Original',
+          items: [
+            { label: 'Custo:', value: this.asText(row.valortotalTIPC) || 'Nao informado' },
+            { label: 'Prazo:', value: this.formatDays(row.prazoEstimadoTIPC) || 'Nao informado' }
+          ]
+        }
+      ],
       status: {
         label: this.getEstadoProcessoLabel(row.estadoProcesso) || 'N/A',
         iconClass: 'fa-solid fa-clock',
@@ -424,9 +568,7 @@ const gccCostApprovalController = {
       }
     });
 
-    ui.sidebar.renderProgress(root.find('[data-component="progress-status"]').first(), {
-      items: this.getProgressItems()
-    });
+    this.refreshFinancialImpact();
   },
 
   getProgressItems: function () {
@@ -451,6 +593,8 @@ const gccCostApprovalController = {
     root.find('#gcc-summary-condition').text(this.asText(row.condicaoPagamentoTIPC) || 'Nao informado');
     root.find('#gcc-summary-deadline').text(this.asText(row.prazoEstimadoTIPC) || 'Nao informado');
 
+    this.renderCostStructureFromRow(row);
+
     root.find('#gcc-capex-percent').val(this.asText(row.capexGCC));
     root.find('#gcc-opex-percent').val(this.asText(row.opexGCC));
     root.find('#gcc-capex-percent-label').text(this.formatPercentLabel(row.capexGCC));
@@ -458,33 +602,91 @@ const gccCostApprovalController = {
     root.find('#gcc-competence').val(this.normalizeMonthValue(row.competenciaGCC));
     root.find('#gcc-observations').val(this.asText(row.observacoesNegociacaoGCC));
 
-    this.renderAllocationRows('capex', this.parseAllocationTable(row.tblNaturezaCustoCapexGCC || row['tblNaturezaCustoCapexGCC'], 'capex'));
-    this.renderAllocationRows('opex', this.parseAllocationTable(row.tblNaturezaCustoOpexGCC || row['tblNaturezaCustoOpexGCC'], 'opex'));
+    const capexRows = this.parseAllocationTable(row.tblNaturezaCustoCapexGCC || row['tblNaturezaCustoCapexGCC'], 'capex');
+    const opexRows = this.parseAllocationTable(row.tblNaturezaCustoOpexGCC || row['tblNaturezaCustoOpexGCC'], 'opex');
+
+    this.renderAllocationRows('capex', capexRows);
+    this.renderAllocationRows('opex', opexRows);
+
+    root.find('#gcc-cost-nature-capex').prop('checked', this.getAllocationPercent('capex') > 0 || capexRows.length > 0);
+    root.find('#gcc-cost-nature-opex').prop('checked', this.getAllocationPercent('opex') > 0 || opexRows.length > 0);
+    this.updateCostNatureCardStyles();
 
     this.updateAllocationVisibility();
     this.ensureVisibleAllocationRows();
+    this.refreshFinancialImpact();
+  },
+
+  renderCostStructureFromRow: function (row) {
+    const root = this.getContainer();
+    const tbody = root.find('[data-component="gcc-cost-structure"]').first();
+    if (!tbody.length) return;
+
+    const items = this.parseTableJson(row.tblItensServicosTIPC || row['tblItensServicosTIPC']);
+    const normalized = Array.isArray(items) ? items.filter(Boolean) : [];
+
+    if (!normalized.length) {
+      tbody.html(`
+        <tr>
+          <td class="px-4 py-3 text-gray-500" colspan="4">Estrutura de custo indisponivel.</td>
+        </tr>
+      `);
+    } else {
+      tbody.html(normalized.map((item) => {
+        const descricao = this.escapeHtml(item && item.descricaoItemServicoTIPC);
+        const qtd = this.escapeHtml(item && item.quantidadeItemServicoTIPC);
+        const unit = this.escapeHtml(item && item.valorUnitarioItemServicoTIPC);
+        const total = this.escapeHtml(item && item.totalItemServicoTIPC);
+
+        return `
+          <tr>
+            <td class="px-4 py-3">${descricao || ''}</td>
+            <td class="px-4 py-3 text-center">${qtd || ''}</td>
+            <td class="px-4 py-3 text-right">${unit || ''}</td>
+            <td class="px-4 py-3 text-right font-medium">${total || ''}</td>
+          </tr>
+        `;
+      }).join(''));
+    }
+
+    const totalEl = root.find('#gcc-cost-structure-total');
+    if (totalEl.length) {
+      const totalGeral = this.asText(row.valortotalTIPC);
+      const fallbackTotal = normalized.reduce((sum, item) => {
+        const val = this.parseCurrencyValue(item && item.totalItemServicoTIPC);
+        return sum + (val !== null ? val : 0);
+      }, 0);
+      totalEl.text(totalGeral || (fallbackTotal > 0 ? this.formatCurrency(fallbackTotal) : '—'));
+    }
   },
 
   parseAllocationTable: function (value, kind) {
     return this.parseTableJson(value).map((item) => {
+      const rawCenterCost = kind === 'capex'
+        ? this.asText(item && item.centroCustoCapexGCC)
+        : this.asText(item && item.centroCustoOpexGCC);
+      const normalizedCostCenter = this.normalizeCostCenterValue(rawCenterCost);
+
       if (kind === 'capex') {
         return {
-          centerCost: this.asText(item && item.centroCustoCapexGCC),
+          centerCost: normalizedCostCenter.code,
+          centerCostLabel: normalizedCostCenter.label,
           account: this.asText(item && item.contaContabilCapexGCC),
-          percentage: this.asText(item && item.porcentagemCapexGCC),
+          committed: this.asText(item && item.porcentagemCapexGCC),
           balance: this.asText(item && item.saldoCapexGCC),
           balanceAfter: this.asText(item && item.saldoAposCompromissoCapexGCC)
         };
       }
 
       return {
-        centerCost: this.asText(item && item.centroCustoOpexGCC),
+        centerCost: normalizedCostCenter.code,
+        centerCostLabel: normalizedCostCenter.label,
         account: this.asText(item && item.contaContabilOpexGCC),
-        percentage: this.asText(item && item.porcentagemOpexGCC),
+        committed: this.asText(item && item.porcentagemOpexGCC),
         balance: this.asText(item && item.saldoOpexGCC),
         balanceAfter: this.asText(item && item.saldoAposCompromissoOpexGCC)
       };
-    }).filter((item) => item.centerCost || item.account || item.percentage || item.balance || item.balanceAfter);
+    }).filter((item) => item.centerCost || item.account || item.committed || item.balance || item.balanceAfter);
   },
 
   getAllocationContainer: function (kind) {
@@ -496,7 +698,14 @@ const gccCostApprovalController = {
     if (!container.length) return;
 
     container.empty();
-    (rows || []).forEach((row) => this.appendAllocationRow(kind, row));
+
+    const normalizedRows = Array.isArray(rows) ? rows.filter(Boolean) : [];
+    if (!normalizedRows.length) {
+      this.appendAllocationRow(kind, {});
+      return;
+    }
+
+    normalizedRows.forEach((row) => this.appendAllocationRow(kind, row));
   },
 
   appendAllocationRow: function (kind, row) {
@@ -505,62 +714,96 @@ const gccCostApprovalController = {
 
     const data = row || {};
     const safeKind = this.escapeHtml(kind);
+    const uid = `gcc-center-cost-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
     container.append(`
-      <div class="gcc-allocation-row border border-gray-200 rounded-lg p-4 bg-white" data-kind="${safeKind}">
-        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
-          <div>
-            <label class="block text-xs text-gray-600 mb-1">Centro de Custo</label>
-            <input type="text" data-field="center-cost" value="${this.escapeHtml(data.centerCost)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
+      <tr class="gcc-allocation-row cost-allocation-row" data-kind="${safeKind}">
+        <td class="py-3" colspan="6">
+          <div class="p-4 bg-white border border-gray-200 rounded-lg">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Centro de Custo</label>
+                <div id="${uid}" data-role="center-cost-filter"></div>
+                <input type="hidden" data-field="center-cost" value="${this.escapeHtml(data.centerCost)}" />
+                <input type="hidden" data-field="center-cost-label" value="${this.escapeHtml(data.centerCostLabel || data.centerCost)}" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Conta Contabil</label>
+                <input type="text" data-field="account" value="${this.escapeHtml(data.account)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" />
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Valor Comprometido</label>
+                <input type="text" inputmode="numeric" data-field="committed" value="${this.escapeHtml(data.committed)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" placeholder="R$ 0,00" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo</label>
+                <input type="text" data-field="balance" value="${this.escapeHtml(data.balance)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" />
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo apos compromisso</label>
+                <input type="text" data-field="balance-after" value="${this.escapeHtml(data.balanceAfter)}" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed" />
+              </div>
+              <div class="flex md:justify-end">
+                <button type="button" data-action="remove-allocation-row" class="px-3 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors" title="Remover">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </div>
+            </div>
           </div>
-          <div>
-            <label class="block text-xs text-gray-600 mb-1">Conta Contabil</label>
-            <input type="text" data-field="account" value="${this.escapeHtml(data.account)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-600 mb-1">Porcentagem</label>
-            <input type="number" min="0" max="100" step="0.01" data-field="percentage" value="${this.escapeHtml(data.percentage)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-600 mb-1">Saldo</label>
-            <input type="text" data-field="balance" value="${this.escapeHtml(data.balance)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
-          </div>
-          <div>
-            <label class="block text-xs text-gray-600 mb-1">Saldo apos compromisso</label>
-            <input type="text" data-field="balance-after" value="${this.escapeHtml(data.balanceAfter)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
-          </div>
-        </div>
-        <div class="flex justify-end mt-3">
-          <button type="button" data-action="remove-allocation-row" class="text-sm text-red-600 hover:text-red-700 font-medium">
-            <i class="fa-solid fa-trash mr-1"></i> Remover linha
-          </button>
-        </div>
-      </div>
+        </td>
+      </tr>
     `);
+
+    const appendedRow = container.find('.gcc-allocation-row').last();
+    this.initializeAllocationCostCenterFilter(appendedRow, uid, data);
   },
 
   addAllocationRow: function (kind) {
     this.appendAllocationRow(kind, {});
+    this.refreshFinancialImpact();
   },
 
   removeAllocationRow: function (buttonEl) {
-    const rowEl = $(buttonEl).closest('.gcc-allocation-row');
-    const kind = this.asText(rowEl.attr('data-kind'));
-    rowEl.remove();
+    const $rowEl = $(buttonEl).closest('.gcc-allocation-row');
+    if (!$rowEl.length) return;
+
+    const kind = this.asText($rowEl.attr('data-kind'));
+    if (!kind) return;
+
+    const remaining = this.getAllocationContainer(kind).find('.gcc-allocation-row').length;
+    const enabled = Boolean(this.getContainer().find(kind === 'capex' ? '#gcc-cost-nature-capex' : '#gcc-cost-nature-opex').prop('checked'));
+
+    if (enabled && remaining <= 1) {
+      $rowEl.find('input').val('');
+      this.resetAllocationCostCenterFilter($rowEl);
+      this.updateAllocationVisibility();
+      this.refreshFinancialImpact();
+      return;
+    }
+
+    this.destroyAllocationCostCenterFilter($rowEl);
+    $rowEl.remove();
     this.ensureVisibleAllocationRows();
-    if (kind) this.updateAllocationVisibility();
+    this.updateAllocationVisibility();
+    this.refreshFinancialImpact();
   },
 
   collectAllocationRows: function (kind) {
     return this.getAllocationContainer(kind).find('.gcc-allocation-row').map((_, rowEl) => {
       const row = $(rowEl);
+      const centerCost = this.asText(row.find('[data-field="center-cost"]').val());
+      const centerCostLabel = this.asText(row.find('[data-field="center-cost-label"]').val());
       return {
-        centerCost: this.asText(row.find('[data-field="center-cost"]').val()),
+        centerCost: centerCost,
+        centerCostLabel: centerCostLabel || centerCost,
         account: this.asText(row.find('[data-field="account"]').val()),
-        percentage: this.asText(row.find('[data-field="percentage"]').val()),
+        committed: this.asText(row.find('[data-field="committed"]').val()),
         balance: this.asText(row.find('[data-field="balance"]').val()),
         balanceAfter: this.asText(row.find('[data-field="balance-after"]').val())
       };
-    }).get().filter((row) => row.centerCost || row.account || row.percentage || row.balance || row.balanceAfter);
+    }).get().filter((row) => row.centerCost || row.account || row.committed || row.balance || row.balanceAfter);
   },
 
   getAllocationPercent: function (kind) {
@@ -573,40 +816,219 @@ const gccCostApprovalController = {
     let capex = this.parsePercentValue(root.find('#gcc-capex-percent').val());
     let opex = this.parsePercentValue(root.find('#gcc-opex-percent').val());
 
-    if (changedKind === 'capex') {
-      opex = Math.max(0, 100 - capex);
-      root.find('#gcc-opex-percent').val(opex);
+    const capexChecked = Boolean(root.find('#gcc-cost-nature-capex').prop('checked'));
+    const opexChecked = Boolean(root.find('#gcc-cost-nature-opex').prop('checked'));
+
+    if (capexChecked && opexChecked) {
+      if (changedKind === 'capex') {
+        opex = Math.max(0, 100 - capex);
+      } else if (changedKind === 'opex') {
+        capex = Math.max(0, 100 - opex);
+      }
+    } else if (capexChecked && !opexChecked) {
+      capex = 100;
+      opex = 0;
+    } else if (!capexChecked && opexChecked) {
+      capex = 0;
+      opex = 100;
     } else {
-      capex = Math.max(0, 100 - opex);
-      root.find('#gcc-capex-percent').val(capex);
+      capex = 0;
+      opex = 0;
     }
+
+    root.find('#gcc-capex-percent').val(capex);
+    root.find('#gcc-opex-percent').val(opex);
 
     root.find('#gcc-capex-percent-label').text(this.formatPercentLabel(capex));
     root.find('#gcc-opex-percent-label').text(this.formatPercentLabel(opex));
 
+    this.updateCostNatureCardStyles();
+
     this.updateAllocationVisibility();
     this.ensureVisibleAllocationRows();
+    this.refreshFinancialImpact();
   },
 
   updateAllocationVisibility: function () {
     const root = this.getContainer();
-    const capex = this.getAllocationPercent('capex');
-    const opex = this.getAllocationPercent('opex');
+    const capexEnabled = Boolean(root.find('#gcc-cost-nature-capex').prop('checked'));
+    const opexEnabled = Boolean(root.find('#gcc-cost-nature-opex').prop('checked'));
 
-    root.find('#gcc-capex-percent-label').text(this.formatPercentLabel(capex));
-    root.find('#gcc-opex-percent-label').text(this.formatPercentLabel(opex));
-    root.find('#gcc-capex-wrapper').toggleClass('hidden', capex <= 0);
-    root.find('#gcc-opex-wrapper').toggleClass('hidden', opex <= 0);
+    root.find('#gcc-capex-wrapper').toggleClass('hidden', !capexEnabled);
+    root.find('#gcc-opex-wrapper').toggleClass('hidden', !opexEnabled);
+    this.refreshFinancialImpact();
   },
 
   ensureVisibleAllocationRows: function () {
-    if (this.getAllocationPercent('capex') > 0 && !this.collectAllocationRows('capex').length) {
-      this.appendAllocationRow('capex', {});
+    ['capex', 'opex'].forEach((kind) => {
+      const enabled = Boolean(this.getContainer().find(kind === 'capex' ? '#gcc-cost-nature-capex' : '#gcc-cost-nature-opex').prop('checked'));
+      const container = this.getAllocationContainer(kind);
+      if (!container.length) return;
+
+      const existingRows = container.find('.gcc-allocation-row').length;
+      if (enabled && existingRows === 0) {
+        this.appendAllocationRow(kind, {});
+      }
+    });
+
+    this.refreshFinancialImpact();
+  },
+
+  getProposalTotalAmount: function () {
+    const root = this.getContainer();
+    const summaryTotal = this.parseCurrencyValue(root.find('#gcc-summary-total').text());
+    if (summaryTotal !== null) return summaryTotal;
+
+    const tableTotal = this.parseCurrencyValue(root.find('#gcc-cost-structure-total').text());
+    if (tableTotal !== null) return tableTotal;
+
+    const rowTotal = this.parseCurrencyValue(this._state.baseRow && this._state.baseRow.valortotalTIPC);
+    return rowTotal !== null ? rowTotal : 0;
+  },
+
+  recomputeAllocationRow: function (rowEl, proposalTotal) {
+    const row = $(rowEl);
+    if (!row.length) return;
+
+    const committed = this.parseCurrencyValue(row.find('[data-field="committed"]').val());
+    const balanceInput = row.find('[data-field="balance"]').first();
+    const balanceAfterInput = row.find('[data-field="balance-after"]').first();
+    if (!balanceInput.length || !balanceAfterInput.length) return;
+
+    const balance = this.parseCurrencyValue(balanceInput.val());
+    if (balance === null) {
+      balanceAfterInput.val('');
+      return;
     }
 
-    if (this.getAllocationPercent('opex') > 0 && !this.collectAllocationRows('opex').length) {
-      this.appendAllocationRow('opex', {});
+    if (committed === null || committed <= 0) {
+      balanceAfterInput.val(this.formatCurrency(balance));
+      return;
     }
+
+    const afterValue = balance - committed;
+    balanceAfterInput.val(this.formatCurrency(afterValue));
+  },
+
+  recomputeAllAllocationRows: function (proposalTotal) {
+    const root = this.getContainer();
+    root.find('.gcc-allocation-row').each((_, rowEl) => {
+      this.recomputeAllocationRow(rowEl, proposalTotal);
+    });
+  },
+
+  calculateCommittedAmount: function (kind, proposalTotal) {
+    const rows = this.collectAllocationRows(kind);
+    if (!rows.length || proposalTotal <= 0) return 0;
+
+    return rows.reduce((sum, row) => {
+      const balance = this.parseCurrencyValue(row.balance);
+      const balanceAfter = this.parseCurrencyValue(row.balanceAfter);
+
+      if (balance !== null && balanceAfter !== null) {
+        return sum + Math.max(0, balance - balanceAfter);
+      }
+
+      const committed = this.parseCurrencyValue(row.committed);
+      if (committed === null || committed <= 0) return sum;
+      return sum + committed;
+    }, 0);
+  },
+
+  aggregateBalancesByCenter: function (mode, proposalTotal) {
+    const rowsByKind = {
+      capex: this.collectAllocationRows('capex'),
+      opex: this.collectAllocationRows('opex')
+    };
+
+    const map = {};
+
+    Object.keys(rowsByKind).forEach((kind) => {
+      rowsByKind[kind].forEach((row, index) => {
+        const name = this.asText(row.centerCostLabel) || this.asText(row.centerCost) || `${kind.toUpperCase()} ${index + 1}`;
+        let value = null;
+
+        if (mode === 'balance') {
+          value = this.parseCurrencyValue(row.balance);
+        } else {
+          value = this.parseCurrencyValue(row.balanceAfter);
+          if (value === null) {
+            const balance = this.parseCurrencyValue(row.balance);
+            const committed = this.parseCurrencyValue(row.committed);
+            if (balance !== null) {
+              value = balance - (committed !== null ? committed : 0);
+            }
+          }
+        }
+
+        if (value === null) return;
+        map[name] = (map[name] || 0) + value;
+      });
+    });
+
+    return Object.keys(map).map((name) => ({ name, value: map[name] }));
+  },
+
+  renderImpactList: function (selector, rows) {
+    const target = this.getContainer().find(selector).first();
+    if (!target.length) return;
+
+    if (!Array.isArray(rows) || !rows.length) {
+      target.html(`
+        <div class="flex justify-between text-xs">
+          <span class="text-blue-100">—</span>
+          <span class="font-medium text-blue-50">—</span>
+        </div>
+      `);
+      return;
+    }
+
+    target.html(rows.slice(0, 6).map((item) => {
+      return `
+        <div class="flex justify-between text-xs gap-2">
+          <span class="text-blue-100 truncate">${this.escapeHtml(item.name)}</span>
+          <span class="font-medium text-blue-50 whitespace-nowrap">${this.escapeHtml(this.formatCurrency(item.value))}</span>
+        </div>
+      `;
+    }).join(''));
+  },
+
+  refreshFinancialImpact: function () {
+    const root = this.getContainer();
+    if (!root.length) return;
+
+    const proposalTotal = this.getProposalTotalAmount();
+    this.recomputeAllAllocationRows(proposalTotal);
+
+    const capexPercent = this.getAllocationPercent('capex');
+    const opexPercent = this.getAllocationPercent('opex');
+
+    const capexTotal = proposalTotal * (capexPercent / 100);
+    const opexTotal = proposalTotal * (opexPercent / 100);
+    const capexCommitted = this.calculateCommittedAmount('capex', proposalTotal);
+    const opexCommitted = this.calculateCommittedAmount('opex', proposalTotal);
+
+    root.find('#gcc-capex-total-value').text(this.formatCurrency(capexTotal));
+    root.find('#gcc-opex-total-value').text(this.formatCurrency(opexTotal));
+    root.find('#gcc-capex-committed-total').text(this.formatCurrency(capexCommitted));
+    root.find('#gcc-opex-committed-total').text(this.formatCurrency(opexCommitted));
+
+    root.find('#impact-proposal-value').text(this.formatCurrency(proposalTotal));
+
+    const availableRows = this.aggregateBalancesByCenter('balance', proposalTotal);
+    const afterRows = this.aggregateBalancesByCenter('after', proposalTotal);
+
+    this.renderImpactList('#impact-available-list', availableRows);
+    this.renderImpactList('#impact-after-list', afterRows);
+
+    const availableTotal = availableRows.reduce((sum, item) => sum + (isFinite(item.value) ? item.value : 0), 0);
+    const afterTotal = afterRows.reduce((sum, item) => sum + (isFinite(item.value) ? item.value : 0), 0);
+
+    root.find('#impact-available-balance').text(this.formatCurrency(availableTotal));
+    root.find('#impact-balance-after')
+      .text(this.formatCurrency(afterTotal))
+      .toggleClass('text-green-300', afterTotal >= 0)
+      .toggleClass('text-red-300', afterTotal < 0);
   },
 
   validateFinancePanel: function () {
@@ -615,14 +1037,22 @@ const gccCostApprovalController = {
     const competence = this.asText(root.find('#gcc-competence').val());
     const capex = this.getAllocationPercent('capex');
     const opex = this.getAllocationPercent('opex');
-    const total = Number((capex + opex).toFixed(2));
+    const capexEnabled = Boolean(root.find('#gcc-cost-nature-capex').prop('checked'));
+    const opexEnabled = Boolean(root.find('#gcc-cost-nature-opex').prop('checked'));
+    const total = Number(((capexEnabled ? capex : 0) + (opexEnabled ? opex : 0)).toFixed(2));
 
     if (!competence) missing.push('Competencia');
+    if (!capexEnabled && !opexEnabled) missing.push('Selecione pelo menos uma natureza de custo (CAPEX/OPEX)');
     if (total !== 100) missing.push('Distribuicao CAPEX/OPEX deve totalizar 100%');
 
     ['capex', 'opex'].forEach((kind) => {
+      const enabled = Boolean(root.find(kind === 'capex' ? '#gcc-cost-nature-capex' : '#gcc-cost-nature-opex').prop('checked'));
+      if (!enabled) return;
+
       const kindPercent = kind === 'capex' ? capex : opex;
-      if (kindPercent <= 0) return;
+      if (kindPercent <= 0) {
+        missing.push(`${kind.toUpperCase()} deve ter percentual maior que zero`);
+      }
 
       const rows = this.collectAllocationRows(kind);
       if (!rows.length) {
@@ -630,16 +1060,11 @@ const gccCostApprovalController = {
         return;
       }
 
-      const allocationSum = Number(rows.reduce((acc, row) => acc + this.parsePercentValue(row.percentage), 0).toFixed(2));
-      if (allocationSum !== Number(kindPercent.toFixed(2))) {
-        missing.push(`Rateio de ${kind.toUpperCase()} deve somar ${this.formatPercentLabel(kindPercent)}`);
-      }
-
       rows.forEach((row, index) => {
         const label = `${kind.toUpperCase()} linha ${index + 1}`;
         if (!row.centerCost) missing.push(`${label} - Centro de Custo`);
         if (!row.account) missing.push(`${label} - Conta Contabil`);
-        if (!row.percentage) missing.push(`${label} - Porcentagem`);
+        if (!row.committed) missing.push(`${label} - Valor Comprometido`);
       });
     });
 
@@ -665,7 +1090,7 @@ const gccCostApprovalController = {
       const i = index + 1;
       cardData[`centroCustoCapexGCC___${i}`] = row.centerCost;
       cardData[`contaContabilCapexGCC___${i}`] = row.account;
-      cardData[`porcentagemCapexGCC___${i}`] = row.percentage;
+      cardData[`porcentagemCapexGCC___${i}`] = row.committed;
       cardData[`saldoCapexGCC___${i}`] = row.balance;
       cardData[`saldoAposCompromissoCapexGCC___${i}`] = row.balanceAfter;
     });
@@ -674,7 +1099,7 @@ const gccCostApprovalController = {
       const i = index + 1;
       cardData[`centroCustoOpexGCC___${i}`] = row.centerCost;
       cardData[`contaContabilOpexGCC___${i}`] = row.account;
-      cardData[`porcentagemOpexGCC___${i}`] = row.percentage;
+      cardData[`porcentagemOpexGCC___${i}`] = row.committed;
       cardData[`saldoOpexGCC___${i}`] = row.balance;
       cardData[`saldoAposCompromissoOpexGCC___${i}`] = row.balanceAfter;
     });
@@ -912,6 +1337,35 @@ const gccCostApprovalController = {
     return Math.max(0, Math.min(100, parsed));
   },
 
+  parseCurrencyValue: function (value) {
+    const text = this.asText(value);
+    if (!text) return null;
+
+    const normalized = text
+      .replace(/\s/g, '')
+      .replace(/[A-Za-z$€£R]/g, '')
+      .replace(/\.(?=\d{3}(?:\D|$))/g, '')
+      .replace(',', '.');
+
+    const parsed = Number(normalized);
+    return isFinite(parsed) ? parsed : null;
+  },
+
+  formatCurrency: function (value) {
+    const amount = Number(value);
+    const safe = isFinite(amount) ? amount : 0;
+    return `R$ ${safe.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  },
+
+  normalizeCurrencyInput: function (inputEl) {
+    const input = inputEl && inputEl.jquery ? inputEl.get(0) : inputEl;
+    if (!input) return;
+
+    const parsed = this.parseCurrencyValue($(input).val());
+    if (parsed === null) return;
+    $(input).val(this.formatCurrency(parsed));
+  },
+
   normalizeMonthValue: function (value) {
     const text = this.asText(value);
     if (!text) return '';
@@ -950,6 +1404,21 @@ const gccCostApprovalController = {
     return 'bg-gray-100 text-gray-800';
   },
 
+  getExecutionTypeLabel: function (value) {
+    const raw = this.asText(value);
+    const normalized = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('extern') !== -1) return 'Externo';
+    if (normalized.indexOf('intern') !== -1) return 'Interno';
+    return raw || 'N/A';
+  },
+
+  getExecutionTypeBadgeClasses: function (value) {
+    const normalized = this.asText(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('extern') !== -1) return 'bg-purple-100 text-purple-800';
+    if (normalized.indexOf('intern') !== -1) return 'bg-blue-100 text-blue-800';
+    return 'bg-gray-100 text-gray-800';
+  },
+
   getEstadoProcessoLabel: function (estadoProcesso) {
     const raw = this.asText(estadoProcesso);
     if (!raw) return '';
@@ -966,6 +1435,230 @@ const gccCostApprovalController = {
     } catch (error) {}
 
     return text.split(/\r?\n|;|,/).map((item) => this.asText(item)).filter(Boolean).length;
+  },
+
+  loadCostCenterOptions: async function () {
+    try {
+      let rows = [];
+      try {
+        rows = await fluigService.getDatasetRows('dsGetCC_ReadView', {
+          fields: ['CODCCUSTO', 'NOME']
+        });
+      } catch (error) {
+        rows = await fluigService.getDataset('dsGetCC_ReadView');
+      }
+
+      this._state.costCenterOptions = this.normalizeCostCenterOptions(rows);
+      this.syncAllocationCostCenterFilters();
+    } catch (error) {
+      console.error('[gccCostApproval] Erro ao carregar dsGetCC_ReadView:', error);
+      this._state.costCenterOptions = [];
+      this.syncAllocationCostCenterFilters();
+    }
+  },
+
+  normalizeCostCenterOptions: function (rows) {
+    if (!Array.isArray(rows)) return [];
+
+    const map = {};
+    rows.forEach((row) => {
+      const code = this.asText(row && (row.CODCCUSTO || row.codccusto || row.codCentroCusto));
+      const name = this.asText(row && (row.NOME || row.nome || row.DESCRICAO || row.descricao));
+      if (!code || !name) return;
+
+      map[code] = {
+        CODCCUSTO: code,
+        NOME: name
+      };
+    });
+
+    return Object.keys(map).map((key) => map[key]);
+  },
+
+  normalizeLookupText: function (value) {
+    return this.asText(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  },
+
+  normalizeCostCenterValue: function (rawValue) {
+    const raw = this.asText(rawValue);
+    if (!raw) return { code: '', label: '' };
+
+    const options = Array.isArray(this._state.costCenterOptions) ? this._state.costCenterOptions : [];
+    const byCode = options.find((item) => this.asText(item && item.CODCCUSTO) === raw);
+    if (byCode) {
+      return {
+        code: this.asText(byCode.CODCCUSTO),
+        label: this.asText(byCode.NOME)
+      };
+    }
+
+    const normalizedRaw = this.normalizeLookupText(raw);
+    const byLabel = options.find((item) => this.normalizeLookupText(item && item.NOME) === normalizedRaw);
+    if (byLabel) {
+      return {
+        code: this.asText(byLabel.CODCCUSTO),
+        label: this.asText(byLabel.NOME)
+      };
+    }
+
+    return { code: raw, label: raw };
+  },
+
+  initializeAllocationCostCenterFilter: function (rowEl, mountId, rowData) {
+    const row = rowEl && rowEl.jquery ? rowEl : $(rowEl);
+    if (!row || !row.length) return;
+
+    const mountSelector = `#${mountId}`;
+    const codeInput = row.find('[data-field="center-cost"]').first();
+    const labelInput = row.find('[data-field="center-cost-label"]').first();
+    const options = Array.isArray(this._state.costCenterOptions) ? this._state.costCenterOptions : [];
+
+    if (typeof TagInputFilter === 'undefined') {
+      row.find('[data-role="center-cost-filter"]').first().replaceWith(
+        `<input type="text" data-field="center-cost-fallback" value="${this.escapeHtml(this.asText((rowData && rowData.centerCostLabel) || (rowData && rowData.centerCost)))}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" />`
+      );
+
+      row.off('input.gccCostCenterFallback');
+      row.on('input.gccCostCenterFallback', '[data-field="center-cost-fallback"]', (event) => {
+        const value = this.asText($(event.currentTarget).val());
+        codeInput.val(value);
+        labelInput.val(value);
+        this.refreshFinancialImpact();
+      });
+      return;
+    }
+
+    const normalizedInitial = this.normalizeCostCenterValue((rowData && rowData.centerCost) || codeInput.val() || labelInput.val());
+    if (!this.asText(codeInput.val())) codeInput.val(normalizedInitial.code);
+    if (!this.asText(labelInput.val())) labelInput.val(normalizedInitial.label || normalizedInitial.code);
+
+    const filter = new TagInputFilter(mountSelector, {
+      placeholder: 'Selecione o centro de custo...',
+      data: options,
+      labelField: 'NOME',
+      valueField: 'CODCCUSTO',
+      columns: [
+        { header: 'Codigo', field: 'CODCCUSTO', width: 'w-1/3' },
+        { header: 'Nome', field: 'NOME', width: 'w-2/3' }
+      ],
+      singleSelection: true,
+      onItemAdded: (item) => {
+        codeInput.val(this.asText(item && item.CODCCUSTO));
+        labelInput.val(this.asText(item && item.NOME));
+        this.refreshFinancialImpact();
+      },
+      onItemRemoved: () => {
+        codeInput.val('');
+        labelInput.val('');
+        this.refreshFinancialImpact();
+      }
+    });
+
+    if (filter && typeof filter.setSelectedItems === 'function') {
+      const initialCode = this.asText(codeInput.val());
+      const initialLabel = this.asText(labelInput.val());
+      let selectedOption = null;
+
+      if (initialCode) {
+        selectedOption = options.find((item) => this.asText(item && item.CODCCUSTO) === initialCode) || null;
+      }
+
+      if (!selectedOption && initialLabel) {
+        const normalizedLabel = this.normalizeLookupText(initialLabel);
+        selectedOption = options.find((item) => this.normalizeLookupText(item && item.NOME) === normalizedLabel) || null;
+      }
+
+      if (selectedOption) {
+        codeInput.val(this.asText(selectedOption.CODCCUSTO));
+        labelInput.val(this.asText(selectedOption.NOME));
+        filter.setSelectedItems([
+          {
+            value: this.asText(selectedOption.CODCCUSTO),
+            label: this.asText(selectedOption.NOME)
+          }
+        ]);
+      }
+    }
+
+    row.attr('data-cost-center-filter-id', mountId);
+    this._state.allocationCostCenterFilters[mountId] = filter;
+  },
+
+  resetAllocationCostCenterFilter: function (rowEl) {
+    const row = rowEl && rowEl.jquery ? rowEl : $(rowEl);
+    if (!row || !row.length) return;
+
+    const mountId = this.asText(row.attr('data-cost-center-filter-id'));
+    const filter = mountId ? this._state.allocationCostCenterFilters[mountId] : null;
+
+    if (filter && typeof filter.removeAll === 'function') {
+      filter.removeAll();
+    }
+
+    row.find('[data-field="center-cost"]').val('');
+    row.find('[data-field="center-cost-label"]').val('');
+    row.find('[data-field="center-cost-fallback"]').val('');
+  },
+
+  destroyAllocationCostCenterFilter: function (rowEl) {
+    const row = rowEl && rowEl.jquery ? rowEl : $(rowEl);
+    if (!row || !row.length) return;
+
+    const mountId = this.asText(row.attr('data-cost-center-filter-id'));
+    if (mountId && this._state.allocationCostCenterFilters[mountId]) {
+      delete this._state.allocationCostCenterFilters[mountId];
+    }
+
+    row.off('input.gccCostCenterFallback');
+  },
+
+  syncAllocationCostCenterFilters: function () {
+    const options = Array.isArray(this._state.costCenterOptions) ? this._state.costCenterOptions : [];
+    const root = this.getContainer();
+
+    root.find('.gcc-allocation-row').each((_, rowEl) => {
+      const row = $(rowEl);
+      const codeInput = row.find('[data-field="center-cost"]').first();
+      const labelInput = row.find('[data-field="center-cost-label"]').first();
+      const current = this.normalizeCostCenterValue(codeInput.val() || labelInput.val());
+
+      codeInput.val(current.code);
+      labelInput.val(current.label || current.code);
+
+      const mountId = this.asText(row.attr('data-cost-center-filter-id'));
+      const filter = mountId ? this._state.allocationCostCenterFilters[mountId] : null;
+      if (!filter) return;
+
+      if (typeof filter.updateData === 'function') {
+        filter.updateData(options);
+      }
+
+      if (typeof filter.setSelectedItems !== 'function') return;
+
+      const selectedCode = this.asText(codeInput.val());
+      if (!selectedCode) {
+        if (typeof filter.removeAll === 'function') filter.removeAll();
+        return;
+      }
+
+      const found = options.find((item) => this.asText(item && item.CODCCUSTO) === selectedCode) || null;
+      if (!found) return;
+
+      labelInput.val(this.asText(found.NOME));
+      filter.setSelectedItems([
+        {
+          value: this.asText(found.CODCCUSTO),
+          label: this.asText(found.NOME)
+        }
+      ]);
+    });
+
+    this.refreshFinancialImpact();
   },
 
   parseTableJson: function (value) {

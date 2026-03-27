@@ -25,6 +25,7 @@ const technicalTriageController = {
     'tblRiscosIdentificadosTITT.tituloRiscoTITT',
     'tblRiscosIdentificadosTITT.descricaoRiscoTITT',
     'tblRiscosIdentificadosTITT.mitigacaoRiscoTITT',
+    'tblRiscosIdentificadosTITT.planoBRiscoTITT',
     'tblRiscosIdentificadosTITT.nivelRiscoTITT',
     'tblRiscosIdentificadosTITT.impactoRiscoTITT',
     'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT',
@@ -32,6 +33,7 @@ const technicalTriageController = {
     'tblDependenciasTITT.statusDependenciaTITT',
     'tblDependenciasTITT.responsavelDependenciaTITT',
     'tblDependenciasTITT.mitigacaoDependenciaTITT',
+    'tblDependenciasTITT.planoBDependenciaTITT',
     'fornecedorRecomendadoTITT',
     'codfornTITT',
     'tipoContratacaoTITT',
@@ -266,6 +268,16 @@ const technicalTriageController = {
       this.removeRiskMatrixItem(event.currentTarget);
     });
 
+    container.on(`click${ns}`, '[data-action="confirm-risk-matrix"]', (event) => {
+      event.preventDefault();
+      this.confirmRiskMatrixItem(event.currentTarget);
+    });
+
+    container.on(`click${ns}`, '[data-action="edit-risk-matrix"]', (event) => {
+      event.preventDefault();
+      this.editRiskMatrixItem(event.currentTarget);
+    });
+
     container.on(`click${ns}`, '[data-action="add-dependency"]', (event) => {
       event.preventDefault();
       this.addDependencyItem({});
@@ -274,6 +286,16 @@ const technicalTriageController = {
     container.on(`click${ns}`, '[data-action="remove-dependency"]', (event) => {
       event.preventDefault();
       this.removeDependencyItem(event.currentTarget);
+    });
+
+    container.on(`click${ns}`, '[data-action="confirm-dependency"]', (event) => {
+      event.preventDefault();
+      this.confirmDependencyItem(event.currentTarget);
+    });
+
+    container.on(`click${ns}`, '[data-action="edit-dependency"]', (event) => {
+      event.preventDefault();
+      this.editDependencyItem(event.currentTarget);
     });
 
     container.on(`change${ns}`, '.triagem-checklist-item', () => {
@@ -599,7 +621,6 @@ const technicalTriageController = {
 
   renderRiskMatrixFromRow: function (tblValue) {
     const list = this.getContainer().find('#risk-matrix-list');
-    const empty = this.getContainer().find('#risk-matrix-empty');
     if (!list.length) return;
 
     const rows = this.parseTableJson(tblValue);
@@ -610,25 +631,35 @@ const technicalTriageController = {
         title: this.asText(item && item.tituloRiscoTITT),
         description: this.asText(item && item.descricaoRiscoTITT),
         mitigation: this.asText(item && item.mitigacaoRiscoTITT),
+        fallback: this.asText(item && item.planoBRiscoTITT),
         level: this.asText(item && item.nivelRiscoTITT),
         impact: this.asText(item && item.impactoRiscoTITT),
-        probability: this.asText(item && item.probabilidadeRiscoTITT)
+        probability: this.asText(item && item.probabilidadeRiscoTITT),
+        confirmed: true
       };
     }).filter((item) => {
-      return item.title || item.description || item.mitigation || item.level || item.impact || item.probability;
+      return item.title || item.description || item.mitigation || item.fallback || item.level || item.impact || item.probability;
     });
 
-    if (risks.length) {
-      risks.forEach((risk) => this.addRiskMatrixItem(risk));
-      if (empty.length) empty.addClass('hidden');
-    } else {
-      if (empty.length) empty.removeClass('hidden');
+    if (!risks.length) {
+      this.updateRiskEmptyState();
+      return;
     }
+
+    risks.forEach((risk) => this.addRiskMatrixItem(risk));
+    this.updateRiskEmptyState();
+  },
+
+  updateRiskEmptyState: function () {
+    const root = this.getContainer();
+    const empty = root.find('#risk-matrix-empty');
+    if (!empty.length) return;
+    const any = root.find('#risk-matrix-list .titt-risk-item').length > 0;
+    empty.toggleClass('hidden', any);
   },
 
   renderDependenciesFromRow: function (tblValue) {
     const list = this.getContainer().find('#dependencies-list');
-    const empty = this.getContainer().find('#dependencies-empty');
     if (!list.length) return;
 
     const rows = this.parseTableJson(tblValue);
@@ -639,96 +670,325 @@ const technicalTriageController = {
         title: this.asText(item && item.tituloDependenciaTITT),
         status: this.asText(item && item.statusDependenciaTITT),
         owner: this.asText(item && item.responsavelDependenciaTITT),
-        mitigation: this.asText(item && item.mitigacaoDependenciaTITT)
+        mitigation: this.asText(item && item.mitigacaoDependenciaTITT),
+        fallback: this.asText(item && item.planoBDependenciaTITT),
+        confirmed: true
       };
     }).filter((item) => {
-      return item.title || item.status || item.owner || item.mitigation;
+      return item.title || item.status || item.owner || item.mitigation || item.fallback;
     });
 
-    if (deps.length) {
-      deps.forEach((dep) => this.addDependencyItem(dep));
-      if (empty.length) empty.addClass('hidden');
-    } else {
-      if (empty.length) empty.removeClass('hidden');
+    if (!deps.length) {
+      this.updateDependencyEmptyState();
+      return;
     }
+
+    deps.forEach((dep) => this.addDependencyItem(dep));
+    this.updateDependencyEmptyState();
   },
 
   addRiskMatrixItem: function (data) {
     const list = this.getContainer().find('#risk-matrix-list');
-    const empty = this.getContainer().find('#risk-matrix-empty');
     if (!list.length) return;
 
+    const cardEl = document.createElement('div');
+    cardEl.classList.add('titt-risk-item', 'risk-item');
+
+    const confirmed = Boolean(data && data.confirmed);
+    cardEl.setAttribute('data-confirmed', confirmed ? '1' : '0');
+    cardEl.setAttribute('data-index', String(list.find('.titt-risk-item').length + 1));
+
+    this.renderRiskCardShell(cardEl, {
+      title: this.asText(data && data.title),
+      description: this.asText(data && data.description),
+      mitigation: this.asText(data && data.mitigation),
+      fallback: this.asText(data && data.fallback),
+      level: this.asText(data && data.level) || 'Alto',
+      impact: this.asText(data && data.impact) || 'Alto',
+      probability: this.asText(data && data.probability) || 'Alta'
+    });
+
+    if (confirmed) this.showRiskReadOnly(cardEl);
+    else this.showRiskEdit(cardEl);
+
+    list.append(cardEl);
+    this.updateRiskEmptyState();
+  },
+
+  renderRiskCardShell: function (cardEl, data) {
+    if (!cardEl) return;
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el) return;
+
+    const idx = this.asText(el.getAttribute('data-index')) || '1';
     const title = this.escapeHtml(this.asText(data && data.title));
     const description = this.escapeHtml(this.asText(data && data.description));
     const mitigation = this.escapeHtml(this.asText(data && data.mitigation));
-    const level = this.asText(data && data.level);
-    const impact = this.asText(data && data.impact);
-    const probability = this.asText(data && data.probability);
+    const fallback = this.escapeHtml(this.asText(data && data.fallback));
+    const level = this.escapeHtml(this.asText(data && data.level) || 'Alto');
+    const impact = this.escapeHtml(this.asText(data && data.impact) || 'Alto');
+    const probability = this.escapeHtml(this.asText(data && data.probability) || 'Alta');
 
-    const html = `
-      <div class="titt-risk-item border border-gray-200 rounded-lg p-4 bg-white">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div class="flex-1">
-            <label class="block text-xs font-medium text-gray-600 mb-1">Título</label>
-            <input type="text" data-field="risk-title" value="${title}" placeholder="Ex: Integração SSO com legado" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
-          </div>
-
-          <div class="w-full md:w-48">
-            <label class="block text-xs font-medium text-gray-600 mb-1">Nível do Risco</label>
-            <select data-field="risk-level" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
-              <option value="">Selecione</option>
-              <option value="Baixo">Baixo</option>
-              <option value="Médio">Médio</option>
-              <option value="Alto">Alto</option>
-            </select>
-          </div>
-
-          <div class="flex md:items-end md:pb-0 pt-1">
-            <button type="button" data-action="remove-risk-matrix" class="w-10 h-10 inline-flex items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors" title="Remover risco">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div class="hidden">
-            <label class="block text-xs font-medium text-gray-600 mb-1">Probabilidade</label>
-            <select data-field="risk-probability" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-              <option value="Baixa">Baixa</option>
-              <option value="Média">Média</option>
-              <option value="Alta">Alta</option>
-            </select>
-          </div>
-          <div class="hidden">
-            <label class="block text-xs font-medium text-gray-600 mb-1">Impacto</label>
-            <select data-field="risk-impact" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm">
-              <option value="Baixo">Baixo</option>
-              <option value="Médio">Médio</option>
-              <option value="Alto">Alto</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="mt-4">
-          <label class="block text-xs font-medium text-gray-600 mb-1">Descrição</label>
-          <textarea rows="2" data-field="risk-description" placeholder="Descreva o risco identificado..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm">${description}</textarea>
-        </div>
-
-        <div class="mt-4">
-          <label class="block text-xs font-medium text-gray-600 mb-1">Mitigação</label>
-          <textarea rows="2" data-field="risk-mitigation" placeholder="Descreva a estratégia de mitigação..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm">${mitigation}</textarea>
-        </div>
+    el.innerHTML = `
+      <div class="risk-fields hidden">
+        <input type="text" name="tituloRiscoTITT___${this.escapeHtml(idx)}" value="${title}" data-field="risk-title" />
+        <input type="text" name="descricaoRiscoTITT___${this.escapeHtml(idx)}" value="${description}" data-field="risk-description" />
+        <input type="text" name="mitigacaoRiscoTITT___${this.escapeHtml(idx)}" value="${mitigation}" data-field="risk-mitigation" />
+        <input type="text" name="planoBRiscoTITT___${this.escapeHtml(idx)}" value="${fallback}" data-field="risk-fallback" />
+        <input type="text" name="nivelRiscoTITT___${this.escapeHtml(idx)}" value="${level}" data-field="risk-level" />
+        <input type="text" name="impactoRiscoTITT___${this.escapeHtml(idx)}" value="${impact}" data-field="risk-impact" />
+        <input type="text" name="probabilidadeRiscoTITT___${this.escapeHtml(idx)}" value="${probability}" data-field="risk-probability" />
       </div>
+      <div class="risk-edit"></div>
+      <div class="risk-view"></div>
     `;
 
-    list.append(html);
+    this.setRiskCardData(el, {
+      title: this.asText(data && data.title),
+      description: this.asText(data && data.description),
+      mitigation: this.asText(data && data.mitigation),
+      fallback: this.asText(data && data.fallback),
+      level: this.asText(data && data.level) || 'Alto',
+      impact: this.asText(data && data.impact) || 'Alto',
+      probability: this.asText(data && data.probability) || 'Alta'
+    });
+  },
 
-    const $item = list.find('.titt-risk-item').last();
-    $item.find('[data-field="risk-level"]').val(level);
-    $item.find('[data-field="risk-impact"]').val(impact || 'Médio');
-    $item.find('[data-field="risk-probability"]').val(probability || 'Média');
+  setRiskCardData: function (cardEl, data) {
+    if (!cardEl) return;
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el || !el.dataset) return;
+    el.dataset.riskTitle = this.asText(data && data.title);
+    el.dataset.riskDescription = this.asText(data && data.description);
+    el.dataset.riskMitigation = this.asText(data && data.mitigation);
+    el.dataset.riskFallback = this.asText(data && data.fallback);
+    el.dataset.riskLevel = this.asText(data && data.level) || 'Alto';
+    el.dataset.riskImpact = this.asText(data && data.impact) || 'Alto';
+    el.dataset.riskProbability = this.asText(data && data.probability) || 'Alta';
+  },
 
-    if (empty.length) empty.addClass('hidden');
+  syncRiskInputsFromDataset: function (cardEl) {
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el || !el.dataset) return;
+    const wrap = $(el).find('.risk-fields');
+    if (!wrap.length) return;
+
+    wrap.find('[name^="tituloRiscoTITT___"]').val(this.asText(el.dataset.riskTitle));
+    wrap.find('[name^="descricaoRiscoTITT___"]').val(this.asText(el.dataset.riskDescription));
+    wrap.find('[name^="mitigacaoRiscoTITT___"]').val(this.asText(el.dataset.riskMitigation));
+    wrap.find('[name^="planoBRiscoTITT___"]').val(this.asText(el.dataset.riskFallback));
+    wrap.find('[name^="nivelRiscoTITT___"]').val(this.asText(el.dataset.riskLevel));
+    wrap.find('[name^="impactoRiscoTITT___"]').val(this.asText(el.dataset.riskImpact));
+    wrap.find('[name^="probabilidadeRiscoTITT___"]').val(this.asText(el.dataset.riskProbability));
+  },
+
+  reindexRiskCards: function () {
+    const list = this.getContainer().find('#risk-matrix-list');
+    if (!list.length) return;
+
+    list.find('.titt-risk-item').each((idx, el) => {
+      const cardEl = el;
+      const newIndex = String(idx + 1);
+      cardEl.setAttribute('data-index', newIndex);
+
+      const fields = $(cardEl).find('.risk-fields');
+      if (!fields.length) return;
+
+      const rename = (prefix) => {
+        fields.find(`[name^="${prefix}___"]`).each((_, input) => {
+          $(input).attr('name', `${prefix}___${newIndex}`);
+        });
+      };
+
+      rename('tituloRiscoTITT');
+      rename('descricaoRiscoTITT');
+      rename('mitigacaoRiscoTITT');
+      rename('planoBRiscoTITT');
+      rename('nivelRiscoTITT');
+      rename('impactoRiscoTITT');
+      rename('probabilidadeRiscoTITT');
+    });
+  },
+
+  getRiskVisual: function (level) {
+    const normalized = (this.asText(level) || 'Alto').replace('Medio', 'Médio');
+
+    if (normalized === 'Baixo') {
+      return {
+        card: 'border border-green-200 bg-green-50 rounded-lg p-4',
+        title: 'text-green-900',
+        badge: 'px-2 py-1 bg-green-100 text-green-800 text-xs rounded',
+        meta: 'text-xs text-green-800'
+      };
+    }
+
+    if (normalized === 'Médio') {
+      return {
+        card: 'border border-yellow-200 bg-yellow-50 rounded-lg p-4',
+        title: 'text-yellow-900',
+        badge: 'px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded',
+        meta: 'text-xs text-yellow-800'
+      };
+    }
+
+    return {
+      card: 'border border-red-200 bg-red-50 rounded-lg p-4',
+      title: 'text-red-900',
+      badge: 'px-2 py-1 bg-red-100 text-red-800 text-xs rounded',
+      meta: 'text-xs text-red-800'
+    };
+  },
+
+  renderRiskReadOnlyCard: function (containerEl, cardEl) {
+    const container = containerEl && containerEl.jquery ? containerEl.get(0) : containerEl;
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!container || !el || !el.dataset) return;
+
+    const title = this.asText(el.dataset.riskTitle);
+    const description = this.asText(el.dataset.riskDescription);
+    const mitigation = this.asText(el.dataset.riskMitigation);
+    const fallback = this.asText(el.dataset.riskFallback);
+    const level = (this.asText(el.dataset.riskLevel) || 'Alto').replace('Medio', 'Médio');
+    const probability = (this.asText(el.dataset.riskProbability) || 'Alta').replace('Media', 'Média');
+    const impact = (this.asText(el.dataset.riskImpact) || 'Alto').replace('Medio', 'Médio');
+    const visual = this.getRiskVisual(level);
+
+    el.className = `${visual.card} risk-item titt-risk-item`;
+    container.innerHTML = `
+      <div class="flex items-start justify-between gap-3 mb-2">
+        <h5 class="font-medium ${this.escapeHtml(visual.title)} break-all">${this.escapeHtml(title)}</h5>
+        <span class="${this.escapeHtml(visual.badge)} shrink-0">${this.escapeHtml(level)}</span>
+      </div>
+      <div class="${this.escapeHtml(visual.meta)} break-all">Probabilidade: ${this.escapeHtml(probability)} | Impacto: ${this.escapeHtml(impact)}</div>
+      ${description ? `<div class="text-sm text-gray-700 mt-2 break-all"><strong>Descricao:</strong> ${this.escapeHtml(description)}</div>` : ''}
+      <div class="text-sm text-gray-700 mt-2 break-all"><strong>Mitigacao:</strong> ${this.escapeHtml(mitigation || 'Nao informado')}</div>
+      <div class="text-sm text-gray-700 mt-2 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Nao informado')}</div>
+      <div class="flex justify-end items-center gap-2 mt-2">
+        <button type="button" data-action="edit-risk-matrix" class="text-blue-500 hover:text-blue-700" title="Editar risco"><i class="fa-solid fa-pen"></i></button>
+        <button type="button" data-action="remove-risk-matrix" class="text-red-400 hover:text-red-600" title="Remover risco"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    `;
+  },
+
+  renderRiskEditCard: function (containerEl, cardEl) {
+    const container = containerEl && containerEl.jquery ? containerEl.get(0) : containerEl;
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!container || !el || !el.dataset) return;
+
+    const title = this.escapeHtml(this.asText(el.dataset.riskTitle));
+    const description = this.escapeHtml(this.asText(el.dataset.riskDescription));
+    const mitigation = this.escapeHtml(this.asText(el.dataset.riskMitigation));
+    const fallback = this.escapeHtml(this.asText(el.dataset.riskFallback));
+    const level = (this.asText(el.dataset.riskLevel) || 'Alto').replace('Medio', 'Médio');
+    const probability = (this.asText(el.dataset.riskProbability) || 'Alta').replace('Media', 'Média');
+    const impact = (this.asText(el.dataset.riskImpact) || 'Alto').replace('Medio', 'Médio');
+
+    container.innerHTML = `
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <input data-field="risk-title" type="text" value="${title}" placeholder="Novo risco" class="font-medium text-bevap-navy bg-transparent border-none p-0 focus:outline-none w-full">
+        <button type="button" data-action="remove-risk-matrix" class="text-red-400 hover:text-red-600" title="Remover risco"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="flex items-center gap-2">
+            <span class="text-gray-600 min-w-[84px]">Nivel:</span>
+            <select data-field="risk-level" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none">
+              <option ${level === 'Baixo' ? 'selected' : ''}>Baixo</option>
+              <option ${level === 'Médio' ? 'selected' : ''}>Médio</option>
+              <option ${level === 'Alto' ? 'selected' : ''}>Alto</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2 text-gray-600">
+            <span class="min-w-[84px]">Probabilidade:</span>
+            <select data-field="risk-probability" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none">
+              <option ${probability === 'Baixa' ? 'selected' : ''}>Baixa</option>
+              <option ${probability === 'Média' ? 'selected' : ''}>Média</option>
+              <option ${probability === 'Alta' ? 'selected' : ''}>Alta</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2 text-gray-600">
+            <span class="min-w-[84px]">Impacto:</span>
+            <select data-field="risk-impact" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none">
+              <option ${impact === 'Baixo' ? 'selected' : ''}>Baixo</option>
+              <option ${impact === 'Médio' ? 'selected' : ''}>Médio</option>
+              <option ${impact === 'Alto' ? 'selected' : ''}>Alto</option>
+            </select>
+          </div>
+        </div>
+        <div class="space-y-1 text-gray-700">
+          <strong class="block">Descricao:</strong>
+          <textarea data-field="risk-description" placeholder="Descreva o risco identificado..." rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none resize-none">${description}</textarea>
+        </div>
+        <div class="space-y-1 text-gray-700">
+          <strong class="block">Mitigacao:</strong>
+          <textarea data-field="risk-mitigation" placeholder="Descreva a estrategia de mitigacao..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none resize-none">${mitigation}</textarea>
+        </div>
+        <div class="space-y-1 text-gray-700">
+          <strong class="block">Plano B:</strong>
+          <textarea data-field="risk-fallback" placeholder="Descreva o plano B para este risco..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none resize-none">${fallback}</textarea>
+        </div>
+        <button type="button" data-action="confirm-risk-matrix" class="px-3 py-1.5 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors text-sm shrink-0">
+          <i class="fa-solid fa-check mr-1"></i>Confirmar
+        </button>
+      </div>
+    `;
+  },
+
+  showRiskReadOnly: function (cardEl) {
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el) return;
+    const view = $(el).find('.risk-view').first();
+    const edit = $(el).find('.risk-edit').first();
+    if (!view.length || !edit.length) return;
+    edit.addClass('hidden');
+    view.removeClass('hidden');
+    this.renderRiskReadOnlyCard(view.get(0), el);
+  },
+
+  showRiskEdit: function (cardEl) {
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el) return;
+    const view = $(el).find('.risk-view').first();
+    const edit = $(el).find('.risk-edit').first();
+    if (!view.length || !edit.length) return;
+    view.addClass('hidden');
+    edit.removeClass('hidden');
+    this.renderRiskEditCard(edit.get(0), el);
+  },
+
+  confirmRiskMatrixItem: function (btnEl) {
+    const card = $(btnEl).closest('.titt-risk-item');
+    if (!card.length) return;
+
+    const title = this.asText(card.find('.risk-edit [data-field="risk-title"]').val());
+    if (!title) {
+      this.showToast('Campo obrigatorio', 'Preencha o titulo do risco antes de confirmar.', 'warning');
+      return;
+    }
+
+    const data = {
+      title: title,
+      description: this.asText(card.find('.risk-edit [data-field="risk-description"]').val()),
+      mitigation: this.asText(card.find('.risk-edit [data-field="risk-mitigation"]').val()),
+      fallback: this.asText(card.find('.risk-edit [data-field="risk-fallback"]').val()),
+      level: this.asText(card.find('.risk-edit [data-field="risk-level"]').val()),
+      impact: this.asText(card.find('.risk-edit [data-field="risk-impact"]').val()),
+      probability: this.asText(card.find('.risk-edit [data-field="risk-probability"]').val())
+    };
+
+    this.setRiskCardData(card, data);
+    card.attr('data-confirmed', '1');
+    this.syncRiskInputsFromDataset(card);
+    this.showRiskReadOnly(card);
+    this.updateRiskEmptyState();
+  },
+
+  editRiskMatrixItem: function (btnEl) {
+    const card = $(btnEl).closest('.titt-risk-item');
+    if (!card.length) return;
+    card.attr('data-confirmed', '0');
+    this.showRiskEdit(card);
+    this.updateRiskEmptyState();
   },
 
   removeRiskMatrixItem: function (target) {
@@ -736,68 +996,33 @@ const technicalTriageController = {
     if (!item.length) return;
     item.remove();
 
-    const list = this.getContainer().find('#risk-matrix-list');
-    const empty = this.getContainer().find('#risk-matrix-empty');
-    if (list.length && empty.length) {
-      empty.toggleClass('hidden', list.find('.titt-risk-item').length > 0);
-    }
+    this.reindexRiskCards();
+    this.updateRiskEmptyState();
   },
 
   addDependencyItem: function (data) {
     const list = this.getContainer().find('#dependencies-list');
-    const empty = this.getContainer().find('#dependencies-empty');
     if (!list.length) return;
 
-    const title = this.escapeHtml(this.asText(data && data.title));
-    const status = this.asText(data && data.status);
-    const owner = this.escapeHtml(this.asText(data && data.owner));
-    const mitigation = this.escapeHtml(this.asText(data && data.mitigation));
+    const cardEl = document.createElement('div');
+    cardEl.classList.add('titt-dependency-item', 'dependency-item');
+    const confirmed = Boolean(data && data.confirmed);
+    cardEl.setAttribute('data-confirmed', confirmed ? '1' : '0');
+    cardEl.setAttribute('data-index', String(list.find('.titt-dependency-item').length + 1));
 
-    const html = `
-      <div class="titt-dependency-item border border-gray-200 rounded-lg p-4 bg-white">
-        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-          <div class="flex-1">
-            <label class="block text-xs font-medium text-gray-600 mb-1">Título</label>
-            <input type="text" data-field="dep-title" value="${title}" placeholder="Ex: Homologação Segurança" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
-          </div>
+    this.renderDependencyCardShell(cardEl, {
+      title: this.asText(data && data.title),
+      status: this.asText(data && data.status) || 'Pendente',
+      owner: this.asText(data && data.owner),
+      mitigation: this.asText(data && data.mitigation),
+      fallback: this.asText(data && data.fallback)
+    });
 
-          <div class="w-full md:w-48">
-            <label class="block text-xs font-medium text-gray-600 mb-1">Status</label>
-            <select data-field="dep-status" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
-              <option value="">Selecione</option>
-              <option value="Pendente">Pendente</option>
-              <option value="Bloqueada">Bloqueada</option>
-              <option value="Concluída">Concluída</option>
-            </select>
-          </div>
+    if (confirmed) this.showDependencyReadOnly(cardEl);
+    else this.showDependencyEdit(cardEl);
 
-          <div class="flex md:items-end pt-1">
-            <button type="button" data-action="remove-dependency" class="w-10 h-10 inline-flex items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors" title="Remover dependência">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          <div>
-            <label class="block text-xs font-medium text-gray-600 mb-1">Responsável</label>
-            <input type="text" data-field="dep-owner" value="${owner}" placeholder="Ex: TI Infraestrutura" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
-          </div>
-        </div>
-
-        <div class="mt-4">
-          <label class="block text-xs font-medium text-gray-600 mb-1">Mitigação</label>
-          <textarea rows="2" data-field="dep-mitigation" placeholder="Descreva a estratégia de mitigação..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm">${mitigation}</textarea>
-        </div>
-      </div>
-    `;
-
-    list.append(html);
-
-    const $item = list.find('.titt-dependency-item').last();
-    $item.find('[data-field="dep-status"]').val(status);
-
-    if (empty.length) empty.addClass('hidden');
+    list.append(cardEl);
+    this.updateDependencyEmptyState();
   },
 
   removeDependencyItem: function (target) {
@@ -805,11 +1030,236 @@ const technicalTriageController = {
     if (!item.length) return;
     item.remove();
 
+    this.reindexDependencyCards();
+    this.updateDependencyEmptyState();
+  },
+
+  updateDependencyEmptyState: function () {
+    const root = this.getContainer();
+    const empty = root.find('#dependencies-empty');
+    if (!empty.length) return;
+    const any = root.find('#dependencies-list .titt-dependency-item[data-confirmed="1"]').length > 0;
+    empty.toggleClass('hidden', any);
+  },
+
+  reindexDependencyCards: function () {
     const list = this.getContainer().find('#dependencies-list');
-    const empty = this.getContainer().find('#dependencies-empty');
-    if (list.length && empty.length) {
-      empty.toggleClass('hidden', list.find('.titt-dependency-item').length > 0);
+    if (!list.length) return;
+
+    list.find('.titt-dependency-item').each((idx, el) => {
+      const cardEl = el;
+      const newIndex = String(idx + 1);
+      cardEl.setAttribute('data-index', newIndex);
+
+      const fields = $(cardEl).find('.dependency-fields');
+      if (!fields.length) return;
+
+      const rename = (prefix) => {
+        fields.find(`[name^="${prefix}___"]`).each((_, input) => {
+          $(input).attr('name', `${prefix}___${newIndex}`);
+        });
+      };
+
+      rename('tituloDependenciaTITT');
+      rename('statusDependenciaTITT');
+      rename('responsavelDependenciaTITT');
+      rename('mitigacaoDependenciaTITT');
+      rename('planoBDependenciaTITT');
+    });
+  },
+
+  renderDependencyCardShell: function (cardEl, data) {
+    if (!cardEl) return;
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el) return;
+    const idx = this.asText(el.getAttribute('data-index')) || '1';
+
+    const title = this.escapeHtml(this.asText(data && data.title));
+    const status = this.escapeHtml(this.asText(data && data.status) || 'Pendente');
+    const owner = this.escapeHtml(this.asText(data && data.owner));
+    const mitigation = this.escapeHtml(this.asText(data && data.mitigation));
+    const fallback = this.escapeHtml(this.asText(data && data.fallback));
+
+    el.innerHTML = `
+      <div class="dependency-fields hidden">
+        <input type="text" name="tituloDependenciaTITT___${this.escapeHtml(idx)}" value="${title}" />
+        <input type="text" name="statusDependenciaTITT___${this.escapeHtml(idx)}" value="${status}" />
+        <input type="text" name="responsavelDependenciaTITT___${this.escapeHtml(idx)}" value="${owner}" />
+        <input type="text" name="mitigacaoDependenciaTITT___${this.escapeHtml(idx)}" value="${mitigation}" />
+        <input type="text" name="planoBDependenciaTITT___${this.escapeHtml(idx)}" value="${fallback}" />
+      </div>
+      <div class="dependency-edit"></div>
+      <div class="dependency-view"></div>
+    `;
+
+    this.setDependencyCardData(el, {
+      title: this.asText(data && data.title),
+      status: this.asText(data && data.status) || 'Pendente',
+      owner: this.asText(data && data.owner),
+      mitigation: this.asText(data && data.mitigation),
+      fallback: this.asText(data && data.fallback)
+    });
+  },
+
+  setDependencyCardData: function (cardEl, data) {
+    if (!cardEl) return;
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el || !el.dataset) return;
+    el.dataset.dependencyTitle = this.asText(data && data.title);
+    el.dataset.dependencyStatus = this.asText(data && data.status) || 'Pendente';
+    el.dataset.dependencyOwner = this.asText(data && data.owner);
+    el.dataset.dependencyMitigation = this.asText(data && data.mitigation);
+    el.dataset.dependencyFallback = this.asText(data && data.fallback);
+  },
+
+  syncDependencyInputsFromDataset: function (cardEl) {
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el || !el.dataset) return;
+    const wrap = $(el).find('.dependency-fields');
+    if (!wrap.length) return;
+
+    wrap.find('[name^="tituloDependenciaTITT___"]').val(this.asText(el.dataset.dependencyTitle));
+    wrap.find('[name^="statusDependenciaTITT___"]').val(this.asText(el.dataset.dependencyStatus));
+    wrap.find('[name^="responsavelDependenciaTITT___"]').val(this.asText(el.dataset.dependencyOwner));
+    wrap.find('[name^="mitigacaoDependenciaTITT___"]').val(this.asText(el.dataset.dependencyMitigation));
+    wrap.find('[name^="planoBDependenciaTITT___"]').val(this.asText(el.dataset.dependencyFallback));
+  },
+
+  getDependencyStatusBadgeHtml: function (status) {
+    const value = this.asText(status) || 'Pendente';
+    if (value === 'Concluida' || value === 'Concluída') return '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded"><i class="fa-solid fa-check mr-1"></i>Concluida</span>';
+    if (value === 'Em andamento') return '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded"><i class="fa-solid fa-spinner mr-1"></i>Em andamento</span>';
+    if (value === 'Bloqueada') return '<span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded"><i class="fa-solid fa-ban mr-1"></i>Bloqueada</span>';
+    return '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded"><i class="fa-solid fa-clock mr-1"></i>Pendente</span>';
+  },
+
+  renderDependencyReadOnlyCard: function (containerEl, cardEl) {
+    const container = containerEl && containerEl.jquery ? containerEl.get(0) : containerEl;
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!container || !el || !el.dataset) return;
+
+    const title = this.asText(el.dataset.dependencyTitle);
+    const status = this.asText(el.dataset.dependencyStatus) || 'Pendente';
+    const owner = this.asText(el.dataset.dependencyOwner);
+    const mitigation = this.asText(el.dataset.dependencyMitigation);
+    const fallback = this.asText(el.dataset.dependencyFallback);
+
+    el.className = 'border border-gray-200 rounded-lg p-4 dependency-item titt-dependency-item';
+    container.innerHTML = `
+      <div class="flex items-start justify-between gap-3 mb-2">
+        <h5 class="font-medium text-bevap-navy break-all">${this.escapeHtml(title)}</h5>
+        ${this.getDependencyStatusBadgeHtml(status)}
+      </div>
+      <div class="text-sm text-gray-600 mb-1 break-all"><strong>Responsavel:</strong> ${this.escapeHtml(owner || 'Nao informado')}</div>
+      <div class="text-sm text-gray-700 mb-1 break-all"><strong>Mitigacao:</strong> ${this.escapeHtml(mitigation || 'Nao informado')}</div>
+      <div class="text-sm text-gray-700 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Nao informado')}</div>
+      <div class="flex justify-end items-center gap-2 mt-2">
+        <button type="button" data-action="edit-dependency" class="text-blue-500 hover:text-blue-700" title="Editar dependência"><i class="fa-solid fa-pen"></i></button>
+        <button type="button" data-action="remove-dependency" class="text-red-400 hover:text-red-600" title="Remover dependência"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    `;
+  },
+
+  renderDependencyEditCard: function (containerEl, cardEl) {
+    const container = containerEl && containerEl.jquery ? containerEl.get(0) : containerEl;
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!container || !el || !el.dataset) return;
+
+    const title = this.escapeHtml(this.asText(el.dataset.dependencyTitle));
+    const status = this.asText(el.dataset.dependencyStatus) || 'Pendente';
+    const owner = this.escapeHtml(this.asText(el.dataset.dependencyOwner));
+    const mitigation = this.escapeHtml(this.asText(el.dataset.dependencyMitigation));
+    const fallback = this.escapeHtml(this.asText(el.dataset.dependencyFallback));
+
+    container.innerHTML = `
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <input data-field="dependency-title" type="text" value="${title}" placeholder="Nova dependência" class="font-medium text-bevap-navy bg-transparent border-none p-0 focus:outline-none w-full">
+        <button type="button" data-action="remove-dependency" class="text-red-400 hover:text-red-600" title="Remover dependência"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div class="flex items-center gap-2">
+          <span class="text-gray-600 min-w-[84px]">Status:</span>
+          <select data-field="dependency-status" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none">
+            <option ${status === 'Pendente' ? 'selected' : ''}>Pendente</option>
+            <option ${status === 'Em andamento' ? 'selected' : ''}>Em andamento</option>
+            <option ${status === 'Bloqueada' ? 'selected' : ''}>Bloqueada</option>
+            <option ${status === 'Concluida' || status === 'Concluída' ? 'selected' : ''}>Concluida</option>
+          </select>
+        </div>
+        <div class="space-y-1 text-gray-600">
+          <span class="block">Responsavel:</span>
+          <input data-field="dependency-owner" type="text" value="${owner}" placeholder="Informe o responsável" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">
+        </div>
+        <div class="space-y-1 text-gray-700">
+          <strong class="block">Mitigacao:</strong>
+          <textarea data-field="dependency-mitigation" placeholder="Descreva a mitigação..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${mitigation}</textarea>
+        </div>
+        <div class="space-y-1 text-gray-700">
+          <strong class="block">Plano B:</strong>
+          <textarea data-field="dependency-fallback" placeholder="Descreva o plano B..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${fallback}</textarea>
+        </div>
+        <button type="button" data-action="confirm-dependency" class="px-3 py-1.5 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors text-sm shrink-0">
+          <i class="fa-solid fa-check mr-1"></i>Confirmar
+        </button>
+      </div>
+    `;
+  },
+
+  showDependencyReadOnly: function (cardEl) {
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el) return;
+    const view = $(el).find('.dependency-view').first();
+    const edit = $(el).find('.dependency-edit').first();
+    if (!view.length || !edit.length) return;
+    edit.addClass('hidden');
+    view.removeClass('hidden');
+    this.renderDependencyReadOnlyCard(view.get(0), el);
+    this.updateDependencyEmptyState();
+  },
+
+  showDependencyEdit: function (cardEl) {
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el) return;
+    const view = $(el).find('.dependency-view').first();
+    const edit = $(el).find('.dependency-edit').first();
+    if (!view.length || !edit.length) return;
+    view.addClass('hidden');
+    edit.removeClass('hidden');
+    this.renderDependencyEditCard(edit.get(0), el);
+    this.updateDependencyEmptyState();
+  },
+
+  confirmDependencyItem: function (btnEl) {
+    const card = $(btnEl).closest('.titt-dependency-item');
+    if (!card.length) return;
+
+    const title = this.asText(card.find('.dependency-edit [data-field="dependency-title"]').val());
+    if (!title) {
+      this.showToast('Campo obrigatorio', 'Preencha a dependência antes de confirmar.', 'warning');
+      return;
     }
+
+    const data = {
+      title,
+      status: this.asText(card.find('.dependency-edit [data-field="dependency-status"]').val()),
+      owner: this.asText(card.find('.dependency-edit [data-field="dependency-owner"]').val()),
+      mitigation: this.asText(card.find('.dependency-edit [data-field="dependency-mitigation"]').val()),
+      fallback: this.asText(card.find('.dependency-edit [data-field="dependency-fallback"]').val())
+    };
+
+    this.setDependencyCardData(card, data);
+    card.attr('data-confirmed', '1');
+    this.syncDependencyInputsFromDataset(card);
+    this.showDependencyReadOnly(card);
+    this.updateDependencyEmptyState();
+  },
+
+  editDependencyItem: function (btnEl) {
+    const card = $(btnEl).closest('.titt-dependency-item');
+    if (!card.length) return;
+    card.attr('data-confirmed', '0');
+    this.showDependencyEdit(card);
+    this.updateDependencyEmptyState();
   },
 
   handleExecutionModeChange: function () {
@@ -1218,48 +1668,20 @@ const technicalTriageController = {
       riscosDependenciasMapeadosTITT: this.getBooleanFieldValue('#check-risks-mapped')
     };
 
-    const risks = root.find('#risk-matrix-list .titt-risk-item').map((_, el) => {
-      const $el = $(el);
-      return {
-        title: this.asText($el.find('[data-field="risk-title"]').val()),
-        description: this.asText($el.find('[data-field="risk-description"]').val()),
-        mitigation: this.asText($el.find('[data-field="risk-mitigation"]').val()),
-        level: this.asText($el.find('[data-field="risk-level"]').val()),
-        impact: this.asText($el.find('[data-field="risk-impact"]').val()),
-        probability: this.asText($el.find('[data-field="risk-probability"]').val())
-      };
-    }).get().filter((item) => {
-      return item.title || item.description || item.mitigation || item.level || item.impact || item.probability;
+    const allowedRiskFieldName = /^(tituloRiscoTITT|descricaoRiscoTITT|mitigacaoRiscoTITT|planoBRiscoTITT|nivelRiscoTITT|impactoRiscoTITT|probabilidadeRiscoTITT)___\d+$/;
+    root.find('#risk-matrix-list .titt-risk-item[data-confirmed="1"] .risk-fields :input[name]').each((_, input) => {
+      const $input = $(input);
+      const name = this.asText($input.attr('name'));
+      if (!name || !allowedRiskFieldName.test(name)) return;
+      cardData[name] = this.asText($input.val());
     });
 
-    risks.forEach((risk, index) => {
-      const i = index + 1;
-      cardData[`tituloRiscoTITT___${i}`] = risk.title;
-      cardData[`descricaoRiscoTITT___${i}`] = risk.description;
-      cardData[`mitigacaoRiscoTITT___${i}`] = risk.mitigation;
-      cardData[`nivelRiscoTITT___${i}`] = risk.level;
-      cardData[`impactoRiscoTITT___${i}`] = risk.impact;
-      cardData[`probabilidadeRiscoTITT___${i}`] = risk.probability;
-    });
-
-    const dependencies = root.find('#dependencies-list .titt-dependency-item').map((_, el) => {
-      const $el = $(el);
-      return {
-        title: this.asText($el.find('[data-field="dep-title"]').val()),
-        status: this.asText($el.find('[data-field="dep-status"]').val()),
-        owner: this.asText($el.find('[data-field="dep-owner"]').val()),
-        mitigation: this.asText($el.find('[data-field="dep-mitigation"]').val())
-      };
-    }).get().filter((item) => {
-      return item.title || item.status || item.owner || item.mitigation;
-    });
-
-    dependencies.forEach((dep, index) => {
-      const i = index + 1;
-      cardData[`tituloDependenciaTITT___${i}`] = dep.title;
-      cardData[`statusDependenciaTITT___${i}`] = dep.status;
-      cardData[`responsavelDependenciaTITT___${i}`] = dep.owner;
-      cardData[`mitigacaoDependenciaTITT___${i}`] = dep.mitigation;
+    const allowedDependencyFieldName = /^(tituloDependenciaTITT|statusDependenciaTITT|responsavelDependenciaTITT|mitigacaoDependenciaTITT|planoBDependenciaTITT)___\d+$/;
+    root.find('#dependencies-list .titt-dependency-item[data-confirmed="1"] .dependency-fields :input[name]').each((_, input) => {
+      const $input = $(input);
+      const name = this.asText($input.attr('name'));
+      if (!name || !allowedDependencyFieldName.test(name)) return;
+      cardData[name] = this.asText($input.val());
     });
 
     return Object.keys(cardData).map((fieldName) => {

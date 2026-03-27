@@ -27,11 +27,17 @@
                             <button type="button" data-tab="triagem-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
                                 <i class="fa-solid fa-route mr-2"></i>Triagem TI
                             </button>
-                            <button type="button" data-tab="fornecedor" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                                <i class="fa-solid fa-building mr-2"></i>Fornecedor
+                            <button type="button" data-tab="fornecedor" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
+                                    <i class="fa-solid fa-exclamation text-[10px]"></i>
+                                </span>
+                                <i class="fa-solid fa-building mr-2"></i>Dados do Fornecedor
                             </button>
-                            <button type="button" data-tab="proposta" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                                <i class="fa-solid fa-file-invoice-dollar mr-2"></i>Proposta
+                            <button type="button" data-tab="proposta" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
+                                    <i class="fa-solid fa-exclamation text-[10px]"></i>
+                                </span>
+                                <i class="fa-solid fa-file-invoice-dollar mr-2"></i>Dados da Proposta Comercial
                             </button>
                             <button type="button" data-tab="checklist" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
                                 <i class="fa-solid fa-tasks mr-2"></i>Checklist
@@ -46,6 +52,9 @@
                         </button>
 
                         <button type="button" data-tabs-scroll-arrow="right" aria-label="Rolar abas para direita" class="absolute right-0 top-0 bottom-0 w-24 rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent shadow-none text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300 flex items-center justify-end pr-2">
+                            <span class="tab-notice-badge hidden absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
+                                <i class="fa-solid fa-exclamation text-[10px]"></i>
+                            </span>
                             <span class="flex items-center gap-0 text-base leading-none">
                                 <i class="fa-solid fa-chevron-right"></i>
                                 <i class="fa-solid fa-chevron-right"></i>
@@ -136,7 +145,7 @@
                                     <input id="proposal-reference-number" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Vigencia em Dias</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Vigencia em Dias <span class="text-red-500">*</span></label>
                                     <input id="proposal-validity-days" type="number" min="1" step="1" inputmode="numeric" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                                 </div>
                             </div>
@@ -144,22 +153,22 @@
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Valor Total <span class="text-red-500">*</span></label>
-                                    <input id="proposal-total-value" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                    <input id="proposal-total-value" type="text" readonly class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Moeda</label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Moeda <span class="text-red-500">*</span></label>
                                     <div id="proposal-currency-filter"></div>
                                     <input id="proposal-currency" type="hidden">
                                     <input id="proposal-currency-symbol" type="hidden">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Prazo Estimado</label>
-                                    <input id="proposal-estimated-deadline" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Prazo estimado semana <span class="text-red-500">*</span></label>
+                                    <input id="proposal-estimated-deadline" type="number" min="1" step="1" inputmode="numeric" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                                 </div>
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Condicao de Pagamento</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Condicao de Pagamento <span class="text-red-500">*</span></label>
                                 <div id="proposal-payment-condition-filter"></div>
                                 <input id="proposal-payment-condition" type="hidden">
                                 <input id="proposal-payment-condition-code" type="hidden">
@@ -173,7 +182,7 @@
 
                         <section>
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Itens / Servicos</h3>
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Itens / Servicos <span class="text-red-500">*</span></h3>
                                 <button type="button" data-action="add-proposal-item" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
                                     <i class="fa-solid fa-plus mr-2"></i>Adicionar
                                 </button>
@@ -196,25 +205,36 @@
                         </section>
 
                         <section>
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Riscos Iniciais</h3>
-                                <button type="button" data-action="add-proposal-risk" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
-                                    <i class="fa-solid fa-plus mr-2"></i>Adicionar
-                                </button>
-                            </div>
-                            <div id="proposal-risk-list" class="space-y-3"></div>
-                            <div id="proposal-risk-empty" class="text-sm text-gray-500 hidden">Nenhum risco informado.</div>
-                        </section>
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4">Riscos &amp; Pré-requisitos</h3>
+                            <div class="grid grid-cols-1 gap-6">
+                                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="text-lg font-semibold text-bevap-navy flex items-center">
+                                            <i class="fa-solid fa-triangle-exclamation text-yellow-500 mr-2"></i>
+                                            Matriz de Riscos
+                                        </h4>
+                                        <button type="button" data-action="add-proposal-risk" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                            <i class="fa-solid fa-plus mr-2"></i>Adicionar
+                                        </button>
+                                    </div>
+                                    <div id="proposal-risk-list" class="space-y-3"></div>
+                                    <div id="proposal-risk-empty" class="text-sm text-gray-500 hidden">Nenhum risco informado.</div>
+                                </div>
 
-                        <section>
-                            <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Pre-requisitos</h3>
-                                <button type="button" data-action="add-proposal-prerequisite" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
-                                    <i class="fa-solid fa-plus mr-2"></i>Adicionar
-                                </button>
+                                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                                    <div class="flex items-center justify-between mb-4">
+                                        <h4 class="text-lg font-semibold text-bevap-navy flex items-center">
+                                            <i class="fa-solid fa-list-check text-blue-600 mr-2"></i>
+                                            Pré-requisitos
+                                        </h4>
+                                        <button type="button" data-action="add-proposal-prerequisite" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                            <i class="fa-solid fa-plus mr-2"></i>Adicionar
+                                        </button>
+                                    </div>
+                                    <div id="proposal-prerequisite-list" class="space-y-2"></div>
+                                    <div id="proposal-prerequisite-empty" class="text-sm text-gray-500 hidden">Nenhum pre-requisito informado.</div>
+                                </div>
                             </div>
-                            <div id="proposal-prerequisite-list" class="space-y-2"></div>
-                            <div id="proposal-prerequisite-empty" class="text-sm text-gray-500 hidden">Nenhum pre-requisito informado.</div>
                         </section>
 
                         <section>

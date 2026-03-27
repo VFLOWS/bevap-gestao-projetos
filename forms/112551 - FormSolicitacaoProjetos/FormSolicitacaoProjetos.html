@@ -236,6 +236,7 @@
 				<th>TÃ­tulo</th>
 				<th>DescriÃ§Ã£o</th>
 				<th>MitigaÃ§Ã£o</th>
+				<th>Plano B</th>
 				<th>NÃ­vel do Risco</th>
 				<th>Impacto</th>
 				<th>Probabilidade</th>
@@ -246,6 +247,7 @@
 				<td><input type="text" name="tituloRiscoTITT" class="form-control"></td>
 				<td><input type="text" name="descricaoRiscoTITT" class="form-control"></td>
 				<td><input type="text" name="mitigacaoRiscoTITT" class="form-control"></td>
+				<td><input type="text" name="planoBRiscoTITT" class="form-control"></td>
 				<td><input type="text" name="nivelRiscoTITT" class="form-control"></td>
 				<td><input type="text" name="impactoRiscoTITT" class="form-control"></td>
 				<td><input type="text" name="probabilidadeRiscoTITT" class="form-control"></td>
@@ -261,6 +263,7 @@
 				<th>Status</th>
 				<th>ResponsÃ¡vel</th>
 				<th>MitigaÃ§Ã£o</th>
+				<th>Plano B</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -269,6 +272,7 @@
 				<td><input type="text" name="statusDependenciaTITT" class="form-control"></td>
 				<td><input type="text" name="responsavelDependenciaTITT" class="form-control"></td>
 				<td><input type="text" name="mitigacaoDependenciaTITT" class="form-control"></td>
+				<td><input type="text" name="planoBDependenciaTITT" class="form-control"></td>
 			</tr>
 		</tbody>
 	</table>
@@ -414,6 +418,7 @@
 				<th>TÃ­tulo do risco</th>
 				<th>DescriÃ§Ã£o</th>
 				<th>MitigaÃ§Ã£o</th>
+				<th>Plano B</th>
 				<th>NÃ­vel</th>
 				<th>Impacto</th>
 				<th>Probabilidade</th>
@@ -425,6 +430,7 @@
 				<td><input type="text" name="tituloRiscoTIPC" class="form-control"></td>
 				<td><input type="text" name="descricaoRiscoTIPC" class="form-control"></td>
 				<td><input type="text" name="mitigacaoRiscoTIPC" class="form-control"></td>
+				<td><input type="text" name="planoBRiscoTIPC" class="form-control"></td>
 				<td><input type="text" name="nivelRiscoTIPC" class="form-control"></td>
 				<td><input type="text" name="impactoRiscoTIPC" class="form-control"></td>
 				<td><input type="text" name="probabilidadeRiscoTIPC" class="form-control"></td>
@@ -437,11 +443,21 @@
 	<table class="table table-bordered" id="tblPreRequisitosTIPC" tablename="tblPreRequisitosTIPC" noaddbutton="true" nodeletebutton="true"  >
 		<thead>
 			<tr>
-				<th>PrÃ©-requisito</th>
+				<th>TÃ­tulo</th>
+				<th>Status</th>
+				<th>ResponsÃ¡vel</th>
+				<th>MitigaÃ§Ã£o</th>
+				<th>Plano B</th>
+				<th>PrÃ©-requisito (legado)</th>
 			</tr>
 		</thead>
 		<tbody>
 			<tr>
+				<td><input type="text" name="tituloPreRequisitoTIPC" class="form-control"></td>
+				<td><input type="text" name="statusPreRequisitoTIPC" class="form-control"></td>
+				<td><input type="text" name="responsavelPreRequisitoTIPC" class="form-control"></td>
+				<td><input type="text" name="mitigacaoPreRequisitoTIPC" class="form-control"></td>
+				<td><input type="text" name="planoBPreRequisitoTIPC" class="form-control"></td>
 				<td><input type="text" name="preRequisitoTIPC" class="form-control"></td>
 			</tr>
 		</tbody>
@@ -481,6 +497,8 @@
 	<!-- GCC - APROVAR CUSTO - GCC -->
 	<label>capex</label>
 	<input type="text" name="capexGCC" id="capexGCC">
+		<input type="text" name="valorCapexGCC" id="valorCapexGCC">
+			<input type="text" name="naturezaCapexGCC" id="naturezaCapexGCC">
 
 	<table class="table table-bordered" id="tblNaturezaCustoCapexGCC" tablename="tblNaturezaCustoCapexGCC" noaddbutton="true" nodeletebutton="true"  >
 		<thead>
@@ -505,6 +523,9 @@
 
 	<label>opex</label>
 	<input type="text" name="opexGCC" id="opexGCC">
+	<input type="text" name="valorOpexGCC" id="valorOpexGCC">
+			<input type="text" name="naturezaOpexGCC" id="naturezaOpexGCC">
+
 
 	<table class="table table-bordered" id="tblNaturezaCustoOpexGCC" tablename="tblNaturezaCustoOpexGCC" noaddbutton="true" nodeletebutton="true"  >
 		<thead>
