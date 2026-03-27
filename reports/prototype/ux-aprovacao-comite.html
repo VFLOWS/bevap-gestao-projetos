@@ -68,10 +68,10 @@
     </div>
 </header>
 
-<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+<main id="main-content" class="pt-32 pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto mt-6">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div id="content-section" class="lg:col-span-2">
-            <div id="tabs-navigation" class="bg-white rounded-lg shadow-md mb-6">
+            <div id="tabs-navigation" class="bg-white rounded-lg shadow-md mb-0">
                 <div class="border-b border-gray-200">
                     <div class="relative">
                         <div id="form-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
@@ -87,11 +87,17 @@
                             <button type="button" onclick="switchTab('triagem-ti')" id="tab-triagem-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
                                 <i class="fa-solid fa-route mr-2"></i>Triagem TI
                             </button>
+                            <button type="button" onclick="switchTab('proposta-fornecedor')" id="tab-proposta-fornecedor" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                                <i class="fa-solid fa-handshake mr-2"></i>Proposta do Fornecedor
+                            </button>
                             <button type="button" onclick="switchTab('business-case')" id="tab-business-case" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
                                 <i class="fa-solid fa-briefcase mr-2"></i>Business Case
                             </button>
                             <button type="button" onclick="switchTab('risk-compliance')" id="tab-risk-compliance" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
                                 <i class="fa-solid fa-shield-alt mr-2"></i>Risco & Compliance
+                            </button>
+                            <button type="button" onclick="switchTab('custo-orcamento')" id="tab-custo-orcamento" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
+                                <i class="fa-solid fa-dollar-sign mr-2"></i>Custo & Orçamento
                             </button>
                             <button type="button" onclick="switchTab('documents')" id="tab-documents" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap">
                                 <i class="fa-solid fa-file-alt mr-2"></i>Documentos
@@ -115,7 +121,7 @@
                 </div>
             </div>
 
-            <div id="tab-content-solicitacao" class="tab-content bg-white rounded-lg shadow-md p-6">
+            <div id="tab-content-solicitacao" class="tab-content bg-white  shadow-md p-6">
                 <div class="space-y-6">
                     <div class="p-5 bg-white border border-gray-200 rounded-lg">
                         <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-4">Dados Básicos</h3>
@@ -423,19 +429,298 @@
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                        <h4 class="text-sm font-semibold text-bevap-navy mb-2 flex items-center">
+                    <div class="bg-white border border-slate-200 rounded-xl p-5">
+                        <h4 class="text-lg font-semibold text-bevap-navy mb-5 flex items-center">
                             <i class="fa-solid fa-shield-halved text-bevap-gold mr-2"></i>
-                            Riscos e Dependências Monitoradas
+                            Riscos & Dependências Monitoradas
                         </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                            <div class="flex items-start bg-white border border-yellow-200 rounded-lg p-3">
-                                <i class="fa-solid fa-triangle-exclamation text-bevap-gold mr-2 mt-0.5"></i>
-                                <span class="text-gray-700">Dependência de atualização do servidor antes do kickoff técnico.</span>
+                        <div class="space-y-6">
+                            <div>
+                                <h5 class="text-lg font-semibold text-bevap-navy mb-3 flex items-center">
+                                    <i class="fa-solid fa-triangle-exclamation text-yellow-500 mr-2"></i>
+                                    Matriz de Riscos
+                                </h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div class="border border-yellow-300 rounded-xl p-4 bg-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                        <div class="flex items-start justify-between mb-2 gap-3">
+                                            <h6 class="font-medium text-bevap-navy">Integração SSO com legado</h6>
+                                            <span class="text-red-700 text-xs font-semibold">Alto</span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-2">Probabilidade: Alta | Impacto: Alto</div>
+                                        <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Teste antecipado com sistemas legados</div>
+                                        <div class="text-sm text-gray-700"><strong>Plano B:</strong> Implementação gradual por sistema</div>
+                                    </div>
+                                    <div class="border border-yellow-300 rounded-xl p-4 bg-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                        <div class="flex items-start justify-between mb-2 gap-3">
+                                            <h6 class="font-medium text-bevap-navy">Disponibilidade da equipe</h6>
+                                            <span class="text-yellow-700 text-xs font-semibold">Médio</span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-2">Probabilidade: Média | Impacto: Médio</div>
+                                        <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Backup de recursos internos</div>
+                                        <div class="text-sm text-gray-700"><strong>Plano B:</strong> Extensão de prazo se necessário</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="flex items-start bg-white border border-yellow-200 rounded-lg p-3">
-                                <i class="fa-solid fa-triangle-exclamation text-bevap-gold mr-2 mt-0.5"></i>
-                                <span class="text-gray-700">Validação com área de negócio para fechamento de escopo contratual.</span>
+                            <div>
+                                <h5 class="text-lg font-semibold text-bevap-navy mb-3 flex items-center">
+                                    <i class="fa-solid fa-link text-blue-600 mr-2"></i>
+                                    Dependências Internas/Externas
+                                </h5>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                        <div class="flex items-start justify-between mb-2 gap-3">
+                                            <h6 class="font-medium text-bevap-navy">Acesso ao Active Directory</h6>
+                                            <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Pendente</span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-1"><strong>Responsável:</strong> TI Infraestrutura</div>
+                                        <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Follow-up diário com time de infraestrutura até liberação final</div>
+                                        <div class="text-sm text-gray-700"><strong>Plano B:</strong> Provisionar acesso temporário via ambiente de homologação espelhado</div>
+                                    </div>
+                                    <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                        <div class="flex items-start justify-between mb-2 gap-3">
+                                            <h6 class="font-medium text-bevap-navy">Homologação Segurança</h6>
+                                            <span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded">Bloqueada</span>
+                                        </div>
+                                        <div class="text-sm text-gray-600 mb-1"><strong>Responsável:</strong> Segurança da Informação</div>
+                                        <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Escalar aprovação com comitê de segurança e gestor da área</div>
+                                        <div class="text-sm text-gray-700"><strong>Plano B:</strong> Replanejar rollout por ondas iniciando pelos módulos não críticos</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-content-proposta-fornecedor" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                <div class="space-y-6">
+                    <div>
+                        <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                            <i class="fa-solid fa-handshake mr-3 text-bevap-gold"></i>
+                            Proposta do Fornecedor
+                        </h2>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Fornecedor</h3>
+                                <div class="space-y-2 text-sm">
+                                    <div class="font-medium text-gray-900">TechPartners Ltda.</div>
+                                    <div class="text-gray-600">CNPJ: 12.345.678/0001-90</div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Contato Principal</h3>
+                                <div class="space-y-1 text-sm">
+                                    <div class="font-medium text-gray-900">Ana Souza</div>
+                                    <div class="text-gray-600">ana@techpartners.com</div>
+                                    <div class="text-gray-600">(11) 99999-8888</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
+                                <div class="text-lg font-bold text-bevap-navy">R$ 128.450,00</div>
+                                <div class="text-xs text-green-600">BRL</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-xs text-gray-500 uppercase tracking-wide">Condição</div>
+                                <div class="text-sm font-medium text-gray-900">30% / 70%</div>
+                                <div class="text-xs text-gray-600">Antecipado / Entrega</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo</div>
+                                <div class="text-lg font-bold text-bevap-navy">8 semanas</div>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="text-xs text-gray-500 uppercase tracking-wide">Vigência</div>
+                                <div class="text-sm font-medium text-gray-900">30 dias</div>
+                                <div class="text-xs text-gray-600">Até 15/02/2026</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo Resumido</h3>
+                            <p class="text-gray-700 text-sm leading-relaxed">Atualização completa do sistema ERP incluindo migração de dados, customizações específicas, integração com sistemas existentes, treinamento de usuários e suporte técnico por 3 meses após go-live.</p>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Itens e Serviços</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-2 text-left text-gray-700 font-medium">Descrição</th>
+                                            <th class="px-4 py-2 text-center text-gray-700 font-medium">Qtd</th>
+                                            <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor Unit.</th>
+                                            <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="px-4 py-3">Licenças ERP (módulos financeiro, compras, estoque)</td>
+                                            <td class="px-4 py-3 text-center">1</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 75.000,00</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 75.000,00</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-3">Customizações e parametrizações</td>
+                                            <td class="px-4 py-3 text-center">1</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 35.450,00</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 35.450,00</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-3">Migração de dados e integração</td>
+                                            <td class="px-4 py-3 text-center">1</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 12.000,00</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 12.000,00</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="px-4 py-3">Treinamento e suporte</td>
+                                            <td class="px-4 py-3 text-center">1</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 6.000,00</td>
+                                            <td class="px-4 py-3 text-right font-medium">R$ 6.000,00</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <div class="bg-white border border-slate-200 rounded-xl p-5">
+                                <h4 class="text-lg font-semibold text-bevap-navy mb-5 flex items-center">
+                                    <i class="fa-solid fa-shield-halved text-bevap-gold mr-2"></i>
+                                    Riscos e Pré-requisitos
+                                </h4>
+                                <div class="space-y-6">
+                                    <div>
+                                        <div class="flex items-center mb-3">
+                                            <h5 class="text-lg font-semibold text-bevap-navy flex items-center">
+                                                <i class="fa-solid fa-triangle-exclamation text-yellow-500 mr-2"></i>
+                                                Matriz de Riscos
+                                            </h5>
+                                        </div>
+                                        <div class="grid grid-cols-1 gap-3">
+                                            <div class="border border-yellow-300 rounded-xl p-4 bg-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                                <div class="flex items-start justify-between mb-2 gap-3">
+                                                    <h6 class="font-medium text-bevap-navy">Intermitência na integração com gateway de pagamentos</h6>
+                                                    <span class="text-yellow-700 text-xs font-semibold">Médio</span>
+                                                </div>
+                                                <div class="text-sm text-gray-600 mb-2">Probabilidade: Média | Impacto: Alto</div>
+                                                <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Executar bateria de testes de carga e fallback por adquirente</div>
+                                                <div class="text-sm text-gray-700"><strong>Plano B:</strong> Ativar rota contingencial com provedor secundário já homologado</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="flex items-center mb-3">
+                                            <h5 class="text-lg font-semibold text-bevap-navy flex items-center">
+                                                <i class="fa-solid fa-link text-blue-600 mr-2"></i>
+                                                Pré-requisitos
+                                            </h5>
+                                        </div>
+                                        <div class="grid grid-cols-1 gap-3">
+                                            <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                                <div class="flex items-start justify-between mb-2 gap-3">
+                                                    <h6 class="font-medium text-bevap-navy">Acesso VPN liberado para equipe do fornecedor</h6>
+                                                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Pendente</span>
+                                                </div>
+                                                <div class="text-sm text-gray-600 mb-1"><strong>Responsável:</strong> TI Infraestrutura</div>
+                                                <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Abrir chamado prioritário com SLA de 24 horas para provisionamento</div>
+                                                <div class="text-sm text-gray-700"><strong>Plano B:</strong> Disponibilizar acesso temporário via bastion host controlado</div>
+                                            </div>
+                                            <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                                <div class="flex items-start justify-between mb-2 gap-3">
+                                                    <h6 class="font-medium text-bevap-navy">Termo de confidencialidade assinado por todos os envolvidos</h6>
+                                                    <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Em andamento</span>
+                                                </div>
+                                                <div class="text-sm text-gray-600 mb-1"><strong>Responsável:</strong> Jurídico Corporativo</div>
+                                                <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Acompanhar assinaturas digitais em lote com reminder diário</div>
+                                                <div class="text-sm text-gray-700"><strong>Plano B:</strong> Permitir início restrito em ambiente sem dados sensíveis até conclusão</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-6">
+                            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
+                                <i class="fa-solid fa-paperclip mr-2 text-bevap-gold"></i>
+                                Documentos da Proposta
+                            </h3>
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-pdf text-red-500 text-xl mr-3"></i>
+                                        <div>
+                                            <div class="font-medium text-sm">Proposta_Comercial_TechPartners.pdf</div>
+                                            <div class="text-xs text-gray-500">2.1 MB</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="previewDocument('proposta')" class="text-bevap-green hover:text-green-700">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                        <button onclick="downloadDocument('proposta')" class="text-bevap-navy hover:text-blue-700">
+                                            <i class="fa-solid fa-download"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-contract text-blue-500 text-xl mr-3"></i>
+                                        <div>
+                                            <div class="font-medium text-sm">Termos_e_Condicoes.pdf</div>
+                                            <div class="text-xs text-gray-500">456 KB</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="previewDocument('termos')" class="text-bevap-green hover:text-green-700">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                        <button onclick="downloadDocument('termos')" class="text-bevap-navy hover:text-blue-700">
+                                            <i class="fa-solid fa-download"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex items-center">
+                                        <i class="fa-solid fa-file-word text-blue-600 text-xl mr-3"></i>
+                                        <div>
+                                            <div class="font-medium text-sm">Escopo_Detalhado_v2.docx</div>
+                                            <div class="text-xs text-gray-500">856 KB</div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2">
+                                        <button onclick="previewDocument('escopo')" class="text-bevap-green hover:text-green-700">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
+                                        <button onclick="downloadDocument('escopo')" class="text-bevap-navy hover:text-blue-700">
+                                            <i class="fa-solid fa-download"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3 flex items-center">
+                                <i class="fa-solid fa-comment-dots mr-2 text-bevap-gold"></i>
+                                Feedback do Solicitante
+                            </h4>
+                            <div class="bg-white border border-green-200 rounded-lg p-4">
+                                <div class="mb-3">
+                                    <div>
+                                        <div class="font-semibold text-gray-900 text-sm">Carlos Mendes</div>
+                                        <div class="text-xs text-gray-500">Aprovado em 02/03/2026 às 14:35</div>
+                                    </div>
+                                </div>
+                                <p class="text-sm text-green-800 leading-relaxed">
+                                    Proposta muito bem estruturada e alinhada com nossas necessidades. Os valores estão competitivos considerando o escopo e qualidade dos equipamentos. 
+                                    O prazo de 10 semanas é adequado para nossa janela de implementação. Recomendo aprovação, pois a infraestrutura atual já está no limite e este projeto é crítico para a continuidade dos negócios.
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -447,32 +732,16 @@
                     <div>
                         <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Benefícios Esperados</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
-                                <div class="flex items-center mb-2">
-                                    <i class="fa-solid fa-chart-line text-bevap-green mr-2"></i>
-                                    <span class="font-medium text-green-900">Eficiência Operacional</span>
-                                </div>
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
                                 <p class="text-sm text-green-800">Redução de 40% no tempo de atendimento aos fornecedores</p>
                             </div>
-                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                <div class="flex items-center mb-2">
-                                    <i class="fa-solid fa-users text-blue-600 mr-2"></i>
-                                    <span class="font-medium text-blue-900">Experiência do Fornecedor</span>
-                                </div>
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center">
                                 <p class="text-sm text-blue-800">Portal self-service 24/7 com transparência total</p>
                             </div>
-                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                                <div class="flex items-center mb-2">
-                                    <i class="fa-solid fa-dollar-sign text-bevap-gold mr-2"></i>
-                                    <span class="font-medium text-yellow-900">Redução de Custos</span>
-                                </div>
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center">
                                 <p class="text-sm text-yellow-800">Economia estimada de R$ 120k/ano em processos manuais</p>
                             </div>
-                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                                <div class="flex items-center mb-2">
-                                    <i class="fa-solid fa-database text-purple-600 mr-2"></i>
-                                    <span class="font-medium text-purple-900">Qualidade dos Dados</span>
-                                </div>
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 flex items-center">
                                 <p class="text-sm text-purple-800">Cadastro atualizado e validado automaticamente</p>
                             </div>
                         </div>
@@ -480,12 +749,12 @@
                     
                     <div>
                         <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Alinhamento Estratégico</h3>
-                        <div class="bg-bevap-navy text-white rounded-lg p-4">
-                            <div class="flex items-center mb-2">
-                                <i class="fa-solid fa-target text-bevap-gold mr-2"></i>
-                                <span class="font-semibold">OKR 2026: Eficiência da Cadeia de Suprimentos</span>
-                            </div>
-                            <p class="text-sm text-blue-200">Este projeto contribui diretamente para o objetivo de digitalizar 80% dos processos de fornecedores até Q4/2026, alinhado com a estratégia de transformação digital da BEVAP.</p>
+                        <div class="bg-bevap-navy text-white rounded-lg p-4 flex items-center">
+                            <ul class="text-sm text-blue-200 list-disc pl-5 space-y-2">
+                                <li>Este projeto contribui diretamente para o objetivo de digitalizar 80% dos processos de fornecedores até Q4/2026, alinhado com a estratégia de transformação digital da BEVAP.</li>
+                                <li>Suporta a meta de elevar para 95% a rastreabilidade ponta a ponta das solicitações de fornecedores até o fim de 2026.</li>
+                                <li>Fortalece o plano de governança digital com padronização de fluxos e redução de retrabalho entre TI, Compras e áreas solicitantes.</li>
+                            </ul>
                         </div>
                     </div>
                     
@@ -593,6 +862,93 @@
                             </div>
                         </div>
                     </div> -->
+                </div>
+            </div>
+
+            <div id="tab-content-custo-orcamento" class="tab-content hidden bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-dollar-sign mr-3 text-bevap-gold"></i>
+                    Análise de Custo & Orçamento
+                </h2>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <div class="bg-gradient-to-r from-bevap-navy to-blue-900 text-white rounded-xl p-6 shadow-sm">
+                        <div class="text-sm font-semibold mb-3 flex items-center">
+                            <i class="fa-solid fa-calculator mr-2 text-bevap-gold"></i>
+                            Investimento Total
+                        </div>
+                        <div class="text-3xl font-montserrat font-bold">R$ 128.450,00</div>
+                        <div class="text-sm text-blue-100 mt-1">Valor aprovado pelo Gerente do Centro de Custo</div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Distribuição CAPEX/OPEX</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-bevap-navy">CAPEX (70%)</span>
+                                    <span class="text-lg font-bold text-bevap-navy">R$ 89.915,00</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-bevap-green h-2 rounded-full" style="width: 70%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-sm font-medium text-bevap-navy">OPEX (30%)</span>
+                                    <span class="text-lg font-bold text-bevap-navy">R$ 38.535,00</span>
+                                </div>
+                                <div class="w-full bg-gray-200 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3 flex items-center">
+                        <i class="fa-solid fa-building mr-2 text-bevap-gold"></i>
+                        Centros de Custo Envolvidos
+                    </h3>
+                    <div class="overflow-x-auto rounded-lg border border-gray-200">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-semibold text-gray-700">Centro de Custo</th>
+                                    <th class="px-4 py-3 text-right font-semibold text-gray-700">Valor</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700">% Total</th>
+                                    <th class="px-4 py-3 text-center font-semibold text-gray-700">Alçada</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200 bg-white">
+                                <tr>
+                                    <td class="px-4 py-3 text-bevap-navy">TI-DEV - Desenvolvimento</td>
+                                    <td class="px-4 py-3 text-right font-semibold text-bevap-navy">R$ 65.500,00</td>
+                                    <td class="px-4 py-3 text-center font-medium text-gray-800">51%</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 font-medium">Aprovada</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 text-bevap-navy">COMPRAS - Fornecedores</td>
+                                    <td class="px-4 py-3 text-right font-semibold text-bevap-navy">R$ 38.450,00</td>
+                                    <td class="px-4 py-3 text-center font-medium text-gray-800">30%</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 font-medium">Aprovada</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="px-4 py-3 text-bevap-navy">TI-INFRA - Infraestrutura</td>
+                                    <td class="px-4 py-3 text-right font-semibold text-bevap-navy">R$ 24.500,00</td>
+                                    <td class="px-4 py-3 text-center font-medium text-gray-800">19%</td>
+                                    <td class="px-4 py-3 text-center">
+                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-green-100 text-green-800 font-medium">Aprovada</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -740,17 +1096,18 @@
                         <h3 class="text-sm font-medium text-gray-700 mb-3">Registro da Reunião</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                             <div>
-                                <label class="block text-xs text-gray-600 mb-1">Data/Hora</label>
-                                <input type="datetime-local" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
+                                <label class="block text-xs text-gray-600 mb-1">Data/Hora <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
+                                <input type="datetime-local" required placeholder="dd/mm/aaaa --:--" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
+
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="block text-xs text-gray-600 mb-1">Participantes</label>
+                            <label class="block text-xs text-gray-600 mb-1">Participantes <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
                             <div class="flex flex-wrap gap-2 mb-3" id="meeting-participants-list"></div>
                             <div id="meeting-participant-autocomplete" class="relative">
                                 <div class="flex gap-2">
-                                    <input type="text" id="meeting-participant-input" placeholder="Nome do participante..." autocomplete="off" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
+                                    <input type="text" id="meeting-participant-input" required placeholder="Nome do participante..." autocomplete="off" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
                                     <button type="button" onclick="addMeetingParticipant()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all" aria-label="Adicionar participante">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
@@ -786,11 +1143,7 @@
                         </div>
                         <div class="pb-2 border-b">
                             <span class="text-gray-600">Título</span>
-                            <p class="font-medium text-gray-900 mt-1">Implantar SSO</p>
-                        </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Solicitante</span>
-                            <span class="font-medium text-gray-900">João Vieira</span>
+                            <p class="font-medium text-gray-900 mt-1">Implantar SSO corporativo</p>
                         </div>
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Área</span>
@@ -802,15 +1155,32 @@
                         </div>
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Prioridade</span>
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-green-100 text-green-800 font-medium">
-                                <i class="fa-solid fa-star mr-1"></i> Estratégico
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-red-100 text-red-800 font-medium">
+                                <i class="fa-solid fa-circle-exclamation mr-1"></i> Crítico
                             </span>
                         </div>
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Tipo</span>
-                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-purple-100 text-purple-800 font-medium">
-                                <i class="fa-solid fa-users mr-1"></i> Interno
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-purple-100 text-purple-800 font-medium">
+                                <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i> Externo
                             </span>
+                        </div>
+                        <div class="pb-2 border-b">
+                            <span class="text-gray-600">Fornecedor Recomendado</span>
+                            <p class="font-medium text-gray-900 mt-1">TechPartners Ltda.</p>
+                        </div>
+                        <div class="pb-2 border-b">
+                            <span class="text-gray-600">Estimativa Original</span>
+                            <div class="mt-2 space-y-1">
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-gray-500">Custo:</span>
+                                    <span class="font-medium">R$ 150k</span>
+                                </div>
+                                <div class="flex justify-between text-xs">
+                                    <span class="text-gray-500">Prazo:</span>
+                                    <span class="font-medium">10 semanas</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="flex items-center justify-between pb-2 border-b">
                             <span class="text-gray-600">Status</span>
@@ -818,17 +1188,10 @@
                                 <i class="fa-solid fa-clipboard-check mr-1"></i> Em Análise - Comitê
                             </span>
                         </div>
-                        <div class="flex items-center justify-between pb-2 border-b">
-                            <span class="text-gray-600">Custo</span>
-                            <span class="font-medium text-gray-900">R$ 290.000</span>
-                        </div>
-                        <div class="flex items-center justify-between">
-                            <span class="text-gray-600">Prazo</span>
-                            <span class="font-medium text-gray-900">12 semanas</span>
-                        </div>
+                     
                     </div>
 
-                    <div class="mt-4 pt-4 border-t space-y-2">
+                    <div class="mt-4 pt-4 space-y-2">
                         <button onclick="viewTimeline()" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
                             <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
                         </button>
@@ -859,6 +1222,18 @@
                         <div class="flex items-center text-green-600">
                             <i class="fa-solid fa-check-circle mr-2"></i>
                             <span>Triagem técnica concluída</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Proposta comercial validada</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Aprovação do Solicitante aprovada</span>
+                        </div>
+                        <div class="flex items-center text-green-600">
+                            <i class="fa-solid fa-check-circle mr-2"></i>
+                            <span>Aprovação do Gerente do Centro de Custo aprovada</span>
                         </div>
                         <div class="flex items-center text-bevap-gold">
                             <i class="fa-solid fa-clock mr-2"></i>
