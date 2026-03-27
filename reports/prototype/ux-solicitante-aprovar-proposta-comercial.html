@@ -492,21 +492,22 @@
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                                <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="bg-gray-50 p-4 rounded-lg min-h-[106px]">
                                     <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
                                     <div class="text-lg font-bold text-bevap-navy">R$ 128.450,00</div>
                                     <div class="text-xs text-green-600">BRL</div>
                                 </div>
-                                <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="bg-gray-50 p-4 rounded-lg min-h-[106px]">
                                     <div class="text-xs text-gray-500 uppercase tracking-wide">Condição</div>
                                     <div class="text-sm font-medium text-gray-900">30% / 70%</div>
                                     <div class="text-xs text-gray-600">Antecipado / Entrega</div>
                                 </div>
-                                <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="bg-gray-50 p-4 rounded-lg min-h-[106px]">
                                     <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo</div>
                                     <div class="text-lg font-bold text-bevap-navy">8 semanas</div>
+                                    <div class="text-xs text-gray-600">Estimado</div>
                                 </div>
-                                <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="bg-gray-50 p-4 rounded-lg min-h-[106px]">
                                     <div class="text-xs text-gray-500 uppercase tracking-wide">Vigência</div>
                                     <div class="text-sm font-medium text-gray-900">30 dias</div>
                                     <div class="text-xs text-gray-600">Até 15/02/2026</div>
@@ -525,8 +526,9 @@
                                         <thead class="bg-gray-50">
                                             <tr>
                                                 <th class="px-4 py-2 text-left text-gray-700 font-medium">Descrição</th>
-                                                <th class="px-4 py-2 text-center text-gray-700 font-medium">Qty</th>
-                                                <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor</th>
+                                                <th class="px-4 py-2 text-center text-gray-700 font-medium">Qtd</th>
+                                                <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor Unit.</th>
+                                                <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor Total</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-gray-200">
@@ -534,20 +536,24 @@
                                                 <td class="px-4 py-3">Licenças ERP (módulos financeiro, compras, estoque)</td>
                                                 <td class="px-4 py-3 text-center">1</td>
                                                 <td class="px-4 py-3 text-right font-medium">R$ 75.000,00</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 75.000,00</td>
                                             </tr>
                                             <tr>
                                                 <td class="px-4 py-3">Customizações e parametrizações</td>
                                                 <td class="px-4 py-3 text-center">1</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 35.450,00</td>
                                                 <td class="px-4 py-3 text-right font-medium">R$ 35.450,00</td>
                                             </tr>
                                             <tr>
                                                 <td class="px-4 py-3">Migração de dados e integração</td>
                                                 <td class="px-4 py-3 text-center">1</td>
                                                 <td class="px-4 py-3 text-right font-medium">R$ 12.000,00</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 12.000,00</td>
                                             </tr>
                                             <tr>
                                                 <td class="px-4 py-3">Treinamento e suporte</td>
                                                 <td class="px-4 py-3 text-center">1</td>
+                                                <td class="px-4 py-3 text-right font-medium">R$ 6.000,00</td>
                                                 <td class="px-4 py-3 text-right font-medium">R$ 6.000,00</td>
                                             </tr>
                                         </tbody>
@@ -556,13 +562,60 @@
                             </div>
 
                             <div class="mb-6">
-                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Riscos e Pré-requisitos</h3>
-                                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                                    <ul class="text-sm text-yellow-800 space-y-1">
-                                        <li>• Disponibilidade da equipe de TI para validações durante o projeto</li>
-                                        <li>• Acesso aos sistemas legados para migração de dados</li>
-                                        <li>• Definição de cronograma de treinamentos com RH</li>
-                                    </ul>
+                                <div class="bg-white border border-slate-200 rounded-xl p-5">
+                                    <h4 class="text-lg font-semibold text-bevap-navy mb-5 flex items-center">
+                                        <i class="fa-solid fa-shield-halved text-bevap-gold mr-2"></i>
+                                        Riscos e Pré-requisitos
+                                    </h4>
+                                    <div class="space-y-6">
+                                        <div>
+                                            <div class="flex items-center mb-3">
+                                                <h5 class="text-lg font-semibold text-bevap-navy flex items-center">
+                                                    <i class="fa-solid fa-triangle-exclamation text-yellow-500 mr-2"></i>
+                                                    Matriz de Riscos
+                                                </h5>
+                                            </div>
+                                            <div class="grid grid-cols-1 gap-3">
+                                                <div class="border border-yellow-300 rounded-xl p-4 bg-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                                    <div class="flex items-start justify-between mb-2 gap-3">
+                                                        <h6 class="font-medium text-bevap-navy">Intermitência na integração com gateway de pagamentos</h6>
+                                                        <span class="text-yellow-700 text-xs font-semibold">Médio</span>
+                                                    </div>
+                                                    <div class="text-sm text-gray-600 mb-2">Probabilidade: Média | Impacto: Alto</div>
+                                                    <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Executar bateria de testes de carga e fallback por adquirente</div>
+                                                    <div class="text-sm text-gray-700"><strong>Plano B:</strong> Ativar rota contingencial com provedor secundário já homologado</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center mb-3">
+                                                <h5 class="text-lg font-semibold text-bevap-navy flex items-center">
+                                                    <i class="fa-solid fa-link text-blue-600 mr-2"></i>
+                                                    Pré-requisitos
+                                                </h5>
+                                            </div>
+                                            <div class="grid grid-cols-1 gap-3">
+                                                <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                                    <div class="flex items-start justify-between mb-2 gap-3">
+                                                        <h6 class="font-medium text-bevap-navy">Acesso VPN liberado para equipe do fornecedor</h6>
+                                                        <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded">Pendente</span>
+                                                    </div>
+                                                    <div class="text-sm text-gray-600 mb-1"><strong>Responsável:</strong> TI Infraestrutura</div>
+                                                    <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Abrir chamado prioritário com SLA de 24 horas para provisionamento</div>
+                                                    <div class="text-sm text-gray-700"><strong>Plano B:</strong> Disponibilizar acesso temporário via bastion host controlado</div>
+                                                </div>
+                                                <div class="border border-blue-200 rounded-xl p-4 bg-blue-50/40 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5">
+                                                    <div class="flex items-start justify-between mb-2 gap-3">
+                                                        <h6 class="font-medium text-bevap-navy">Termo de confidencialidade assinado por todos os envolvidos</h6>
+                                                        <span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded">Em andamento</span>
+                                                    </div>
+                                                    <div class="text-sm text-gray-600 mb-1"><strong>Responsável:</strong> Jurídico Corporativo</div>
+                                                    <div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> Acompanhar assinaturas digitais em lote com reminder diário</div>
+                                                    <div class="text-sm text-gray-700"><strong>Plano B:</strong> Permitir início restrito em ambiente sem dados sensíveis até conclusão</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -646,27 +699,28 @@
                                 </div>
                             </div> -->
 
-                            <div class="pt-6 border-t">
-                                <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
-                                    <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
-                                    Seu Feedback
-                                </h3>
-
-                                <div class="mb-6">
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Observações / Negociação</label>
-                                    <textarea id="feedback-text" rows="4" placeholder="Adicione comentários, sugestões de ajustes ou pontos para negociação..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
-                                </div>
-
-                                <div class="mb-2">
-                                    <label class="flex items-start">
-                                        <input type="checkbox" id="agreement-checkbox" class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
-                                        <span class="text-sm text-gray-700">Li e concordo com a proposta comercial apresentada e suas condições gerais *</span>
-                                    </label>
-                                </div>
-                            </div>
                         </div>
 
                     </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 mt-6">
+                <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
+                    <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
+                    Seu Feedback
+                </h3>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Observações / Negociação</label>
+                    <textarea id="feedback-text" rows="4" placeholder="Adicione comentários, sugestões de ajustes ou pontos para negociação..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent resize-none"></textarea>
+                </div>
+
+                <div class="mb-2">
+                    <label class="flex items-start">
+                        <input type="checkbox" id="agreement-checkbox" required class="w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green mr-3 mt-1">
+                        <span class="text-sm text-gray-700">Li e concordo com a proposta comercial apresentada e suas condições gerais <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -743,7 +797,7 @@
                     </div>
                 </div>
 
-                <div id="comparison-card" class="bg-white rounded-lg shadow-md p-5">
+                <!-- <div id="comparison-card" class="bg-white rounded-lg shadow-md p-5">
                     <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
                         <i class="fa-solid fa-balance-scale mr-2 text-bevap-green"></i>
                         Comparação
@@ -780,7 +834,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <div id="progress-status" class="bg-white rounded-lg shadow-md p-5">
                     <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">

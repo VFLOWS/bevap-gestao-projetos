@@ -447,16 +447,32 @@
                     <div>
                         <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Benefícios Esperados</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center">
+                            <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-chart-line text-bevap-green mr-2"></i>
+                                    <span class="font-medium text-green-900">Eficiência Operacional</span>
+                                </div>
                                 <p class="text-sm text-green-800">Redução de 40% no tempo de atendimento aos fornecedores</p>
                             </div>
-                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center">
+                            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-users text-blue-600 mr-2"></i>
+                                    <span class="font-medium text-blue-900">Experiência do Fornecedor</span>
+                                </div>
                                 <p class="text-sm text-blue-800">Portal self-service 24/7 com transparência total</p>
                             </div>
-                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 flex items-center">
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-dollar-sign text-bevap-gold mr-2"></i>
+                                    <span class="font-medium text-yellow-900">Redução de Custos</span>
+                                </div>
                                 <p class="text-sm text-yellow-800">Economia estimada de R$ 120k/ano em processos manuais</p>
                             </div>
-                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4 flex items-center">
+                            <div class="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                                <div class="flex items-center mb-2">
+                                    <i class="fa-solid fa-database text-purple-600 mr-2"></i>
+                                    <span class="font-medium text-purple-900">Qualidade dos Dados</span>
+                                </div>
                                 <p class="text-sm text-purple-800">Cadastro atualizado e validado automaticamente</p>
                             </div>
                         </div>
@@ -464,7 +480,11 @@
                     
                     <div>
                         <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Alinhamento Estratégico</h3>
-                        <div class="bg-bevap-navy text-white rounded-lg p-4 flex items-center">
+                        <div class="bg-bevap-navy text-white rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <i class="fa-solid fa-target text-bevap-gold mr-2"></i>
+                                <span class="font-semibold">OKR 2026: Eficiência da Cadeia de Suprimentos</span>
+                            </div>
                             <p class="text-sm text-blue-200">Este projeto contribui diretamente para o objetivo de digitalizar 80% dos processos de fornecedores até Q4/2026, alinhado com a estratégia de transformação digital da BEVAP.</p>
                         </div>
                     </div>
@@ -720,18 +740,17 @@
                         <h3 class="text-sm font-medium text-gray-700 mb-3">Registro da Reunião</h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                             <div>
-                                <label class="block text-xs text-gray-600 mb-1">Data/Hora <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
-                                <input type="datetime-local" required placeholder="dd/mm/aaaa --:--" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
-
+                                <label class="block text-xs text-gray-600 mb-1">Data/Hora</label>
+                                <input type="datetime-local" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
                             </div>
                         </div>
 
                         <div class="mb-3">
-                            <label class="block text-xs text-gray-600 mb-1">Participantes <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
+                            <label class="block text-xs text-gray-600 mb-1">Participantes</label>
                             <div class="flex flex-wrap gap-2 mb-3" id="meeting-participants-list"></div>
                             <div id="meeting-participant-autocomplete" class="relative">
                                 <div class="flex gap-2">
-                                    <input type="text" id="meeting-participant-input" required placeholder="Nome do participante..." autocomplete="off" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
+                                    <input type="text" id="meeting-participant-input" placeholder="Nome do participante..." autocomplete="off" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm">
                                     <button type="button" onclick="addMeetingParticipant()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all" aria-label="Adicionar participante">
                                         <i class="fa-solid fa-plus"></i>
                                     </button>
