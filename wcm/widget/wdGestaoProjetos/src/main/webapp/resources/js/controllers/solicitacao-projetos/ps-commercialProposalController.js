@@ -35,6 +35,9 @@ const commercialProposalController = {
     'codigoCondicaoPagamentoTIPC',
     'escopoResumidoTIPC',
     'anexosPropostaTIPC',
+    'decisaoTIPC',
+    'justificativaTIPC',
+    'categoriajustiTIPC',
     'escopoClaroDetalhadoTIPC',
     'impostosTaxasInclusosTIPC',
     'prazosEntregaDefinidosTIPC',
@@ -263,6 +266,16 @@ const commercialProposalController = {
       this.openModal('approve-modal');
     });
 
+    container.on(`click${ns}`, '[data-action="open-return-modal"]', (event) => {
+      event.preventDefault();
+      this.openModal('modal-return');
+    });
+
+    container.on(`click${ns}`, '[data-action="open-reject-modal"]', (event) => {
+      event.preventDefault();
+      this.openModal('modal-reject');
+    });
+
     container.on(`click${ns}`, '[data-action="close-modal"]', (event) => {
       event.preventDefault();
       const modalId = this.asText($(event.currentTarget).attr('data-modal-id'));
@@ -271,10 +284,68 @@ const commercialProposalController = {
 
     container.on(`click${ns}`, '[data-action="confirm-send"]', (event) => {
       event.preventDefault();
-      this.submitProposal();
+      this.submitProposal({
+        decisionValue: 'aprovado',
+        justification: '',
+        category: '',
+        modalId: 'approve-modal',
+        successMessage: 'Proposta comercial enviada ao solicitante.'
+      });
     });
 
-    container.on(`click${ns}`, '#approve-modal', (event) => {
+    container.on(`click${ns}`, '[data-action="confirm-return"]', (event) => {
+      event.preventDefault();
+      const category = this.asText(container.find('#return-category-input').val());
+      const reason = this.asText(container.find('#return-reason-input').val());
+
+      if (!category) {
+        this.showToast('Categoria', 'Selecione a categoria da devolucao.', 'warning');
+        container.find('#return-category-input').trigger('focus');
+        return;
+      }
+
+      if (!reason) {
+        this.showToast('Justificativa', 'Informe o motivo da devolucao.', 'warning');
+        container.find('#return-reason-input').trigger('focus');
+        return;
+      }
+
+      this.submitProposal({
+        decisionValue: 'correcao',
+        justification: reason,
+        category: category,
+        modalId: 'modal-return',
+        successMessage: 'Proposta devolvida para correcao.'
+      });
+    });
+
+    container.on(`click${ns}`, '[data-action="confirm-reject"]', (event) => {
+      event.preventDefault();
+      const category = this.asText(container.find('#reject-category-input').val());
+      const reason = this.asText(container.find('#reject-reason-input').val());
+
+      if (!category) {
+        this.showToast('Categoria', 'Selecione a categoria da reprovacao.', 'warning');
+        container.find('#reject-category-input').trigger('focus');
+        return;
+      }
+
+      if (!reason) {
+        this.showToast('Justificativa', 'Informe a justificativa da reprovacao.', 'warning');
+        container.find('#reject-reason-input').trigger('focus');
+        return;
+      }
+
+      this.submitProposal({
+        decisionValue: 'cancelado',
+        justification: reason,
+        category: category,
+        modalId: 'modal-reject',
+        successMessage: 'Nao continuidade da proposta registrada.'
+      });
+    });
+
+    container.on(`click${ns}`, '#approve-modal, #modal-return, #modal-reject', (event) => {
       if (event.target === event.currentTarget) {
         $(event.currentTarget).addClass('hidden');
       }
@@ -1448,6 +1519,8 @@ const commercialProposalController = {
     const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
     if (!container || !el || !el.dataset) return;
 
+    el.className = 'border border-gray-200 rounded-lg p-4 bg-white risk-item tipc-risk-item';
+
     const title = this.escapeHtml(this.asText(el.dataset.riskTitle));
     const level = (this.asText(el.dataset.riskLevel) || 'Alto').replace('Medio', 'Médio');
     const probability = (this.asText(el.dataset.riskProbability) || 'Alta').replace('Media', 'Média');
@@ -1736,6 +1809,8 @@ const commercialProposalController = {
     const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
     if (!container || !el || !el.dataset) return;
 
+    el.className = 'border border-gray-200 rounded-lg p-4 prerequisite-item tipc-prerequisite-item';
+
     const title = this.escapeHtml(this.asText(el.dataset.prerequisiteTitle));
     const status = this.asText(el.dataset.prerequisiteStatus) || 'Pendente';
     const owner = this.escapeHtml(this.asText(el.dataset.prerequisiteOwner));
@@ -2017,7 +2092,7 @@ const commercialProposalController = {
     return missing;
   },
 
-  collectTaskFields: function () {
+  collectTaskFields: function (decisionValue, justificationValue, categoryValue) {
     const root = this.getContainer();
     const cardData = {
       nomeFornecedorTIPC: this.asText(root.find('#proposal-supplier-name').val()),
@@ -2045,6 +2120,18 @@ const commercialProposalController = {
       vigenciaPropostaConfirmadaTIPC: this.getBooleanFieldValue('#proposal-check-validity'),
       documentosAnexCompTIPC: this.getBooleanFieldValue('#proposal-check-documents')
     };
+
+    if (decisionValue !== undefined) {
+      cardData.decisaoTIPC = this.asText(decisionValue);
+    }
+
+    if (justificationValue !== undefined) {
+      cardData.justificativaTIPC = this.asText(justificationValue);
+    }
+
+    if (categoryValue !== undefined) {
+      cardData.categoriajustiTIPC = this.asText(categoryValue);
+    }
 
     const persistedAttachments = (Array.isArray(this._state.attachments) ? this._state.attachments : [])
       .filter((att) => att && att.persisted)
@@ -2252,25 +2339,36 @@ const commercialProposalController = {
     return this._state.processInstanceId;
   },
 
-  submitProposal: async function () {
+  submitProposal: async function (config) {
     if (this._state.isSubmitting) return;
 
     const loading = this.createActionLoading();
     this._state.isSubmitting = true;
 
     try {
-      const missing = this.validateForm();
-      if (missing.length) {
-        this.closeModal('approve-modal');
-        this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
-        return;
+      const decisionValue = this.asText(config && config.decisionValue).toLowerCase();
+      const requiresFullValidation = !decisionValue || decisionValue === 'aprovado';
+
+      if (requiresFullValidation) {
+        const missing = this.validateForm();
+        if (missing.length) {
+          if (config && config.modalId) {
+            this.closeModal(config.modalId);
+          }
+          this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          return;
+        }
       }
 
       loading.updateMessage('Preparando proposta comercial...');
       await this.waitForUiPaint();
 
       const processInstanceId = await this.resolveProcessInstanceId();
-      const taskFields = this.collectTaskFields();
+      const taskFields = this.collectTaskFields(
+        config && config.decisionValue,
+        config && config.justification,
+        config && config.category
+      );
       const attachments = await this.collectAttachmentsPayload();
 
       try {
@@ -2289,8 +2387,10 @@ const commercialProposalController = {
         attachments: attachments
       }, taskFields);
 
-      this.closeModal('approve-modal');
-      this.showToast('Sucesso', 'Proposta comercial enviada ao solicitante.', 'success');
+      if (config && config.modalId) {
+        this.closeModal(config.modalId);
+      }
+      this.showToast('Sucesso', this.asText(config && config.successMessage) || 'Movimentacao registrada com sucesso.', 'success');
 
       setTimeout(() => {
         location.hash = '#dashboard';

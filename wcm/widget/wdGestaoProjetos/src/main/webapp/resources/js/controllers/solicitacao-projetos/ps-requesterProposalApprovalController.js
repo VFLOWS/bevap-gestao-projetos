@@ -582,13 +582,13 @@ const requesterProposalApprovalController = {
     };
   },
 
-  collectReturnCardData: function (reason) {
+  collectReturnCardData: function (category, reason) {
     return {
       observacoesNegociacaoSAP: this.collectSapCardData().observacoesNegociacaoSAP,
       liConcordoPropostaComercialSAP: 'false',
       decisaoPropostaSAP: 'correcao',
       justificativaPropostaSAP: this.asText(reason),
-      categoriajustiPropostaSAP: ''
+      categoriajustiPropostaSAP: this.asText(category)
     };
   },
 
@@ -728,6 +728,13 @@ const requesterProposalApprovalController = {
     if (this._state.isSubmitting) return;
 
     const root = this.getContainer();
+    const category = this.asText(root.find('#return-category-input').val());
+    if (!category) {
+      this.showToast('Categoria', 'Selecione a categoria da devolucao.', 'warning');
+      root.find('#return-category-input').trigger('focus');
+      return;
+    }
+
     const reason = this.asText(root.find('#return-reason-input').val());
     if (!reason) {
       this.showToast('Motivo', 'Informe o motivo da devolucao.', 'warning');
@@ -743,7 +750,7 @@ const requesterProposalApprovalController = {
       await this.waitForUiPaint();
 
       const processInstanceId = await this.resolveProcessInstanceId();
-      const cardData = this.collectReturnCardData(reason);
+      const cardData = this.collectReturnCardData(category, reason);
       const taskFields = Object.keys(cardData).map((fieldName) => {
         return { name: fieldName, value: cardData[fieldName] };
       });

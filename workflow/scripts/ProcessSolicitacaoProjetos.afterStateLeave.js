@@ -1,17 +1,19 @@
 function afterStateLeave(sequenceId) {
     var atividade = getValue("WKNumState");
 
-    if (atividade != 26 && atividade != 36 && atividade != 38) {
-        return;
-    }
+    var targetFieldByActivity = {
+        "26": "anexosApoioTITT",
+        "36": "anexarAtaReuniaoCAP",
+        "38": "anexosPropostaTIPC",
+        "61": "anexarAtaReuniaoACP"
+    };
+
+    var targetField = targetFieldByActivity[String(atividade)];
+    if (!targetField) return;
 
     try {
         var gson = new com.google.gson.Gson();
         var attachments = hAPI.listAttachments();
-
-        var baseJson = String(hAPI.getCardValue("anexosNS") || "");
-        var apoioJson = String(hAPI.getCardValue("anexosApoioTITT") || "");
-        var ataJson = String(hAPI.getCardValue("anexarAtaReuniaoCAP") || "");
 
         function safeParseArray(text) {
             var raw = String(text || "").trim();
@@ -43,33 +45,25 @@ function afterStateLeave(sequenceId) {
             return ids;
         }
 
-        var baseIds = extractDocumentIds(safeParseArray(baseJson));
+        // Excluir anexos já salvos em qualquer campo de anexo para evitar duplicidade cruzada.
+        var attachmentFields = [
+            "anexosNS",
+            "anexosApoioTITT",
+            "anexarAtaReuniaoCAP",
+            "anexosPropostaTIPC",
+            "anexarAtaReuniaoACP",
+            "anexosCRC"
+        ];
 
-        // Sempre ignoramos anexos já registrados como ATA, para evitar duplicidade
-        // quando o processo retorna ao Comitê ou quando outra atividade captura anexos.
-        var ataIds = extractDocumentIds(safeParseArray(ataJson));
-        for (var ataKey in ataIds) {
-            if (ataIds.hasOwnProperty(ataKey)) {
-                baseIds[ataKey] = true;
-            }
-        }
+        var excludedIds = {};
+        for (var f = 0; f < attachmentFields.length; f++) {
+            var fieldName = attachmentFields[f];
+            var jsonText = String(hAPI.getCardValue(fieldName) || "");
+            var fieldIds = extractDocumentIds(safeParseArray(jsonText));
 
-        if (atividade == 36) {
-            // No Comitê, a ata deve conter apenas anexos desta atividade.
-            // Então removemos do universo todos os anexos já existentes em anexosNS e anexosApoioTITT.
-            var apoioIds = extractDocumentIds(safeParseArray(apoioJson));
-            for (var key in apoioIds) {
-                if (apoioIds.hasOwnProperty(key)) {
-                    baseIds[key] = true;
-                }
-            }
-        }
-
-        if (atividade == 38) {
-            var apoioIds38 = extractDocumentIds(safeParseArray(apoioJson));
-            for (var key38 in apoioIds38) {
-                if (apoioIds38.hasOwnProperty(key38)) {
-                    baseIds[key38] = true;
+            for (var idKey in fieldIds) {
+                if (fieldIds.hasOwnProperty(idKey)) {
+                    excludedIds[idKey] = true;
                 }
             }
         }
@@ -81,7 +75,7 @@ function afterStateLeave(sequenceId) {
             var documentId = String(attachment.getDocumentId());
 
             // só pega anexos que NÃO estavam na criação
-            if (baseIds[documentId] === true) continue;
+            if (excludedIds[documentId] === true) continue;
 
             jsonAttachments.push({
                 documentId: attachment.getDocumentId(),
@@ -94,16 +88,8 @@ function afterStateLeave(sequenceId) {
 
         var attachmentsString = gson.toJson(jsonAttachments);
 
-        if (atividade == 26) {
-            hAPI.setCardValue("anexosApoioTITT", attachmentsString);
-            log.info("[afterStateLeave] Triagem (26): anexos novos salvos em anexosApoioTITT = " + jsonAttachments.length);
-        } else if (atividade == 38) {
-            hAPI.setCardValue("anexosPropostaTIPC", attachmentsString);
-            log.info("[afterStateLeave] Proposta Comercial (38): anexos novos salvos em anexosPropostaTIPC = " + jsonAttachments.length);
-        } else if (atividade == 36) {
-            hAPI.setCardValue("anexarAtaReuniaoCAP", attachmentsString);
-            log.info("[afterStateLeave] Comitê (36): ata salva em anexarAtaReuniaoCAP = " + jsonAttachments.length);
-        }
+        hAPI.setCardValue(targetField, attachmentsString);
+        log.info("[afterStateLeave] Atividade " + atividade + ": anexos novos salvos em " + targetField + " = " + jsonAttachments.length);
     } catch (error) {
         log.error("[afterStateLeave] Erro ao capturar anexos (atividade " + atividade + "): " + error);
     }

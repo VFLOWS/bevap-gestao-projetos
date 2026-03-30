@@ -875,6 +875,8 @@ const technicalTriageController = {
     const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
     if (!container || !el || !el.dataset) return;
 
+    el.className = 'border border-gray-200 rounded-lg p-4 bg-white risk-item titt-risk-item';
+
     const title = this.escapeHtml(this.asText(el.dataset.riskTitle));
     const description = this.escapeHtml(this.asText(el.dataset.riskDescription));
     const mitigation = this.escapeHtml(this.asText(el.dataset.riskMitigation));
@@ -1038,7 +1040,7 @@ const technicalTriageController = {
     const root = this.getContainer();
     const empty = root.find('#dependencies-empty');
     if (!empty.length) return;
-    const any = root.find('#dependencies-list .titt-dependency-item[data-confirmed="1"]').length > 0;
+    const any = root.find('#dependencies-list .titt-dependency-item').length > 0;
     empty.toggleClass('hidden', any);
   },
 
@@ -1164,6 +1166,8 @@ const technicalTriageController = {
     const container = containerEl && containerEl.jquery ? containerEl.get(0) : containerEl;
     const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
     if (!container || !el || !el.dataset) return;
+
+    el.className = 'border border-gray-200 rounded-lg p-4 dependency-item titt-dependency-item';
 
     const title = this.escapeHtml(this.asText(el.dataset.dependencyTitle));
     const status = this.asText(el.dataset.dependencyStatus) || 'Pendente';

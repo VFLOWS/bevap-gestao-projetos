@@ -312,12 +312,20 @@ const committeeCostApprovalController = {
         modalId: 'approve-modal',
         decisionField: 'decisaocomite2',
         decisionValue: 'aprovado',
-        justification: ''
+        justification: '',
+        extraCardData: { categoriajusticomite2: '' }
       });
     });
 
     container.on(`click${ns}`, '[data-action="confirm-return"]', (event) => {
       event.preventDefault();
+      const category = this.asText(container.find('#cap-return-category').val());
+      if (!category) {
+        this.showToast('Categoria', 'Selecione a categoria da devolução.', 'warning');
+        container.find('#cap-return-category').trigger('focus');
+        return;
+      }
+
       const justification = this.asText(container.find('#cap-justification-return').val());
       if (!justification) {
         this.showToast('Justificativa', 'Informe o motivo da devolução.', 'warning');
@@ -331,7 +339,8 @@ const committeeCostApprovalController = {
         modalId: 'modal-return',
         decisionField: 'decisaocomite2',
         decisionValue: 'correcao',
-        justification: justification
+        justification: justification,
+        extraCardData: { categoriajusticomite2: category }
       });
     });
 

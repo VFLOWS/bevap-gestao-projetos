@@ -1146,15 +1146,26 @@ const gccCostApprovalController = {
       actionLabel: 'Aprovar',
       modalId: 'approve-modal',
       decisionValue: 'aprovado',
+      justification: '',
+      category: '',
       validateFinance: true
     });
   },
 
   handleReturn: function () {
-    const justification = this.asText(this.getContainer().find('#gcc-justification-return').val());
+    const root = this.getContainer();
+    const category = this.asText(root.find('#gcc-return-category').val());
+    const justification = this.asText(root.find('#gcc-justification-return').val());
+
+    if (!category) {
+      this.showToast('Categoria', 'Selecione a categoria da devolucao.', 'warning');
+      root.find('#gcc-return-category').trigger('focus');
+      return;
+    }
+
     if (!justification) {
       this.showToast('Justificativa', 'Informe o motivo da devolucao.', 'warning');
-      this.getContainer().find('#gcc-justification-return').trigger('focus');
+      root.find('#gcc-justification-return').trigger('focus');
       return;
     }
 
@@ -1163,6 +1174,7 @@ const gccCostApprovalController = {
       modalId: 'modal-return',
       decisionValue: 'correcao',
       justification: justification,
+      category: category,
       validateFinance: false
     });
   },
@@ -1441,17 +1453,17 @@ const gccCostApprovalController = {
     try {
       let rows = [];
       try {
-        rows = await fluigService.getDatasetRows('dsGetCC_ReadView', {
+        rows = await fluigService.getDatasetRows('ds_buscaCentroCusto', {
           fields: ['CODCCUSTO', 'NOME']
         });
       } catch (error) {
-        rows = await fluigService.getDataset('dsGetCC_ReadView');
+        rows = await fluigService.getDataset('ds_buscaCentroCusto');
       }
 
       this._state.costCenterOptions = this.normalizeCostCenterOptions(rows);
       this.syncAllocationCostCenterFilters();
     } catch (error) {
-      console.error('[gccCostApproval] Erro ao carregar dsGetCC_ReadView:', error);
+      console.error('[gccCostApproval] Erro ao carregar ds_buscaCentroCusto:', error);
       this._state.costCenterOptions = [];
       this.syncAllocationCostCenterFilters();
     }
