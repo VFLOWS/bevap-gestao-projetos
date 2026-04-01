@@ -31,12 +31,10 @@ const gccCostApprovalController = {
     'justificativaGCC',
     'categoriaJustificativaGCC',
     'tblNaturezaCustoCapexGCC.centroCustoCapexGCC',
-    'tblNaturezaCustoCapexGCC.contaContabilCapexGCC',
     'tblNaturezaCustoCapexGCC.porcentagemCapexGCC',
     'tblNaturezaCustoCapexGCC.saldoCapexGCC',
     'tblNaturezaCustoCapexGCC.saldoAposCompromissoCapexGCC',
     'tblNaturezaCustoOpexGCC.centroCustoOpexGCC',
-    'tblNaturezaCustoOpexGCC.contaContabilOpexGCC',
     'tblNaturezaCustoOpexGCC.porcentagemOpexGCC',
     'tblNaturezaCustoOpexGCC.saldoOpexGCC',
     'tblNaturezaCustoOpexGCC.saldoAposCompromissoOpexGCC',
@@ -671,7 +669,6 @@ const gccCostApprovalController = {
         return {
           centerCost: normalizedCostCenter.code,
           centerCostLabel: normalizedCostCenter.label,
-          account: this.asText(item && item.contaContabilCapexGCC),
           committed: this.asText(item && item.porcentagemCapexGCC),
           balance: this.asText(item && item.saldoCapexGCC),
           balanceAfter: this.asText(item && item.saldoAposCompromissoCapexGCC)
@@ -681,7 +678,6 @@ const gccCostApprovalController = {
       return {
         centerCost: normalizedCostCenter.code,
         centerCostLabel: normalizedCostCenter.label,
-        account: this.asText(item && item.contaContabilOpexGCC),
         committed: this.asText(item && item.porcentagemOpexGCC),
         balance: this.asText(item && item.saldoOpexGCC),
         balanceAfter: this.asText(item && item.saldoAposCompromissoOpexGCC)
@@ -719,20 +715,17 @@ const gccCostApprovalController = {
       <tr class="gcc-allocation-row cost-allocation-row" data-kind="${safeKind}">
         <td class="py-3" colspan="6">
           <div class="p-4 bg-white border border-gray-200 rounded-lg">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
               <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">Centro de Custo</label>
                 <div id="${uid}" data-role="center-cost-filter"></div>
                 <input type="hidden" data-field="center-cost" value="${this.escapeHtml(data.centerCost)}" />
                 <input type="hidden" data-field="center-cost-label" value="${this.escapeHtml(data.centerCostLabel || data.centerCost)}" />
               </div>
-              <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Conta Contabil</label>
-                <input type="text" data-field="account" value="${this.escapeHtml(data.account)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" />
-              </div>
+              
             </div>
 
-            <div class="mt-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div class="mt-4 grid grid-cols-1 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1.3fr)_minmax(0,1.3fr)_auto] gap-5 items-end">
               <div>
                 <label class="block text-xs font-medium text-gray-600 mb-1">Valor Comprometido</label>
                 <input type="text" inputmode="numeric" data-field="committed" value="${this.escapeHtml(data.committed)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" placeholder="R$ 0,00" />
@@ -1063,7 +1056,6 @@ const gccCostApprovalController = {
       rows.forEach((row, index) => {
         const label = `${kind.toUpperCase()} linha ${index + 1}`;
         if (!row.centerCost) missing.push(`${label} - Centro de Custo`);
-        if (!row.account) missing.push(`${label} - Conta Contabil`);
         if (!row.committed) missing.push(`${label} - Valor Comprometido`);
       });
     });
@@ -1089,7 +1081,6 @@ const gccCostApprovalController = {
     capexRows.forEach((row, index) => {
       const i = index + 1;
       cardData[`centroCustoCapexGCC___${i}`] = row.centerCost;
-      cardData[`contaContabilCapexGCC___${i}`] = row.account;
       cardData[`porcentagemCapexGCC___${i}`] = row.committed;
       cardData[`saldoCapexGCC___${i}`] = row.balance;
       cardData[`saldoAposCompromissoCapexGCC___${i}`] = row.balanceAfter;
@@ -1098,7 +1089,6 @@ const gccCostApprovalController = {
     opexRows.forEach((row, index) => {
       const i = index + 1;
       cardData[`centroCustoOpexGCC___${i}`] = row.centerCost;
-      cardData[`contaContabilOpexGCC___${i}`] = row.account;
       cardData[`porcentagemOpexGCC___${i}`] = row.committed;
       cardData[`saldoOpexGCC___${i}`] = row.balance;
       cardData[`saldoAposCompromissoOpexGCC___${i}`] = row.balanceAfter;
