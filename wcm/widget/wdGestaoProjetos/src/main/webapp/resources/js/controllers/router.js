@@ -46,6 +46,10 @@ const router = {
           controller: newSolicitationController,
           handler: () => newSolicitationController.load(params)
         },
+        solicitationDetail: {
+          controller: solicitationDetailController,
+          handler: () => solicitationDetailController.load(params)
+        },
         correction: {
           controller: correctionController,
           handler: () => correctionController.load(params)
@@ -77,6 +81,14 @@ const router = {
         committeeCostApproval: {
           controller: committeeCostApprovalController,
           handler: () => committeeCostApprovalController.load(params)
+        },
+        purchaseContracting: {
+          controller: purchaseContractingController,
+          handler: () => purchaseContractingController.load(params)
+        },
+        glpiErrorTreatment: {
+          controller: glpiErrorTreatmentController,
+          handler: () => glpiErrorTreatmentController.load(params)
         },
         requesterProposalApproval: {
           controller: requesterProposalApprovalController,

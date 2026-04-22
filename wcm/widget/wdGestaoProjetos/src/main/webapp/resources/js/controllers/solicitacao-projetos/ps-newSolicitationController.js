@@ -6,6 +6,7 @@ const newSolicitationController = {
     numSolicitacao: "",
     documentId: "",
     processInstanceId: "",
+    projectYear: "",
     isSubmitting: false,
     attachments: [],
     tagFilters: {},
@@ -21,6 +22,8 @@ const newSolicitationController = {
     'areaUnidadeNS',
     'centrodecustoNS',
     'patrocinadorNS',
+    'solicitanteNomeNS',
+    'solicitanteColleagueIdNS',
     'objetivodoprojetoNS',
     'problemaOportunidadeNS',
     'beneficiosesperadosNS',
@@ -117,6 +120,7 @@ const newSolicitationController = {
     this._state.numSolicitacao = "";
     this._state.documentId = "";
     this._state.processInstanceId = "";
+    this._state.projectYear = "";
     this._state.isSubmitting = false;
     this._state.attachments = [];
     this._state.tagFilters = {};
@@ -147,6 +151,7 @@ const newSolicitationController = {
     this.updateSummaryDetails();
     this.renderAttachments();
     this.loadDraftFromDataset();
+    this.syncProcessMetadata();
   },
 
   initializeTagInputFilters: function () {
@@ -801,6 +806,9 @@ const newSolicitationController = {
     const list = this.getContainer().find('#objetivos-estrategicos-list');
     if (!list.length) return;
 
+    list.append(this.getStrategicObjectiveMarkup(''));
+    return;
+
     list.append(`
       <div class="strategic-objective-item flex items-center gap-2 p-3 bg-white border border-green-200 rounded-lg">
         <input type="text" placeholder="Descreva um objetivo estratÃ©gico..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="objetivos-estrategicos">
@@ -854,7 +862,7 @@ const newSolicitationController = {
     const sponsorValue = container.find('#summary-sponsor-value');
 
     if (codeValue.length) {
-      codeValue.text('N/A');
+      codeValue.text(this.getProjectCode() || 'N/A');
     }
 
     if (areaValue.length) {
@@ -867,6 +875,17 @@ const newSolicitationController = {
       const sponsor = String(container.find('#patrocinador').val() || '').trim();
       sponsorValue.text(sponsor || 'N/A');
     }
+  },
+
+  getStrategicObjectiveMarkup: function (value) {
+    return `
+      <div class="strategic-objective-item flex items-center gap-2 p-3 bg-white border border-green-200 rounded-lg">
+        <input type="text" placeholder="Descreva um objetivo estrat&eacute;gico..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="objetivos-estrategicos" value="${this.escapeHtml(value)}">
+        <button data-action="remove-strategic-objective" class="text-red-500 hover:text-red-700">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+    `;
   },
 
   addStakeholder: function () {
@@ -968,6 +987,9 @@ const newSolicitationController = {
     if (!list.length) return;
 
     const rows = (items || []).length ? items : [''];
+    list.html(rows.map((value) => this.getStrategicObjectiveMarkup(value)).join(''));
+    return;
+
     list.html(rows.map((value) => {
       return `
         <div class="strategic-objective-item flex items-center gap-2 p-3 bg-white border border-green-200 rounded-lg">
@@ -1024,11 +1046,15 @@ const newSolicitationController = {
 
   restorePersistedAttachments: function (items) {
     this._state.attachments = (items || []).map((item, index) => {
+      const documentId = this.asText(item && (item.documentId || item.documentID || item.id));
       return {
-        id: `saved-att-${index + 1}`,
+        id: documentId ? `saved-att-${documentId}` : `saved-att-${index + 1}`,
+        documentId: documentId,
         persisted: true,
         fileName: this.asText(item && item.fileName),
-        fileSize: this.asText(item && item.fileSize)
+        fileSize: this.asText(item && item.fileSize),
+        version: this.asText(item && item.version),
+        createdAt: this.asText(item && item.createdAt)
       };
     }).filter((item) => item.fileName);
   },
@@ -1206,6 +1232,7 @@ const newSolicitationController = {
     this.updateSummaryPriority();
     this.updateSummaryDetails();
     this.updateChecklist();
+    this.syncProcessMetadata();
   },
 
   escapeHtml: function (value) {
@@ -1317,8 +1344,11 @@ const newSolicitationController = {
       }
 
       return {
+        documentId: this.asText(attachment.documentId),
         fileName: this.asText(attachment.fileName),
         fileSize: this.asText(attachment.fileSize),
+        version: this.asText(attachment.version),
+        createdAt: this.asText(attachment.createdAt),
         persisted: true
       };
     }).filter((attachment) => attachment.fileName);
@@ -1372,6 +1402,8 @@ const newSolicitationController = {
       area: getValue("#cod-area"),
       "centro-custo": getValue("#cod-centro-custo"),
       patrocinador: getValue("#patrocinador"),
+      solicitanteNome: typeof WCMAPI !== 'undefined' && WCMAPI.getUser ? this.asText(WCMAPI.getUser()) : '',
+      solicitanteColleagueId: typeof WCMAPI !== 'undefined' && WCMAPI.getUserCode ? this.asText(WCMAPI.getUserCode()) : '',
       objetivo: getValue("#objetivo"),
       problema: getValue("#problema"),
       beneficiosEsperados: beneficiosEsperados,
@@ -1475,6 +1507,7 @@ const newSolicitationController = {
         this.updateDraftHash();
       }
 
+      await this.syncProcessMetadata();
       this.writeDraftUiCache(this._state.documentId, payload);
 
       this.showNotification({
@@ -1514,6 +1547,92 @@ const newSolicitationController = {
     });
   },
 
+  getResolvedProcessInstanceId: function () {
+    return this.asText(this._state.processInstanceId || this._state.numSolicitacao);
+  },
+
+  getProjectCode: function () {
+    const processInstanceId = this.getResolvedProcessInstanceId();
+    if (!processInstanceId) {
+      return '';
+    }
+
+    return fluigService.buildProjectCode(processInstanceId, this._state.projectYear);
+  },
+
+  updateSuccessModalProjectCode: function () {
+    const container = this.getContainer();
+    const modal = container.find('#success-modal .bg-white').first();
+    if (!modal.length) {
+      return;
+    }
+
+    let codeTarget = modal.find('#success-modal-project-code');
+    if (!codeTarget.length) {
+      const nextStepCard = modal.find('.bg-gray-50').first();
+      const codeCard = $(`
+        <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4 text-left" data-role="project-code-card">
+          <div class="flex items-center mb-2">
+            <i class="fa-solid fa-hashtag text-bevap-green mr-2"></i>
+            <span class="font-semibold text-sm text-gray-700">Codigo do Projeto</span>
+          </div>
+          <div id="success-modal-project-code" class="font-mono text-lg font-semibold text-bevap-navy">N/A</div>
+        </div>
+      `);
+
+      if (nextStepCard.length) {
+        codeCard.insertBefore(nextStepCard);
+      } else {
+        modal.append(codeCard);
+      }
+
+      codeTarget = modal.find('#success-modal-project-code');
+    }
+
+    codeTarget.text(this.getProjectCode() || 'N/A');
+  },
+
+  syncProcessMetadata: async function () {
+    try {
+      let processInstanceId = this.getResolvedProcessInstanceId();
+      let documentId = this.asText(this._state.documentId);
+
+      if (!processInstanceId && documentId) {
+        processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
+      }
+
+      if (!documentId && processInstanceId) {
+        documentId = await fluigService.resolveDocumentIdByProcessInstanceId(processInstanceId);
+      }
+
+      if (processInstanceId) {
+        this._state.processInstanceId = processInstanceId;
+      }
+
+      if (documentId) {
+        this._state.documentId = documentId;
+      }
+
+      if (processInstanceId) {
+        try {
+          const workflowInfo = await fluigService.getWorkflowProcessInfo({
+            processInstanceId: processInstanceId,
+            documentId: documentId
+          });
+
+          this._state.projectYear = this.asText(
+            workflowInfo && (workflowInfo.startDateProcess || workflowInfo.startDateProcessFromHistory)
+          );
+        } catch (error) {}
+      }
+    } catch (error) {
+      console.warn('[newSolicitation] Nao foi possivel sincronizar os metadados do processo:', error);
+    } finally {
+      this.updateSummaryDetails();
+      this.updateSuccessModalProjectCode();
+    }
+  },
+
   submitForm: async function () {
     if (this._state.isSubmitting) return;
 
@@ -1548,6 +1667,7 @@ const newSolicitationController = {
           datasetName: 'DSFormSolicitacaoProjetos'
         }, taskFields);
         this._state.numSolicitacao = this.asText(processInstanceId);
+        this._state.processInstanceId = this.asText(processInstanceId);
         this.clearDraftUiCache(this._state.documentId);
       } else {
         loading.updateMessage('Enviando para o processo no Fluig...');
@@ -1556,8 +1676,10 @@ const newSolicitationController = {
           completeTask: true
         });
         this._state.numSolicitacao = String(result.numSolicitacao || "").trim();
+        this._state.processInstanceId = this._state.numSolicitacao;
       }
 
+      await this.syncProcessMetadata();
       this.getContainer().find('#success-modal').removeClass('hidden');
     } catch (error) {
       console.error("Error submitting project solicitation:", error);
@@ -1582,31 +1704,28 @@ const newSolicitationController = {
   },
 
   viewRequest: function () {
-    const numSolicitacao = String(this._state.numSolicitacao || "").trim();
-    if (!numSolicitacao) {
+    const processInstanceId = this.getResolvedProcessInstanceId();
+    const documentId = this.asText(this._state.documentId);
+
+    if (!processInstanceId && !documentId) {
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
         title: 'Solicitacao nao encontrada',
-        message: 'Nao foi possivel localizar o numero da solicitacao.'
+        message: 'Nao foi possivel localizar os dados da solicitacao.'
       });
       return;
     }
 
-    const url = `https://fluigqa.bevap.com.br:8443/portal/p/1/pageworkflowview?app_ecm_workflowview_detailsProcessInstanceID=${encodeURIComponent(numSolicitacao)}`;
-    const newTab = window.open(url, "_blank", "noopener,noreferrer");
-
-    if (newTab) {
-      newTab.opener = null;
-      return;
+    const params = new URLSearchParams();
+    if (documentId) {
+      params.set('documentId', documentId);
+    }
+    if (processInstanceId) {
+      params.set('processInstanceId', processInstanceId);
     }
 
-    this.showNotification({
-      borderClass: 'border-red-500',
-      iconClass: 'fa-triangle-exclamation text-red-500',
-      title: 'Pop-up bloqueado',
-      message: 'Permita pop-ups para abrir a solicitacao em nova guia.'
-    });
+    location.hash = `#solicitationDetail?${params.toString()}`;
   },
 
   asText: function (value) {

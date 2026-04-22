@@ -36,8 +36,8 @@ class TagInputFilter {
     _render() {
         this.container.innerHTML = `
             <div class="tag-input-wrapper relative">
-                <div class="tag-input-area bg-white border-2 border-gray-200 rounded-xl w-full min-h-[45px] p-2.5 flex items-center flex-wrap gap-2 cursor-text focus-within:ring-2 focus-within:ring-bevap-green focus-within:border-bevap-green">    
-                <input type="text" class="tag-input-search flex-grow p-1 text-sm outline-none bg-transparent" placeholder="${this.options.placeholder}">
+                <div class="tag-input-area bg-white border-2 border-gray-200 rounded-xl w-full h-[45px] p-2.5 flex items-center gap-2 cursor-text focus-within:ring-2 focus-within:ring-bevap-green focus-within:border-bevap-green overflow-hidden">    
+                <input type="text" class="tag-input-search flex-grow min-w-0 p-1 text-sm outline-none bg-transparent" placeholder="${this.options.placeholder}">
                 </div>
                 <div class="tag-input-dropdown absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-10 hidden max-h-72 overflow-y-auto"></div>
             </div>
@@ -124,12 +124,28 @@ class TagInputFilter {
      */
     _renderTags() {
         this.inputArea.querySelectorAll('.tag-input-tag').forEach(tag => tag.remove());
+        const isSingleWithSelection = this.options.singleSelection && this.selectedItems.size > 0;
+
         this.selectedItems.forEach((label, value) => {
+            const safeLabel = String(label)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
             const tagEl = document.createElement('div');
-            tagEl.className = 'tag-input-tag flex items-center gap-2 bg-gray-200 text-gray-800 text-sm font-semibold pl-3 pr-2 py-1 rounded-md';
-            tagEl.innerHTML = `<span id="tagLabel_${this.container.id}">${label}</span><button data-value="${value}" class="tag-input-remove-tag text-gray-500 hover:text-red-600">&times;</button>`;
+            tagEl.className = `tag-input-tag flex items-center gap-2 min-w-0 max-w-full bg-gray-200 text-gray-800 text-sm font-semibold pl-3 pr-2 py-1 rounded-md ${isSingleWithSelection ? 'w-full' : ''}`;
+            tagEl.innerHTML = `<span id="tagLabel_${this.container.id}" class="tag-input-tag-label block flex-1 min-w-0 truncate" title="${safeLabel}">${safeLabel}</span><button data-value="${value}" class="tag-input-remove-tag shrink-0 text-gray-500 hover:text-red-600">&times;</button>`;
             this.inputArea.insertBefore(tagEl, this.searchInput);
         });
+
+        if (isSingleWithSelection) {
+            this.searchInput.classList.remove('flex-grow', 'p-1');
+            this.searchInput.classList.add('w-0', 'p-0', 'm-0', 'min-w-0');
+        } else {
+            this.searchInput.classList.remove('w-0', 'p-0', 'm-0');
+            this.searchInput.classList.add('flex-grow', 'p-1', 'min-w-0');
+        }
+
         this.inputArea.querySelectorAll('.tag-input-remove-tag').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();

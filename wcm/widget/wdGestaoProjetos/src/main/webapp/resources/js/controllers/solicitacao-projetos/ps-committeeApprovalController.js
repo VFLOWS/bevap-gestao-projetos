@@ -6,6 +6,8 @@ const committeeApprovalController = {
     'titulodoprojetoNS',
     'areaUnidadeNS',
     'patrocinadorNS',
+    'solicitanteNomeNS',
+    'solicitanteColleagueIdNS',
     'prioridadeNS',
     'estadoProcesso',
     'anexosNS',
@@ -272,6 +274,7 @@ const committeeApprovalController = {
         modalId: 'approve-modal',
         decisionField: 'decisaocomite1',
         decisionValue: 'aprovado',
+        validateMainFields: true,
         justification: ''
       });
     });
@@ -291,6 +294,7 @@ const committeeApprovalController = {
         modalId: 'modal-return',
         decisionField: 'decisaocomite1',
         decisionValue: 'correcao',
+        validateMainFields: false,
         justification: justification
       });
     });
@@ -318,6 +322,7 @@ const committeeApprovalController = {
         modalId: 'modal-reject',
         decisionField: 'decisaocomite1',
         decisionValue: 'cancelado',
+        validateMainFields: false,
         justification: justification,
         extraCardData: { categoriajusticomite1: category }
       });
@@ -460,7 +465,7 @@ const committeeApprovalController = {
         return;
       }
 
-      this.renderSidebarFromRow(row);
+      await this.renderSidebarFromRow(row);
       this.fillCapFieldsFromRow(row);
       this.renderApproveModalFromRow(row);
     } catch (error) {
@@ -494,7 +499,7 @@ const committeeApprovalController = {
       code: 'N/A',
       title: 'N/A',
       requester: 'N/A',
-      showRequester: false,
+      showRequester: true,
       area: 'N/A',
       sponsor: 'N/A',
       attachmentsCount: 0,
@@ -525,7 +530,7 @@ const committeeApprovalController = {
     });
   },
 
-  renderSidebarFromRow: function (row) {
+  renderSidebarFromRow: async function (row) {
     const ui = this.getUiComponents();
     if (!ui || !ui.sidebar) return;
 
@@ -533,11 +538,16 @@ const committeeApprovalController = {
     const summaryTarget = container.find('[data-component="project-summary"]').first();
     const progressTarget = container.find('[data-component="progress-status"]').first();
 
+    const projectCode = await fluigService.resolveProjectSummaryCode({
+      documentId: this.asText(row && row.documentid) || this.asText(this._state.documentId),
+      processInstanceId: this.asText(this._state.processInstanceId)
+    }) || 'N/A';
+
     ui.sidebar.renderProjectSummary(summaryTarget, {
-      code: this.asText(row && row.documentid) || 'N/A',
+      code: projectCode,
       title: this.asText(row && row.titulodoprojetoNS) || 'N/A',
-      requester: 'N/A',
-      showRequester: false,
+      requester: this.asText(row && row.solicitanteNomeNS) || 'N/A',
+      showRequester: true,
       area: this.asText(row && row.areaUnidadeNS) || 'N/A',
       sponsor: this.asText(row && row.patrocinadorNS) || 'N/A',
       attachmentsCount: this.countAttachments(row && row.anexosNS),
@@ -931,10 +941,13 @@ const committeeApprovalController = {
       loading.updateMessage('Validando dados do Comitê...');
       await this.waitForUiPaint();
 
-      const missing = this.validateCap();
-      if (missing && missing.length) {
-        this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
-        return;
+      const shouldValidateMainFields = !config || config.validateMainFields !== false;
+      if (shouldValidateMainFields) {
+        const missing = this.validateCap();
+        if (missing && missing.length) {
+          this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          return;
+        }
       }
 
       const processInstanceId = await this.resolveProcessInstanceId();

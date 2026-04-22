@@ -11,6 +11,8 @@ const gccCostApprovalController = {
     'titulodoprojetoNS',
     'areaUnidadeNS',
     'patrocinadorNS',
+    'solicitanteNomeNS',
+    'solicitanteColleagueIdNS',
     'prioridadeNS',
     'estadoProcesso',
     'anexosNS',
@@ -266,7 +268,11 @@ const gccCostApprovalController = {
       this.toggleCostTable();
     });
 
-    root.on(`input${ns}`, '#gcc-capex-rows [data-field="committed"], #gcc-capex-rows [data-field="balance"], #gcc-capex-rows [data-field="account"], #gcc-opex-rows [data-field="committed"], #gcc-opex-rows [data-field="balance"], #gcc-opex-rows [data-field="account"]', () => {
+    root.on(`input${ns}`, '#gcc-capex-rows [data-field="committed"], #gcc-capex-rows [data-field="balance"], #gcc-capex-rows [data-field="account"], #gcc-opex-rows [data-field="committed"], #gcc-opex-rows [data-field="balance"], #gcc-opex-rows [data-field="account"]', (event) => {
+      const target = $(event.currentTarget);
+      if (this.asText(target.attr('data-field')) === 'committed') {
+        this.applyCurrencyMaskInput(event.currentTarget);
+      }
       this.refreshFinancialImpact();
     });
 
@@ -425,7 +431,7 @@ const gccCostApprovalController = {
         return;
       }
 
-      this.renderSidebarFromRow(row);
+      await this.renderSidebarFromRow(row);
       this.fillFieldsFromRow(row);
       this.updateApproveModalProject(row);
     } catch (error) {
@@ -478,7 +484,7 @@ const gccCostApprovalController = {
       code: 'N/A',
       title: 'N/A',
       requester: 'N/A',
-      showRequester: false,
+      showRequester: true,
       area: 'N/A',
       sponsor: 'N/A',
       attachmentsCount: 0,
@@ -519,16 +525,20 @@ const gccCostApprovalController = {
     this.refreshFinancialImpact();
   },
 
-  renderSidebarFromRow: function (row) {
+  renderSidebarFromRow: async function (row) {
     const ui = this.getUiComponents();
     if (!ui || !ui.sidebar) return;
 
     const root = this.getContainer();
+    const projectCode = await fluigService.resolveProjectSummaryCode({
+      documentId: this.asText(row && row.documentid) || this.asText(this._state.documentId),
+      processInstanceId: this.asText(this._state.processInstanceId)
+    }) || 'N/A';
     ui.sidebar.renderProjectSummary(root.find('[data-component="project-summary"]').first(), {
-      code: this.asText(row.documentid) || 'N/A',
+      code: projectCode,
       title: this.asText(row.titulodoprojetoNS) || 'N/A',
-      requester: 'N/A',
-      showRequester: false,
+      requester: this.asText(row.solicitanteNomeNS) || 'N/A',
+      showRequester: true,
       area: this.asText(row.areaUnidadeNS) || 'N/A',
       sponsor: this.asText(row.patrocinadorNS) || 'N/A',
       attachmentsCount: this.countAttachments(row.anexosNS) + this.countAttachments(row.anexosPropostaTIPC),
@@ -1357,6 +1367,27 @@ const gccCostApprovalController = {
     const amount = Number(value);
     const safe = isFinite(amount) ? amount : 0;
     return `R$ ${safe.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  },
+
+  applyCurrencyMaskInput: function (inputEl) {
+    const input = inputEl && inputEl.jquery ? inputEl.get(0) : inputEl;
+    if (!input) return;
+
+    const raw = this.asText($(input).val());
+    const digitsOnly = raw.replace(/\D/g, '');
+
+    if (!digitsOnly) {
+      $(input).val('');
+      return;
+    }
+
+    const cents = Number(digitsOnly) / 100;
+    if (!isFinite(cents)) {
+      $(input).val('');
+      return;
+    }
+
+    $(input).val(this.formatCurrency(cents));
   },
 
   normalizeCurrencyInput: function (inputEl) {

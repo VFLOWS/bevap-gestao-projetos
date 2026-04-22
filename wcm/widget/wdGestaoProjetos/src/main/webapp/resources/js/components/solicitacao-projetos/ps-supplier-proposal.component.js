@@ -308,7 +308,7 @@
     return { label: asText(value) || 'Nao informado', classes: 'bg-slate-100 text-slate-700' };
   }
 
-  function renderHtml(row) {
+  function renderHtml(row, params) {
     if (!row) {
       return '<div class="text-sm text-gray-500">Nao foi possivel carregar a proposta do fornecedor.</div>';
     }
@@ -360,11 +360,14 @@
       asText(row.telefone2TIPC)
     ].filter(Boolean);
 
-    const hasCommercialApprovalFeedback = [
-      row.decisaoPropostaSAP,
-      row.observacoesNegociacaoSAP,
-      row.liConcordoPropostaComercialSAP
-    ].some((value) => asText(value));
+    const hideRequesterFeedbackInProposal = params && params.hideRequesterFeedback === true;
+
+    const hasCommercialApprovalFeedback =
+      !hideRequesterFeedbackInProposal && (
+      asText(row.decisaoPropostaSAP) ||
+      asText(row.observacoesNegociacaoSAP) ||
+      parseBooleanLike(row.liConcordoPropostaComercialSAP) === true
+      );
     const proposalDecisionBadge = getProposalDecisionBadge(row.decisaoPropostaSAP);
     const agreementValue = parseBooleanLike(row.liConcordoPropostaComercialSAP);
     const agreementLabel = agreementValue === true ? 'Sim' : agreementValue === false ? 'Nao' : 'Nao informado';
@@ -511,7 +514,7 @@
     }
 
     const row = await loadRow(documentId);
-    return renderHtml(row);
+    return renderHtml(row, params || {});
   }
 
   const registry = getRegistry();

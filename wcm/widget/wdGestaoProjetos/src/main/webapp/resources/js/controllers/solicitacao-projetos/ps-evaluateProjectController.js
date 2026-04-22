@@ -8,6 +8,8 @@ const evaluateProjectController = {
     'areaUnidadeNS',
     'centrodecustoNS',
     'patrocinadorNS',
+    'solicitanteNomeNS',
+    'solicitanteColleagueIdNS',
     'objetivodoprojetoNS',
     'problemaOportunidadeNS',
     'beneficiosesperadosNS',
@@ -117,14 +119,14 @@ const evaluateProjectController = {
     }
 
     if (titleEl.length) {
-      titleEl.text('TI - Evaluate Project');
+      titleEl.text('TI - Avaliar Projeto');
     }
 
     if (breadcrumbEl.length) {
       breadcrumbEl.html(`
         <a href="#dashboard" class="text-gray-300 hover:text-white transition-colors">Home</a>
         <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-        <span class="text-bevap-gold font-medium">Evaluate</span>
+        <span class="text-bevap-gold font-medium">Avaliar Projeto</span>
       `);
     }
   },
@@ -198,6 +200,14 @@ const evaluateProjectController = {
 
     container.on(`click${ns}`, '[data-action="confirm-return"]', (event) => {
       event.preventDefault();
+
+      const returnReason = this.asText(container.find('#evaluate-return-reason-input').val());
+      if (!returnReason) {
+        this.showToast('Informe o motivo da devolucao.', 'warning');
+        container.find('#evaluate-return-reason-input').trigger('focus');
+        return;
+      }
+
       this.handleTaskAction({
         modalId: 'modal-return',
         choosedState: 14,
@@ -209,6 +219,21 @@ const evaluateProjectController = {
 
     container.on(`click${ns}`, '[data-action="confirm-reject"]', (event) => {
       event.preventDefault();
+
+      const rejectCategory = this.asText(container.find('#evaluate-reject-category-input').val());
+      if (!rejectCategory) {
+        this.showToast('Selecione a categoria da reprovacao.', 'warning');
+        container.find('#evaluate-reject-category-input').trigger('focus');
+        return;
+      }
+
+      const rejectDescription = this.asText(container.find('#evaluate-reject-description-input').val());
+      if (!rejectDescription) {
+        this.showToast('Informe a justificativa da reprovacao.', 'warning');
+        container.find('#evaluate-reject-description-input').trigger('focus');
+        return;
+      }
+
       this.handleTaskAction({
         modalId: 'modal-reject',
         choosedState: 14,
@@ -225,6 +250,7 @@ const evaluateProjectController = {
         choosedState: 14,
         decisionField: 'decisaoAvaliarProjeto',
         decisionValue: 'aprovado',
+        validateRequiredFields: true,
         successMessage: 'Encaminhado para aprovacao do projeto'
       });
     });
@@ -449,7 +475,8 @@ const evaluateProjectController = {
 
     const styleMap = {
       success: { iconClass: 'fa-check-circle text-bevap-green', borderClass: 'border-bevap-green' },
-      error: { iconClass: 'fa-triangle-exclamation text-red-500', borderClass: 'border-red-500' }
+      error: { iconClass: 'fa-triangle-exclamation text-red-500', borderClass: 'border-red-500' },
+      warning: { iconClass: 'fa-circle-exclamation text-yellow-500', borderClass: 'border-yellow-500' }
     };
     const presentation = styleMap[type || 'success'] || styleMap.success;
 
@@ -536,7 +563,7 @@ const evaluateProjectController = {
 
       this.fillNsFieldsFromRow(row);
       this.fillEvaluateFieldsFromRow(row);
-      this.renderSidebarFromRow(row);
+      await this.renderSidebarFromRow(row);
       this.updateApproveModalProject(row);
       await this.renderSolicitacaoHistoryTab();
     } catch (error) {
@@ -707,6 +734,24 @@ const evaluateProjectController = {
     });
   },
 
+  findAttachmentsMount: function () {
+    const root = this.getContainer();
+    const selectors = [
+      '[data-tab-panel="solicitacao"] [data-gp-attachments]',
+      '[data-component="tab-solicitacao-history"] [data-gp-attachments]',
+      '#attachments-list'
+    ];
+
+    for (let i = 0; i < selectors.length; i++) {
+      const target = root.find(selectors[i]).first();
+      if (target.length) {
+        return target;
+      }
+    }
+
+    return $();
+  },
+
   openAttachmentsFromSidebar: async function () {
     const ui = this.getUiComponents();
     if (ui && ui.tabs && this._tabsRoot) {
@@ -715,7 +760,7 @@ const evaluateProjectController = {
 
     await this.renderSolicitacaoHistoryTab();
 
-    const target = this.getContainer().find('[data-tab-panel="solicitacao"] [data-gp-attachments]').first();
+    const target = this.findAttachmentsMount();
     const fallback = this.getContainer().find('[data-component="tab-solicitacao-history"]').first();
     const scrollTarget = target.length ? target : fallback;
     if (!scrollTarget.length) return;
@@ -727,14 +772,18 @@ const evaluateProjectController = {
   },
 
   renderAttachments: function (fieldName, rawValue) {
-    const list = this.getContainer().find('#attachments-list').first();
-    if (!list.length) return;
+    const list = this.findAttachmentsMount();
+    if (!list.length) {
+      return;
+    }
 
     const ui = this.getUiComponents();
     if (ui && ui.attachments && typeof ui.attachments.render === 'function') {
       ui.attachments.render(list, {
         fieldName: this.asText(fieldName) || 'anexosNS',
-        value: rawValue
+        value: rawValue,
+        documentId: this._currentDocumentId,
+        datasetId: this._datasetId
       });
       return;
     }
@@ -742,17 +791,22 @@ const evaluateProjectController = {
     list.html('<div class="py-2 text-sm text-gray-500">—</div>');
   },
 
-  renderSidebarFromRow: function (row) {
+  renderSidebarFromRow: async function (row) {
     const ui = this.getUiComponents();
     if (!ui || !ui.sidebar) return;
 
     const summaryTarget = this.getContainer().find('[data-component="project-summary"]').first();
     if (!summaryTarget.length) return;
+    const projectCode = await fluigService.resolveProjectSummaryCode({
+      documentId: this.asText(row && row.documentid) || this.asText(this._currentDocumentId),
+      processInstanceId: this.asText(this._currentProcessInstanceId)
+    }) || '-';
 
     ui.sidebar.renderProjectSummary(summaryTarget, {
-      code: this.asText(row.documentid) || '-',
+      code: projectCode,
       title: row.titulodoprojetoNS || '-',
-      requester: '-',
+      requester: this.asText(row.solicitanteNomeNS) || 'N/A',
+      showRequester: true,
       area: row.areaUnidadeNS || '-',
       sponsor: row.patrocinadorNS || '-',
       attachmentsCount: this.countAttachments(row.anexosNS),
@@ -912,6 +966,63 @@ const evaluateProjectController = {
     return this.getContainer().find('#tab-content-analise-tecnica .space-y-5 > div');
   },
 
+  validateEvaluateProject: function () {
+    const missing = [];
+    const visibility = this.getAnalysisFieldValue({
+      selector: 'input[name="technical-visibility"]:checked',
+      blockIndex: 0,
+      type: 'radio',
+      fallbackSelector: 'input[name="viabilidade"]:checked'
+    });
+    const alternatives = this.getAnalysisFieldValue({
+      selector: '#alternatives-considered-input',
+      blockIndex: 1,
+      fallbackSelector: 'textarea'
+    });
+    const estimatedHours = this.getAnalysisFieldValue({
+      selector: '#estimated-hours-input',
+      blockIndex: 2,
+      type: 'numberGroup',
+      inputIndex: 0
+    });
+    const estimatedPoints = this.getAnalysisFieldValue({
+      selector: '#estimated-points-input',
+      blockIndex: 2,
+      type: 'numberGroup',
+      inputIndex: 1
+    });
+    const dependencies = this.getAnalysisFieldValue({
+      selector: '#technical-dependencies-input',
+      blockIndex: 4,
+      fallbackSelector: 'textarea'
+    });
+
+    if (!visibility) missing.push('Viabilidade Tecnica');
+    if (!alternatives) missing.push('Alternativas Consideradas');
+    if (!estimatedHours) missing.push('Esforco Estimado (horas)');
+    if (!estimatedPoints) missing.push('Esforco Estimado (pontos)');
+    if (!dependencies) missing.push('Dependencias Tecnicas');
+
+    return missing;
+  },
+
+  showEvaluateValidationWarning: function (missing) {
+    this.showToast(`Campos obrigatorios: Preencha ${missing.join(' | ')}`, 'warning');
+  },
+
+  openEvaluateAnalysisTab: function () {
+    const ui = this.getUiComponents();
+    if (ui && ui.tabs && this._tabsRoot) {
+      ui.tabs.setActive(this._tabsRoot, 'analise-tecnica');
+      return;
+    }
+
+    const tab = this.getContainer().find('#tab-analise-tecnica').first();
+    if (tab.length) {
+      tab.trigger('click');
+    }
+  },
+
   getAnalysisFieldValue: function (config) {
     const root = this.getContainer();
     if (config.selector) {
@@ -1066,6 +1177,17 @@ const evaluateProjectController = {
     try {
       loading.updateMessage('Preparando dados da etapa...');
       await this.waitForUiPaint();
+
+      if (config && config.validateRequiredFields) {
+        const missing = this.validateEvaluateProject();
+        if (missing && missing.length) {
+          this.closeModal(config.modalId);
+          this.showEvaluateValidationWarning(missing);
+          this.openEvaluateAnalysisTab();
+          return;
+        }
+      }
+
       const processInstanceId = await this.resolveProcessInstanceId();
       const taskFields = this.collectEvaluateTaskFields(config.decisionField, config.decisionValue);
 

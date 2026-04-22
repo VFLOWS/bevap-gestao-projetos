@@ -26,16 +26,100 @@
 
   function parseAttachments(value) {
     if (Array.isArray(value)) return value;
+    if (value && typeof value === 'object') {
+      return normalizeAttachmentsPayload(value);
+    }
 
     const text = asText(value);
     if (!text) return [];
 
     try {
       const parsed = JSON.parse(text);
-      return Array.isArray(parsed) ? parsed : [];
+      return normalizeAttachmentsPayload(parsed);
     } catch (error) {
       return [];
     }
+  }
+
+  function normalizeAttachmentsPayload(value) {
+    if (Array.isArray(value)) return value;
+    if (!value || typeof value !== 'object') return [];
+
+    const candidates = [
+      value.items,
+      value.attachments,
+      value.anexos,
+      value.documents,
+      value.rows
+    ];
+
+    for (let i = 0; i < candidates.length; i++) {
+      if (Array.isArray(candidates[i])) {
+        return candidates[i];
+      }
+    }
+
+    return [value];
+  }
+
+  function getObjectValue(obj, keys) {
+    if (!obj || typeof obj !== 'object') return '';
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      if (obj[key] !== undefined && obj[key] !== null && obj[key] !== 'null') {
+        return obj[key];
+      }
+    }
+
+    return '';
+  }
+
+  function normalizeAttachmentItem(item) {
+    const documentId = asText(getObjectValue(item, [
+      'documentId',
+      'documentID',
+      'id',
+      'nrDocumento',
+      'nr_documento'
+    ]));
+    const fileName = asText(getObjectValue(item, [
+      'fileName',
+      'filename',
+      'name',
+      'description',
+      'documentDescription'
+    ]));
+    const fileSize = getObjectValue(item, [
+      'fileSize',
+      'size',
+      'phisicalFileSize'
+    ]);
+
+    return {
+      documentId: documentId,
+      fileName: fileName,
+      fileSize: fileSize
+    };
+  }
+
+  function getRowFieldValue(row, fieldName) {
+    if (!row || !fieldName) return '';
+
+    const candidates = [
+      fieldName,
+      fieldName.toLowerCase(),
+      fieldName.toUpperCase()
+    ];
+
+    for (let i = 0; i < candidates.length; i++) {
+      const key = candidates[i];
+      if (row[key] !== undefined && row[key] !== null && row[key] !== 'null') {
+        return row[key];
+      }
+    }
+
+    return '';
   }
 
   function getAttachmentIconClass(fileName) {
@@ -117,7 +201,7 @@
 
       let rawValue = options.value;
 
-      if ((rawValue === null || rawValue === undefined || rawValue === '') && documentId) {
+      if ((rawValue === null || rawValue === undefined || rawValue === '') && documentId && fieldName && datasetId) {
         try {
           const rows = await fluigService.getDatasetRows(datasetId, {
             fields: [fieldName],
@@ -127,7 +211,7 @@
           });
 
           const row = rows && rows.length ? rows[0] : null;
-          rawValue = row ? row[fieldName] : rawValue;
+          rawValue = row ? getRowFieldValue(row, fieldName) : rawValue;
         } catch (error) {
           // Se falhar o dataset, só exibe vazio.
           $target.html(emptyHtml);
@@ -136,14 +220,7 @@
       }
 
       const items = parseAttachments(rawValue)
-        .map((item) => {
-          const docId = asText(item && (item.documentId || item.documentID || item.id));
-          return {
-            documentId: docId,
-            fileName: asText(item && (item.fileName || item.filename || item.name)),
-            fileSize: item && item.fileSize !== undefined ? item.fileSize : (item && item.size)
-          };
-        })
+        .map((item) => normalizeAttachmentItem(item))
         .filter((item) => item.documentId && item.fileName);
 
       if (!items.length) {

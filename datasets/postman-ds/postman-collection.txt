@@ -1,0 +1,733 @@
+{
+  "info": {
+    "_postman_id": "66ef3884-a81f-45d2-8729-b11dbbfdfbf7",
+    "name": "GLPI NOVO v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "4284673",
+    "_collection_link": "https://go.postman.co/collection/4284673-66ef3884-a81f-45d2-8729-b11dbbfdfbf7?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Project",
+      "item": [
+        {
+          "name": "Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Session-Token",
+                "value": "{{session_token_GLPI}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"TESTE UPDATE POSTMAN\",\r\n    \"code\": \"GLPI-TESTE\",\r\n    \"priority\": 1,\r\n    \"entities_id\": \"Bevap\",\r\n    \"is_recursive\": 0,\r\n    \"projects_id\": 0,\r\n    \"projectstates_id\": \"New\",\r\n    \"projecttypes_id\": 0,\r\n    \"date\": null,\r\n    \"date_mod\": \"2026-03-27 09:49:59\",\r\n    \"users_id\": \"vflows.ext.vinicius\",\r\n    \"groups_id\": \"TI_Sistemas\",\r\n    \"plan_start_date\": \"2026-04-05 12:00:00\",\r\n    \"plan_end_date\": \"2026-12-31 12:00:00\",\r\n    \"real_start_date\": \"2026-03-30 12:00:00\",\r\n    \"real_end_date\": \"2026-08-31 12:00:00\",\r\n    \"percent_done\": 0,\r\n    \"auto_percent_done\": 0,\r\n    \"show_on_global_gantt\": 0,\r\n    \"content\": \"<p>UPDATE POSTMAN</p>\",\r\n    \"comment\": \"UPDATE POSTMAN\",\r\n    \"is_deleted\": 0,\r\n    \"date_creation\": \"2026-03-26 17:32:42\",\r\n    \"projecttemplates_id\": 0,\r\n    \"is_template\": 0,\r\n    \"template_name\": null,\r\n    \"links\": [\r\n        {\r\n            \"rel\": \"Entity\",\r\n            \"href\": \"https://central.beval.com.br/api.php/v1/Entity/0\"\r\n        },\r\n        {\r\n            \"rel\": \"ProjectState\",\r\n            \"href\": \"https://central.beval.com.br/api.php/v1/ProjectState/1\"\r\n        },\r\n        {\r\n            \"rel\": \"User\",\r\n            \"href\": \"https://central.beval.com.br/api.php/v1/User/46\"\r\n        },\r\n        {\r\n            \"rel\": \"Group\",\r\n            \"href\": \"https://central.beval.com.br/api.php/v1/Group/2\"\r\n        },\r\n        {\r\n            \"rel\": \"Document_Item\",\r\n            \"href\": \"https://central.beval.com.br/api.php/v1/Project/2/Document_Item/\"\r\n        },\r\n        {\r\n            \"rel\": \"Contract_Item\",\r\n            \"href\": \"https://central.beval.com.br/api.php/v1/Project/2/Contract_Item/\"\r\n        },\r\n        {\r\n            \"rel\": \"ProjectTask\",\r\n            \"href\": \"https://central.beval.com.br/api.php/v1/Project/2/ProjectTask/\"\r\n        },\r\n        {\r\n            \"rel\": \"ProjectCost\",\r\n            \"href\": \"https://central.beval.com.br/api.php/v1/Project/2/ProjectCost/\"\r\n        },\r\n        {\r\n            \"rel\": \"Itil_Project\",\r\n            \"href\": \"https://central.beval.com.br/api.php/v1/Project/2/Itil_Project/\"\r\n        },\r\n        {\r\n            \"rel\": \"Item_Project\",\r\n            \"href\": \"https://central.beval.com.br/api.php/v1/Project/2/Item_Project/\"\r\n        }\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_GLPI_NOVO}}/apirest.php/:itemtype/:id",
+              "host": [
+                "{{base_GLPI_NOVO}}"
+              ],
+              "path": [
+                "apirest.php",
+                ":itemtype",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "itemtype",
+                  "value": "Project"
+                },
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Session-Token",
+                "value": "{{session_token_GLPI}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_GLPI_NOVO}}/apirest.php/:itemtype/:id?expand_dropdowns=true",
+              "host": [
+                "{{base_GLPI_NOVO}}"
+              ],
+              "path": [
+                "apirest.php",
+                ":itemtype",
+                ":id"
+              ],
+              "query": [
+                {
+                  "key": "expand_dropdowns",
+                  "value": "true"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "itemtype",
+                  "value": "Project"
+                },
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Project",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Session-Token",
+                "value": "{{session_token_GLPI}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"input\": {\r\n    \"name\": \"TESTE NOVO PROJETO API POSTMAN\",\r\n    \"code\": \"GLPI-TESTE-POSTMAN\",\r\n    \"priority\": 1,\r\n    \"entities_id\": 0,\r\n    \"is_recursive\": 0,\r\n    \"projects_id\": 0,\r\n    \"projectstates_id\": 0,\r\n    \"projecttypes_id\": 0,\r\n    \"date\": null,\r\n    \"date_mod\": \"2026-03-27 09:49:59\",\r\n    \"users_id\": \"vflows.ext.vinicius\",\r\n    \"groups_id\": \"TI_Sistemas\",\r\n    \"plan_start_date\": \"2026-04-05 12:00:00\",\r\n    \"plan_end_date\": \"2026-12-31 12:00:00\",\r\n    \"real_start_date\": \"2026-03-30 12:00:00\",\r\n    \"real_end_date\": \"2026-08-31 12:00:00\",\r\n    \"percent_done\": 0,\r\n    \"auto_percent_done\": 0,\r\n    \"show_on_global_gantt\": 0,\r\n    \"content\": \"<p>TESTE POSTMAN</p>\",\r\n    \"comment\": \"TESTE POSTMAN COMMENT\",\r\n    \"is_deleted\": 0,\r\n    \"date_creation\": \"2026-03-26 17:32:42\",\r\n    \"projecttemplates_id\": 0,\r\n    \"is_template\": 0,\r\n    \"template_name\": null,\r\n    \"links\": []\r\n}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_GLPI_NOVO}}/apirest.php/:itemtype",
+              "host": [
+                "{{base_GLPI_NOVO}}"
+              ],
+              "path": [
+                "apirest.php",
+                ":itemtype"
+              ],
+              "variable": [
+                {
+                  "key": "itemtype",
+                  "value": "Project"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "User",
+      "item": [
+        {
+          "name": "User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Session-Token",
+                "value": "{{session_token_GLPI}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_GLPI_NOVO}}/apirest.php/User",
+              "host": [
+                "{{base_GLPI_NOVO}}"
+              ],
+              "path": [
+                "apirest.php",
+                "User"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "listSearchOptions",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Session-Token",
+                "value": "{{session_token_GLPI}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_GLPI_NOVO}}/apirest.php/listSearchOptions/User",
+              "host": [
+                "{{base_GLPI_NOVO}}"
+              ],
+              "path": [
+                "apirest.php",
+                "listSearchOptions",
+                "User"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Session-Token",
+                "value": "{{session_token_GLPI}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_GLPI_NOVO}}/apirest.php/search/User/?criteria[0][field]=5&criteria[0][searchtype]=contains&criteria[0][value]=vinicius.nogueira@vflows.com.br",
+              "host": [
+                "{{base_GLPI_NOVO}}"
+              ],
+              "path": [
+                "apirest.php",
+                "search",
+                "User",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "criteria[0][field]",
+                  "value": "5"
+                },
+                {
+                  "key": "criteria[0][searchtype]",
+                  "value": "contains"
+                },
+                {
+                  "key": "criteria[0][value]",
+                  "value": "vinicius.nogueira@vflows.com.br"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search User Copy",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "App-Token",
+                "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+                "type": "text"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Session-Token",
+                "value": "{{session_token_GLPI}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_GLPI_NOVO}}/apirest.php/search/User/?reset=reset&criteria[0][field]=5&criteria[0][searchtype]=contains&criteria[0][value]=vinicius&forcedisplay[0]=2&forcedisplay[1]=1&forcedisplay[2]=5",
+              "host": [
+                "{{base_GLPI_NOVO}}"
+              ],
+              "path": [
+                "apirest.php",
+                "search",
+                "User",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "reset",
+                  "value": "reset"
+                },
+                {
+                  "key": "criteria[0][field]",
+                  "value": "5"
+                },
+                {
+                  "key": "criteria[0][searchtype]",
+                  "value": "contains"
+                },
+                {
+                  "key": "criteria[0][value]",
+                  "value": "vinicius"
+                },
+                {
+                  "key": "forcedisplay[0]",
+                  "value": "2"
+                },
+                {
+                  "key": "forcedisplay[1]",
+                  "value": "1"
+                },
+                {
+                  "key": "forcedisplay[2]",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Init Session",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "let response = pm.response.json();\r",
+              "\r",
+              "// Save the access token in a collection variable\r",
+              "pm.collectionVariables.set(\"session_token_GLPI\", response.session_token);\r",
+              "\r",
+              "// Optionally, log the saved token\r",
+              "console.log(\"Session token saved:\", response.session_token);"
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{psw_GLPI}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "{{user_GLPI}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Authorization",
+            "value": "user_token MC96XzFQg8vq1tNe4VA6hqPZdTWqASCpEQbfzXBo",
+            "type": "text",
+            "disabled": true
+          }
+        ],
+        "url": {
+          "raw": "{{base_GLPI_NOVO}}/apirest.php/initSession",
+          "host": [
+            "{{base_GLPI_NOVO}}"
+          ],
+          "path": [
+            "apirest.php",
+            "initSession"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "My Profiles",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Session-Token",
+            "value": "{{session_token_GLPI}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_GLPI_NOVO}}/apirest.php/getMyProfiles",
+          "host": [
+            "{{base_GLPI_NOVO}}"
+          ],
+          "path": [
+            "apirest.php",
+            "getMyProfiles"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Active Profile",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Session-Token",
+            "value": "{{session_token_GLPI}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_GLPI_NOVO}}/apirest.php/getActiveProfile",
+          "host": [
+            "{{base_GLPI_NOVO}}"
+          ],
+          "path": [
+            "apirest.php",
+            "getActiveProfile"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Active Entities",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              ""
+            ],
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {}
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [
+          {
+            "key": "App-Token",
+            "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "Session-Token",
+            "value": "{{session_token_GLPI}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_GLPI_NOVO}}/apirest.php/getActiveEntities",
+          "host": [
+            "{{base_GLPI_NOVO}}"
+          ],
+          "path": [
+            "apirest.php",
+            "getActiveEntities"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "user_GLPI",
+      "value": ""
+    },
+    {
+      "key": "base_GLPI_NOVO",
+      "value": ""
+    },
+    {
+      "key": "psw_GLPI",
+      "value": ""
+    },
+    {
+      "key": "session_token_GLPI",
+      "value": ""
+    }
+  ]
+}
