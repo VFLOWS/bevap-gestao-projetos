@@ -65,8 +65,7 @@ const newSolicitationController = {
       'escopo-inicial',
       'out-of-scope',
       'dependencies',
-      'declaracao',
-      'alinhamento'
+      'declaracao'
     ],
     requiredFieldLabels: {
       titulo: 'Titulo do Projeto',
