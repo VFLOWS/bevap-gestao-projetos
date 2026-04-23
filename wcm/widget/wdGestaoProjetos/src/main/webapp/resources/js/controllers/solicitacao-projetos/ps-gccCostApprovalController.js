@@ -11,6 +11,8 @@ const gccCostApprovalController = {
     'titulodoprojetoNS',
     'areaUnidadeNS',
     'patrocinadorNS',
+    'solicitanteNomeNS',
+    'solicitanteColleagueIdNS',
     'prioridadeNS',
     'estadoProcesso',
     'anexosNS',
@@ -266,7 +268,11 @@ const gccCostApprovalController = {
       this.toggleCostTable();
     });
 
-    root.on(`input${ns}`, '#gcc-capex-rows [data-field="committed"], #gcc-capex-rows [data-field="balance"], #gcc-capex-rows [data-field="account"], #gcc-opex-rows [data-field="committed"], #gcc-opex-rows [data-field="balance"], #gcc-opex-rows [data-field="account"]', () => {
+    root.on(`input${ns}`, '#gcc-capex-rows [data-field="committed"], #gcc-capex-rows [data-field="balance"], #gcc-capex-rows [data-field="account"], #gcc-opex-rows [data-field="committed"], #gcc-opex-rows [data-field="balance"], #gcc-opex-rows [data-field="account"]', (event) => {
+      const target = $(event.currentTarget);
+      if (this.asText(target.attr('data-field')) === 'committed') {
+        this.applyCurrencyMaskInput(event.currentTarget);
+      }
       this.refreshFinancialImpact();
     });
 
@@ -425,7 +431,7 @@ const gccCostApprovalController = {
         return;
       }
 
-      this.renderSidebarFromRow(row);
+      await this.renderSidebarFromRow(row);
       this.fillFieldsFromRow(row);
       this.updateApproveModalProject(row);
     } catch (error) {
@@ -478,7 +484,7 @@ const gccCostApprovalController = {
       code: 'N/A',
       title: 'N/A',
       requester: 'N/A',
-      showRequester: false,
+      showRequester: true,
       area: 'N/A',
       sponsor: 'N/A',
       attachmentsCount: 0,
@@ -519,16 +525,20 @@ const gccCostApprovalController = {
     this.refreshFinancialImpact();
   },
 
-  renderSidebarFromRow: function (row) {
+  renderSidebarFromRow: async function (row) {
     const ui = this.getUiComponents();
     if (!ui || !ui.sidebar) return;
 
     const root = this.getContainer();
+    const projectCode = await fluigService.resolveProjectSummaryCode({
+      documentId: this.asText(row && row.documentid) || this.asText(this._state.documentId),
+      processInstanceId: this.asText(this._state.processInstanceId)
+    }) || 'N/A';
     ui.sidebar.renderProjectSummary(root.find('[data-component="project-summary"]').first(), {
-      code: this.asText(row.documentid) || 'N/A',
+      code: projectCode,
       title: this.asText(row.titulodoprojetoNS) || 'N/A',
-      requester: 'N/A',
-      showRequester: false,
+      requester: this.asText(row.solicitanteNomeNS) || 'N/A',
+      showRequester: true,
       area: this.asText(row.areaUnidadeNS) || 'N/A',
       sponsor: this.asText(row.patrocinadorNS) || 'N/A',
       attachmentsCount: this.countAttachments(row.anexosNS) + this.countAttachments(row.anexosPropostaTIPC),
@@ -1024,6 +1034,69 @@ const gccCostApprovalController = {
       .toggleClass('text-red-300', afterTotal < 0);
   },
 
+  validateAllocationCompliance: function () {
+    const issues = [];
+    const tolerance = 0.009;
+    const proposalTotal = this.getProposalTotalAmount();
+    const root = this.getContainer();
+
+    const kinds = [
+      {
+        kind: 'capex',
+        enabled: Boolean(root.find('#gcc-cost-nature-capex').prop('checked')),
+        percent: this.getAllocationPercent('capex')
+      },
+      {
+        kind: 'opex',
+        enabled: Boolean(root.find('#gcc-cost-nature-opex').prop('checked')),
+        percent: this.getAllocationPercent('opex')
+      }
+    ];
+
+    kinds.forEach((entry) => {
+      if (!entry.enabled) return;
+
+      const kindLabel = entry.kind.toUpperCase();
+      const expectedTotal = proposalTotal * (entry.percent / 100);
+      const committedTotal = this.calculateCommittedAmount(entry.kind, proposalTotal);
+
+      if (Math.abs(committedTotal - expectedTotal) > tolerance) {
+        issues.push(`${kindLabel} - Total comprometido (${this.formatCurrency(committedTotal)}) deve ser igual ao valor total da natureza (${this.formatCurrency(expectedTotal)})`);
+      }
+
+      const rows = this.collectAllocationRows(entry.kind);
+      rows.forEach((row, index) => {
+        const rowLabel = `${kindLabel} linha ${index + 1}`;
+        const committed = this.parseCurrencyValue(row.committed);
+        const balance = this.parseCurrencyValue(row.balance);
+        let balanceAfter = this.parseCurrencyValue(row.balanceAfter);
+
+        if (balanceAfter === null && committed !== null && balance !== null) {
+          balanceAfter = balance - committed;
+        }
+
+        if (this.asText(row.committed) && (committed === null || committed <= 0)) {
+          issues.push(`${rowLabel} - Valor Comprometido deve ser maior que zero`);
+        }
+
+        if (balance === null) {
+          issues.push(`${rowLabel} - Saldo deve ser informado`);
+          return;
+        }
+
+        if (committed !== null && committed - balance > tolerance) {
+          issues.push(`${rowLabel} - Valor Comprometido nao pode ser maior que o Saldo`);
+        }
+
+        if (balanceAfter !== null && balanceAfter < -tolerance) {
+          issues.push(`${rowLabel} - Saldo apos compromisso nao pode ficar negativo`);
+        }
+      });
+    });
+
+    return issues;
+  },
+
   validateFinancePanel: function () {
     const missing = [];
     const root = this.getContainer();
@@ -1059,6 +1132,11 @@ const gccCostApprovalController = {
         if (!row.committed) missing.push(`${label} - Valor Comprometido`);
       });
     });
+
+    const complianceIssues = this.validateAllocationCompliance();
+    if (complianceIssues.length) {
+      missing.push.apply(missing, complianceIssues);
+    }
 
     return missing;
   },
@@ -1357,6 +1435,27 @@ const gccCostApprovalController = {
     const amount = Number(value);
     const safe = isFinite(amount) ? amount : 0;
     return `R$ ${safe.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  },
+
+  applyCurrencyMaskInput: function (inputEl) {
+    const input = inputEl && inputEl.jquery ? inputEl.get(0) : inputEl;
+    if (!input) return;
+
+    const raw = this.asText($(input).val());
+    const digitsOnly = raw.replace(/\D/g, '');
+
+    if (!digitsOnly) {
+      $(input).val('');
+      return;
+    }
+
+    const cents = Number(digitsOnly) / 100;
+    if (!isFinite(cents)) {
+      $(input).val('');
+      return;
+    }
+
+    $(input).val(this.formatCurrency(cents));
   },
 
   normalizeCurrencyInput: function (inputEl) {

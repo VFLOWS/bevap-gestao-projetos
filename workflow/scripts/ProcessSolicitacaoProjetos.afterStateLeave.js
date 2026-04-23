@@ -2,10 +2,12 @@ function afterStateLeave(sequenceId) {
     var atividade = getValue("WKNumState");
 
     var targetFieldByActivity = {
+        "15": "anexosNS",
         "26": "anexosApoioTITT",
         "36": "anexarAtaReuniaoCAP",
         "38": "anexosPropostaTIPC",
-        "61": "anexarAtaReuniaoACP"
+        "61": "anexarAtaReuniaoACP",
+        "66": "anexosCRC"
     };
 
     var targetField = targetFieldByActivity[String(atividade)];
@@ -58,6 +60,9 @@ function afterStateLeave(sequenceId) {
         var excludedIds = {};
         for (var f = 0; f < attachmentFields.length; f++) {
             var fieldName = attachmentFields[f];
+            if (fieldName === targetField) {
+                continue;
+            }
             var jsonText = String(hAPI.getCardValue(fieldName) || "");
             var fieldIds = extractDocumentIds(safeParseArray(jsonText));
 
@@ -74,7 +79,7 @@ function afterStateLeave(sequenceId) {
             var attachment = attachments.get(j);
             var documentId = String(attachment.getDocumentId());
 
-            // só pega anexos que NÃO estavam na criação
+            // só pega anexos que ainda nao foram salvos em outros campos de anexo
             if (excludedIds[documentId] === true) continue;
 
             jsonAttachments.push({

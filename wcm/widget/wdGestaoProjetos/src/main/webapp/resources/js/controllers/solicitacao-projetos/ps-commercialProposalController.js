@@ -11,11 +11,15 @@ const commercialProposalController = {
     'titulodoprojetoNS',
     'areaUnidadeNS',
     'patrocinadorNS',
+    'solicitanteNomeNS',
+    'solicitanteColleagueIdNS',
     'prioridadeNS',
     'estadoProcesso',
     'anexosNS',
     'anexosApoioTITT',
     'execucaoProjetoTITT',
+    'fornecedorRecomendadoTITT',
+    'codfornTITT',
     'nomeFornecedorTIPC',
     'codFornecedorTIPC',
     'cnpjTIPC',
@@ -402,8 +406,21 @@ const commercialProposalController = {
     });
 
     container.on(`input${ns}`, '#proposal-items-list [data-field="item-quantity"], #proposal-items-list [data-field="item-unit"]', (event) => {
-      const row = $(event.currentTarget).closest('.proposal-item-row');
+      const field = $(event.currentTarget);
+      if (this.asText(field.attr('data-field')) === 'item-unit') {
+        this.applyUnitMoneyMask(event.currentTarget);
+      }
+
+      const row = field.closest('.proposal-item-row');
       this.updateItemRowTotal(row);
+    });
+
+    container.on(`focus${ns}`, '#proposal-items-list [data-field="item-unit"]', (event) => {
+      this.prepareUnitFieldForEditing(event.currentTarget);
+    });
+
+    container.on(`blur${ns}`, '#proposal-items-list [data-field="item-unit"]', (event) => {
+      this.formatUnitFieldValue(event.currentTarget);
     });
 
     container.on(`change${ns}`, '.proposal-checklist-item', () => {
@@ -557,8 +574,8 @@ const commercialProposalController = {
       columns: [
         { header: 'Codigo', field: 'CODIGO', width: 'w-1/4' },
         { header: 'Nome', field: 'NOME', width: 'w-2/4' },
-        { header: 'Parcelas', field: 'QUANTASVEZES', width: 'w-1/4' },
-        { header: 'Periodo', field: 'PERIODOEMDIAS', width: 'w-1/4' }
+        { header: 'Parcelas', field: 'QUANTASVEZES1', width: 'w-1/4' },
+        { header: 'Periodo', field: 'PERIODOEMDIAS1', width: 'w-1/4' }
       ],
       singleSelection: true,
       onItemAdded: (item) => {
@@ -654,8 +671,8 @@ const commercialProposalController = {
       return {
         CODIGO: codigo,
         NOME: nome,
-        QUANTASVEZES: this.asText(row && row.QUANTASVEZES),
-        PERIODOEMDIAS: this.asText(row && row.PERIODOEMDIAS)
+        QUANTASVEZES1: this.asText(row && (row.QUANTASVEZES1 || row.QUANTASVEZES)),
+        PERIODOEMDIAS1: this.asText(row && (row.PERIODOEMDIAS1 || row.PERIODOEMDIAS))
       };
     }).filter(Boolean);
   },
@@ -752,7 +769,8 @@ const commercialProposalController = {
     const root = this.getContainer();
     this._state.pendingSupplierSync = {
       codforn: this.asText(root.find('#proposal-supplier-code').val()),
-      nomeFantasia: this.asText(root.find('#proposal-supplier-name').val())
+      nomeFantasia: this.asText(root.find('#proposal-supplier-name').val()),
+      hydrateSelection: false
     };
     this.syncSupplierFilterFromPending();
   },
@@ -774,7 +792,17 @@ const commercialProposalController = {
       found = options.find((row) => this.normalizeLookupText(row && row.nomeFantasia) === normalizedLabel) || null;
     }
 
-    if (!found || typeof filter.setSelectedItems !== 'function') return;
+    if (!found || typeof filter.setSelectedItems !== 'function') {
+      if (pending && pending.hydrateSelection && pendingCode) {
+        this.applySupplierSelection({
+          codforn: pendingCode,
+          nomeFantasia: pendingLabel,
+          cnpj: this.asText(this.getContainer().find('#proposal-supplier-cnpj').val())
+        });
+        this._state.pendingSupplierSync = null;
+      }
+      return;
+    }
     if (!pendingCode) {
       this.getContainer().find('#proposal-supplier-code').val(this.asText(found.codforn));
     }
@@ -782,6 +810,10 @@ const commercialProposalController = {
       value: this.asText(found.codforn),
       label: this.asText(found.nomeFantasia)
     }]);
+    if (pending && pending.hydrateSelection) {
+      this.applySupplierSelection(found);
+    }
+    this._state.pendingSupplierSync = null;
   },
 
   applyCurrencySelection: function (item) {
@@ -925,7 +957,7 @@ const commercialProposalController = {
     ui.sidebar.renderProgress(progressTarget, { items: this.getProgressItems() });
   },
 
-  renderSidebarFromRow: function (row) {
+  renderSidebarFromRow: async function (row) {
     const ui = this.getUiComponents();
     if (!ui || !ui.sidebar) return;
 
@@ -933,10 +965,16 @@ const commercialProposalController = {
     const summaryTarget = container.find('[data-component="project-summary"]').first();
     const progressTarget = container.find('[data-component="progress-status"]').first();
 
+    const projectCode = await fluigService.resolveProjectSummaryCode({
+      documentId: this.asText(row && row.documentid) || this.asText(this._state.documentId),
+      processInstanceId: this.asText(this._state.processInstanceId)
+    }) || 'N/A';
+
     ui.sidebar.renderProjectSummary(summaryTarget, {
-      code: this.asText(row.documentid) || 'N/A',
+      code: projectCode,
       title: this.asText(row.titulodoprojetoNS) || 'N/A',
-      requester: 'N/A',
+      requester: this.asText(row.solicitanteNomeNS) || 'N/A',
+      showRequester: true,
       area: this.asText(row.areaUnidadeNS) || 'N/A',
       sponsor: this.asText(row.patrocinadorNS) || 'N/A',
       attachmentsCount: this.countAttachments(row.anexosNS) + this.countAttachments(row.anexosPropostaTIPC),
@@ -1001,7 +1039,7 @@ const commercialProposalController = {
         return;
       }
 
-      this.renderSidebarFromRow(row);
+      await this.renderSidebarFromRow(row);
       this.fillFieldsFromRow(row);
       this.updateApproveModalProject(row);
     } catch (error) {
@@ -1128,9 +1166,16 @@ const commercialProposalController = {
 
   fillFieldsFromRow: function (row) {
     const root = this.getContainer();
+    const persistedSupplierName = this.asText(row.nomeFornecedorTIPC);
+    const persistedSupplierCode = this.asText(row.codFornecedorTIPC);
+    const fallbackSupplierName = this.asText(row.fornecedorRecomendadoTITT);
+    const fallbackSupplierCode = this.asText(row.codfornTITT);
+    const useRecommendedSupplier = !persistedSupplierName && !persistedSupplierCode && (fallbackSupplierName || fallbackSupplierCode);
+    const supplierName = persistedSupplierName || fallbackSupplierName;
+    const supplierCode = persistedSupplierCode || fallbackSupplierCode;
 
-    root.find('#proposal-supplier-name').val(this.asText(row.nomeFornecedorTIPC));
-    root.find('#proposal-supplier-code').val(this.asText(row.codFornecedorTIPC));
+    root.find('#proposal-supplier-name').val(supplierName);
+    root.find('#proposal-supplier-code').val(supplierCode);
     root.find('#proposal-supplier-cnpj').val(this.asText(row.cnpjTIPC));
     root.find('#proposal-contact-name').val(this.asText(row.nomeContatoTIPC));
     root.find('#proposal-contact-email').val(this.asText(row.emailTIPC));
@@ -1141,15 +1186,24 @@ const commercialProposalController = {
 
     root.find('#proposal-reference-number').val(this.asText(row.numeroRefPropostaTIPC));
     root.find('#proposal-validity-days').val(this.asText(row.vigenciaDiasTIPC));
-    root.find('#proposal-total-value').val(this.asText(row.valortotalTIPC));
     root.find('#proposal-currency').val(this.asText(row.moedaTIPC));
     root.find('#proposal-currency-symbol').val(this.asText(row.simboloMoedaTIPC));
+    root.find('#proposal-total-value').val(this.normalizeCurrencyDisplayValue(row.valortotalTIPC));
     root.find('#proposal-estimated-deadline').val(this.asText(row.prazoEstimadoTIPC));
     root.find('#proposal-payment-condition').val(this.asText(row.condicaoPagamentoTIPC));
     root.find('#proposal-payment-condition-code').val(this.asText(row.codigoCondicaoPagamentoTIPC));
     root.find('#proposal-scope-summary').val(this.asText(row.escopoResumidoTIPC));
 
-    this.requestSupplierSyncFromHidden();
+    if (useRecommendedSupplier) {
+      this._state.pendingSupplierSync = {
+        codforn: supplierCode,
+        nomeFantasia: supplierName,
+        hydrateSelection: true
+      };
+      this.syncSupplierFilterFromPending();
+    } else {
+      this.requestSupplierSyncFromHidden();
+    }
     this.requestCurrencySyncFromHidden();
     this.requestPaymentConditionSyncFromHidden();
 
@@ -1201,8 +1255,8 @@ const commercialProposalController = {
 
     const description = this.escapeHtml(this.asText(data && data.description));
     const quantity = this.escapeHtml(this.asText(data && data.quantity) || '1');
-    const unit = this.escapeHtml(this.asText(data && data.unit));
-    const total = this.escapeHtml(this.asText(data && data.total));
+    const unit = this.escapeHtml(this.normalizeCurrencyDisplayValue(data && data.unit));
+    const total = this.escapeHtml(this.normalizeCurrencyDisplayValue(data && data.total));
 
     list.append(`
       <tr class="proposal-item-row border-t">
@@ -1248,7 +1302,7 @@ const commercialProposalController = {
 
     const totalField = $row.find('[data-field="item-total"]').first();
     const quantity = Number(this.asText($row.find('[data-field="item-quantity"]').val()) || '0');
-    const unitValue = this.parseMoneyValue($row.find('[data-field="item-unit"]').val());
+    const unitValue = this.parseFlexibleMoneyValue($row.find('[data-field="item-unit"]').val());
 
     if (!isFinite(quantity) || quantity <= 0 || unitValue === null) {
       totalField.val('');
@@ -1274,7 +1328,7 @@ const commercialProposalController = {
     root.find('#proposal-items-list .proposal-item-row').each((_, el) => {
       const row = $(el);
       const quantity = Number(this.asText(row.find('[data-field="item-quantity"]').val()) || '0');
-      const unitValue = this.parseMoneyValue(row.find('[data-field="item-unit"]').val());
+      const unitValue = this.parseFlexibleMoneyValue(row.find('[data-field="item-unit"]').val());
       if (!isFinite(quantity) || quantity <= 0 || unitValue === null) return;
 
       hasValidRows = true;
@@ -1287,7 +1341,9 @@ const commercialProposalController = {
 
   updateAllItemTotals: function () {
     this.getContainer().find('#proposal-items-list .proposal-item-row').each((_, el) => {
-      this.updateItemRowTotal($(el), true);
+      const row = $(el);
+      this.formatUnitFieldValue(row.find('[data-field="item-unit"]').get(0));
+      this.updateItemRowTotal(row, true);
     });
 
     this.updateProposalTotalValue();
@@ -2503,6 +2559,29 @@ const commercialProposalController = {
     return isFinite(parsed) ? parsed : null;
   },
 
+  parseFlexibleMoneyValue: function (value) {
+    const text = this.asText(value);
+    if (!text) return null;
+
+    let normalized = text
+      .replace(/\s/g, '')
+      .replace(/[^\d,.\-]/g, '');
+
+    if (!normalized) return null;
+
+    const hasComma = normalized.indexOf(',') >= 0;
+    const hasDot = normalized.indexOf('.') >= 0;
+
+    if (hasComma && hasDot) {
+      normalized = normalized.replace(/\./g, '').replace(',', '.');
+    } else if (hasComma) {
+      normalized = normalized.replace(',', '.');
+    }
+
+    const parsed = Number(normalized);
+    return isFinite(parsed) ? parsed : null;
+  },
+
   formatCurrencyValue: function (value) {
     const amount = Number(value);
     if (!isFinite(amount)) return '';
@@ -2511,7 +2590,59 @@ const commercialProposalController = {
     const currencySymbol = this.asText(root.find('#proposal-currency-symbol').val());
     const currencyLabel = this.asText(root.find('#proposal-currency').val());
     const prefix = currencySymbol || currencyLabel || 'R$';
-    return `${prefix} ${amount.toFixed(2).replace('.', ',')}`;
+    const formattedNumber = amount.toLocaleString('pt-BR', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+    return `${prefix} ${formattedNumber}`;
+  },
+
+  normalizeCurrencyDisplayValue: function (value) {
+    const parsed = this.parseFlexibleMoneyValue(value);
+    if (parsed === null) return this.asText(value);
+    return this.formatCurrencyValue(parsed);
+  },
+
+  applyUnitMoneyMask: function (field) {
+    const input = field && field.jquery ? field.get(0) : field;
+    if (!input) return;
+
+    const digits = this.asText(input.value).replace(/\D/g, '');
+    if (!digits) {
+      input.value = '';
+      return;
+    }
+
+    const amount = Number(digits) / 100;
+    if (!isFinite(amount)) {
+      input.value = '';
+      return;
+    }
+
+    input.value = this.formatCurrencyValue(amount);
+
+    try {
+      const finalPos = input.value.length;
+      input.setSelectionRange(finalPos, finalPos);
+    } catch (e) {}
+  },
+
+  prepareUnitFieldForEditing: function (field) {
+    const input = field && field.jquery ? field.get(0) : field;
+    if (!input) return;
+
+    try {
+      const finalPos = input.value.length;
+      input.setSelectionRange(finalPos, finalPos);
+    } catch (e) {}
+  },
+
+  formatUnitFieldValue: function (field) {
+    const input = field && field.jquery ? field.get(0) : field;
+    if (!input) return;
+
+    const parsed = this.parseFlexibleMoneyValue(input.value);
+    input.value = parsed === null ? '' : this.formatCurrencyValue(parsed);
   },
 
   normalizeLookupText: function (value) {

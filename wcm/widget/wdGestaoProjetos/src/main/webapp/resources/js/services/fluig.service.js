@@ -256,6 +256,35 @@ var fluigService = {
         return String(value).trim();
     },
 
+    extractYearFromDateLike: function (value) {
+        var text = this.asTrimmedString(value);
+        if (!text) {
+            return "";
+        }
+
+        var match = text.match(/^(\d{4})[-/]/);
+        if (match && match[1]) {
+            return match[1];
+        }
+
+        var parsed = new Date(text);
+        if (!isNaN(parsed.getTime())) {
+            return String(parsed.getFullYear());
+        }
+
+        return "";
+    },
+
+    buildProjectCode: function (processInstanceId, referenceDate) {
+        var processId = this.asTrimmedString(processInstanceId);
+        if (!processId) {
+            return "";
+        }
+
+        var projectYear = this.extractYearFromDateLike(referenceDate) || String(new Date().getFullYear());
+        return "PRJ-" + projectYear + "-" + processId;
+    },
+
     asBooleanString: function (value) {
         if (typeof value === "boolean") return value ? "true" : "false";
         var normalized = this.asTrimmedString(value).toLowerCase();
@@ -333,6 +362,8 @@ var fluigService = {
     buildProjectSolicitationCardData: function (formData) {
         var self = this;
         var cardData = {};
+        var requesterName = self.asTrimmedString((formData && formData.solicitanteNome) || (typeof WCMAPI !== "undefined" && WCMAPI.getUser ? WCMAPI.getUser() : ""));
+        var requesterColleagueId = self.asTrimmedString((formData && formData.solicitanteColleagueId) || (typeof WCMAPI !== "undefined" && WCMAPI.getUserCode ? WCMAPI.getUserCode() : ""));
         var simpleFieldMap = [
             { formField: "titulo", fluigField: "titulodoprojetoNS" },
             { formField: "coligada", fluigField: "ColigadaNS" },
@@ -351,6 +382,9 @@ var fluigService = {
         simpleFieldMap.forEach(function (mapping) {
             cardData[mapping.fluigField] = self.asTrimmedString(formData[mapping.formField]);
         });
+
+        cardData.solicitanteNomeNS = requesterName;
+        cardData.solicitanteColleagueIdNS = requesterColleagueId;
 
         cardData.alinhadobevapNS = self.asBooleanString(formData.alinhamento);
         cardData.beneficiosesperadosNS = self.normalizeRows(formData.beneficiosEsperados).join("\n");
@@ -633,6 +667,99 @@ var fluigService = {
                 reject(error);
             }
         });
+    },
+    getWorkflowProcessInfo: function (filters = {}) {
+        return new Promise((resolve, reject) => {
+            try {
+                var finalProcessInstanceId = this.asTrimmedString(filters.processInstanceId);
+                var finalDocumentId = this.asTrimmedString(filters.documentId);
+                var dataset = null;
+
+                if (finalProcessInstanceId) {
+                    dataset = DatasetFactory.getDataset('workflowProcess', null, [
+                        DatasetFactory.createConstraint(
+                            'workflowProcessPK.processInstanceId',
+                            finalProcessInstanceId,
+                            finalProcessInstanceId,
+                            ConstraintType.MUST
+                        )
+                    ], null);
+                } else if (finalDocumentId) {
+                    var constraintCandidates = [
+                        'cardDocumentId',
+                        'workflowProcessPK.cardDocumentId',
+                        'documentId',
+                        'NR_DOCUMENTO_CARD'
+                    ];
+
+                    for (var i = 0; i < constraintCandidates.length; i++) {
+                        dataset = DatasetFactory.getDataset('workflowProcess', null, [
+                            DatasetFactory.createConstraint(
+                                constraintCandidates[i],
+                                finalDocumentId,
+                                finalDocumentId,
+                                ConstraintType.MUST
+                            )
+                        ], null);
+
+                        if (dataset && Array.isArray(dataset.values) && dataset.values.length) {
+                            break;
+                        }
+                    }
+                } else {
+                    throw new Error('processInstanceId ou documentId e obrigatorio');
+                }
+
+                if (!dataset || !Array.isArray(dataset.values) || !dataset.values.length) {
+                    throw new Error('Nao foi possivel localizar os dados do processo informado');
+                }
+
+                resolve(dataset.values[0] || {});
+            } catch (error) {
+                reject(error);
+            }
+        });
+    },
+    resolveProjectSummaryContext: async function (filters = {}) {
+        var finalDocumentId = this.asTrimmedString(filters.documentId);
+        var finalProcessInstanceId = this.asTrimmedString(filters.processInstanceId);
+        var workflowInfo = filters && typeof filters.workflowInfo === 'object' ? filters.workflowInfo : null;
+        var referenceDate = this.asTrimmedString(filters.referenceDate);
+
+        if (!finalProcessInstanceId && finalDocumentId) {
+            try {
+                finalProcessInstanceId = await this.resolveProcessInstanceIdByDocumentId(finalDocumentId);
+            } catch (error) {}
+        }
+
+        if (!workflowInfo && (finalProcessInstanceId || finalDocumentId)) {
+            try {
+                workflowInfo = await this.getWorkflowProcessInfo({
+                    processInstanceId: finalProcessInstanceId,
+                    documentId: finalDocumentId
+                });
+            } catch (error) {}
+        }
+
+        if (!referenceDate && workflowInfo) {
+            referenceDate = this.asTrimmedString(
+                workflowInfo.startDateProcess
+                || workflowInfo.startDateProcessFromHistory
+                || workflowInfo['startDateProcess']
+                || workflowInfo['startDateProcessFromHistory']
+            );
+        }
+
+        return {
+            documentId: finalDocumentId,
+            processInstanceId: finalProcessInstanceId,
+            workflowInfo: workflowInfo,
+            projectCode: this.buildProjectCode(finalProcessInstanceId, referenceDate)
+        };
+    },
+    resolveProjectSummaryCode: async function (filters = {}) {
+        var context = await this.resolveProjectSummaryContext(filters);
+        return this.asTrimmedString(context && context.projectCode);
     },
     resolveDocumentIdByProcessInstanceId: function (processInstanceId) {
         return new Promise((resolve, reject) => {

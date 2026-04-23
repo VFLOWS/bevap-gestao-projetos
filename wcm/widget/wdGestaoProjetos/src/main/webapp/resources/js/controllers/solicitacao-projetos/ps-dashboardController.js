@@ -138,6 +138,10 @@ const dashboardController = {
           ? 'Abrir Proposta'
         : actionConfig.route === 'commercialProposal'
           ? 'Abrir Proposta'
+        : actionConfig.route === 'purchaseContracting'
+          ? 'Abrir Compras'
+        : actionConfig.route === 'glpiErrorTreatment'
+          ? 'Tratar Erro GLPI'
         : actionConfig.route === 'gccCostApproval'
           ? 'Abrir GCC'
         : actionConfig.route === 'committeeCostApproval'
@@ -267,6 +271,14 @@ const dashboardController = {
       };
     }
 
+    if (activity === 28) {
+      return {
+        enabled: true,
+        route: 'glpiErrorTreatment',
+        label: 'Tratar Erro GLPI'
+      };
+    }
+
     if (activity === 36) {
       return {
         enabled: true,
@@ -304,6 +316,14 @@ const dashboardController = {
         enabled: true,
         route: 'committeeCostApproval',
         label: 'Abrir Comitê (Custo)'
+      };
+    }
+
+    if (activity === 66) {
+      return {
+        enabled: true,
+        route: 'purchaseContracting',
+        label: 'Abrir Compras'
       };
     }
 

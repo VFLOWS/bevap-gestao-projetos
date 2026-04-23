@@ -6,6 +6,8 @@ const immediateApprovalController = {
     'titulodoprojetoNS',
     'areaUnidadeNS',
     'patrocinadorNS',
+    'solicitanteNomeNS',
+    'solicitanteColleagueIdNS',
     'prioridadeNS',
     'estadoProcesso',
     'anexosNS',
@@ -112,14 +114,14 @@ const immediateApprovalController = {
     }
 
     if (titleEl.length) {
-      titleEl.text('Immediate Manager - Approve Project');
+      titleEl.text('Gestor Imediato - Aprovar Projeto');
     }
 
     if (breadcrumbEl.length) {
       breadcrumbEl.html(`
         <a href="#dashboard" class="text-gray-300 hover:text-white transition-colors">Home</a>
         <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-        <span class="text-bevap-gold font-medium">Immediate Approval</span>
+        <span class="text-bevap-gold font-medium">Gestor Imediato - Aprovar Projeto</span>
       `);
     }
   },
@@ -219,12 +221,21 @@ const immediateApprovalController = {
         choosedState: 21,
         decisionField: 'decisaoSuperiorImediato',
         decisionValue: 'aprovado',
+        validateRequiredFields: true,
         successMessage: 'Projeto aprovado e encaminhado para a proxima etapa'
       });
     });
 
     container.on(`click${ns}`, '[data-action="confirm-return"]', (event) => {
       event.preventDefault();
+
+      const returnReason = this.asText(container.find('#return-reason-input').val());
+      if (!returnReason) {
+        this.showToast('Justificativa obrigatoria', 'Informe o motivo da devolucao.', 'warning');
+        container.find('#return-reason-input').trigger('focus');
+        return;
+      }
+
       this.handleTaskAction({
         modalId: 'modal-return',
         choosedState: 21,
@@ -236,6 +247,21 @@ const immediateApprovalController = {
 
     container.on(`click${ns}`, '[data-action="confirm-reject"]', (event) => {
       event.preventDefault();
+
+      const rejectCategory = this.asText(container.find('#reject-category-input').val());
+      if (!rejectCategory) {
+        this.showToast('Categoria obrigatoria', 'Selecione a categoria da reprovacao.', 'warning');
+        container.find('#reject-category-input').trigger('focus');
+        return;
+      }
+
+      const rejectDescription = this.asText(container.find('#reject-description-input').val());
+      if (!rejectDescription) {
+        this.showToast('Justificativa obrigatoria', 'Informe a justificativa da reprovacao.', 'warning');
+        container.find('#reject-description-input').trigger('focus');
+        return;
+      }
+
       this.handleTaskAction({
         modalId: 'modal-reject',
         choosedState: 21,
@@ -295,7 +321,7 @@ const immediateApprovalController = {
       }
 
       this.fillImmediateFieldsFromRow(row);
-      this.renderSidebarFromRow(row);
+      await this.renderSidebarFromRow(row);
       this.updateApproveModalProject(row);
     } catch (error) {
       console.error('[immediateApproval] Error loading base context:', error);
@@ -408,7 +434,7 @@ const immediateApprovalController = {
     });
   },
 
-  renderSidebarFromRow: function (row) {
+  renderSidebarFromRow: async function (row) {
     const ui = this.getUiComponents();
     if (!ui || !ui.sidebar) return;
 
@@ -416,10 +442,16 @@ const immediateApprovalController = {
     const summaryTarget = container.find('[data-component="project-summary"]').first();
     const progressTarget = container.find('[data-component="progress-status"]').first();
 
+    const projectCode = await fluigService.resolveProjectSummaryCode({
+      documentId: this.asText(row && row.documentid) || this.asText(this._state.documentId),
+      processInstanceId: this.asText(this._state.processInstanceId)
+    }) || 'N/A';
+
     ui.sidebar.renderProjectSummary(summaryTarget, {
-      code: this.asText(row.documentid) || 'N/A',
+      code: projectCode,
       title: this.asText(row.titulodoprojetoNS) || 'N/A',
-      requester: 'N/A',
+      requester: this.asText(row.solicitanteNomeNS) || 'N/A',
+      showRequester: true,
       area: this.asText(row.areaUnidadeNS) || 'N/A',
       sponsor: this.asText(row.patrocinadorNS) || 'N/A',
       attachmentsCount: this.countAttachments(row.anexosNS),
@@ -481,6 +513,70 @@ const immediateApprovalController = {
 
     this.getContainer().find('#impacto-checklist-percentage').text(`${percentage}%`);
     this.getContainer().find('#impacto-checklist-progress').css('width', `${percentage}%`);
+  },
+
+  validateImmediateApproval: function () {
+    const root = this.getContainer();
+    const missing = [];
+
+    const teamAvailabilityRaw = this.asText(root.find('#team-availability-input').val());
+    const teamAvailabilityNumber = Number(teamAvailabilityRaw);
+    const requiredResources = this.asText(root.find('#required-resources-input').val());
+    const scheduleConflicts = this.asText(root.find('#schedule-conflicts-input').val());
+    const areaPriority = this.asText(root.find('input[name="area-priority"]:checked').val());
+
+    if (teamAvailabilityRaw === '' || Number.isNaN(teamAvailabilityNumber) || teamAvailabilityNumber < 0 || teamAvailabilityNumber > 100) {
+      missing.push('Disponibilidade da Equipe');
+    }
+
+    if (!requiredResources) {
+      missing.push('Recursos Necessarios da Area');
+    }
+
+    if (!scheduleConflicts) {
+      missing.push('Conflitos de Agenda');
+    }
+
+    if (!areaPriority) {
+      missing.push('Prioridade para a Area');
+    }
+
+    return missing;
+  },
+
+  showImmediateValidationWarning: function (missing) {
+    this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+  },
+
+  openImpactTab: function () {
+    const ui = this.getUiComponents();
+    if (ui && ui.tabs && this._tabsRoot) {
+      ui.tabs.setActive(this._tabsRoot, 'impacto');
+      return;
+    }
+
+    const tab = this.getContainer().find('#tab-impacto').first();
+    if (tab.length) {
+      tab.trigger('click');
+    }
+  },
+
+  focusFirstInvalidImmediateField: function (missing) {
+    const selectorMap = {
+      'Disponibilidade da Equipe': '#team-availability-input',
+      'Recursos Necessarios da Area': '#required-resources-input',
+      'Conflitos de Agenda': '#schedule-conflicts-input',
+      'Prioridade para a Area': 'input[name="area-priority"]'
+    };
+
+    const firstMissing = Array.isArray(missing) && missing.length ? missing[0] : '';
+    const selector = selectorMap[firstMissing];
+    if (!selector) return;
+
+    const field = this.getContainer().find(selector).first();
+    if (field.length) {
+      field.trigger('focus');
+    }
   },
 
   fillImmediateFieldsFromRow: function (row) {
@@ -661,6 +757,18 @@ const immediateApprovalController = {
     try {
       loading.updateMessage('Preparando dados da etapa...');
       await this.waitForUiPaint();
+
+      if (config && config.validateRequiredFields) {
+        const missing = this.validateImmediateApproval();
+        if (missing && missing.length) {
+          this.closeModal(config.modalId);
+          this.showImmediateValidationWarning(missing);
+          this.openImpactTab();
+          this.focusFirstInvalidImmediateField(missing);
+          return;
+        }
+      }
+
       const processInstanceId = await this.resolveProcessInstanceId();
       const cardData = this.collectImmediateCardData(config.decisionField, config.decisionValue);
       const taskFields = Object.keys(cardData).map((fieldName) => {

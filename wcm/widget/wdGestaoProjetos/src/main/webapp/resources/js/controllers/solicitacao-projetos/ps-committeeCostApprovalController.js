@@ -6,6 +6,8 @@ const committeeCostApprovalController = {
     'titulodoprojetoNS',
     'areaUnidadeNS',
     'patrocinadorNS',
+    'solicitanteNomeNS',
+    'solicitanteColleagueIdNS',
     'prioridadeNS',
     'estadoProcesso',
     'anexosNS',
@@ -312,6 +314,7 @@ const committeeCostApprovalController = {
         modalId: 'approve-modal',
         decisionField: 'decisaocomite2',
         decisionValue: 'aprovado',
+        validateMainFields: true,
         justification: '',
         extraCardData: { categoriajusticomite2: '' }
       });
@@ -339,6 +342,7 @@ const committeeCostApprovalController = {
         modalId: 'modal-return',
         decisionField: 'decisaocomite2',
         decisionValue: 'correcao',
+        validateMainFields: false,
         justification: justification,
         extraCardData: { categoriajusticomite2: category }
       });
@@ -367,6 +371,7 @@ const committeeCostApprovalController = {
         modalId: 'modal-reject',
         decisionField: 'decisaocomite2',
         decisionValue: 'cancelado',
+        validateMainFields: false,
         justification: justification,
         extraCardData: { categoriajusticomite2: category }
       });
@@ -510,7 +515,7 @@ const committeeCostApprovalController = {
         return;
       }
 
-      this.renderSidebarFromRow(row);
+      await this.renderSidebarFromRow(row);
       this.fillAcpFieldsFromRow(row);
       this.renderApproveModalFromRow(row);
     } catch (error) {
@@ -542,7 +547,7 @@ const committeeCostApprovalController = {
       code: 'N/A',
       title: 'N/A',
       requester: 'N/A',
-      showRequester: false,
+      showRequester: true,
       area: 'N/A',
       sponsor: 'N/A',
       attachmentsCount: 0,
@@ -573,7 +578,7 @@ const committeeCostApprovalController = {
     });
   },
 
-  renderSidebarFromRow: function (row) {
+  renderSidebarFromRow: async function (row) {
     const ui = this.getUiComponents();
     if (!ui || !ui.sidebar) return;
 
@@ -581,11 +586,16 @@ const committeeCostApprovalController = {
     const summaryTarget = container.find('[data-component="project-summary"]').first();
     const progressTarget = container.find('[data-component="progress-status"]').first();
 
+    const projectCode = await fluigService.resolveProjectSummaryCode({
+      documentId: this.asText(row && row.documentid) || this.asText(this._state.documentId),
+      processInstanceId: this.asText(this._state.processInstanceId)
+    }) || 'N/A';
+
     ui.sidebar.renderProjectSummary(summaryTarget, {
-      code: this.asText(row && row.documentid) || 'N/A',
+      code: projectCode,
       title: this.asText(row && row.titulodoprojetoNS) || 'N/A',
-      requester: 'N/A',
-      showRequester: false,
+      requester: this.asText(row && row.solicitanteNomeNS) || 'N/A',
+      showRequester: true,
       area: this.asText(row && row.areaUnidadeNS) || 'N/A',
       sponsor: this.asText(row && row.patrocinadorNS) || 'N/A',
       attachmentsCount: this.countAttachments(row && row.anexosNS),
@@ -634,6 +644,9 @@ const committeeCostApprovalController = {
       { style: 'success', label: 'Análise TI concluída', iconClass: 'fa-solid fa-check-circle' },
       { style: 'success', label: 'Impacto na área concluído', iconClass: 'fa-solid fa-check-circle' },
       { style: 'success', label: 'Triagem técnica concluída', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Proposta comercial validada', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Aprovação do Solicitante aprovada', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Aprovação do Gerente do Centro de Custo aprovada', iconClass: 'fa-solid fa-check-circle' },
       { style: 'warning', label: 'Análise do comitê em andamento', iconClass: 'fa-solid fa-clock' }
     ];
   },
@@ -1006,10 +1019,13 @@ const committeeCostApprovalController = {
       loading.updateMessage('Validando dados do Comitê...');
       await this.waitForUiPaint();
 
-      const missing = this.validateCap();
-      if (missing && missing.length) {
-        this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
-        return;
+      const shouldValidateMainFields = !config || config.validateMainFields !== false;
+      if (shouldValidateMainFields) {
+        const missing = this.validateCap();
+        if (missing && missing.length) {
+          this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          return;
+        }
       }
 
       const processInstanceId = await this.resolveProcessInstanceId();

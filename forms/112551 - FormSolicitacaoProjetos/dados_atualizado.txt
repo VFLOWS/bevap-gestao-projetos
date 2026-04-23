@@ -177,4 +177,15 @@ valorFinalCRC
 impostosEncargosCRC
 anexosCRC
 escolhercondicaopagamentoCRC
+quantasVezesCondicaoCRC
+periodoEmDiasCondicaoCRC
 escolherparcelasCRC
+
+*TRATAR ERRO INTEGRACAO GLPI - TEIG
+statusIntegracaoGLPI
+mensagemErroGLPI
+
+*SOLICITANTE - CORRECAO - CORR
+decisaoCorrecao
+justificativaCorrecao
+categoriajustiCorrecao
