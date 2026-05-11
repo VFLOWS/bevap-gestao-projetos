@@ -1,5 +1,6 @@
 const newSolicitationController = {
   _eventNamespace: '.newSolicitation',
+  _uiComponentsKey: 'gpUiComponents',
 
   _state: {
     currentStep: 1,
@@ -44,6 +45,7 @@ const newSolicitationController = {
     requiredFields: [
       'titulo',
       'coligada',
+      'area',
       'centro-custo',
       'patrocinador',
       'objetivo',
@@ -52,11 +54,13 @@ const newSolicitationController = {
       'escopo-inicial',
       'out-of-scope',
       'dependencies',
+      'stakeholders',
       'declaracao'
     ],
     completionFields: [
       'titulo',
       'coligada',
+      'area',
       'centro-custo',
       'patrocinador',
       'objetivo',
@@ -65,12 +69,13 @@ const newSolicitationController = {
       'escopo-inicial',
       'out-of-scope',
       'dependencies',
-      'declaracao',
-      'alinhamento'
+      'stakeholders',
+      'declaracao'
     ],
     requiredFieldLabels: {
       titulo: 'Titulo do Projeto',
       coligada: 'Coligada',
+      area: '\u00C1rea/Unidade',
       'centro-custo': 'Centro de Custo',
       patrocinador: 'Patrocinador',
       objetivo: 'Objetivo do Projeto',
@@ -79,16 +84,17 @@ const newSolicitationController = {
       'escopo-inicial': 'Escopo Inicial',
       'out-of-scope': 'Fora de Escopo',
       dependencies: 'Dependencias',
+      stakeholders: 'Stakeholders',
       declaracao: 'Declaracao'
     },
     checklistSections: [
       {
         step: 1,
-        fields: ['titulo', 'coligada', 'centro-custo', 'patrocinador', 'objetivo', 'problema', 'beneficios']
+        fields: ['titulo', 'coligada', 'area', 'centro-custo', 'patrocinador', 'objetivo', 'problema', 'beneficios']
       },
       {
         step: 2,
-        fields: ['escopo-inicial', 'out-of-scope', 'dependencies']
+        fields: ['escopo-inicial', 'out-of-scope', 'dependencies', 'stakeholders']
       },
       {
         step: 3,
@@ -135,6 +141,11 @@ const newSolicitationController = {
 
   getContainer: function () {
     return $('#page-container');
+  },
+
+  getUiComponents: function () {
+    if (typeof $ === 'undefined') return null;
+    return $(document).data(this._uiComponentsKey || 'gpUiComponents') || null;
   },
 
   initializePage: function () {
@@ -187,14 +198,16 @@ const newSolicitationController = {
         containerSelector: '#area-tag-filter',
         hiddenLabelSelector: '#area',
         hiddenCodeSelector: '#cod-area',
-        datasetId: 'ds_exemplo_area_unidade',
+        datasetId: 'dsGetAreaSecao_RM',
         valueField: 'CODIGO',
-        labelField: 'DESCRICAO_ZOOM',
-        fields: ['CODIGO', 'DESCRICAO_ZOOM'],
+        labelField: 'DESCRICAO',
+        fields: ['CODIGO', 'DESCRICAO'],
         columns: [
           { header: 'Codigo', field: 'CODIGO', width: 'w-1/3' },
-          { header: 'Descricao', field: 'DESCRICAO_ZOOM', width: 'w-2/3' },
-        ]
+          { header: 'Descricao', field: 'DESCRICAO', width: 'w-2/3' },
+        ],
+        dependsOnColigada: true,
+        getItemLabel: (row) => this.buildLookupDisplayValue(row, 'CODIGO', 'DESCRICAO')
       },
       {
         key: 'centro-custo',
@@ -209,7 +222,41 @@ const newSolicitationController = {
           { header: 'Codigo', field: 'CODCCUSTO', width: 'w-1/3' },
           { header: 'Nome', field: 'NOME', width: 'w-2/3' },
         ],
-        dependsOnColigada: true
+        dependsOnColigada: true,
+        getItemLabel: (row) => this.buildLookupDisplayValue(row, 'CODCCUSTO', 'NOME')
+      },
+      {
+        key: 'patrocinador',
+        containerSelector: '#patrocinador-tag-filter',
+        hiddenLabelSelector: '#patrocinador',
+        datasetId: 'dsBuscaFunc',
+        valueField: 'CHAPA',
+        labelField: 'NOME_NORMALIZADO',
+        fields: ['CHAPA', 'CHAPANOMEFUNCIONARIO', 'NOMEFUNCAO', 'NOMESECAO'],
+        placeholder: 'Selecione um patrocinador...',
+        normalizeRows: 'employee',
+        columns: [
+          { header: 'Chapa', field: 'CHAPA', width: 'w-1/5' },
+          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'w-2/5' },
+          { header: 'Funcao', field: 'NOMEFUNCAO', width: 'w-1/5' },
+          { header: 'Secao', field: 'NOMESECAO', width: 'w-1/5' }
+        ]
+      },
+      {
+        key: 'stakeholder',
+        containerSelector: '#stakeholder-tag-filter',
+        datasetId: 'dsBuscaFunc',
+        valueField: 'CHAPA',
+        labelField: 'NOME_NORMALIZADO',
+        fields: ['CHAPA', 'CHAPANOMEFUNCIONARIO', 'NOMEFUNCAO', 'NOMESECAO'],
+        placeholder: 'Selecione um stakeholder...',
+        normalizeRows: 'employee',
+        columns: [
+          { header: 'Chapa', field: 'CHAPA', width: 'w-1/5' },
+          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'w-2/5' },
+          { header: 'Funcao', field: 'NOMEFUNCAO', width: 'w-1/5' },
+          { header: 'Secao', field: 'NOMESECAO', width: 'w-1/5' }
+        ]
       }
     ];
 
@@ -222,12 +269,13 @@ const newSolicitationController = {
       }
 
       const filter = new TagInputFilter(cfg.containerSelector, {
-        placeholder: 'Selecione...',
+        placeholder: cfg.placeholder || 'Selecione...',
         data: [],
         labelField: cfg.labelField,
         valueField: cfg.valueField,
+        getItemLabel: cfg.getItemLabel,
         columns: cfg.columns,
-        singleSelection: true,
+        singleSelection: cfg.singleSelection !== false,
         onItemAdded: (item) => {
           this.applyTagFilterSelection(cfg, item);
         },
@@ -238,7 +286,7 @@ const newSolicitationController = {
 
       this._state.tagFilters[cfg.key] = filter;
 
-      // Centro de custo depende da coligada (constraint codColigada).
+      // Campos dependentes da coligada so carregam depois da selecao.
       if (cfg.dependsOnColigada) {
         if (typeof filter.disable === 'function') {
           filter.disable(true);
@@ -254,7 +302,9 @@ const newSolicitationController = {
           if (filter && typeof filter.updateData === 'function') {
             filter.updateData(rows);
           }
-          this.trySyncTagFilterFromHidden(cfg);
+          if (cfg.hiddenLabelSelector || cfg.hiddenCodeSelector) {
+            this.trySyncTagFilterFromHidden(cfg);
+          }
         })
         .catch((error) => {
           console.error(`[newSolicitation] Erro carregando dataset ${cfg.datasetId}:`, error);
@@ -278,50 +328,54 @@ const newSolicitationController = {
     const previousCode = this._state.lastColigadaCode;
     this._state.lastColigadaCode = coligadaCode;
 
-    const centroCfg = (this._state.tagFilterConfigs || []).find((cfg) => cfg.key === 'centro-custo');
-    const centroFilter = this._state.tagFilters && this._state.tagFilters['centro-custo'];
-    const currentCentroCode = String(this.getContainer().find('#cod-centro-custo').val() || '').trim();
-    const shouldPreserveCentroSelection = !finalForce
-      && previousCode === ''
-      && currentCentroCode !== '';
-    if (!centroCfg || !centroFilter) {
+    const dependentConfigs = (this._state.tagFilterConfigs || []).filter((cfg) => cfg.dependsOnColigada);
+    if (!dependentConfigs.length) {
       return;
     }
 
-    // Se a coligada mudou (ou foi limpa), limpa o centro de custo.
-    if ((finalForce || previousCode !== coligadaCode) && !shouldPreserveCentroSelection) {
-      if (typeof centroFilter.removeAll === 'function') {
-        centroFilter.removeAll();
+    dependentConfigs.forEach((cfg) => {
+      const filter = this._state.tagFilters && this._state.tagFilters[cfg.key];
+      if (!filter) {
+        return;
       }
-      this.clearTagFilterSelection(centroCfg);
-    }
 
-    if (!coligadaCode) {
-      if (typeof centroFilter.updateData === 'function') {
-        centroFilter.updateData([]);
-      }
-      if (typeof centroFilter.disable === 'function') {
-        centroFilter.disable(true);
-      }
-      return;
-    }
+      const currentCode = String(this.getContainer().find(cfg.hiddenCodeSelector).val() || '').trim();
+      const shouldPreserveSelection = !finalForce && previousCode === '' && currentCode !== '';
 
-    if (typeof centroFilter.disable === 'function') {
-      centroFilter.disable(false);
-    }
-
-    this.loadTagFilterDataset(centroCfg, {
-      codColigada: coligadaCode
-    })
-      .then((rows) => {
-        if (typeof centroFilter.updateData === 'function') {
-          centroFilter.updateData(rows);
+      if ((finalForce || previousCode !== coligadaCode) && !shouldPreserveSelection) {
+        if (typeof filter.removeAll === 'function') {
+          filter.removeAll();
         }
-        this.trySyncTagFilterFromHidden(centroCfg);
+        this.clearTagFilterSelection(cfg);
+      }
+
+      if (!coligadaCode) {
+        if (typeof filter.updateData === 'function') {
+          filter.updateData([]);
+        }
+        if (typeof filter.disable === 'function') {
+          filter.disable(true);
+        }
+        return;
+      }
+
+      if (typeof filter.disable === 'function') {
+        filter.disable(false);
+      }
+
+      this.loadTagFilterDataset(cfg, {
+        codColigada: coligadaCode
       })
-      .catch((error) => {
-        console.error('[newSolicitation] Erro carregando centro de custo por coligada:', error);
-      });
+        .then((rows) => {
+          if (typeof filter.updateData === 'function') {
+            filter.updateData(rows);
+          }
+          this.trySyncTagFilterFromHidden(cfg);
+        })
+        .catch((error) => {
+          console.error(`[newSolicitation] Erro carregando ${cfg.key} por coligada:`, error);
+        });
+    });
   },
 
   loadTagFilterDataset: function (cfg, filtersOverride) {
@@ -332,19 +386,103 @@ const newSolicitationController = {
     return fluigService.getDatasetRows(cfg.datasetId, {
       fields: cfg.fields,
       filters: filtersOverride || null
-    }).then((rows) => Array.isArray(rows) ? rows : []);
+    }).then((rows) => {
+      const finalRows = Array.isArray(rows) ? rows : [];
+      if (cfg && cfg.normalizeRows === 'employee') {
+        return this.normalizeEmployeeRows(finalRows);
+      }
+      return finalRows;
+    });
+  },
+
+  normalizeEmployeeRows: function (rows) {
+    return (Array.isArray(rows) ? rows : []).map((row) => {
+      const chapa = this.asText(row && (row.CHAPA || row.chapa));
+      const rawName = this.asText(row && (row.CHAPANOMEFUNCIONARIO || row.chapanomefuncionario || row.NOME || row.nome));
+      const normalizedName = this.normalizeEmployeeName(rawName);
+
+      if (!normalizedName) {
+        return null;
+      }
+
+      return {
+        CHAPA: chapa || rawName,
+        CHAPANOMEFUNCIONARIO: rawName,
+        NOME_NORMALIZADO: normalizedName,
+        NOMEFUNCAO: this.asText(row && (row.NOMEFUNCAO || row.nomefuncao)),
+        NOMESECAO: this.asText(row && (row.NOMESECAO || row.nomesecao)),
+        NOMECOLIGADA: this.asText(row && (row.NOMECOLIGADA || row.nomecoligada)),
+        NOMEFILIAL: this.asText(row && (row.NOMEFILIAL || row.nomefilial))
+      };
+    }).filter(Boolean);
+  },
+
+  normalizeEmployeeName: function (value) {
+    let text = this.asText(value);
+    if (!text) return '';
+
+    const dashIndex = text.indexOf('-');
+    if (dashIndex >= 0) {
+      text = text.slice(dashIndex + 1);
+    }
+
+    text = text.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!text) return '';
+
+    return text.replace(/(^|\s)(\S)/g, function (match, separator, letter) {
+      return separator + letter.toUpperCase();
+    });
+  },
+
+  normalizeLookupText: function (value) {
+    return this.asText(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  },
+
+  buildLookupDisplayValue: function (row, codeField, descriptionField) {
+    const code = this.asText(row && row[codeField]);
+    const description = this.asText(row && row[descriptionField]);
+
+    if (code && description) {
+      return `${code} - ${description}`;
+    }
+
+    return description || code || '';
+  },
+
+  getTagFilterItemLabel: function (cfg, item) {
+    if (!cfg || !item) return '';
+    if (typeof cfg.getItemLabel === 'function') {
+      return this.asText(cfg.getItemLabel(item));
+    }
+    return this.asText(item[cfg.labelField]);
   },
 
   applyTagFilterSelection: function (cfg, item) {
+    if (cfg && cfg.key === 'stakeholder') {
+      return;
+    }
+
     const container = this.getContainer();
-    const label = item && item[cfg.labelField] !== undefined ? String(item[cfg.labelField]) : '';
+    const label = this.getTagFilterItemLabel(cfg, item);
     const value = item && item[cfg.valueField] !== undefined ? String(item[cfg.valueField]) : '';
 
-    container.find(cfg.hiddenLabelSelector).val(label);
-    container.find(cfg.hiddenCodeSelector).val(value);
+    if (cfg.hiddenLabelSelector) {
+      container.find(cfg.hiddenLabelSelector).val(label);
+    }
+
+    if (cfg.hiddenCodeSelector) {
+      container.find(cfg.hiddenCodeSelector).val(value);
+    }
 
     // Dispara change para manter checklist/resumo atualizados.
-    container.find(cfg.hiddenLabelSelector).trigger('change');
+    if (cfg.hiddenLabelSelector) {
+      container.find(cfg.hiddenLabelSelector).trigger('change');
+    }
 
     if (cfg && cfg.key === 'coligada') {
       this.onColigadaChanged(false);
@@ -352,10 +490,19 @@ const newSolicitationController = {
   },
 
   clearTagFilterSelection: function (cfg) {
+    if (cfg && cfg.key === 'stakeholder') {
+      return;
+    }
+
     const container = this.getContainer();
-    container.find(cfg.hiddenLabelSelector).val('');
-    container.find(cfg.hiddenCodeSelector).val('');
-    container.find(cfg.hiddenLabelSelector).trigger('change');
+    if (cfg.hiddenLabelSelector) {
+      container.find(cfg.hiddenLabelSelector).val('');
+      container.find(cfg.hiddenLabelSelector).trigger('change');
+    }
+
+    if (cfg.hiddenCodeSelector) {
+      container.find(cfg.hiddenCodeSelector).val('');
+    }
 
     if (cfg && cfg.key === 'coligada') {
       this.onColigadaChanged(false);
@@ -373,8 +520,8 @@ const newSolicitationController = {
       return;
     }
 
-    const currentLabel = String(container.find(cfg.hiddenLabelSelector).val() || '').trim();
-    const currentCode = String(container.find(cfg.hiddenCodeSelector).val() || '').trim();
+    const currentLabel = cfg.hiddenLabelSelector ? String(container.find(cfg.hiddenLabelSelector).val() || '').trim() : '';
+    const currentCode = cfg.hiddenCodeSelector ? String(container.find(cfg.hiddenCodeSelector).val() || '').trim() : '';
 
     if (!currentLabel && !currentCode) {
       this._state.pendingTagFilterSync[cfg.key] = false;
@@ -383,9 +530,9 @@ const newSolicitationController = {
 
     const match = data.find((row) => {
       const rowCode = row && row[cfg.valueField] !== undefined ? String(row[cfg.valueField]).trim() : '';
-      const rowLabel = row && row[cfg.labelField] !== undefined ? String(row[cfg.labelField]).trim() : '';
+      const rowLabel = this.getTagFilterItemLabel(cfg, row);
       if (currentCode) return rowCode === currentCode;
-      return rowLabel && rowLabel === currentLabel;
+      return rowLabel && this.normalizeLookupText(rowLabel) === this.normalizeLookupText(currentLabel);
     });
 
     if (!match) {
@@ -397,7 +544,7 @@ const newSolicitationController = {
       filter.setSelectedItems([
         {
           value: match[cfg.valueField],
-          label: match[cfg.labelField]
+          label: this.getTagFilterItemLabel(cfg, match)
         }
       ]);
     }
@@ -467,16 +614,11 @@ const newSolicitationController = {
       this.addStakeholder();
     });
 
-    container.on(`keydown${ns}`, '#stakeholder-input', (event) => {
-      if (event.key === 'Enter') {
-        event.preventDefault();
-        this.addStakeholder();
-      }
-    });
-
     container.on(`click${ns}`, '[data-action="remove-stakeholder"]', (event) => {
       event.preventDefault();
       $(event.currentTarget).closest('span.inline-flex').remove();
+      this.updateChecklist();
+      this.updateSummaryDetails();
     });
 
     container.on(`click${ns}`, '#dropzone', (event) => {
@@ -599,6 +741,10 @@ const newSolicitationController = {
       return this.collectExpectedBenefits().length > 0;
     }
 
+    if (fieldId === 'stakeholders') {
+      return this.getContainer().find('#stakeholders-list > span').length > 0;
+    }
+
     return this.isFieldFilled(this.getField(fieldId));
   },
 
@@ -613,22 +759,30 @@ const newSolicitationController = {
   },
 
   showValidationModal: function (missingFields) {
-    const modalContent = this.getContainer().find('#missing-fields');
-    modalContent.empty();
+    const ui = typeof this.getUiComponents === 'function'
+      ? this.getUiComponents()
+      : (typeof $ !== 'undefined' ? $(document).data(this._uiComponentsKey || 'gpUiComponents') || null : null);
+    if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+      ui.validation.showValidationModal(this.getContainer(), {
+        missingFields: missingFields,
+        title: 'Campos Obrigatorios',
+        message: 'Por favor, preencha todos os campos obrigatorios marcados com <span class="text-red-500 font-semibold">*</span> antes de enviar sua solicitacao.'
+      });
+      return;
+    }
 
-    missingFields.forEach((field) => {
-      modalContent.append(`
-        <div class="flex items-start mb-2 last:mb-0">
-          <i class="fa-solid fa-circle text-red-400 text-xs mt-1.5 mr-2 flex-shrink-0"></i>
-          <span class="text-sm text-red-800">${field}</span>
-        </div>
-      `);
-    });
-
-    this.getContainer().find('#validation-modal').removeClass('hidden');
+    this.showToast('Campos obrigatorios', `Preencha: ${(missingFields || []).join(' | ')}`, 'warning');
   },
 
   closeValidationModal: function () {
+    const ui = typeof this.getUiComponents === 'function'
+      ? this.getUiComponents()
+      : (typeof $ !== 'undefined' ? $(document).data(this._uiComponentsKey || 'gpUiComponents') || null : null);
+    if (ui && ui.validation && typeof ui.validation.closeValidationModal === 'function') {
+      ui.validation.closeValidationModal(this.getContainer());
+      return;
+    }
+
     this.getContainer().find('#validation-modal').addClass('hidden');
   },
 
@@ -811,7 +965,7 @@ const newSolicitationController = {
 
     list.append(`
       <div class="strategic-objective-item flex items-center gap-2 p-3 bg-white border border-green-200 rounded-lg">
-        <input type="text" placeholder="Descreva um objetivo estratÃ©gico..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="objetivos-estrategicos">
+        <input type="text" placeholder="Descreva um objetivo estratégico..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm" data-field="objetivos-estrategicos">
         <button data-action="remove-strategic-objective" class="text-red-500 hover:text-red-700">
           <i class="fa-solid fa-times"></i>
         </button>
@@ -889,20 +1043,59 @@ const newSolicitationController = {
   },
 
   addStakeholder: function () {
-    const input = this.getContainer().find('#stakeholder-input').first();
-    const value = String(input.val() || '').trim();
-    if (!value) return;
+    const filter = this._state.tagFilters && this._state.tagFilters.stakeholder;
+    const selected = filter && typeof filter.getSelectedItems === 'function'
+      ? filter.getSelectedItems()
+      : [];
+    const value = this.normalizeEmployeeName(selected && selected[0] ? selected[0].label : '');
+
+    if (!value) {
+      this.showNotification({
+        borderClass: 'border-yellow-500',
+        iconClass: 'fa-circle-exclamation text-yellow-500',
+        title: 'Stakeholder obrigatorio',
+        message: 'Selecione um colaborador antes de adicionar.'
+      });
+      return;
+    }
+
+    const normalizedValue = this.normalizeLookupText(value);
+    const alreadyExists = this.getContainer()
+      .find('#stakeholders-list > span')
+      .toArray()
+      .some((item) => {
+        const raw = $(item).attr('data-stakeholder-name') || $(item).text();
+        return this.normalizeLookupText(raw) === normalizedValue;
+      });
+
+    if (alreadyExists) {
+      this.showNotification({
+        borderClass: 'border-yellow-500',
+        iconClass: 'fa-circle-exclamation text-yellow-500',
+        title: 'Stakeholder duplicado',
+        message: 'Este stakeholder ja foi adicionado.'
+      });
+      if (filter && typeof filter.removeAll === 'function') {
+        filter.removeAll();
+      }
+      return;
+    }
 
     this.getContainer().find('#stakeholders-list').append(`
-      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">
-        ${value}
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white" data-stakeholder-name="${this.escapeHtml(value)}">
+        ${this.escapeHtml(value)}
         <button data-action="remove-stakeholder" class="ml-2 hover:text-red-300">
           <i class="fa-solid fa-times text-xs"></i>
         </button>
       </span>
     `);
 
-    input.val('');
+    if (filter && typeof filter.removeAll === 'function') {
+      filter.removeAll();
+    }
+
+    this.updateChecklist();
+    this.updateSummaryDetails();
   },
 
   addAttachments: function (filesList) {
@@ -1032,16 +1225,19 @@ const newSolicitationController = {
     const list = this.getContainer().find('#stakeholders-list');
     if (!list.length) return;
 
-    list.html((items || []).map((value) => {
+    list.html((items || []).map((item) => {
+      const value = this.normalizeEmployeeName(item) || this.asText(item);
+      if (!value) return '';
+
       return `
-        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white" data-stakeholder-name="${this.escapeHtml(value)}">
           ${this.escapeHtml(value)}
           <button data-action="remove-stakeholder" class="ml-2 hover:text-red-300">
             <i class="fa-solid fa-times text-xs"></i>
           </button>
         </span>
       `;
-    }).join(''));
+    }).filter(Boolean).join(''));
   },
 
   restorePersistedAttachments: function (items) {
@@ -1185,7 +1381,7 @@ const newSolicitationController = {
       .map((item) => this.asText(item && item.riscoPotencialNS))
       .filter(Boolean);
     const stakeholdersFromDataset = this.parseTableJson(row.tblStakeholdersNS || row.tblstakeholdersNS)
-      .map((item) => this.asText(item && item.valorstakeholdersNS))
+      .map((item) => this.normalizeEmployeeName(item && item.valorstakeholdersNS))
       .filter(Boolean);
     const stakeholders = stakeholdersFromDataset.length
       ? stakeholdersFromDataset
@@ -1207,7 +1403,7 @@ const newSolicitationController = {
     this.setFieldValue('#coligada', '');
     this.setFieldValue('#area', '');
     this.setFieldValue('#centro-custo', '');
-    this.setFieldValue('#patrocinador', row.patrocinadorNS);
+    this.setFieldValue('#patrocinador', this.normalizeEmployeeName(row.patrocinadorNS) || this.asText(row.patrocinadorNS));
     this.setFieldValue('#objetivo', row.objetivodoprojetoNS);
     this.setFieldValue('#problema', row.problemaOportunidadeNS);
     this.getContainer().find('#alinhamento').prop('checked', this.asText(row.alinhadobevapNS) === 'true');
@@ -1384,6 +1580,9 @@ const newSolicitationController = {
     const stakeholders = container
       .find('#stakeholders-list > span')
       .map(function () {
+        const name = String($(this).attr('data-stakeholder-name') || '').trim();
+        if (name) return name;
+
         const chip = $(this).clone();
         chip.find('button').remove();
         return String(chip.text() || "").trim();

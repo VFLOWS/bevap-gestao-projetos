@@ -40,22 +40,49 @@ var fluigService = {
 
                 if (options.filters) {
                     Object.keys(options.filters).forEach(function (key) {
-                        var value = options.filters[key];
+                        var rawFilter = options.filters[key];
+                        var isMetaObject = rawFilter
+                            && typeof rawFilter === 'object'
+                            && !Array.isArray(rawFilter);
+                        var value = isMetaObject ? rawFilter.value : rawFilter;
+                        var finalValue = isMetaObject
+                            ? (rawFilter.finalValue !== undefined ? rawFilter.finalValue : value)
+                            : value;
+                        var type = isMetaObject && rawFilter.type !== undefined
+                            ? rawFilter.type
+                            : ConstraintType.MUST;
 
                         if (value === null || value === undefined || value === '') {
                             return;
                         }
 
-                        constraints.push(
-                            DatasetFactory.createConstraint(key, String(value), String(value), ConstraintType.MUST)
+                        var constraint = DatasetFactory.createConstraint(
+                            key,
+                            String(value),
+                            finalValue === null || finalValue === undefined ? String(value) : String(finalValue),
+                            type
                         );
+
+                        if (isMetaObject && rawFilter.likeSearch === true) {
+                            constraint._likeSearch = true;
+                        }
+
+                        constraints.push(constraint);
                     });
                 }
 
                 console.group('[getDatasetRows] chamada dsGetSolicitacaoProjetos');
                 console.log('[getDatasetRows] datasetId :', datasetId);
                 console.log('[getDatasetRows] fields    :', JSON.stringify(fields));
-                console.log('[getDatasetRows] constraints:', JSON.stringify(constraints.map(function(c){ return { fieldName: c.fieldName, initialValue: c.initialValue }; })));
+                console.log('[getDatasetRows] constraints:', JSON.stringify(constraints.map(function(c){
+                    return {
+                        fieldName: c.fieldName,
+                        initialValue: c.initialValue,
+                        finalValue: c.finalValue,
+                        type: c.constraintType,
+                        likeSearch: c._likeSearch === true
+                    };
+                })));
                 console.groupEnd();
 
                 var dataset = DatasetFactory.getDataset(datasetId, fields, constraints, sortFields);
@@ -427,40 +454,65 @@ var fluigService = {
         ];
     },
 
-    createProjectSolicitation: function (formData = {}, options = {}) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (!formData || typeof formData !== "object") {
-                    throw new Error("Dados do formulario invalidos");
-                }
-
-                var fields = this.buildProjectSolicitationStartFields(formData, options);
-                var cardData = this.buildProjectSolicitationCardData(formData);
-                var constraints = this.buildConstraintsFromCardData(cardData);
-                var dsStartProcess = DatasetFactory.getDataset("dsStartProcess", fields, constraints, null);
-
-                if (!dsStartProcess || !dsStartProcess.values || dsStartProcess.values.length === 0) {
-                    throw new Error("Nenhum retorno do dsStartProcess");
-                }
-
-                var result = dsStartProcess.values[0];
-                var status = result.status || result.STATUS || "";
-                var numSolicitacao = result.numSolicitacao || result.NUMSOLICITACAO || "";
-
-                if (status !== "OK") {
-                    throw new Error(result.message || result.MESSAGE || "Erro ao iniciar solicitacao no Fluig");
-                }
-
-                resolve({
-                    status: status,
-                    numSolicitacao: numSolicitacao,
-                    raw: result
-                });
-            } catch (error) {
-                console.error("Error creating project solicitation:", error);
-                reject(error);
+    createProjectSolicitation: async function (formData = {}, options = {}) {
+        try {
+            if (!formData || typeof formData !== "object") {
+                throw new Error("Dados do formulario invalidos");
             }
-        });
+
+            var fields = this.buildProjectSolicitationStartFields(formData, options);
+            var cardData = this.buildProjectSolicitationCardData(formData);
+            var constraints = this.buildConstraintsFromCardData(cardData);
+            var dsStartProcess = DatasetFactory.getDataset("dsStartProcess", fields, constraints, null);
+
+            if (!dsStartProcess || !dsStartProcess.values || dsStartProcess.values.length === 0) {
+                throw new Error("Nenhum retorno do dsStartProcess");
+            }
+
+            var result = dsStartProcess.values[0];
+            var status = result.status || result.STATUS || "";
+            var numSolicitacao = result.numSolicitacao || result.NUMSOLICITACAO || "";
+
+            if (status !== "OK") {
+                throw new Error(result.message || result.MESSAGE || "Erro ao iniciar solicitacao no Fluig");
+            }
+
+            // Monta o código do projeto e salva no card recém-criado
+            try {
+                var processInstanceId = String(numSolicitacao || "").trim();
+                var referenceDate = this.asTrimmedString((formData && formData.referenceDate) || new Date().toISOString());
+                var projectCode = this.buildProjectCode(processInstanceId, referenceDate);
+
+                // Tenta resolver documentId e atualizar o card com o campo `codigoglpi`
+                var documentId = '';
+                try {
+                    documentId = await this.resolveDocumentIdByProcessInstanceId(processInstanceId);
+                } catch (e) {
+                    // se não conseguiu resolver agora, ignora — código ainda estará gerado e poderá ser salvo depois
+                    documentId = '';
+                }
+
+                if (documentId) {
+                    try {
+                        await this.updateCard('', documentId, { codigoglpi: projectCode });
+                    } catch (e) {
+                        // Não falha o fluxo se a atualização do card der erro; registra para análise
+                        console.warn('Falha ao salvar codigoglpi no card:', e);
+                    }
+                }
+            } catch (e) {
+                console.warn('Erro ao montar/salvar projectCode:', e);
+            }
+
+            return {
+                status: status,
+                numSolicitacao: numSolicitacao,
+                raw: result
+            };
+        } catch (error) {
+            console.error("Error creating project solicitation:", error);
+            throw error;
+        }
     },
 
     saveDraft: function (config = {}) {

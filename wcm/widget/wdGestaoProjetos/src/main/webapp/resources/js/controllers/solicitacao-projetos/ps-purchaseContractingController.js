@@ -2231,6 +2231,11 @@ const purchaseContractingController = {
   },
 
   showToast: function (title, message, type) {
+    const ui = $(document).data('gpUiComponents');
+    if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
+      if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;
+    }
+
     const root = this.getContainer();
     const toast = root.find('#toast');
     const icon = root.find('#toast-icon');

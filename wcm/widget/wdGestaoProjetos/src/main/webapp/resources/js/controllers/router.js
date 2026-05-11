@@ -42,6 +42,10 @@ const router = {
           controller: dashboardController,
           handler: () => dashboardController.load(params)
         },
+        projectPlanning: {
+          controller: projectPlanningController,
+          handler: () => projectPlanningController.load(params)
+        },
         newSolicitation: {
           controller: newSolicitationController,
           handler: () => newSolicitationController.load(params)

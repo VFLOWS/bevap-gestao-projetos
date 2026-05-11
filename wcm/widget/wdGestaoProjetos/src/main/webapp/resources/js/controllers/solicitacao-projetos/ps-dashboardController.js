@@ -239,6 +239,15 @@ const dashboardController = {
       };
     }
 
+    // Processo de Desenvolvimento de Projetos - etapa inicial (Realizar Planejamento do Projeto)
+    if (activity === 14) {
+      return {
+        enabled: true,
+        route: 'projectPlanning',
+        label: 'Planejar Projeto'
+      };
+    }
+
     if (activity === 5) {
       return {
         enabled: true,

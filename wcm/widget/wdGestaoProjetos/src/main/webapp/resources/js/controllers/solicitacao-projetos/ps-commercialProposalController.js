@@ -85,7 +85,14 @@ const commercialProposalController = {
     pendingCurrencySync: null,
     paymentConditionFilter: null,
     paymentConditionOptions: [],
-    pendingPaymentConditionSync: null
+    pendingPaymentConditionSync: null,
+    itemProductFilters: {},
+    productOptions: [],
+    initialProductOptionsPromise: null,
+    productSearchTimers: {},
+    productPriceCache: {},
+    itemRowSequence: 0,
+    pendingItemRemoval: null
   },
 
   load: function (params = {}) {
@@ -104,6 +111,7 @@ const commercialProposalController = {
         this.renderSidebarSkeleton();
         this.initializeTabs(this._state.currentTab);
         this.bindEvents();
+        this.configureRemovalModal();
         this.initializeTagInputFilters();
         this.ensureEditableDefaults();
         this.renderAttachmentsList();
@@ -145,6 +153,13 @@ const commercialProposalController = {
     this._state.paymentConditionFilter = null;
     this._state.paymentConditionOptions = [];
     this._state.pendingPaymentConditionSync = null;
+    this._state.itemProductFilters = {};
+    this._state.productOptions = [];
+    this._state.initialProductOptionsPromise = null;
+    this._state.productSearchTimers = {};
+    this._state.productPriceCache = {};
+    this._state.itemRowSequence = 0;
+    this._state.pendingItemRemoval = null;
   },
 
   getTemplateUrl: function () {
@@ -270,16 +285,6 @@ const commercialProposalController = {
       this.openModal('approve-modal');
     });
 
-    container.on(`click${ns}`, '[data-action="open-return-modal"]', (event) => {
-      event.preventDefault();
-      this.openModal('modal-return');
-    });
-
-    container.on(`click${ns}`, '[data-action="open-reject-modal"]', (event) => {
-      event.preventDefault();
-      this.openModal('modal-reject');
-    });
-
     container.on(`click${ns}`, '[data-action="close-modal"]', (event) => {
       event.preventDefault();
       const modalId = this.asText($(event.currentTarget).attr('data-modal-id'));
@@ -297,61 +302,17 @@ const commercialProposalController = {
       });
     });
 
-    container.on(`click${ns}`, '[data-action="confirm-return"]', (event) => {
+    container.on(`click${ns}`, '[data-action="confirm-remove-item"]', (event) => {
       event.preventDefault();
-      const category = this.asText(container.find('#return-category-input').val());
-      const reason = this.asText(container.find('#return-reason-input').val());
-
-      if (!category) {
-        this.showToast('Categoria', 'Selecione a categoria da devolucao.', 'warning');
-        container.find('#return-category-input').trigger('focus');
-        return;
-      }
-
-      if (!reason) {
-        this.showToast('Justificativa', 'Informe o motivo da devolucao.', 'warning');
-        container.find('#return-reason-input').trigger('focus');
-        return;
-      }
-
-      this.submitProposal({
-        decisionValue: 'correcao',
-        justification: reason,
-        category: category,
-        modalId: 'modal-return',
-        successMessage: 'Proposta devolvida para correcao.'
-      });
+      this.confirmPendingItemRemoval();
     });
 
-    container.on(`click${ns}`, '[data-action="confirm-reject"]', (event) => {
-      event.preventDefault();
-      const category = this.asText(container.find('#reject-category-input').val());
-      const reason = this.asText(container.find('#reject-reason-input').val());
-
-      if (!category) {
-        this.showToast('Categoria', 'Selecione a categoria da reprovacao.', 'warning');
-        container.find('#reject-category-input').trigger('focus');
-        return;
-      }
-
-      if (!reason) {
-        this.showToast('Justificativa', 'Informe a justificativa da reprovacao.', 'warning');
-        container.find('#reject-reason-input').trigger('focus');
-        return;
-      }
-
-      this.submitProposal({
-        decisionValue: 'cancelado',
-        justification: reason,
-        category: category,
-        modalId: 'modal-reject',
-        successMessage: 'Nao continuidade da proposta registrada.'
-      });
-    });
-
-    container.on(`click${ns}`, '#approve-modal, #modal-return, #modal-reject', (event) => {
+    container.on(`click${ns}`, '#approve-modal, #modal-reject', (event) => {
       if (event.target === event.currentTarget) {
         $(event.currentTarget).addClass('hidden');
+        if (event.currentTarget && event.currentTarget.id === 'modal-reject') {
+          this._state.pendingItemRemoval = null;
+        }
       }
     });
 
@@ -471,6 +432,16 @@ const commercialProposalController = {
     this.initializeSupplierTagFilter();
     this.initializeCurrencyTagFilter();
     this.initializePaymentConditionTagFilter();
+  },
+
+  configureRemovalModal: function () {
+    const modal = this.getContainer().find('#modal-reject');
+    if (!modal.length) return;
+
+    modal.find('h3').first().text('Confirmar remocao');
+    modal.find('p').first().text('Deseja realmente remover este registro da proposta comercial?');
+    modal.find('#reject-category-input').addClass('hidden');
+    modal.find('#reject-reason-input').addClass('hidden');
   },
 
   initializeSupplierTagFilter: function () {
@@ -624,6 +595,302 @@ const commercialProposalController = {
       seen.add(item.codforn);
       return true;
     });
+  },
+
+  mapProductRows: function (rows) {
+    const seen = new Set();
+    return (rows || []).map((row) => {
+      const idprod = this.asText(row && (row.idprod || row.IDPRD));
+      const codprod = this.asText(row && (row.codprod || row.CODPROD || row.CODIGOPRD));
+      const descricao = this.asText(row && (row.descricao || row.DESCRICAO || row.nome || row.NOME));
+      const produto = this.asText(row && (row.prd || row.PRD || row.produto || row.PRODUTO)) || this.buildProductLabel(codprod, descricao);
+      if (!produto) return null;
+
+      const filterValue = idprod || (codprod ? `cod:${codprod}` : `label:${this.normalizeLookupText(produto)}`);
+      if (!filterValue || seen.has(filterValue)) return null;
+      seen.add(filterValue);
+
+      return {
+        idprod: idprod,
+        codprod: codprod,
+        descricao: descricao,
+        produto: produto,
+        prd: this.asText(row && (row.prd || row.PRD)) || produto,
+        nome: this.asText(row && (row.nome || row.NOME)),
+        marca: this.asText(row && (row.marca || row.MARCA)),
+        precounitario: this.asText(row && (row.precounitario || row.PRECOUNITARIO || row.CUSTOUNITARIO || row.custounitario)),
+        __filterValue: filterValue
+      };
+    }).filter(Boolean);
+  },
+
+  loadProductOptions: async function (searchTerm) {
+    let rows = [];
+    const filters = { sqlLimit: 10 };
+    const term = this.asText(searchTerm);
+    if (term) {
+      filters.prd = {
+        value: `%${term}%`,
+        likeSearch: true
+      };
+    }
+
+    try {
+      rows = await fluigService.getDatasetRows('ds_RM_PRODUTOS', { filters: filters });
+    } catch (error) {
+      const fallbackFilters = { sqlLimit: 10 };
+      if (term) {
+        fallbackFilters.prd = `%${term}%`;
+      }
+      rows = await fluigService.getDataset('ds_RM_PRODUTOS', fallbackFilters);
+    }
+
+    return this.mapProductRows(rows);
+  },
+
+  ensureInitialProductOptionsLoaded: function () {
+    if (Array.isArray(this._state.productOptions) && this._state.productOptions.length) {
+      return Promise.resolve(this._state.productOptions);
+    }
+
+    if (this._state.initialProductOptionsPromise) {
+      return this._state.initialProductOptionsPromise;
+    }
+
+    this._state.initialProductOptionsPromise = this.loadProductOptions('')
+      .then((rows) => {
+        this._state.productOptions = Array.isArray(rows) ? rows : [];
+        return this._state.productOptions;
+      })
+      .catch((error) => {
+        console.error('[commercialProposal] Erro carregando ds_RM_PRODUTOS:', error);
+        this._state.productOptions = [];
+        return [];
+      })
+      .finally(() => {
+        this._state.initialProductOptionsPromise = null;
+      });
+
+    return this._state.initialProductOptionsPromise;
+  },
+
+  buildProductLabel: function (codprod, descricao) {
+    const code = this.asText(codprod);
+    const desc = this.asText(descricao);
+    if (code && desc) return `${code} - ${desc}`;
+    return desc || code || '';
+  },
+
+  getItemProductFilterOptions: function (currentDescription, sourceOptions) {
+    const options = Array.isArray(sourceOptions)
+      ? sourceOptions.slice()
+      : (Array.isArray(this._state.productOptions) ? this._state.productOptions.slice() : []);
+    const savedLabel = this.asText(currentDescription);
+    if (!savedLabel) return options;
+
+    const normalizedSaved = this.normalizeLookupText(savedLabel);
+    const hasMatch = options.some((item) => {
+      return this.normalizeLookupText(item && item.produto) === normalizedSaved
+        || this.normalizeLookupText(item && item.descricao) === normalizedSaved
+        || this.normalizeLookupText(this.buildProductLabel(item && item.codprod, item && item.descricao)) === normalizedSaved;
+    });
+
+    if (hasMatch) return options;
+
+    options.push({
+      idprod: '',
+      codprod: '',
+      descricao: savedLabel,
+      produto: savedLabel,
+      prd: savedLabel,
+      marca: '',
+      __filterValue: `legacy:${normalizedSaved || Date.now()}`
+    });
+
+    return options;
+  },
+
+  refreshItemProductFilters: function () {
+    const root = this.getContainer();
+    root.find('#proposal-items-list .proposal-item-row').each((_, row) => {
+      this.initializeItemProductFilter(row);
+    });
+  },
+
+  initializeItemProductFilter: function (rowEl) {
+    const row = rowEl && rowEl.jquery ? rowEl : $(rowEl);
+    if (!row || !row.length || typeof TagInputFilter === 'undefined') return;
+
+    const rowId = this.asText(row.attr('data-row-id'));
+    if (!rowId) return;
+
+    const mount = row.find('[data-field="item-description-filter"]').get(0);
+    if (!mount) return;
+    if (!mount.id) {
+      mount.id = `proposal-item-product-filter-${rowId}`;
+    }
+
+    const currentDescription = this.asText(row.find('[data-field="item-description"]').val());
+    const options = this.getItemProductFilterOptions(currentDescription);
+    let filter = this._state.itemProductFilters[rowId] || null;
+
+    if (!filter) {
+      filter = new TagInputFilter(`#${mount.id}`, {
+        placeholder: 'Selecione um produto...',
+        data: options,
+        labelField: 'produto',
+        valueField: '__filterValue',
+        portalDropdown: true,
+        columns: [
+          { header: 'Codigo', field: 'codprod', width: 'w-1/4' },
+          { header: 'Descricao', field: 'descricao', width: 'w-2/4' },
+          { header: 'Marca', field: 'marca', width: 'w-1/4' }
+        ],
+        singleSelection: true,
+        onItemAdded: (item) => {
+          this.applyItemProductSelection(row, item);
+        },
+        onItemRemoved: () => {
+          this.clearItemProductSelection(row);
+        }
+      });
+      this._state.itemProductFilters[rowId] = filter;
+      this.bindItemProductFilterSearch(row, filter);
+    } else if (typeof filter.updateData === 'function') {
+      filter.updateData(options);
+    }
+
+    this.syncItemProductFilter(row);
+    this.ensureInitialProductOptionsLoaded().then((initialOptions) => {
+      const currentFilter = this._state.itemProductFilters[rowId];
+      if (!currentFilter || typeof currentFilter.updateData !== 'function') return;
+      currentFilter.updateData(this.getItemProductFilterOptions(currentDescription, initialOptions));
+      this.syncItemProductFilter(row);
+    });
+  },
+
+  bindItemProductFilterSearch: function (rowEl, filter) {
+    if (!filter || !filter.searchInput || filter.__remoteSearchBound) return;
+
+    filter.__remoteSearchBound = true;
+    filter.searchInput.addEventListener('input', () => {
+      const row = rowEl && rowEl.jquery ? rowEl : $(rowEl);
+      const rowId = this.asText(row.attr('data-row-id'));
+      if (!rowId) return;
+
+      if (this._state.productSearchTimers[rowId]) {
+        clearTimeout(this._state.productSearchTimers[rowId]);
+      }
+
+      this._state.productSearchTimers[rowId] = setTimeout(() => {
+        delete this._state.productSearchTimers[rowId];
+        const currentDescription = this.asText(row.find('[data-field="item-description"]').val());
+        const term = this.asText(filter.searchInput.value);
+        const loadPromise = term ? this.loadProductOptions(term) : this.ensureInitialProductOptionsLoaded();
+
+        loadPromise.then((rows) => {
+          const currentFilter = this._state.itemProductFilters[rowId];
+          if (!currentFilter || typeof currentFilter.updateData !== 'function') return;
+          currentFilter.updateData(this.getItemProductFilterOptions(currentDescription, rows));
+          currentFilter.openDropdown();
+        }).catch((error) => {
+          console.error('[commercialProposal] Erro pesquisando ds_RM_PRODUTOS:', error);
+        });
+      }, 250);
+    });
+  },
+
+  syncItemProductFilter: function (rowEl) {
+    const row = rowEl && rowEl.jquery ? rowEl : $(rowEl);
+    if (!row || !row.length) return;
+
+    const rowId = this.asText(row.attr('data-row-id'));
+    const filter = rowId ? this._state.itemProductFilters[rowId] : null;
+    if (!filter || typeof filter.setSelectedItems !== 'function') return;
+
+    const currentDescription = this.asText(row.find('[data-field="item-description"]').val());
+    if (!currentDescription) {
+      if (typeof filter.removeAll === 'function') filter.removeAll();
+      return;
+    }
+
+    const options = filter.options && Array.isArray(filter.options.data) ? filter.options.data : [];
+    const normalizedCurrent = this.normalizeLookupText(currentDescription);
+    const found = options.find((item) => {
+      return this.normalizeLookupText(item && item.produto) === normalizedCurrent
+        || this.normalizeLookupText(item && item.descricao) === normalizedCurrent
+        || this.normalizeLookupText(this.buildProductLabel(item && item.codprod, item && item.descricao)) === normalizedCurrent;
+    });
+
+    if (!found) return;
+
+    filter.setSelectedItems([{
+      value: this.asText(found.__filterValue),
+      label: this.asText(found.produto)
+    }]);
+  },
+
+  applyItemProductSelection: function (rowEl, item) {
+    const row = rowEl && rowEl.jquery ? rowEl : $(rowEl);
+    if (!row || !row.length) return;
+
+    const description = this.asText(item && item.produto) || this.buildProductLabel(item && item.codprod, item && item.descricao);
+    row.find('[data-field="item-description"]').val(description);
+    row.attr('data-product-id', this.asText(item && item.idprod));
+    row.attr('data-product-code', this.asText(item && item.codprod));
+
+    this.fillItemUnitPriceFromProduct(row, item);
+  },
+
+  clearItemProductSelection: function (rowEl) {
+    const row = rowEl && rowEl.jquery ? rowEl : $(rowEl);
+    if (!row || !row.length) return;
+
+    row.find('[data-field="item-description"]').val('');
+    row.attr('data-product-id', '');
+    row.attr('data-product-code', '');
+    row.find('[data-field="item-unit"]').val('');
+    row.find('[data-field="item-total"]').val('');
+    this.updateItemRowTotal(row);
+  },
+
+  loadProductPrice: async function (item) {
+    const idprod = this.asText(item && (item.idprod || item.IDPRD));
+    const codprod = this.asText(item && (item.codprod || item.CODIGOPRD || item.CODPROD));
+    const cacheKey = idprod || (codprod ? `cod:${codprod}` : '');
+    if (!cacheKey) return null;
+
+    if (Object.prototype.hasOwnProperty.call(this._state.productPriceCache, cacheKey)) {
+      return this._state.productPriceCache[cacheKey];
+    }
+
+    const directPrice = this.parseFlexibleMoneyValue(
+      item && (item.precounitario || item.PRECOUNITARIO || item.CUSTOUNITARIO || item.custounitario)
+    );
+    const price = directPrice === null ? null : directPrice;
+    this._state.productPriceCache[cacheKey] = price;
+    return price;
+  },
+
+  fillItemUnitPriceFromProduct: function (rowEl, item) {
+    const row = rowEl && rowEl.jquery ? rowEl : $(rowEl);
+    if (!row || !row.length) return;
+
+    const unitField = row.find('[data-field="item-unit"]').first();
+    unitField.val('');
+    this.updateItemRowTotal(row);
+
+    this.loadProductPrice(item)
+      .then((price) => {
+        if (price === null || price === undefined || !isFinite(Number(price))) {
+          return;
+        }
+        unitField.val(this.formatCurrencyValue(price));
+        this.updateItemRowTotal(row);
+      })
+      .catch((error) => {
+        console.error('[commercialProposal] Erro carregando preco do produto:', error);
+      });
   },
 
   loadCurrencyOptions: async function () {
@@ -1253,39 +1520,67 @@ const commercialProposalController = {
     const list = this.getContainer().find('#proposal-items-list');
     if (!list.length) return;
 
+    this._state.itemRowSequence += 1;
+    const rowId = String(this._state.itemRowSequence);
     const description = this.escapeHtml(this.asText(data && data.description));
     const quantity = this.escapeHtml(this.asText(data && data.quantity) || '1');
     const unit = this.escapeHtml(this.normalizeCurrencyDisplayValue(data && data.unit));
     const total = this.escapeHtml(this.normalizeCurrencyDisplayValue(data && data.total));
 
     list.append(`
-      <tr class="proposal-item-row border-t">
-        <td class="px-4 py-3">
-          <input type="text" data-field="item-description" value="${description}" class="w-full px-2 py-1 border border-gray-300 rounded text-sm">
-        </td>
-        <td class="px-4 py-3 text-center">
-          <input type="number" min="1" step="1" data-field="item-quantity" value="${quantity}" class="w-20 px-2 py-1 border border-gray-300 rounded text-sm text-center">
-        </td>
-        <td class="px-4 py-3">
-          <input type="text" data-field="item-unit" value="${unit}" class="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right">
-        </td>
-        <td class="px-4 py-3">
-          <input type="text" data-field="item-total" value="${total}" readonly class="w-full px-2 py-1 border border-gray-300 rounded text-sm text-right bg-gray-50 text-gray-700 cursor-not-allowed">
-        </td>
-        <td class="px-4 py-3 text-center">
-          <button type="button" data-action="remove-proposal-item" class="text-red-500 hover:text-red-700">
-            <i class="fa-solid fa-trash text-sm"></i>
-          </button>
-        </td>
-      </tr>
+      <div class="proposal-item-row border border-gray-300 rounded-lg bg-white p-4" data-row-id="${this.escapeHtml(rowId)}">
+        <div class="mb-4">
+          <label class="block text-xs font-medium text-gray-600 mb-2">Item / Servico</label>
+          <div id="proposal-item-description-mount-${this.escapeHtml(rowId)}" data-field="item-description-filter"></div>
+          <input type="hidden" data-field="item-description" value="${description}">
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-[88px_minmax(0,1fr)_minmax(0,1fr)_40px] gap-3 items-end">
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-2">Qtd</label>
+            <input type="number" min="1" step="1" data-field="item-quantity" value="${quantity}" class="w-full px-2 py-2 border border-gray-300 rounded text-sm text-center">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-2">Valor Unit.</label>
+            <input type="text" data-field="item-unit" value="${unit}" class="w-full px-3 py-2 border border-gray-300 rounded text-sm text-right">
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-gray-600 mb-2">Total</label>
+            <input type="text" data-field="item-total" value="${total}" readonly class="w-full px-3 py-2 border border-gray-300 rounded text-sm text-right bg-gray-50 text-gray-700 cursor-not-allowed">
+          </div>
+          <div class="flex justify-center md:justify-end">
+            <button type="button" data-action="remove-proposal-item" class="h-10 w-10 inline-flex items-center justify-center text-red-500 hover:text-red-700">
+              <i class="fa-solid fa-trash text-sm"></i>
+            </button>
+          </div>
+        </div>
+      </div>
     `);
 
-    this.updateItemRowTotal(list.find('.proposal-item-row').last());
+    const row = list.children('.proposal-item-row').last();
+    this.initializeItemProductFilter(row);
+    this.updateItemRowTotal(row);
   },
 
   removeItemRow: function (target) {
     const item = $(target).closest('.proposal-item-row');
     if (!item.length) return;
+    this.promptItemRemoval('proposal-item', item.get(0));
+  },
+
+  executeItemRowRemoval: function (target) {
+    const item = $(target).closest('.proposal-item-row');
+    if (!item.length) return;
+    const rowId = this.asText(item.attr('data-row-id'));
+    if (rowId && this._state.itemProductFilters[rowId]) {
+      if (typeof this._state.itemProductFilters[rowId].destroy === 'function') {
+        this._state.itemProductFilters[rowId].destroy();
+      }
+      delete this._state.itemProductFilters[rowId];
+    }
+    if (rowId && this._state.productSearchTimers[rowId]) {
+      clearTimeout(this._state.productSearchTimers[rowId]);
+      delete this._state.productSearchTimers[rowId];
+    }
     item.remove();
 
     if (!this.getContainer().find('#proposal-items-list .proposal-item-row').length) {
@@ -1634,6 +1929,12 @@ const commercialProposalController = {
   removeRiskMatrixItem: function (target) {
     const item = $(target).closest('.tipc-risk-item');
     if (!item.length) return;
+    this.promptItemRemoval('proposal-risk', item.get(0));
+  },
+
+  executeRiskMatrixRemoval: function (target) {
+    const item = $(target).closest('.tipc-risk-item');
+    if (!item.length) return;
     item.remove();
 
     const list = this.getContainer().find('#proposal-risk-list');
@@ -1910,6 +2211,12 @@ const commercialProposalController = {
   removePrerequisiteItem: function (target) {
     const item = $(target).closest('.tipc-prerequisite-item');
     if (!item.length) return;
+    this.promptItemRemoval('proposal-prerequisite', item.get(0));
+  },
+
+  executePrerequisiteRemoval: function (target) {
+    const item = $(target).closest('.tipc-prerequisite-item');
+    if (!item.length) return;
     item.remove();
 
     const list = this.getContainer().find('#proposal-prerequisite-list');
@@ -1921,6 +2228,33 @@ const commercialProposalController = {
 
     if (empty.length) empty.addClass('hidden');
     this.reindexPrerequisiteCards();
+  },
+
+  promptItemRemoval: function (kind, target) {
+    if (!target) return;
+    this._state.pendingItemRemoval = { kind: this.asText(kind), target: target };
+    this.openModal('modal-reject');
+  },
+
+  confirmPendingItemRemoval: function () {
+    const pending = this._state.pendingItemRemoval;
+    this.closeModal('modal-reject');
+    this._state.pendingItemRemoval = null;
+    if (!pending || !pending.target) return;
+
+    if (pending.kind === 'proposal-item') {
+      this.executeItemRowRemoval(pending.target);
+      return;
+    }
+
+    if (pending.kind === 'proposal-risk') {
+      this.executeRiskMatrixRemoval(pending.target);
+      return;
+    }
+
+    if (pending.kind === 'proposal-prerequisite') {
+      this.executePrerequisiteRemoval(pending.target);
+    }
   },
 
   reindexPrerequisiteCards: function () {
@@ -2268,7 +2602,16 @@ const commercialProposalController = {
     // Inputs de edicao estao dentro de .risk-edit
     const title = this.asText(card.find('.risk-edit [data-field="risk-title"]').val());
     if (!title) {
-      this.showToast('Campo obrigatorio', 'Informe o titulo do risco.', 'warning');
+      const ui = this.getUiComponents();
+      if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+        ui.validation.showValidationModal(this.getContainer(), {
+          missingFields: ['Titulo do risco'],
+          title: 'Campos Obrigatorios',
+          message: 'Por favor, preencha todos os campos obrigatorios antes de confirmar este item.'
+        });
+      } else {
+        this.showToast('Campo obrigatorio', 'Informe o titulo do risco.', 'warning');
+      }
       return;
     }
 
@@ -2303,7 +2646,16 @@ const commercialProposalController = {
 
     const title = this.asText(card.find('.prerequisite-edit [data-field="prerequisite-title"]').val());
     if (!title) {
-      this.showToast('Campo obrigatorio', 'Informe o titulo do pre-requisito.', 'warning');
+      const ui = this.getUiComponents();
+      if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+        ui.validation.showValidationModal(this.getContainer(), {
+          missingFields: ['Titulo do pre-requisito'],
+          title: 'Campos Obrigatorios',
+          message: 'Por favor, preencha todos os campos obrigatorios antes de confirmar este item.'
+        });
+      } else {
+        this.showToast('Campo obrigatorio', 'Informe o titulo do pre-requisito.', 'warning');
+      }
       return;
     }
 
@@ -2411,7 +2763,16 @@ const commercialProposalController = {
           if (config && config.modalId) {
             this.closeModal(config.modalId);
           }
-          this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          const ui = this.getUiComponents();
+          if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+            ui.validation.showValidationModal(this.getContainer(), {
+              missingFields: missing,
+              title: 'Campos Obrigatorios',
+              message: 'Por favor, preencha todos os campos obrigatorios antes de continuar.'
+            });
+          } else {
+            this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          }
           return;
         }
       }
@@ -2461,6 +2822,13 @@ const commercialProposalController = {
   },
 
   showToast: function (title, message, type) {
+    const ui = $(document).data('gpUiComponents');
+    if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
+      if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) {
+        return;
+      }
+    }
+
     const toast = this.getContainer().find('#toast');
     const icon = this.getContainer().find('#toast-icon');
     const toastTitle = this.getContainer().find('#toast-title');

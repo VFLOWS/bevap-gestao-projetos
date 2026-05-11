@@ -57,7 +57,7 @@
                             <input type="hidden" id="cod-coligada" name="cod-coligada">
                         </div>
                         
-                        <div>
+                        <div class="md:col-span-2 min-w-0">
                             <label class="block text-sm font-medium text-gray-700 mb-2">
                                 Centro de Custo <span class="text-red-500">*</span>
                             </label>
@@ -65,22 +65,23 @@
                             <input type="hidden" id="centro-custo" name="centro-custo" class="field-input" data-field="centro-custo" required>
                             <input type="hidden" id="cod-centro-custo" name="cod-centro-custo">
                         </div>
+                    </div>
 
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">
-                                Área/Unidade
-                            </label>
-                            <div id="area-tag-filter"></div>
-                            <input type="hidden" id="area" name="area" class="field-input" data-field="area">
-                            <input type="hidden" id="cod-area" name="cod-area">
-                        </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Área/Unidade <span class="text-red-500">*</span>
+                        </label>
+                        <div id="area-tag-filter"></div>
+                        <input type="hidden" id="area" name="area" class="field-input" data-field="area">
+                        <input type="hidden" id="cod-area" name="cod-area">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             Patrocinador <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" id="patrocinador" placeholder="Ex: Diretoria TI" class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all" data-field="patrocinador" required>
+                        <div id="patrocinador-tag-filter"></div>
+                        <input type="hidden" id="patrocinador" name="patrocinador" class="field-input" data-field="patrocinador" required>
                     </div>
 
                     <div>
@@ -205,7 +206,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Fora de Escopo <span class="text-red-500">*</span></label>
-                        <textarea rows="3" placeholder="O que NÃO será incluído neste projeto..." class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="out-of-scope" required></textarea>
+                        <textarea rows="3" placeholder="O que N&Atilde;O ser&aacute; inclu&iacute;do neste projeto..." class="field-input w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none" data-field="out-of-scope" required></textarea>
                     </div>
 
                     <div>
@@ -230,10 +231,10 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Stakeholders</label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Stakeholders <span class="text-red-500">*</span></label>
                         <div class="flex flex-wrap gap-2 mb-3" id="stakeholders-list"></div>
                         <div class="flex gap-2">
-                            <input type="text" id="stakeholder-input" placeholder="Nome do stakeholder..." class="field-input flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" data-field="stakeholders">
+                            <div id="stakeholder-tag-filter" class="flex-1"></div>
                             <button data-action="add-stakeholder" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
@@ -279,7 +280,7 @@
                         <div class="flex items-start mb-4">
                             <input type="checkbox" id="declaracao" class="field-input mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" data-field="declaracao" required>
                             <label for="declaracao" class="ml-3 text-sm text-gray-700">
-                                <p class="text-gray-500 text-xs mt-1">Confirmo que todas as informações prestadas nesta solicitação são precisas e completas</p>
+                                <p class="text-gray-500 text-xs mt-1">Confirmo que todas as informações prestadas nesta solicitação são precisas e completas<span class="text-red-500">*</span></p>
                             </label>
                         </div>
 
@@ -339,15 +340,15 @@
                     
                     <div class="space-y-2 text-sm">
                         <div class="flex items-center">
-                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">○</span>
+                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">&#9675;</span>
                             <span class="text-gray-400">Dados Básicos</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">○</span>
+                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">&#9675;</span>
                             <span class="text-gray-400">Escopo Definido</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">○</span>
+                            <span class="checklist-icon text-gray-300 mr-2 font-semibold">&#9675;</span>
                             <span class="text-gray-400">Anexos & Envio</span>
                         </div>
                     </div>
@@ -413,7 +414,7 @@
             </div>
             <div class="flex items-center text-sm text-gray-600">
                 <i class="fa-solid fa-arrow-right text-bevap-green mr-2"></i>
-                <span id="success-modal-next-step">TI – Avaliar Projeto</span>
+                <span id="success-modal-next-step">TI &ndash; Avaliar Projeto</span>
             </div>
         </div>
 

@@ -508,7 +508,7 @@
         "method": "GET",
         "header": [
           {
-            "key": "App-Token",
+            "key": "APP-TOKEN",
             "value": "MkVWVwRz0KHQUeRwUApf9P0h0yFm47PtiAF95V7L",
             "type": "text"
           },
@@ -715,19 +715,19 @@
   "variable": [
     {
       "key": "user_GLPI",
-      "value": ""
+      "value": "svc.totvs.fluig"
     },
     {
       "key": "base_GLPI_NOVO",
-      "value": ""
+      "value": "https://central.bevap.com.br"
     },
     {
       "key": "psw_GLPI",
-      "value": ""
+      "value": "5ZsRsaj583zf"
     },
     {
       "key": "session_token_GLPI",
-      "value": ""
+      "value": "ashlotqs9n4slgdfha9bmkls9d"
     }
   ]
 }

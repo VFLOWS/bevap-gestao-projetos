@@ -701,6 +701,171 @@
 
 	<label>Mensagem Erro GLPI</label>
 	<input type="text" name="mensagemErroGLPI" id="mensagemErroGLPI">
+
+	<!-- PROJECT PLANNING - DP (Planejamento do Projeto / Widget) -->
+	<hr>
+	<label><strong>PROJECT PLANNING - DP</strong></label>
+
+	<label>projectPlanningJsonDP</label>
+	<textarea name="projectPlanningJsonDP" id="projectPlanningJsonDP" class="form-control" rows="6"></textarea>
+
+	<label>WBS Phases</label>
+	<table class="table table-bordered" id="tblWbsPhasesDP" tablename="tblWbsPhasesDP" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Phase Id</th>
+				<th>Phase Order</th>
+				<th>Phase Name</th>
+				<th>Responsible</th>
+				<th>Effort Hours</th>
+				<th>Duration Days</th>
+				<th>Notes</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="wbsPhaseIdDP" class="form-control"></td>
+				<td><input type="text" name="wbsPhaseOrderDP" class="form-control"></td>
+				<td><input type="text" name="wbsPhaseNameDP" class="form-control"></td>
+				<td><input type="text" name="wbsPhaseResponsibleDP" class="form-control"></td>
+				<td><input type="text" name="wbsPhaseEffortHoursDP" class="form-control"></td>
+				<td><input type="text" name="wbsPhaseDurationDaysDP" class="form-control"></td>
+				<td><input type="text" name="wbsPhaseNotesDP" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>WBS Tasks</label>
+	<table class="table table-bordered" id="tblWbsTasksDP" tablename="tblWbsTasksDP" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Task Id</th>
+				<th>Phase Id</th>
+				<th>Task Order</th>
+				<th>Task Name</th>
+				<th>Responsible</th>
+				<th>Effort Hours</th>
+				<th>Duration Days</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="wbsTaskIdDP" class="form-control"></td>
+				<td><input type="text" name="wbsTaskPhaseIdDP" class="form-control"></td>
+				<td><input type="text" name="wbsTaskOrderDP" class="form-control"></td>
+				<td><input type="text" name="wbsTaskNameDP" class="form-control"></td>
+				<td><input type="text" name="wbsTaskResponsibleDP" class="form-control"></td>
+				<td><input type="text" name="wbsTaskEffortHoursDP" class="form-control"></td>
+				<td><input type="text" name="wbsTaskDurationDaysDP" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>Milestones</label>
+	<table class="table table-bordered" id="tblMilestonesDP" tablename="tblMilestonesDP" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Milestone Id</th>
+				<th>Name</th>
+				<th>Start Date</th>
+				<th>End Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="milestoneIdDP" class="form-control"></td>
+				<td><input type="text" name="milestoneNameDP" class="form-control"></td>
+				<td><input type="text" name="milestoneStartDateDP" class="form-control"></td>
+				<td><input type="text" name="milestoneEndDateDP" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>Milestone Criteria</label>
+	<table class="table table-bordered" id="tblMilestoneCriteriaDP" tablename="tblMilestoneCriteriaDP" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Milestone Id</th>
+				<th>Criteria</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="milestoneCriteriaMilestoneIdDP" class="form-control"></td>
+				<td><input type="text" name="milestoneCriteriaTextDP" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>Milestone Tasks</label>
+	<table class="table table-bordered" id="tblMilestoneTasksDP" tablename="tblMilestoneTasksDP" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Milestone Id</th>
+				<th>Task</th>
+				<th>Due Date</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="milestoneTaskMilestoneIdDP" class="form-control"></td>
+				<td><input type="text" name="milestoneTaskTextDP" class="form-control"></td>
+				<td><input type="text" name="milestoneTaskDueDateDP" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>Risks</label>
+	<table class="table table-bordered" id="tblRisksDP" tablename="tblRisksDP" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Risk Id</th>
+				<th>Description</th>
+				<th>Probability</th>
+				<th>Impact</th>
+				<th>Mitigation</th>
+				<th>Plan B</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="riskIdDP" class="form-control"></td>
+				<td><input type="text" name="riskDescriptionDP" class="form-control"></td>
+				<td><input type="text" name="riskProbabilityDP" class="form-control"></td>
+				<td><input type="text" name="riskImpactDP" class="form-control"></td>
+				<td><input type="text" name="riskMitigationDP" class="form-control"></td>
+				<td><input type="text" name="riskPlanBDP" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>External Dependencies</label>
+	<table class="table table-bordered" id="tblExternalDependenciesDP" tablename="tblExternalDependenciesDP" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Dependency Id</th>
+				<th>Description</th>
+				<th>Responsible</th>
+				<th>Mitigation</th>
+				<th>Plan B</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="externalDependencyIdDP" class="form-control"></td>
+				<td><input type="text" name="externalDependencyDescriDP" class="form-control"></td>
+				<td><input type="text" name="externalDependencyResponDP" class="form-control"></td>
+				<td><input type="text" name="externalDependencyMitiDP" class="form-control"></td>
+				<td><input type="text" name="externalDependencyPlanBDP" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<label>RACI Json</label>
+	<textarea name="raciJsonDP" id="raciJsonDP" class="form-control" rows="4"></textarea>
+
+	<label>Documents Json</label>
+	<textarea name="documentsJsonDP" id="documentsJsonDP" class="form-control" rows="4"></textarea>
 </form>
 </div>
 </body>
