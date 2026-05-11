@@ -27,8 +27,21 @@ const router = {
     this._isRouting = true;
 
     const container = $('#page-container');
-    const loading = FLUIGC.loading(container);
-    loading.show();
+    const loading = (function () {
+      if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
+        return modalLoadingService.show({
+          title: 'Aguarde',
+          message: 'Carregando a tela...'
+        });
+      }
+
+      const legacyLoading = FLUIGC.loading(container);
+      legacyLoading.show();
+      return {
+        hide: function () { legacyLoading.hide(); },
+        updateMessage: function () {}
+      };
+    })();
 
     try {
       const [page, paramStr] = rawHash.split('?');

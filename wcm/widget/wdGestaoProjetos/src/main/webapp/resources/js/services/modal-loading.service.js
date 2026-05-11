@@ -25,8 +25,8 @@ var modalLoadingService = (function () {
 
     function show(options) {
         var config = options || {};
-        var title = escapeHtml(config.title || "Processing");
-        var message = escapeHtml(config.message || "Please wait...");
+        var title = escapeHtml(config.title || "Aguarde");
+        var message = escapeHtml(config.message || "Processando...");
         var modalId = `loading-modal-${Date.now()}-${++sequence}`;
 
         var modal = $(`
