@@ -1,7 +1,6 @@
 const projectPlanningController = {
   _eventNamespace: '.projectPlanning',
-  _datasetId: 'dsGetSolicitacaoProjetos',
-  _projectFields: ['documentid', 'titulodoprojetoNS', 'areaUnidadeNS', 'patrocinadorNS', 'prioridadeNS'],
+  _projectFields: ['documentid', 'titulodoprojetoNS', 'areaUnidadeNS', 'patrocinadorNS', 'prioridadeNS', 'codigoglpi', 'estadoProcesso'],
 
   _headerBackup: null,
   _globalsBackup: null,
@@ -11,6 +10,10 @@ const projectPlanningController = {
   _state: {
     documentId: '',
     estadoProcesso: '',
+    processType: '',
+    processName: '',
+    datasetId: '',
+    formName: '',
     currentStep: 1,
     totalSteps: 5,
     stepLabels: {
@@ -38,6 +41,10 @@ const projectPlanningController = {
 
     this._state.documentId = this.asText(params.documentId);
     this._state.estadoProcesso = this.asText(params.estadoProcesso);
+    this._state.processType = this.asText(params.processType);
+    this._state.processName = this.asText(params.processName);
+    this._state.datasetId = this.asText(params.datasetId);
+    this._state.formName = this.asText(params.formName);
     this._state.currentStep = 1;
 
     try {
@@ -379,32 +386,43 @@ const projectPlanningController = {
       return;
     }
 
-    let projectCode = '';
-    try {
-      projectCode = await fluigService.resolveProjectSummaryCode({ documentId });
-    } catch (error) {
-      projectCode = '';
-    }
-
-    let row = null;
+    let processContext = null;
 
     try {
-      const rows = await fluigService.getDatasetRows(this._datasetId, {
+      processContext = await fluigService.resolveProjectProcessContext({
+        documentId: documentId,
+        processType: this._state.processType,
+        processName: this._state.processName,
         fields: this._projectFields,
-        filters: {
-          documentid: documentId
-        }
       });
-
-      row = rows && rows.length ? rows[0] : null;
     } catch (error) {
-      console.error('[projectPlanningController] Erro consultando dsGetSolicitacaoProjetos:', error);
+      console.error('[projectPlanningController] Erro resolvendo contexto do processo:', error);
     }
 
+    if (processContext) {
+      this._state.processType = this.asText(processContext.processType);
+      this._state.processName = this.asText(processContext.processName);
+      this._state.datasetId = this.asText(processContext.datasetId);
+      this._state.formName = this.asText(processContext.formName);
+      this._state.estadoProcesso = this.asText(processContext.estadoProcesso || this._state.estadoProcesso);
+    }
+
+    let projectCode = this.asText(processContext && processContext.codigoglpi);
+    if (!projectCode) {
+      try {
+        projectCode = await fluigService.resolveProjectSummaryCode({ documentId });
+      } catch (error) {
+        projectCode = '';
+      }
+    }
+
+    const row = processContext;
     const title = this.asText(row && row.titulodoprojetoNS) || '-';
     const area = this.asText(row && row.areaUnidadeNS) || '-';
     const sponsor = this.asText(row && row.patrocinadorNS) || '-';
     const priority = this.asText(row && row.prioridadeNS) || '-';
+    const processLabel = this.asText(row && row.processLabel) || fluigService.getProjectProcessLabel(this._state.processType);
+    const formName = this.asText(row && row.formName) || this.asText(this._state.formName);
 
     $('#project-summary-code').text(projectCode || documentId || '-');
     $('#project-summary-title').text(title);
@@ -419,7 +437,7 @@ const projectPlanningController = {
 
     const typeEl = $('#project-summary-type');
     if (typeEl.length) {
-      typeEl.text('-');
+      typeEl.text(processLabel && formName ? `${processLabel} - ${formName}` : processLabel || formName || '-');
     }
 
     this.setConcludeModalText(projectCode || documentId || '-', title);

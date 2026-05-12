@@ -1,6 +1,5 @@
 const dashboardController = {
   _eventNamespace: '.dashboard',
-  _pendenciesDatasetId: 'dsGetSolicitacaoProjetos',
   _pendenciesFields: ['titulodoprojetoNS', 'documentid', 'prioridadeNS', 'estadoProcesso'],
 
   load: async function () {
@@ -36,11 +35,10 @@ const dashboardController = {
 
     try {
       console.group('[loadPendencies] iniciando');
-      console.log('[loadPendencies] dataset id :', this._pendenciesDatasetId);
       console.log('[loadPendencies] fields     :', JSON.stringify(this._pendenciesFields));
       console.groupEnd();
 
-      const rows = await fluigService.getDatasetRows(this._pendenciesDatasetId, {
+      const rows = await fluigService.fetchAllProjectProcessRows({
         fields: this._pendenciesFields
       });
 
@@ -66,12 +64,20 @@ const dashboardController = {
 
   normalizePendencies: function (rows) {
     const pendencies = (rows || []).map((row, index) => {
+      const processContext = fluigService.buildProjectProcessContext(row.processType || row.processName, row);
+
       return {
-        projectCode: 'PRJ-2026-018',
+        projectCode: this.asText(row.codigoglpi) || this.asText(row.documentid) || '-',
         title: this.asText(row.titulodoprojetoNS),
         documentId: this.asText(row.documentid),
         priority: this.asText(row.prioridadeNS),
         processState: this.asText(row.estadoProcesso),
+        processType: processContext.processType,
+        processLabel: processContext.processLabel,
+        processName: processContext.processName,
+        datasetId: processContext.datasetId,
+        formName: processContext.formName,
+        activity: processContext.activity,
         _sourceIndex: index
       };
     });
@@ -130,33 +136,9 @@ const dashboardController = {
       const style = priorityInfo.style;
       const priority = priorityInfo.label;
       const title = pendency.title || 'Projeto sem título';
-      const subtitle = this.getPendencySubtitle(pendency.processState);
-      const actionConfig = this.getPendencyActionConfig(pendency.processState);
-      const buttonLabel = actionConfig.route === 'immediateApproval'
-        ? 'Abrir Aprovacao'
-        : actionConfig.route === 'requesterProposalApproval'
-          ? 'Abrir Proposta'
-        : actionConfig.route === 'commercialProposal'
-          ? 'Abrir Proposta'
-        : actionConfig.route === 'purchaseContracting'
-          ? 'Abrir Compras'
-        : actionConfig.route === 'glpiErrorTreatment'
-          ? 'Tratar Erro GLPI'
-        : actionConfig.route === 'gccCostApproval'
-          ? 'Abrir GCC'
-        : actionConfig.route === 'committeeCostApproval'
-          ? 'Abrir Comitê (Custo)'
-        : actionConfig.route === 'technicalTriage'
-          ? 'Abrir Triagem'
-        : actionConfig.route === 'committeeApproval'
-          ? 'Abrir Comitê'
-        : actionConfig.route === 'correction'
-          ? 'Corrigir Agora'
-        : actionConfig.route === 'newSolicitation'
-          ? 'Continuar Rascunho'
-        : actionConfig.enabled
-          ? 'Avaliar Agora'
-          : 'Indisponivel';
+      const subtitle = this.getPendencySubtitle(pendency);
+      const actionConfig = this.getPendencyActionConfig(pendency);
+      const buttonLabel = actionConfig.label || 'Abrir';
       const borderStyleAttr = style.borderStyle ? ` style="${style.borderStyle}"` : '';
       const buttonClasses = actionConfig.enabled
         ? 'w-full bg-bevap-green hover:bg-bevap-green/90 text-white text-sm py-2 rounded-lg font-medium transition-colors'
@@ -176,6 +158,10 @@ const dashboardController = {
             data-action="open-pendency"
             data-document-id="${this.escapeHtml(pendency.documentId)}"
             data-estado-processo="${this.escapeHtml(pendency.processState)}"
+            data-process-type="${this.escapeHtml(pendency.processType)}"
+            data-process-name="${this.escapeHtml(pendency.processName)}"
+            data-dataset-id="${this.escapeHtml(pendency.datasetId)}"
+            data-form-name="${this.escapeHtml(pendency.formName)}"
             data-target-route="${this.escapeHtml(actionConfig.route)}"
             ${actionConfig.enabled ? '' : 'disabled'}
             class="${buttonClasses}"
@@ -189,170 +175,26 @@ const dashboardController = {
     list.html(cards.join(''));
   },
 
-  getPendencySubtitle: function (estadoProcesso) {
-    const raw = this.asText(estadoProcesso);
-    const activity = this.parseEstadoProcessoActivity(raw);
-
-    const mapping = {
-      0: 'Rascunho da Nova Solicitacao',
-      4: 'Rascunho da Nova Solicitacao',
-      5: 'Aguardando TI Avaliar Projeto',
-      15: 'Aguardando Correção do Solicitante',
-      19: 'Aguardando Aprovação do Superior Imediato',
-      26: 'Aguardando Triagem Tecnica TI',
-      28: 'Erro de Integracao GLPI',
-      29: 'Integracao GLPI',
-      36: 'Aguardando Aprovação Comite',
-      38: 'Aguardando TI Anexar Proposta Comercial',
-      40: 'Aguardando Solicitante Aprovar Proposta',
-      53: 'Integracao Iniciar Projeto',
-      54: 'Aguardando Aprovacao Gerente do Centro de Custo',
-      61: 'Aguardando Comite Aprovar Custo do Projeto',
-      66: 'Aguardando Compras Realizar Contratação',
-      72: 'Finalizado',
-      74: 'Erro de Integracao Iniciar Projeto'
-    };
-
-    if (activity === 24 || activity === 47 || activity === 59) {
-      return 'Cancelado';
-    }
-
-    if (activity && mapping[activity]) {
-      return mapping[activity];
-    }
-
-    if (raw) {
-      return raw;
-    }
-
-    return 'Pendência disponível para avaliação';
+  getPendencySubtitle: function (pendency) {
+    return fluigService.getProjectProcessStateLabel({
+      processType: pendency.processType,
+      processName: pendency.processName,
+      estadoProcesso: pendency.processState,
+      activity: pendency.activity
+    });
   },
 
-  getPendencyActionConfig: function (estadoProcesso) {
-    const activity = this.parseEstadoProcessoActivity(estadoProcesso);
-
-    if (activity === 0 || activity === 4) {
-      return {
-        enabled: true,
-        route: 'newSolicitation',
-        label: 'Continuar Rascunho'
-      };
-    }
-
-    // Processo de Desenvolvimento de Projetos - etapa inicial (Realizar Planejamento do Projeto)
-    if (activity === 14) {
-      return {
-        enabled: true,
-        route: 'projectPlanning',
-        label: 'Planejar Projeto'
-      };
-    }
-
-    if (activity === 5) {
-      return {
-        enabled: true,
-        route: 'evaluateProject',
-        label: 'Avaliar Agora'
-      };
-    }
-
-    if (activity === 15) {
-      return {
-        enabled: true,
-        route: 'correction',
-        label: 'Corrigir Agora'
-      };
-    }
-
-    if (activity === 19) {
-      return {
-        enabled: true,
-        route: 'immediateApproval',
-        label: 'Abrir AprovaÃ§Ã£o'
-      };
-    }
-
-    if (activity === 26) {
-      return {
-        enabled: true,
-        route: 'technicalTriage',
-        label: 'Abrir Triagem'
-      };
-    }
-
-    if (activity === 28) {
-      return {
-        enabled: true,
-        route: 'glpiErrorTreatment',
-        label: 'Tratar Erro GLPI'
-      };
-    }
-
-    if (activity === 36) {
-      return {
-        enabled: true,
-        route: 'committeeApproval',
-        label: 'Abrir Comitê'
-      };
-    }
-
-    if (activity === 38) {
-      return {
-        enabled: true,
-        route: 'commercialProposal',
-        label: 'Abrir Proposta'
-      };
-    }
-
-    if (activity === 40) {
-      return {
-        enabled: true,
-        route: 'requesterProposalApproval',
-        label: 'Abrir Proposta'
-      };
-    }
-
-    if (activity === 54) {
-      return {
-        enabled: true,
-        route: 'gccCostApproval',
-        label: 'Abrir GCC'
-      };
-    }
-
-    if (activity === 61) {
-      return {
-        enabled: true,
-        route: 'committeeCostApproval',
-        label: 'Abrir Comitê (Custo)'
-      };
-    }
-
-    if (activity === 66) {
-      return {
-        enabled: true,
-        route: 'purchaseContracting',
-        label: 'Abrir Compras'
-      };
-    }
-
-    return {
-      enabled: false,
-      route: '',
-      label: 'IndisponÃ­vel'
-    };
+  getPendencyActionConfig: function (pendency) {
+    return fluigService.getProjectProcessActionConfig({
+      processType: pendency.processType,
+      processName: pendency.processName,
+      estadoProcesso: pendency.processState,
+      activity: pendency.activity
+    });
   },
 
   parseEstadoProcessoActivity: function (estadoProcesso) {
-    const text = this.asText(estadoProcesso);
-    if (!text) return null;
-
-    const matchDash = text.match(/^\s*(\d+)\s*-/);
-    const matchAny = matchDash || text.match(/(\d+)/);
-    if (!matchAny) return null;
-
-    const parsed = parseInt(matchAny[1], 10);
-    return Number.isFinite(parsed) ? parsed : null;
+    return fluigService.parseProjectProcessActivity(estadoProcesso);
   },
 
   getPendenciesListElement: function () {
@@ -447,6 +289,10 @@ const dashboardController = {
       const button = $(event.currentTarget);
       const documentId = button.data('document-id');
       const processState = button.data('estado-processo');
+      const processType = String(button.data('process-type') || '').trim();
+      const processName = String(button.data('process-name') || '').trim();
+      const datasetId = String(button.data('dataset-id') || '').trim();
+      const formName = String(button.data('form-name') || '').trim();
       const targetRoute = String(button.data('target-route') || '').trim();
 
       if (!targetRoute) {
@@ -461,6 +307,22 @@ const dashboardController = {
 
       if (processState) {
         params.set('estadoProcesso', String(processState));
+      }
+
+      if (processType) {
+        params.set('processType', processType);
+      }
+
+      if (processName) {
+        params.set('processName', processName);
+      }
+
+      if (datasetId) {
+        params.set('datasetId', datasetId);
+      }
+
+      if (formName) {
+        params.set('formName', formName);
       }
 
       const queryString = params.toString();

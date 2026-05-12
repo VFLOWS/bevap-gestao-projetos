@@ -278,6 +278,401 @@ var fluigService = {
         });
     },
 
+    getProjectProcessDefinitions: function () {
+        return {
+            solicitacao: {
+                type: 'solicitacao',
+                processName: 'ProcessSolicitacaoProjetos',
+                datasetId: 'dsGetSolicitacaoProjetos',
+                formName: 'FormSolicitacaoProjetos',
+                label: 'Solicitação'
+            },
+            desenvolvimento: {
+                type: 'desenvolvimento',
+                processName: 'ProcessDesenvolvimentoProjetos',
+                datasetId: 'dsGetDesenvolvimentoProjetos',
+                formName: 'FormDesenvolvimentoProjetos',
+                label: 'Desenvolvimento'
+            }
+        };
+    },
+
+    normalizeProjectProcessType: function (value) {
+        var text = this.asTrimmedString(value).toLowerCase();
+        if (!text) {
+            return '';
+        }
+
+        if (text === 'solicitacao' || text === 'solicitação') {
+            return 'solicitacao';
+        }
+
+        if (text === 'desenvolvimento') {
+            return 'desenvolvimento';
+        }
+
+        return '';
+    },
+
+    detectProjectProcessType: function (value) {
+        var normalized = this.normalizeProjectProcessType(value);
+        if (normalized) {
+            return normalized;
+        }
+
+        var text = this.asTrimmedString(value).toLowerCase();
+        if (!text) {
+            return '';
+        }
+
+        if (text.indexOf('processsolicitacaoprojetos') !== -1 || text.indexOf('solicitacao') !== -1 || text.indexOf('solicitação') !== -1) {
+            return 'solicitacao';
+        }
+
+        if (text.indexOf('processdesenvolvimentoprojetos') !== -1 || text.indexOf('desenvolvimento') !== -1) {
+            return 'desenvolvimento';
+        }
+
+        return '';
+    },
+
+    getProjectProcessDefinition: function (value) {
+        var processType = this.detectProjectProcessType(value);
+        var definitions = this.getProjectProcessDefinitions();
+        return definitions[processType] || null;
+    },
+
+    parseProjectProcessActivity: function (value) {
+        var text = this.asTrimmedString(value);
+        if (!text) {
+            return null;
+        }
+
+        var matchDash = text.match(/^\s*(\d+)\s*-/);
+        var matchAny = matchDash || text.match(/(\d+)/);
+        if (!matchAny || !matchAny[1]) {
+            return null;
+        }
+
+        var parsed = parseInt(matchAny[1], 10);
+        return isNaN(parsed) ? null : parsed;
+    },
+
+    buildProjectProcessContext: function (processType, row, extras) {
+        var definition = this.getProjectProcessDefinition(processType);
+        var finalRow = row && typeof row === 'object' ? row : {};
+        var finalExtras = extras && typeof extras === 'object' ? extras : {};
+        var rawState = finalExtras.estadoProcesso !== undefined
+            ? finalExtras.estadoProcesso
+            : finalRow.estadoProcesso;
+        var activity = finalExtras.activity !== undefined
+            ? finalExtras.activity
+            : this.parseProjectProcessActivity(rawState);
+
+        return Object.assign({}, finalRow, finalExtras, {
+            processType: definition ? definition.type : this.detectProjectProcessType(processType),
+            processName: definition ? definition.processName : '',
+            datasetId: definition ? definition.datasetId : '',
+            formName: definition ? definition.formName : '',
+            processLabel: definition ? definition.label : '',
+            estadoProcesso: this.asTrimmedString(rawState),
+            activity: activity
+        });
+    },
+
+    getProjectProcessLabel: function (value) {
+        var definition = this.getProjectProcessDefinition(value);
+        return definition ? definition.label : 'Processo';
+    },
+
+    getProjectCancelledActivities: function () {
+        return [24, 47, 59];
+    },
+
+    getProjectProcessActionMap: function (processType) {
+        var normalizedType = this.detectProjectProcessType(processType);
+
+        if (normalizedType === 'desenvolvimento') {
+            return {
+                0: {
+                    enabled: true,
+                    route: 'projectPlanning',
+                    label: 'Planejar Projeto'
+                },
+                4: {
+                    enabled: true,
+                    route: 'projectPlanning',
+                    label: 'Planejar Projeto'
+                },
+                14: {
+                    enabled: true,
+                    route: 'projectPlanning',
+                    label: 'Planejar Projeto'
+                }
+            };
+        }
+
+        return {
+            0: {
+                enabled: true,
+                route: 'newSolicitation',
+                label: 'Continuar Rascunho'
+            },
+            4: {
+                enabled: true,
+                route: 'newSolicitation',
+                label: 'Continuar Rascunho'
+            },
+            5: {
+                enabled: true,
+                route: 'evaluateProject',
+                label: 'Avaliar Agora'
+            },
+            15: {
+                enabled: true,
+                route: 'correction',
+                label: 'Corrigir Agora'
+            },
+            19: {
+                enabled: true,
+                route: 'immediateApproval',
+                label: 'Abrir Aprovação'
+            },
+            26: {
+                enabled: true,
+                route: 'technicalTriage',
+                label: 'Abrir Triagem'
+            },
+            28: {
+                enabled: true,
+                route: 'glpiErrorTreatment',
+                label: 'Tratar Erro GLPI'
+            },
+            36: {
+                enabled: true,
+                route: 'committeeApproval',
+                label: 'Abrir Comitê'
+            },
+            38: {
+                enabled: true,
+                route: 'commercialProposal',
+                label: 'Abrir Proposta'
+            },
+            40: {
+                enabled: true,
+                route: 'requesterProposalApproval',
+                label: 'Abrir Proposta'
+            },
+            54: {
+                enabled: true,
+                route: 'gccCostApproval',
+                label: 'Abrir GCC'
+            },
+            61: {
+                enabled: true,
+                route: 'committeeCostApproval',
+                label: 'Abrir Comitê (Custo)'
+            },
+            66: {
+                enabled: true,
+                route: 'purchaseContracting',
+                label: 'Abrir Compras'
+            }
+        };
+    },
+
+    getProjectProcessStateLabelMap: function (processType) {
+        var normalizedType = this.detectProjectProcessType(processType);
+
+        if (normalizedType === 'desenvolvimento') {
+            return {
+                0: 'Planejamento do Projeto',
+                4: 'Planejamento do Projeto',
+                14: 'Aguardando Planejamento do Projeto',
+                72: 'Finalizado'
+            };
+        }
+
+        return {
+            0: 'Rascunho da Nova Solicitação',
+            4: 'Rascunho da Nova Solicitação',
+            5: 'Aguardando TI Avaliar Projeto',
+            15: 'Aguardando Correção do Solicitante',
+            19: 'Aguardando Aprovação do Superior Imediato',
+            26: 'Aguardando Triagem Técnica TI',
+            28: 'Erro de Integração GLPI',
+            29: 'Integração GLPI',
+            36: 'Aguardando Aprovação Comitê',
+            38: 'Aguardando TI Anexar Proposta Comercial',
+            40: 'Aguardando Solicitante Aprovar Proposta',
+            53: 'Integração Iniciar Projeto',
+            54: 'Aguardando Aprovação Gerente do Centro de Custo',
+            61: 'Aguardando Comitê Aprovar Custo do Projeto',
+            66: 'Aguardando Compras Realizar Contratação',
+            72: 'Finalizado',
+            74: 'Erro de Integração Iniciar Projeto'
+        };
+    },
+
+    isProjectPlanningActivity: function (processTypeOrContext, activity) {
+        var context = processTypeOrContext && typeof processTypeOrContext === 'object'
+            ? processTypeOrContext
+            : null;
+        var processType = context
+            ? this.detectProjectProcessType(context.processType || context.processName)
+            : this.detectProjectProcessType(processTypeOrContext);
+        var finalActivity = context
+            ? this.parseProjectProcessActivity(context.activity !== undefined ? context.activity : context.estadoProcesso)
+            : this.parseProjectProcessActivity(activity);
+
+        return processType === 'desenvolvimento' && (finalActivity === 0 || finalActivity === 4 || finalActivity === 14);
+    },
+
+    getProjectProcessActionConfig: function (processTypeOrContext, activity) {
+        var context = processTypeOrContext && typeof processTypeOrContext === 'object'
+            ? processTypeOrContext
+            : this.buildProjectProcessContext(processTypeOrContext, {
+                estadoProcesso: activity
+            });
+        var processType = this.detectProjectProcessType(context.processType || context.processName);
+        var currentActivity = this.parseProjectProcessActivity(context.activity !== undefined ? context.activity : context.estadoProcesso);
+        var actionMap = this.getProjectProcessActionMap(processType);
+
+        if (currentActivity !== null && actionMap[currentActivity]) {
+            return actionMap[currentActivity];
+        }
+
+        if (processType === 'desenvolvimento') {
+            return {
+                enabled: false,
+                route: '',
+                label: 'Etapa Não Suportada'
+            };
+        }
+
+        return {
+            enabled: false,
+            route: '',
+            label: 'Indisponível'
+        };
+    },
+
+    getProjectProcessStateLabel: function (processTypeOrContext, estadoProcesso) {
+        var context = processTypeOrContext && typeof processTypeOrContext === 'object'
+            ? processTypeOrContext
+            : this.buildProjectProcessContext(processTypeOrContext, {
+                estadoProcesso: estadoProcesso
+            });
+        var processType = this.detectProjectProcessType(context.processType || context.processName);
+        var raw = this.asTrimmedString(context.estadoProcesso);
+        var activity = this.parseProjectProcessActivity(context.activity !== undefined ? context.activity : raw);
+        var stateLabelMap = this.getProjectProcessStateLabelMap(processType);
+
+        if (this.getProjectCancelledActivities().indexOf(activity) !== -1) {
+            return 'Cancelado';
+        }
+
+        if (activity !== null && stateLabelMap[activity]) {
+            return stateLabelMap[activity];
+        }
+
+        if (processType === 'desenvolvimento') {
+            return raw || 'Pendência de Desenvolvimento';
+        }
+
+        return raw || 'Pendência disponível para avaliação';
+    },
+
+    fetchProjectProcessRows: function (processType, options) {
+        var self = this;
+        return new Promise(function (resolve, reject) {
+            var definition = self.getProjectProcessDefinition(processType);
+            if (!definition) {
+                resolve([]);
+                return;
+            }
+
+            self.getDatasetRows(definition.datasetId, options || {})
+                .then(function (rows) {
+                    resolve((rows || []).map(function (row) {
+                        return self.buildProjectProcessContext(definition.type, row);
+                    }));
+                })
+                .catch(reject);
+        });
+    },
+
+    fetchAllProjectProcessRows: async function (options) {
+        var definitions = this.getProjectProcessDefinitions();
+        var processTypes = Object.keys(definitions);
+        var results = await Promise.all(processTypes.map((processType) => {
+            return this.fetchProjectProcessRows(processType, options).catch(function () {
+                return [];
+            });
+        }));
+
+        return results.reduce(function (acc, rows) {
+            return acc.concat(rows || []);
+        }, []);
+    },
+
+    resolveProjectProcessContext: async function (filters) {
+        var finalFilters = filters && typeof filters === 'object' ? filters : {};
+        var documentId = this.asTrimmedString(finalFilters.documentId);
+        var preferredType = this.detectProjectProcessType(finalFilters.processType || finalFilters.processName || finalFilters.type);
+        var queryOptions = {
+            fields: Array.isArray(finalFilters.fields) ? finalFilters.fields : null,
+            sortFields: Array.isArray(finalFilters.sortFields) ? finalFilters.sortFields : null,
+            filters: Object.assign({}, finalFilters.filters || {})
+        };
+
+        if (documentId) {
+            queryOptions.filters.documentid = documentId;
+        }
+
+        var processTypes = [];
+        if (preferredType) {
+            processTypes.push(preferredType);
+        }
+
+        Object.keys(this.getProjectProcessDefinitions()).forEach(function (processType) {
+            if (processTypes.indexOf(processType) === -1) {
+                processTypes.push(processType);
+            }
+        });
+
+        var contexts = [];
+        for (var i = 0; i < processTypes.length; i++) {
+            var rows = await this.fetchProjectProcessRows(processTypes[i], queryOptions);
+            if (rows && rows.length) {
+                contexts = contexts.concat(rows);
+                if (preferredType && processTypes[i] === preferredType) {
+                    break;
+                }
+            }
+        }
+
+        if (!contexts.length) {
+            return null;
+        }
+
+        if (preferredType) {
+            for (var preferredIndex = 0; preferredIndex < contexts.length; preferredIndex++) {
+                if (contexts[preferredIndex].processType === preferredType) {
+                    return contexts[preferredIndex];
+                }
+            }
+        }
+
+        for (var contextIndex = 0; contextIndex < contexts.length; contextIndex++) {
+            if (contexts[contextIndex].processType === 'desenvolvimento') {
+                return contexts[contextIndex];
+            }
+        }
+
+        return contexts[0];
+    },
+
     asTrimmedString: function (value) {
         if (value === null || value === undefined) return "";
         return String(value).trim();
