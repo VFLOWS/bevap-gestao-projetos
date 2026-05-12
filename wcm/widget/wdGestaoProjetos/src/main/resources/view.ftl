@@ -5,7 +5,7 @@
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-4 ">
                     <div class="flex items-center space-x-2 bg-white px-4 py-1 rounded-lg">
-                        <img src="logoBevap.png" class="h-auto w-24" alt="">
+                        <img src="bevap.png" class="h-auto w-24" alt="">
                     </div>
                     <div class="h-8 w-px bg-gray-400"></div>
                     <h1 class="text-white font-montserrat font-semibold text-lg">Dashboard</h1>

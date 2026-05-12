@@ -1,11 +1,17 @@
-const projectPlanningController = {
+var projectPlanningController = {
   _eventNamespace: '.projectPlanning',
-  _projectFields: ['documentid', 'titulodoprojetoNS', 'areaUnidadeNS', 'patrocinadorNS', 'prioridadeNS', 'codigoglpi', 'estadoProcesso'],
+  _projectFields: ['documentid', 'titulodoprojetoNS', 'areaUnidadeNS', 'patrocinadorNS', 'prioridadeNS', 'estadoProcesso', 'projectPlanningJsonDP'],
+
+  _nextStateAfterPlanning: '16',
 
   _headerBackup: null,
   _globalsBackup: null,
   _pendingDeleteAction: null,
   _toastTimeoutId: null,
+
+  _raciMatrixData: [],
+  _raciRemovedStakeholdersByPhase: new Map(),
+  _teamAllocationData: [],
 
   _state: {
     documentId: '',
@@ -59,6 +65,7 @@ const projectPlanningController = {
       this.initializeUi();
 
       await this.loadProjectSummary();
+      await this.loadPlanningDraft();
     } catch (error) {
       console.error('Project planning template load error:', error);
       container.html('<div class="p-6 text-red-600">Falha ao carregar a tela de Planejamento do Projeto.</div>');
@@ -217,6 +224,23 @@ const projectPlanningController = {
         this.refreshResponsibleSearchField(field);
       });
     });
+
+    // Fecha dropdowns de RACI quando clica fora
+    $(document).on(`click${this._eventNamespace}`, (event) => {
+      const target = event.target;
+      if (!target) return;
+      if (target.closest('.raci-stakeholder-search-field')) return;
+
+      document.querySelectorAll('.raci-stakeholder-search-field').forEach((field) => {
+        field.dataset.dropdownOpen = 'false';
+        this.refreshRaciStakeholderSearchField(field);
+      });
+    });
+
+    // Atualiza RACI/Alocação quando a WBS mudar
+    $(document).on(`input${this._eventNamespace} change${this._eventNamespace}`, '#wbs-container input, #wbs-container textarea, #wbs-container select', () => {
+      this.onWbsChanged();
+    });
   },
 
   unbindEvents: function () {
@@ -235,6 +259,12 @@ const projectPlanningController = {
     if (!document.querySelector('#communication-plan-body tr')) {
       this.addCommunicationPlanRow();
     }
+
+    // Estado inicial vazio para RACI/Alocação
+    this._raciMatrixData = [];
+    this._raciRemovedStakeholdersByPhase = new Map();
+    this._teamAllocationData = [];
+    this.renderRaciAndResources();
 
     // Ajusta texto do modal de conclusão (placeholder)
     this.setConcludeModalText('-', '-');
@@ -443,6 +473,270 @@ const projectPlanningController = {
     this.setConcludeModalText(projectCode || documentId || '-', title);
   },
 
+  // ---------------------------
+  // Draft load / apply
+  // ---------------------------
+
+  loadPlanningDraft: async function () {
+    const documentId = this.asText(this._state.documentId);
+    if (!documentId) {
+      return;
+    }
+
+    const datasetId = this.asText(this._state.datasetId) || 'dsGetDesenvolvimentoProjetos';
+
+    try {
+      const rows = await fluigService.getDatasetRows(datasetId, {
+        fields: ['documentid', 'projectPlanningJsonDP'],
+        filters: {
+          documentid: documentId,
+          sqlLimit: 1
+        }
+      });
+
+      const row = rows && rows.length ? rows[0] : null;
+      const rawJson = this.asText(row && row.projectPlanningJsonDP);
+      if (!rawJson) {
+        return;
+      }
+
+      let payload = null;
+      try {
+        payload = JSON.parse(rawJson);
+      } catch (error) {
+        throw new Error('JSON de planejamento inválido no card');
+      }
+
+      this.applyPlanningPayload(payload);
+      this.showToast('Rascunho carregado.', 'info');
+    } catch (error) {
+      console.error('[projectPlanningController] loadPlanningDraft error:', error);
+      this.showToast(`Falha ao carregar rascunho: ${this.asText(error && (error.message || error)) || 'erro'}`, 'warning');
+    }
+  },
+
+  applyPlanningPayload: function (payload) {
+    const finalPayload = payload && typeof payload === 'object' ? payload : {};
+
+    // limpa UI
+    const wbsContainer = document.getElementById('wbs-container');
+    if (wbsContainer) wbsContainer.innerHTML = '';
+    const milestonesContainer = document.getElementById('milestones-container');
+    if (milestonesContainer) milestonesContainer.innerHTML = '';
+    const risksContainer = document.getElementById('risk-matrix-list');
+    if (risksContainer) risksContainer.innerHTML = '';
+    const depsContainer = document.getElementById('external-dependencies-list');
+    if (depsContainer) depsContainer.innerHTML = '';
+    const commBody = document.getElementById('communication-plan-body');
+    if (commBody) commBody.innerHTML = '';
+
+    // WBS
+    const phases = finalPayload.wbs && Array.isArray(finalPayload.wbs.phases) ? finalPayload.wbs.phases : [];
+    phases.forEach((phase) => {
+      this.addPhase();
+
+      const phaseEls = document.querySelectorAll('#wbs-container > .wbs-item');
+      const phaseEl = phaseEls && phaseEls.length ? phaseEls[phaseEls.length - 1] : null;
+      if (!phaseEl) return;
+
+      const panel = phaseEl.querySelector('.wbs-panel-content');
+      const nameInput = phaseEl.querySelector('.wbs-phase-name-input');
+      if (nameInput) nameInput.value = this.asText(phase && phase.name);
+
+      const respInput = panel && panel.querySelector('.responsible-search-input');
+      if (respInput) respInput.value = this.asText(phase && phase.responsible);
+
+      const effortInput = panel && panel.querySelector('.wbs-phase-effort');
+      if (effortInput) effortInput.value = this.asText(phase && phase.effortHours);
+
+      const durationInput = panel && panel.querySelector('.wbs-phase-duration');
+      if (durationInput) durationInput.value = this.asText(phase && phase.durationDays);
+
+      const notesInput = panel && panel.querySelector('textarea');
+      if (notesInput) notesInput.value = this.asText(phase && phase.notes);
+
+      // dependencies
+      const deps = Array.isArray(phase && phase.dependencies) ? phase.dependencies : [];
+      deps.forEach((depText) => {
+        const btn = panel && panel.querySelector('button[onclick="addDependencyItem(this)"]');
+        if (!btn) return;
+        this.addDependencyItem(btn);
+        const list = panel.querySelector('.dependency-list');
+        const last = list && list.lastElementChild ? list.lastElementChild.querySelector('input') : null;
+        if (last) last.value = this.asText(depText);
+      });
+
+      // tasks
+      const tasks = Array.isArray(phase && phase.tasks) ? phase.tasks : [];
+      tasks.forEach((task) => {
+        const btn = panel && panel.querySelector('button[onclick="addSubtask(this)"]');
+        if (!btn) return;
+        this.addSubtask(btn);
+
+        const taskEls = phaseEl.querySelectorAll('.subtask-container .wbs-subtask');
+        const taskEl = taskEls && taskEls.length ? taskEls[taskEls.length - 1] : null;
+        if (!taskEl) return;
+
+        const taskNameInput = taskEl.querySelector('.wbs-task-name-input');
+        if (taskNameInput) taskNameInput.value = this.asText(task && task.name);
+
+        const taskResp = taskEl.querySelector('.responsible-search-input');
+        if (taskResp) taskResp.value = this.asText(task && task.responsible);
+
+        const taskEffort = taskEl.querySelector('.task-effort');
+        if (taskEffort) taskEffort.value = this.asText(task && task.effortHours);
+
+        const taskDuration = taskEl.querySelector('.task-duration');
+        if (taskDuration) taskDuration.value = this.asText(task && task.durationDays);
+
+        const taskDeps = Array.isArray(task && task.dependencies) ? task.dependencies : [];
+        taskDeps.forEach((depText) => {
+          const depBtn = taskEl.querySelector('button[onclick="addDependencyItem(this)"]');
+          if (!depBtn) return;
+          this.addDependencyItem(depBtn);
+          const list = taskEl.querySelector('.dependency-list');
+          const last = list && list.lastElementChild ? list.lastElementChild.querySelector('input') : null;
+          if (last) last.value = this.asText(depText);
+        });
+      });
+
+      this.initResponsibleSearchFields(phaseEl);
+    });
+
+    this.updateWbsNumbers();
+
+    // Milestones
+    const milestones = finalPayload.milestones && Array.isArray(finalPayload.milestones.items)
+      ? finalPayload.milestones.items
+      : [];
+    milestones.forEach((milestone) => {
+      this.addMilestone();
+
+      const milestoneEls = document.querySelectorAll('#milestones-container > .milestone-card');
+      const milestoneEl = milestoneEls && milestoneEls.length ? milestoneEls[milestoneEls.length - 1] : null;
+      if (!milestoneEl) return;
+
+      const nameInput = milestoneEl.querySelector('.milestone-phase-input');
+      const periodInput = milestoneEl.querySelector('.milestone-period-input');
+      if (nameInput) nameInput.value = this.asText(milestone && milestone.name);
+      if (periodInput) periodInput.value = this.asText(milestone && milestone.period);
+
+      const criteria = Array.isArray(milestone && milestone.criteria) ? milestone.criteria : [];
+      const criteriaList = milestoneEl.querySelector('.milestone-criteria-list');
+      if (criteriaList) {
+        criteriaList.innerHTML = '';
+        if (!criteria.length) {
+          const btn = milestoneEl.querySelector('button[onclick="addMilestoneCriteria(this)"]');
+          if (btn) this.addMilestoneCriteria(btn);
+        } else {
+          criteria.forEach((crit) => {
+            const btn = milestoneEl.querySelector('button[onclick="addMilestoneCriteria(this)"]');
+            if (!btn) return;
+            this.addMilestoneCriteria(btn);
+            const last = criteriaList.lastElementChild ? criteriaList.lastElementChild.querySelector('input') : null;
+            if (last) last.value = this.asText(crit);
+          });
+        }
+      }
+
+      const tasks = Array.isArray(milestone && milestone.tasks) ? milestone.tasks : [];
+      const taskList = milestoneEl.querySelector('.milestone-tasks-list');
+      if (taskList) {
+        taskList.innerHTML = '';
+        if (!tasks.length) {
+          const btn = milestoneEl.querySelector('button[onclick="addMilestoneTask(this)"]');
+          if (btn) this.addMilestoneTask(btn);
+        } else {
+          tasks.forEach((t) => {
+            const btn = milestoneEl.querySelector('button[onclick="addMilestoneTask(this)"]');
+            if (!btn) return;
+            this.addMilestoneTask(btn);
+            const lastRow = taskList.lastElementChild;
+            if (!lastRow) return;
+            const textInput = lastRow.querySelector('input[type="text"]');
+            const dateInput = lastRow.querySelector('input[type="date"]');
+            if (textInput) textInput.value = this.asText(t && t.task);
+            if (dateInput) dateInput.value = this.asText(t && t.dueDate);
+          });
+        }
+      }
+
+      this.initializeMilestoneDatePickers(milestoneEl);
+    });
+
+    // Risks (addRisk usa prepend; carrega invertendo para preservar ordem)
+    const risks = finalPayload.risks && Array.isArray(finalPayload.risks.items) ? finalPayload.risks.items : [];
+    risks.slice().reverse().forEach((risk) => {
+      this.addRisk();
+      const card = document.querySelector('#risk-matrix-list > div');
+      if (!card) return;
+      const inputs = card.querySelectorAll('input');
+      const textareas = card.querySelectorAll('textarea');
+      if (inputs[0]) inputs[0].value = this.asText(risk && risk.description);
+      if (inputs[1]) inputs[1].value = this.asText(risk && risk.probabilityImpact);
+      if (textareas[0]) textareas[0].value = this.asText(risk && risk.mitigation);
+      if (textareas[1]) textareas[1].value = this.asText(risk && risk.planB);
+    });
+
+    // External dependencies (addExternalDependency usa prepend; carrega invertendo)
+    const extDeps = finalPayload.externalDependencies && Array.isArray(finalPayload.externalDependencies.items)
+      ? finalPayload.externalDependencies.items
+      : [];
+    extDeps.slice().reverse().forEach((dep) => {
+      this.addExternalDependency();
+      const card = document.querySelector('#external-dependencies-list > div');
+      if (!card) return;
+      const inputs = card.querySelectorAll('input');
+      const textareas = card.querySelectorAll('textarea');
+      if (inputs[0]) inputs[0].value = this.asText(dep && dep.description);
+      if (inputs[1]) inputs[1].value = this.asText(dep && dep.responsible);
+      if (textareas[0]) textareas[0].value = this.asText(dep && dep.mitigation);
+      if (textareas[1]) textareas[1].value = this.asText(dep && dep.planB);
+    });
+
+    // Communication plan
+    const commItems = finalPayload.communicationPlan && Array.isArray(finalPayload.communicationPlan.items)
+      ? finalPayload.communicationPlan.items
+      : [];
+    if (!commItems.length) {
+      this.addCommunicationPlanRow();
+    } else {
+      commItems.forEach((item) => {
+        this.addCommunicationPlanRow();
+        const rows = commBody ? Array.from(commBody.querySelectorAll('tr')) : [];
+        const rowEl = rows.length ? rows[rows.length - 1] : null;
+        if (!rowEl) return;
+        const audience = rowEl.querySelector('input');
+        const selects = Array.from(rowEl.querySelectorAll('select'));
+        if (audience) audience.value = this.asText(item && item.audience);
+        if (selects[0]) selects[0].value = this.asText(item && item.channel);
+        if (selects[1]) selects[1].value = this.asText(item && item.frequency);
+      });
+    }
+
+    // RACI
+    const raciRows = finalPayload.raci && Array.isArray(finalPayload.raci.rows) ? finalPayload.raci.rows : [];
+    this._raciMatrixData = raciRows.map((row) => ({
+      phase: this.asText(row && row.phase),
+      r: this.normalizeStakeholderField(row && row.r),
+      a: this.normalizeStakeholderField(row && row.a),
+      c: this.normalizeStakeholderField(row && row.c),
+      i: this.normalizeStakeholderField(row && row.i)
+    }));
+
+    const removed = finalPayload.raci && finalPayload.raci.removedStakeholdersByPhase && typeof finalPayload.raci.removedStakeholdersByPhase === 'object'
+      ? finalPayload.raci.removedStakeholdersByPhase
+      : {};
+    this._raciRemovedStakeholdersByPhase = new Map(
+      Object.keys(removed).map((key) => [key, new Set(Array.isArray(removed[key]) ? removed[key] : [])])
+    );
+
+    // re-sync + render
+    this.syncRaciAndAllocationInternal();
+    this.renderRaciAndResources();
+    this.updateDocumentsPlanSummary();
+  },
+
   setConcludeModalText: function (projectCode, title) {
     const el = document.getElementById('conclude-modal-text');
     if (!el) return;
@@ -511,6 +805,22 @@ const projectPlanningController = {
     this.updateStepper();
     this.updateNavButtons();
     this.updatePlanProgress();
+
+    if (nextStep === 4) {
+      this.renderRaciAndResources();
+    }
+  },
+
+  onWbsChanged: function () {
+    this.syncRaciAndAllocationInternal();
+
+    const step4 = document.getElementById('step-4');
+    const isStep4Visible = step4 && !step4.classList.contains('hidden');
+    if (isStep4Visible) {
+      this.renderRaciAndResources();
+    }
+
+    this.updateDocumentsPlanSummary();
   },
 
   previousStep: function () {
@@ -1291,6 +1601,554 @@ const projectPlanningController = {
   },
 
   // ---------------------------
+  // RACI + Alocação (baseado no protótipo)
+  // ---------------------------
+
+  getRaciPhaseKey: function (phaseName) {
+    return this.asText(phaseName).toLowerCase();
+  },
+
+  normalizeStakeholderField: function (fieldValue) {
+    if (Array.isArray(fieldValue)) {
+      return fieldValue.map((v) => this.asText(v)).filter(Boolean);
+    }
+    const text = this.asText(fieldValue);
+    return text ? [text] : [];
+  },
+
+  getWbsPhaseBaseDataFromDom: function () {
+    const phaseItems = Array.from(document.querySelectorAll('#wbs-container > .wbs-item'));
+    return phaseItems.map((phaseItem, index) => {
+      const phasePanel = phaseItem.querySelector('.wbs-panel-content');
+      const phaseName = this.asText(phaseItem.querySelector('.wbs-phase-name-input')?.value) || `Fase ${index + 1}`;
+      const responsible = this.asText(phasePanel?.querySelector('.responsible-search-input')?.value);
+      const effort = this.parseNumber(phasePanel?.querySelector('.wbs-phase-effort')?.value);
+
+      const taskResponsibles = Array.from(phaseItem.querySelectorAll('.wbs-subtask .responsible-search-input') || [])
+        .map((inputEl) => this.asText(inputEl && inputEl.value))
+        .filter(Boolean);
+
+      const responsibles = Array.from(new Set([responsible, ...taskResponsibles].filter(Boolean)));
+      return { phaseName, responsible, effort, responsibles };
+    });
+  },
+
+  getTeamProfileByMember: function (memberName) {
+    const normalizedName = this.asText(memberName).toLowerCase();
+    if (!normalizedName) return 'TI';
+    if (normalizedName.includes('techpartners')) return 'Fornecedor';
+    if (normalizedName.includes('diretoria') || normalizedName.includes('solicitante') || normalizedName.includes('negócio') || normalizedName.includes('negocio')) {
+      return 'Negócio';
+    }
+    return 'TI';
+  },
+
+  toPositiveNumber: function (value) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed) || parsed < 0) return 0;
+    return parsed;
+  },
+
+  computeTeamAllocationFromWbsPayload: function (wbs) {
+    const phases = wbs && Array.isArray(wbs.phases) ? wbs.phases : [];
+    const groupedByPerson = new Map();
+
+    const addEffort = (memberName, effortHours) => {
+      const member = this.asText(memberName);
+      if (!member) return;
+      const current = groupedByPerson.get(member) || {
+        member,
+        profile: this.getTeamProfileByMember(member),
+        effort: 0
+      };
+      current.effort += this.toPositiveNumber(effortHours);
+      groupedByPerson.set(member, current);
+    };
+
+    phases.forEach((phase) => {
+      const phaseResponsible = this.asText(phase && phase.responsible);
+      const phaseEffort = this.toPositiveNumber(phase && phase.effortHours);
+      const tasks = Array.isArray(phase && phase.tasks) ? phase.tasks : [];
+
+      if (!tasks.length) {
+        addEffort(phaseResponsible, phaseEffort);
+        return;
+      }
+
+      tasks.forEach((task) => {
+        addEffort(this.asText(task && task.responsible), this.toPositiveNumber(task && task.effortHours));
+      });
+    });
+
+    const allocations = Array.from(groupedByPerson.values());
+    if (!allocations.length) return [];
+    const maxEffort = Math.max(...allocations.map((item) => item.effort), 1);
+
+    return allocations
+      .sort((first, second) => second.effort - first.effort || first.member.localeCompare(second.member, 'pt-BR'))
+      .map((item) => ({
+        member: item.member,
+        profile: item.profile,
+        dedication: Math.max(0, Math.min(100, Math.round((item.effort / maxEffort) * 100)))
+      }));
+  },
+
+  syncRaciMatrixWithWbsPhasesData: function (phasesBase, existingRows, removedStakeholdersByPhase) {
+    const phases = Array.isArray(phasesBase) ? phasesBase : [];
+    const existing = Array.isArray(existingRows) ? existingRows : [];
+    const removedMap = removedStakeholdersByPhase instanceof Map ? removedStakeholdersByPhase : new Map();
+
+    const activePhaseKeys = new Set(phases.map((phase) => this.getRaciPhaseKey(phase.phaseName)));
+    const nextRemovedMap = new Map(
+      Array.from(removedMap.entries()).filter(([phaseKey]) => activePhaseKeys.has(phaseKey))
+    );
+
+    const existingByPhase = new Map(
+      existing.map((row) => [
+        this.asText(row && row.phase),
+        {
+          phase: this.asText(row && row.phase),
+          r: this.normalizeStakeholderField(row && row.r),
+          a: this.normalizeStakeholderField(row && row.a),
+          c: this.normalizeStakeholderField(row && row.c),
+          i: this.normalizeStakeholderField(row && row.i)
+        }
+      ])
+    );
+
+    const nextRows = phases.map((phase, index) => {
+      const phaseName = this.asText(phase && phase.phaseName) || `Fase ${index + 1}`;
+      const existingRow = existingByPhase.get(phaseName);
+      const defaultR = Array.from(new Set((Array.isArray(phase && phase.responsibles) ? phase.responsibles : [])
+        .map((n) => this.asText(n)).filter(Boolean)));
+
+      if (!existingRow) {
+        return {
+          phase: phaseName,
+          r: defaultR,
+          a: [],
+          c: [],
+          i: []
+        };
+      }
+
+      const phaseKey = this.getRaciPhaseKey(phaseName);
+      const removed = nextRemovedMap.get(phaseKey) || new Set();
+      const preservedDefaultR = defaultR.filter((name) => !removed.has(name));
+      const existingR = this.normalizeStakeholderField(existingRow.r).filter((name) => !removed.has(name));
+
+      return {
+        ...existingRow,
+        phase: phaseName,
+        r: Array.from(new Set([...preservedDefaultR, ...existingR]))
+      };
+    });
+
+    return { rows: nextRows, removedByPhase: nextRemovedMap };
+  },
+
+  buildWbsSnapshotFromDom: function () {
+    const container = document.getElementById('wbs-container');
+    const phases = [];
+    if (!container) {
+      return { phases: [] };
+    }
+
+    Array.from(container.querySelectorAll(':scope > .wbs-item')).forEach((phaseEl, index) => {
+      const panel = phaseEl.querySelector('.wbs-panel-content');
+      const name = this.asText(phaseEl.querySelector('.wbs-phase-name-input')?.value) || `Fase ${index + 1}`;
+      const responsible = this.asText(panel?.querySelector('.responsible-search-input')?.value);
+      const effortHours = this.parseNumber(panel?.querySelector('.wbs-phase-effort')?.value);
+
+      const tasks = [];
+      phaseEl.querySelectorAll('.subtask-container .wbs-subtask').forEach((taskEl) => {
+        tasks.push({
+          responsible: this.asText(taskEl.querySelector('.responsible-search-input')?.value),
+          effortHours: this.parseNumber(taskEl.querySelector('.task-effort')?.value)
+        });
+      });
+
+      phases.push({
+        name,
+        responsible,
+        effortHours,
+        tasks
+      });
+    });
+
+    return { phases };
+  },
+
+  syncRaciAndAllocationInternal: function () {
+    const phasesBase = this.getWbsPhaseBaseDataFromDom();
+
+    const result = this.syncRaciMatrixWithWbsPhasesData(
+      phasesBase,
+      this._raciMatrixData,
+      this._raciRemovedStakeholdersByPhase
+    );
+
+    this._raciMatrixData = result.rows;
+    this._raciRemovedStakeholdersByPhase = result.removedByPhase;
+
+    const wbsSnapshot = this.buildWbsSnapshotFromDom();
+    this._teamAllocationData = this.computeTeamAllocationFromWbsPayload(wbsSnapshot);
+  },
+
+  getAvailableStakeholderOptions: function (selectedNames) {
+    const selectedSet = new Set(this.normalizeStakeholderField(selectedNames));
+    return (Array.isArray(this._responsibleOptions) ? this._responsibleOptions : []).filter((name) => !selectedSet.has(name));
+  },
+
+  getRaciStakeholderSearchFieldHTML: function (index, field) {
+    return `
+      <div class="raci-stakeholder-search-field relative" data-raci-index="${index}" data-raci-field="${this.escapeHtml(field)}">
+        <div class="relative">
+          <input type="text" value="" class="raci-stakeholder-search-input w-full px-2.5 py-2 pr-16 border border-gray-300 rounded-lg text-xs bg-white" placeholder="Adicionar...">
+          <button type="button" class="raci-stakeholder-search-clear hidden absolute top-1/2 right-7 -translate-y-1/2 text-red-500 hover:text-red-700 px-1" title="Limpar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <button type="button" class="raci-stakeholder-search-toggle absolute top-1/2 right-1 -translate-y-1/2 text-gray-500 hover:text-gray-700 px-1" title="Abrir opções">
+            <i class="fa-solid fa-chevron-down text-[10px]"></i>
+          </button>
+        </div>
+        <div class="raci-stakeholder-search-dropdown hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-56 overflow-y-auto"></div>
+      </div>
+    `;
+  },
+
+  getRaciStakeholderChipsHTML: function (index, field, names) {
+    if (!Array.isArray(names) || !names.length) {
+      return '<span class="text-xs text-gray-400">Nenhum selecionado</span>';
+    }
+
+    return names.map((name) => {
+      const safeName = this.escapeHtml(name);
+      return `
+        <div title="${safeName}" class="flex items-center justify-between gap-2 w-full px-2 py-1 rounded-md border border-gray-200 bg-white text-xs text-gray-700">
+          <span class="block text-left whitespace-normal break-words flex-1">${safeName}</span>
+          <button type="button" class="raci-chip-remove shrink-0 text-red-500 hover:text-red-700" title="Remover" data-index="${index}" data-field="${this.escapeHtml(field)}" data-name="${safeName}">
+            <i class="fa-solid fa-xmark text-[11px]"></i>
+          </button>
+        </div>
+      `;
+    }).join('');
+  },
+
+  renderRaciMatrixTable: function () {
+    this.syncRaciAndAllocationInternal();
+
+    const body = document.getElementById('raci-matrix-body');
+    if (!body) return;
+
+    if (!this._raciMatrixData.length) {
+      body.innerHTML = '<div class="text-sm text-gray-500">Adicione ao menos uma fase na WBS para gerar a matriz RACI.</div>';
+      return;
+    }
+
+    body.innerHTML = this._raciMatrixData.map((row, index) => `
+      <div class="border border-gray-200 rounded-lg">
+        <div class="px-3 py-2 bg-gray-50 border-b border-gray-200">
+          <p class="text-base text-gray-700"><span class="font-semibold text-gray-600">Fase:</span> ${this.escapeHtml(row.phase)}</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4">
+          <div class="p-2 border-b md:border-b-0 md:border-r border-gray-200 align-top">
+            <div class="text-xs font-semibold text-gray-600 mb-1 text-center">R</div>
+            <div class="space-y-1.5">
+              ${this.getRaciStakeholderSearchFieldHTML(index, 'r')}
+              <div class="space-y-1 min-h-[34px]">
+                ${this.getRaciStakeholderChipsHTML(index, 'r', this.normalizeStakeholderField(row.r))}
+              </div>
+            </div>
+          </div>
+          <div class="p-2 border-b md:border-b-0 md:border-r border-gray-200 align-top">
+            <div class="text-xs font-semibold text-gray-600 mb-1 text-center">A</div>
+            <div class="space-y-1.5">
+              ${this.getRaciStakeholderSearchFieldHTML(index, 'a')}
+              <div class="space-y-1 min-h-[34px]">
+                ${this.getRaciStakeholderChipsHTML(index, 'a', this.normalizeStakeholderField(row.a))}
+              </div>
+            </div>
+          </div>
+          <div class="p-2 border-b md:border-b-0 md:border-r border-gray-200 align-top">
+            <div class="text-xs font-semibold text-gray-600 mb-1 text-center">C</div>
+            <div class="space-y-1.5">
+              ${this.getRaciStakeholderSearchFieldHTML(index, 'c')}
+              <div class="space-y-1 min-h-[34px]">
+                ${this.getRaciStakeholderChipsHTML(index, 'c', this.normalizeStakeholderField(row.c))}
+              </div>
+            </div>
+          </div>
+          <div class="p-2 align-top">
+            <div class="text-xs font-semibold text-gray-600 mb-1 text-center">I</div>
+            <div class="space-y-1.5">
+              ${this.getRaciStakeholderSearchFieldHTML(index, 'i')}
+              <div class="space-y-1 min-h-[34px]">
+                ${this.getRaciStakeholderChipsHTML(index, 'i', this.normalizeStakeholderField(row.i))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    this.initRaciStakeholderSearchFields(body);
+
+    body.querySelectorAll('.raci-chip-remove').forEach((btn) => {
+      btn.addEventListener('click', (event) => {
+        event.preventDefault();
+        const index = Number(btn.dataset.index);
+        const field = this.asText(btn.dataset.field);
+        const name = this.asText(btn.dataset.name);
+        this.removeRaciStakeholder(index, field, name);
+      });
+    });
+  },
+
+  addRaciStakeholder: function (index, field, stakeholderName) {
+    const row = this._raciMatrixData[index];
+    if (!row) return;
+    const selected = this.asText(stakeholderName);
+    if (!selected) return;
+
+    const current = this.normalizeStakeholderField(row[field]);
+    if (current.includes(selected)) {
+      return;
+    }
+
+    if (field === 'r') {
+      const phaseKey = this.getRaciPhaseKey(row.phase);
+      const removed = this._raciRemovedStakeholdersByPhase.get(phaseKey);
+      if (removed && removed.has(selected)) {
+        removed.delete(selected);
+        if (!removed.size) {
+          this._raciRemovedStakeholdersByPhase.delete(phaseKey);
+        }
+      }
+    }
+
+    row[field] = [...current, selected];
+    this.renderRaciMatrixTable();
+  },
+
+  addRaciStakeholderFromSearch: function (index, field, inputElement) {
+    const typedValue = this.asText(inputElement && inputElement.value);
+    if (!typedValue) return;
+    const row = this._raciMatrixData[index];
+    if (!row) return;
+
+    const selectedNames = this.normalizeStakeholderField(row[field]);
+    const available = this.getAvailableStakeholderOptions(selectedNames);
+    const matched = available.find((name) => name.toLowerCase() === typedValue.toLowerCase());
+    if (!matched) {
+      this.showToast('Selecione uma pessoa válida da lista.', 'warning');
+      return;
+    }
+
+    inputElement.value = '';
+    this.addRaciStakeholder(index, field, matched);
+  },
+
+  removeRaciStakeholder: function (index, field, stakeholderName) {
+    const row = this._raciMatrixData[index];
+    if (!row) return;
+
+    const selected = this.asText(stakeholderName);
+    if (field === 'r' && selected) {
+      const phaseKey = this.getRaciPhaseKey(row.phase);
+      const removed = this._raciRemovedStakeholdersByPhase.get(phaseKey) || new Set();
+      removed.add(selected);
+      this._raciRemovedStakeholdersByPhase.set(phaseKey, removed);
+    }
+
+    row[field] = this.normalizeStakeholderField(row[field]).filter((name) => name !== selected);
+    this.renderRaciMatrixTable();
+  },
+
+  refreshRaciStakeholderSearchField: function (fieldElement) {
+    if (!fieldElement) return;
+
+    const index = Number(fieldElement.dataset.raciIndex);
+    const field = fieldElement.dataset.raciField || '';
+    if (Number.isNaN(index) || !field) return;
+
+    const row = this._raciMatrixData[index];
+    if (!row) return;
+
+    const searchInput = fieldElement.querySelector('.raci-stakeholder-search-input');
+    const clearButton = fieldElement.querySelector('.raci-stakeholder-search-clear');
+    const toggleButton = fieldElement.querySelector('.raci-stakeholder-search-toggle');
+    const dropdown = fieldElement.querySelector('.raci-stakeholder-search-dropdown');
+    if (!searchInput || !dropdown) return;
+
+    const selectedNames = this.normalizeStakeholderField(row[field]);
+    const availableOptions = this.getAvailableStakeholderOptions(selectedNames);
+    const searchText = (searchInput.value || '').trim();
+    const searchLower = searchText.toLowerCase();
+    const filtered = searchText
+      ? availableOptions.filter((name) => name.toLowerCase().includes(searchLower))
+      : availableOptions;
+
+    const hasInputValue = Boolean(searchText);
+    if (clearButton) {
+      clearButton.classList.toggle('hidden', !hasInputValue);
+    }
+    if (toggleButton) {
+      toggleButton.classList.toggle('hidden', hasInputValue);
+    }
+
+    const isFocused = document.activeElement === searchInput;
+    const shouldShowDropdown = fieldElement.dataset.dropdownOpen === 'true' && (isFocused || hasInputValue);
+
+    if (!shouldShowDropdown) {
+      dropdown.classList.add('hidden');
+      dropdown.innerHTML = '';
+      return;
+    }
+
+    if (!filtered.length) {
+      dropdown.innerHTML = '<div class="px-3 py-2 text-sm text-gray-500">Nenhuma pessoa encontrada</div>';
+      dropdown.classList.remove('hidden');
+      return;
+    }
+
+    dropdown.innerHTML = filtered
+      .map((name) => `
+        <button type="button" class="raci-stakeholder-option w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" data-value="${this.escapeHtml(name)}">
+          ${this.escapeHtml(name)}
+        </button>
+      `)
+      .join('');
+
+    dropdown.classList.remove('hidden');
+
+    dropdown.querySelectorAll('.raci-stakeholder-option').forEach((optionElement) => {
+      optionElement.addEventListener('mousedown', (event) => event.preventDefault());
+      optionElement.addEventListener('click', () => {
+        const selectedValue = optionElement.getAttribute('data-value') || '';
+        if (!selectedValue) return;
+        searchInput.value = '';
+        fieldElement.dataset.dropdownOpen = 'false';
+        this.addRaciStakeholder(index, field, selectedValue);
+      });
+    });
+  },
+
+  bindRaciStakeholderSearchField: function (fieldElement) {
+    if (!fieldElement || fieldElement.dataset.eventsReady === 'true') return;
+
+    const index = Number(fieldElement.dataset.raciIndex);
+    const field = fieldElement.dataset.raciField || '';
+    if (Number.isNaN(index) || !field) return;
+
+    const searchInput = fieldElement.querySelector('.raci-stakeholder-search-input');
+    const clearButton = fieldElement.querySelector('.raci-stakeholder-search-clear');
+    const toggleButton = fieldElement.querySelector('.raci-stakeholder-search-toggle');
+    if (!searchInput) return;
+
+    searchInput.addEventListener('focus', () => {
+      fieldElement.dataset.dropdownOpen = 'true';
+      this.refreshRaciStakeholderSearchField(fieldElement);
+    });
+
+    searchInput.addEventListener('input', () => {
+      fieldElement.dataset.dropdownOpen = 'true';
+      this.refreshRaciStakeholderSearchField(fieldElement);
+    });
+
+    searchInput.addEventListener('change', () => {
+      this.addRaciStakeholderFromSearch(index, field, searchInput);
+      this.refreshRaciStakeholderSearchField(fieldElement);
+    });
+
+    searchInput.addEventListener('keydown', (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      this.addRaciStakeholderFromSearch(index, field, searchInput);
+      this.refreshRaciStakeholderSearchField(fieldElement);
+    });
+
+    searchInput.addEventListener('blur', () => {
+      setTimeout(() => {
+        fieldElement.dataset.dropdownOpen = 'false';
+        this.refreshRaciStakeholderSearchField(fieldElement);
+      }, 120);
+    });
+
+    if (clearButton) {
+      clearButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        searchInput.value = '';
+        fieldElement.dataset.dropdownOpen = 'false';
+        this.refreshRaciStakeholderSearchField(fieldElement);
+        searchInput.focus();
+      });
+    }
+
+    if (toggleButton) {
+      toggleButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        fieldElement.dataset.dropdownOpen = fieldElement.dataset.dropdownOpen === 'true' ? 'false' : 'true';
+        this.refreshRaciStakeholderSearchField(fieldElement);
+        searchInput.focus();
+      });
+    }
+
+    fieldElement.dataset.eventsReady = 'true';
+    this.refreshRaciStakeholderSearchField(fieldElement);
+  },
+
+  initRaciStakeholderSearchFields: function (rootElement) {
+    const root = rootElement || document;
+    root.querySelectorAll('.raci-stakeholder-search-field').forEach((fieldElement) => {
+      this.bindRaciStakeholderSearchField(fieldElement);
+    });
+  },
+
+  getTeamBadge: function (profile) {
+    if (profile === 'Fornecedor') {
+      return 'px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded';
+    }
+    if (profile === 'Negócio' || profile === 'Negocio') {
+      return 'px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded';
+    }
+    return 'px-2 py-1 bg-bevap-green text-white text-xs rounded';
+  },
+
+  renderTeamAllocationList: function () {
+    this.syncRaciAndAllocationInternal();
+
+    const container = document.getElementById('team-allocation-list');
+    if (!container) return;
+
+    if (!this._teamAllocationData.length) {
+      container.innerHTML = '<div class="text-sm text-gray-500">Alocação será calculada automaticamente conforme esforço e responsáveis definidos na WBS.</div>';
+      return;
+    }
+
+    container.innerHTML = this._teamAllocationData.map((item) => `
+      <div class="border border-gray-200 rounded-lg p-3">
+        <div class="flex items-center justify-between mb-2">
+          <span class="font-medium text-bevap-navy break-all">${this.escapeHtml(item.member)}</span>
+          <span class="${this.getTeamBadge(item.profile)}">${this.escapeHtml(item.profile)}</span>
+        </div>
+        <div class="flex items-center space-x-2">
+          <span class="text-sm text-gray-600">Dedicação:</span>
+          <div class="flex-1 bg-gray-200 rounded-full h-2">
+            <div class="bg-bevap-green h-2 rounded-full" style="width: ${Number(item.dedication) || 0}%"></div>
+          </div>
+          <span class="text-sm font-medium">${Number(item.dedication) || 0}%</span>
+        </div>
+      </div>
+    `).join('');
+  },
+
+  renderRaciAndResources: function () {
+    this.renderRaciMatrixTable();
+    this.renderTeamAllocationList();
+  },
+
+  // ---------------------------
   // Modals + Toast
   // ---------------------------
 
@@ -1354,7 +2212,97 @@ const projectPlanningController = {
 
   confirmConcludePlanning: function () {
     this.closeConcludeModal();
-    this.showToast('Planejamento concluído (mock).', 'success');
+
+    const errors = this.validatePlanningForConclude();
+    if (errors.length) {
+      const first = errors[0];
+      if (first && first.step) {
+        this.goToStep(first.step);
+      }
+      this.showToast(first && first.message ? first.message : 'Revise o planejamento antes de concluir.', 'warning');
+      return;
+    }
+
+    const documentId = this.asText(this._state.documentId);
+    if (!documentId) {
+      this.showToast('documentId não informado; não foi possível concluir.', 'error');
+      return;
+    }
+
+    (async () => {
+      try {
+        await this.persistPlanningJsonDP({ silent: true });
+
+        const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
+        await fluigService.saveAndSendTask({
+          id: processInstanceId,
+          numState: this._nextStateAfterPlanning,
+          documentId: documentId
+        });
+
+        this.showToast('Planejamento concluído e enviado para execução.', 'success');
+      } catch (error) {
+        console.error('[projectPlanningController] concludePlanning error:', error);
+        this.showToast(`Falha ao concluir: ${this.asText(error && (error.message || error)) || 'erro'}`, 'error');
+      }
+    })();
+  },
+
+  validatePlanningForConclude: function () {
+    const issues = [];
+    const payload = this.buildPlanningPayload();
+    const phases = payload.wbs && Array.isArray(payload.wbs.phases) ? payload.wbs.phases : [];
+
+    if (!phases.length) {
+      issues.push({ step: 1, message: 'Inclua ao menos uma fase na EAP/WBS.' });
+      return issues;
+    }
+
+    for (let i = 0; i < phases.length; i++) {
+      const phase = phases[i];
+      const phaseLabel = this.asText(phase && phase.name) || `Fase ${i + 1}`;
+
+      if (!this.asText(phase && phase.name)) {
+        issues.push({ step: 1, message: `Informe a descrição da fase ${i + 1}.` });
+        break;
+      }
+
+      if (!this.asText(phase && phase.responsible)) {
+        issues.push({ step: 1, message: `Informe o responsável da fase: ${phaseLabel}.` });
+        break;
+      }
+
+      if (!Number.isFinite(phase && phase.effortHours) || Number(phase.effortHours) <= 0) {
+        issues.push({ step: 1, message: `Informe o esforço (h) da fase: ${phaseLabel}.` });
+        break;
+      }
+
+      if (!Number.isFinite(phase && phase.durationDays) || Number(phase.durationDays) <= 0) {
+        issues.push({ step: 1, message: `Informe a duração (dias) da fase: ${phaseLabel}.` });
+        break;
+      }
+    }
+
+    this.syncRaciAndAllocationInternal();
+
+    for (let i = 0; i < this._raciMatrixData.length; i++) {
+      const row = this._raciMatrixData[i];
+      const phaseName = this.asText(row && row.phase) || `Fase ${i + 1}`;
+      const r = this.normalizeStakeholderField(row && row.r);
+      const a = this.normalizeStakeholderField(row && row.a);
+
+      if (!r.length) {
+        issues.push({ step: 4, message: `Defina ao menos um "R" na matriz RACI para: ${phaseName}.` });
+        break;
+      }
+
+      if (!a.length) {
+        issues.push({ step: 4, message: `Defina ao menos um "A" na matriz RACI para: ${phaseName}.` });
+        break;
+      }
+    }
+
+    return issues;
   },
 
   openDeleteModal: function (message, onConfirm) {
@@ -1440,25 +2388,37 @@ const projectPlanningController = {
       return;
     }
 
-    const payload = this.buildPlanningPayload();
-    const json = JSON.stringify(payload);
-
     (async () => {
       try {
-        await fluigService.saveDraft({
-          mode: 'updateCardDraft',
-          documentId: documentId,
-          cardData: {
-            projectPlanningJsonDP: json
-          }
-        });
-
+        await this.persistPlanningJsonDP({ silent: true });
         this.showToast('Rascunho salvo.', 'success');
       } catch (error) {
         console.error('[projectPlanningController] saveDraft error:', error);
         this.showToast(`Falha ao salvar rascunho: ${this.asText(error && (error.message || error)) || 'erro'}`, 'error');
       }
     })();
+  },
+
+  persistPlanningJsonDP: async function ({ silent } = {}) {
+    const documentId = this.asText(this._state.documentId);
+    if (!documentId) {
+      throw new Error('documentId não informado');
+    }
+
+    const payload = this.buildPlanningPayload();
+    const json = JSON.stringify(payload);
+
+    await fluigService.saveDraft({
+      mode: 'updateCardDraft',
+      documentId: documentId,
+      cardData: {
+        projectPlanningJsonDP: json
+      }
+    });
+
+    if (!silent) {
+      return;
+    }
   },
 
   buildPlanningPayload: function () {
@@ -1485,6 +2445,13 @@ const projectPlanningController = {
         items: []
       },
       communicationPlan: {
+        items: []
+      },
+      raci: {
+        rows: [],
+        removedStakeholdersByPhase: {}
+      },
+      teamAllocation: {
         items: []
       }
     };
@@ -1669,6 +2636,25 @@ const projectPlanningController = {
 
     payload.wbs.summary.totalEffortHours = Math.max(0, Math.round(payload.wbs.summary.totalEffortHours));
     payload.wbs.summary.totalDurationDays = Math.max(0, Math.round(payload.wbs.summary.totalDurationDays));
+
+    // RACI + Team allocation
+    this.syncRaciAndAllocationInternal();
+
+    payload.raci.rows = this._raciMatrixData.map((row) => ({
+      phase: this.asText(row && row.phase),
+      r: this.normalizeStakeholderField(row && row.r),
+      a: this.normalizeStakeholderField(row && row.a),
+      c: this.normalizeStakeholderField(row && row.c),
+      i: this.normalizeStakeholderField(row && row.i)
+    }));
+
+    const removedObj = {};
+    Array.from(this._raciRemovedStakeholdersByPhase.entries()).forEach(([phaseKey, set]) => {
+      removedObj[String(phaseKey)] = Array.from(set || []);
+    });
+    payload.raci.removedStakeholdersByPhase = removedObj;
+
+    payload.teamAllocation.items = Array.isArray(this._teamAllocationData) ? this._teamAllocationData : [];
 
     return payload;
   },

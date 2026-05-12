@@ -106,3 +106,23 @@ Dica: Também é possível abrir o view.ftl local em um servidor estático apena
 4. Anexar prints no README e publicar link de navegação entre telas.
 5. Depois: mapear contratos de dados para implementação real no Fluig.
 
+11) Planejamento (Desenvolvimento) — Persistência e regras
+- Tela: Planejamento do projeto (processo Desenvolvimento).
+- Persistência: campo do formulário/card `projectPlanningJsonDP` (JSON) salvo via `fluigService.saveDraft({ mode: 'updateCardDraft' })`.
+- Dataset de leitura: `dsGetDesenvolvimentoProjetos` (retorna `PRINCIPAL.*`, incluindo `projectPlanningJsonDP`).
+
+Schema (alto nível) de `projectPlanningJsonDP`:
+- `meta`: `{ documentId, savedAt, version }`
+- `wbs`: `{ phases: [...], summary: { totalEffortHours, totalDurationDays } }`
+- `milestones`: `{ items: [...] }`
+- `risks`: `{ items: [...] }`
+- `externalDependencies`: `{ items: [...] }`
+- `communicationPlan`: `{ items: [...] }`
+- `raci`: `{ rows: [...], removedStakeholdersByPhase: { [phaseKey]: string[] } }`
+- `teamAllocation`: `{ items: [{ member, profile, dedication }] }`
+
+Regras:
+- RACI é sincronizada automaticamente com as fases/tarefas da WBS (R padrão começa com os responsáveis encontrados na WBS).
+- Alocação (`teamAllocation`) é calculada automaticamente a partir do esforço por responsável (dedicação normalizada para 0–100%).
+- Conclusão do planejamento: valida WBS e RACI e move o workflow para a próxima activity (planejamento → execução) via `fluigService.saveAndSendTask` com `numState = 16`.
+
