@@ -33,7 +33,7 @@ var MyWidget = SuperWidget.extend({
             theme: {
                 extend: {
                     colors: {
-                        'bevap-navy': '#0B2E4A',
+                        'bevap-navy': '#3D567E',
                         'bevap-green': '#1C8C5D',
                         'bevap-gold': '#F1B434',
                     },
@@ -45,6 +45,8 @@ var MyWidget = SuperWidget.extend({
             }
         }
     }
+    window.tailwind = window.tailwind || {};
+    window.tailwind.config = window.tailwindConfig;
 
     // Injetar Tailwind CSS
     if (!$('script[src*="tailwindcss"]').length) {

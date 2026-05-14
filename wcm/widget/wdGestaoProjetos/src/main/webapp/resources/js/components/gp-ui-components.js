@@ -425,6 +425,8 @@
       const status = d.status || { label: '—', iconClass: 'fa-solid fa-clock', badgeClasses: 'bg-gray-100 text-gray-800' };
 
       const customRows = Array.isArray(d.customRows) ? d.customRows : [];
+      const showStatus = d.showStatus !== false;
+      const showAttachmentsCount = d.showAttachmentsCount !== false;
 
       const customRowsHtml = customRows.map((row) => {
         const variant = row && row.variant ? String(row.variant) : 'inline';
@@ -487,6 +489,10 @@
         `;
       }).join('');
 
+      const attachmentsLabel = showAttachmentsCount
+        ? `Ver Anexos (${Number(d.attachmentsCount || 0)})`
+        : 'Ver Anexos';
+
       const html = `
         <div class="bg-white rounded-lg shadow-md p-5" data-gp-component="project-summary">
           <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
@@ -528,12 +534,14 @@
               </span>
             </div>
             ${customRowsHtml}
+            ${showStatus ? `
             <div class="flex items-center justify-between">
               <span class="text-gray-600">Status</span>
               <span class="inline-flex items-center px-2 py-1 rounded-full text-xs ${this._escape(status.badgeClasses || '')} font-medium">
                 <i class="${this._escape(status.iconClass || 'fa-solid fa-clock')} mr-1"></i> ${this._escape(status.label || '—')}
               </span>
             </div>
+            ` : ''}
           </div>
 
           <div class="mt-4 pt-4 border-t space-y-2">
@@ -541,7 +549,7 @@
               <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
             </button>
             <button data-action="show-attachments" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
-              <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos (${Number(d.attachmentsCount || 0)})
+              <i class="fa-solid fa-paperclip mr-2"></i> ${this._escape(attachmentsLabel)}
             </button>
           </div>
         </div>

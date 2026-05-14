@@ -6,7 +6,6 @@
 	<script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="/portal/resources/js/mustache/mustache-min.js"></script>
 	<script type="text/javascript" src="/style-guide/js/fluig-style-guide.min.js" charset="utf-8"></script>
-	<script type="text/javascript" src="validate.js"></script>
 </head>
 
 <body>
@@ -20,6 +19,11 @@
 
 			<label>timeline</label>
 			<input type="text" name="decisaoSuperiorImediato" id="decisaoSuperiorImediato">
+
+			<input type="hidden" name="idGLPI" id="idGLPI">
+			<input type="hidden" name="codigoglpi" id="codigoglpi">
+
+			<input type="hidden" name="payloadJsonGLPI" id="payloadJsonGLPI">
 
 
 			<label>timeline</label>
@@ -47,11 +51,10 @@
 			<label>solicitante nome</label>
 			<input type="text" name="solicitanteNomeNS" id="solicitanteNomeNS">
 
-			<label>solicitante colleague id</label>
-			<input type="text" name="solicitanteColleagueIdNS" id="solicitanteColleagueIdNS">
-
 			<label>objetivodoprojeto</label>
 			<input type="text" name="objetivodoprojetoNS" id="objetivodoprojetoNS">
+
+
 
 			<label>problema/oportunidade</label>
 			<input type="text" name="problemaOportunidadeNS" id="problemaOportunidadeNS">
@@ -719,26 +722,261 @@
 			<label>categoriajustiCRC</label>
 			<input type="text" name="categoriajustiCRC" id="categoriajustiCRC">
 
-			<label>decisaoCorrecao</label>
-			<input type="text" name="decisaoCorrecao" id="decisaoCorrecao">
-
-			<label>justificativaCorrecao</label>
-			<input type="text" name="justificativaCorrecao" id="justificativaCorrecao">
-
-			<label>categoriajustiCorrecao</label>
-			<input type="text" name="categoriajustiCorrecao" id="categoriajustiCorrecao">
-
-			<input type="hidden" name="idGLPI" id="idGLPI">
-			
-			<input type="hidden" name="codigoglpi" id="codigoglpi">
-
 			<label>Status Integracao GLPI</label>
 			<input type="text" name="statusIntegracaoGLPI" id="statusIntegracaoGLPI">
 
 			<label>Mensagem Erro GLPI</label>
 			<input type="text" name="mensagemErroGLPI" id="mensagemErroGLPI">
 
-			<input type="hidden" name="payloadJsonGLPI" id="payloadJsonGLPI">
+			<!-- PROJECT PLANNING - DP (Planejamento do Projeto / Widget) -->
+			<hr>
+			<label><strong>PROJECT PLANNING - DP</strong></label>
+
+			<label>projectPlanningJsonDP</label>
+			<textarea name="projectPlanningJsonDP" id="projectPlanningJsonDP" class="form-control" rows="6"></textarea>
+
+			<label>WBS Phases</label>
+			<table class="table table-bordered" id="tblWbsPhasesDP" tablename="tblWbsPhasesDP" noaddbutton="true"
+				nodeletebutton="true">
+				<thead>
+					<tr>
+						<th>Phase Id</th>
+						<th>Phase Order</th>
+						<th>Phase Name</th>
+						<th>Responsible</th>
+						<th>Effort Hours</th>
+						<th>Duration Days</th>
+						<th>Notes</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" name="wbsPhaseIdDP" class="form-control"></td>
+						<td><input type="text" name="wbsPhaseOrderDP" class="form-control"></td>
+						<td><input type="text" name="wbsPhaseNameDP" class="form-control"></td>
+						<td><input type="text" name="wbsPhaseResponsibleDP" class="form-control"></td>
+						<td><input type="text" name="wbsPhaseEffortHoursDP" class="form-control"></td>
+						<td><input type="text" name="wbsPhaseDurationDaysDP" class="form-control"></td>
+						<td><input type="text" name="wbsPhaseNotesDP" class="form-control"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<label>WBS Tasks</label>
+			<table class="table table-bordered" id="tblWbsTasksDP" tablename="tblWbsTasksDP" noaddbutton="true"
+				nodeletebutton="true">
+				<thead>
+					<tr>
+						<th>Task Id</th>
+						<th>Phase Id</th>
+						<th>Task Order</th>
+						<th>Task Name</th>
+						<th>Responsible</th>
+						<th>Effort Hours</th>
+						<th>Duration Days</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" name="wbsTaskIdDP" class="form-control"></td>
+						<td><input type="text" name="wbsTaskPhaseIdDP" class="form-control"></td>
+						<td><input type="text" name="wbsTaskOrderDP" class="form-control"></td>
+						<td><input type="text" name="wbsTaskNameDP" class="form-control"></td>
+						<td><input type="text" name="wbsTaskResponsibleDP" class="form-control"></td>
+						<td><input type="text" name="wbsTaskEffortHoursDP" class="form-control"></td>
+						<td><input type="text" name="wbsTaskDurationDaysDP" class="form-control"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<label>Milestones</label>
+			<table class="table table-bordered" id="tblMilestonesDP" tablename="tblMilestonesDP" noaddbutton="true"
+				nodeletebutton="true">
+				<thead>
+					<tr>
+						<th>Milestone Id</th>
+						<th>Name</th>
+						<th>Start Date</th>
+						<th>End Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" name="milestoneIdDP" class="form-control"></td>
+						<td><input type="text" name="milestoneNameDP" class="form-control"></td>
+						<td><input type="text" name="milestoneStartDateDP" class="form-control"></td>
+						<td><input type="text" name="milestoneEndDateDP" class="form-control"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<label>Milestone Criteria</label>
+			<table class="table table-bordered" id="tblMilestoneCriteriaDP" tablename="tblMilestoneCriteriaDP"
+				noaddbutton="true" nodeletebutton="true">
+				<thead>
+					<tr>
+						<th>Milestone Id</th>
+						<th>Criteria</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" name="milestoneCriteriaMilestoneIdDP" class="form-control"></td>
+						<td><input type="text" name="milestoneCriteriaTextDP" class="form-control"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<label>Milestone Tasks</label>
+			<table class="table table-bordered" id="tblMilestoneTasksDP" tablename="tblMilestoneTasksDP"
+				noaddbutton="true" nodeletebutton="true">
+				<thead>
+					<tr>
+						<th>Milestone Id</th>
+						<th>Task</th>
+						<th>Due Date</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" name="milestoneTaskMilestoneIdDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskTextDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskDueDateDP" class="form-control"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<label>Milestone Tasks Summary</label>
+			<table class="table table-bordered" id="tblMilestoneTasksSummaryDP" tablename="tblMilestoneTasksSummaryDP"
+				noaddbutton="true" nodeletebutton="true">
+				<thead>
+					<tr>
+						<th>Task</th>
+						<th>Due Date</th>
+						<th>Phase</th>
+						<th>Milestone</th>
+						<th>process</th>
+						<th>Started</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" name="milestoneTaskSummaryTextDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskSummaryDueDateDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskSummaryPhaseDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskSummaryMarcoDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskSummaryProcessDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskSummaryStartedDP" class="form-control" value="false"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<label>Risks</label>
+			<table class="table table-bordered" id="tblRisksDP" tablename="tblRisksDP" noaddbutton="true"
+				nodeletebutton="true">
+				<thead>
+					<tr>
+						<th>Risk Id</th>
+						<th>Description</th>
+						<th>Probability</th>
+						<th>Impact</th>
+						<th>Mitigation</th>
+						<th>Plan B</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" name="riskIdDP" class="form-control"></td>
+						<td><input type="text" name="riskDescriptionDP" class="form-control"></td>
+						<td><input type="text" name="riskProbabilityDP" class="form-control"></td>
+						<td><input type="text" name="riskImpactDP" class="form-control"></td>
+						<td><input type="text" name="riskMitigationDP" class="form-control"></td>
+						<td><input type="text" name="riskPlanBDP" class="form-control"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<label>External Dependencies</label>
+			
+            <table class="table table-bordered" id="tblExternalDependenciesDP" tablename="tblExternalDependenciesDP" noaddbutton="true" nodeletebutton="true">
+                <thead>
+                    <tr>
+                        <th>Dependency Id</th>
+                        <th>Description</th>
+                        <th>Status</th> <!-- COLUNA ADICIONADA -->
+                        <th>Responsible</th>
+                        <th>Mitigation</th>
+                        <th>Plan B</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" name="externalDependencyIdDP" class="form-control"></td>
+                        <td><input type="text" name="externalDependencyDescriDP" class="form-control"></td>
+                        <td><input type="text" name="externalDependencyStatusDP" class="form-control"></td> <!-- CAMPO ADICIONADO -->
+                        <td><input type="text" name="externalDependencyResponDP" class="form-control"></td>
+                        <td><input type="text" name="externalDependencyMitiDP" class="form-control"></td>
+                        <td><input type="text" name="externalDependencyPlanBDP" class="form-control"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+			<label>RACI Json</label>
+			<textarea name="raciJsonDP" id="raciJsonDP" class="form-control" rows="4"></textarea>
+
+			<label>Alocação de Equipe</label>
+            <table class="table table-bordered" id="tblTeamAllocationDP" tablename="tblTeamAllocationDP" noaddbutton="true" nodeletebutton="true">
+                <thead>
+                    <tr>
+                        <th>Membro (Member)</th>
+                        <th>Perfil (Profile)</th>
+                        <th>Dedicação % (Dedication)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" name="allocMemberDP" class="form-control"></td>
+                        <td><input type="text" name="allocProfileDP" class="form-control"></td>
+                        <td><input type="text" name="allocDedicationDP" class="form-control"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+			<label>Plano de Comunicação</label>
+            <table class="table table-bordered" id="tblCommunicationPlanDP" tablename="tblCommunicationPlanDP" noaddbutton="true" nodeletebutton="true">
+                <thead>
+                    <tr>
+                        <th>Público (Audience)</th>
+                        <th>Canal (Channel)</th>
+                        <th>Periodicidade (Frequency)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="text" name="commAudienceDP" class="form-control"></td>
+                        <td><input type="text" name="commChannelDP" class="form-control"></td>
+                        <td><input type="text" name="commFrequencyDP" class="form-control"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+			<label>Documents Json</label>
+			<textarea name="documentsJsonDP" id="documentsJsonDP" class="form-control" rows="4"></textarea>
+
+			<label>Checklist de Completude</label>
+			<input type="text" name="chkEapWbsDP" id="chkEapWbsDP">
+			<input type="text" name="chkMilestonesDP" id="chkMilestonesDP">
+			<input type="text" name="chkRisksDP" id="chkRisksDP">
+			<input type="text" name="chkRaciDP" id="chkRaciDP">
+			<input type="text" name="chkDocsDP" id="chkDocsDP">
+
+			<hr>
+			<label><strong>Tratar Erro - Iniciar Execução Atividades do Projeto</strong></label>
+			<label>Mensagem de Erro</label>
+			<input type="text" name="erroIniciarExecucaoMsg" id="erroIniciarExecucaoMsg" class="form-control">
+			<label>Índice da Tarefa com Erro</label>
+			<input type="text" name="erroIniciarExecucaoIdx" id="erroIniciarExecucaoIdx" class="form-control">
+			<p>Depois de revisar a mensagem, conclua a atividade para retornar à atividade 16 e tentar abrir somente os itens não iniciados.</p>
 
 		</form>
 	</div>

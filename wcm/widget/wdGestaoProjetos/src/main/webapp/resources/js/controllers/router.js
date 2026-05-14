@@ -53,62 +53,103 @@ const router = {
       const routes = {
         dashboard: {
           controller: dashboardController,
+          title: 'Dashboard',
           handler: () => dashboardController.load(params)
         },
         projectPlanning: {
           controller: projectPlanningController,
+          title: 'Desenvolvimento - Planejamento do Projeto',
+          breadcrumb: ['Desenvolvimento', 'Planejamento do Projeto'],
           handler: () => projectPlanningController.load(params)
         },
         newSolicitation: {
           controller: newSolicitationController,
+          title: 'Nova Solicitacao',
+          breadcrumb: ['Solicitacoes', 'Nova Solicitacao'],
           handler: () => newSolicitationController.load(params)
         },
         solicitationDetail: {
           controller: solicitationDetailController,
+          title: 'Minha Solicitacao',
+          breadcrumb: ['Solicitacoes', 'Minha Solicitacao'],
           handler: () => solicitationDetailController.load(params)
         },
         correction: {
           controller: correctionController,
+          title: 'Solicitante - Corrigir Solicitacao',
+          breadcrumb: ['Solicitacoes', 'Corrigir Solicitacao'],
           handler: () => correctionController.load(params)
         },
         evaluateProject: {
           controller: evaluateProjectController,
+          title: 'TI - Avaliar Projeto',
+          breadcrumb: ['TI', 'Avaliar Projeto'],
           handler: () => evaluateProjectController.load(params)
         },
         immediateApproval: {
           controller: immediateApprovalController,
+          title: 'Gestor Imediato - Aprovar Projeto',
+          breadcrumb: ['Aprovacoes', 'Gestor Imediato'],
           handler: () => immediateApprovalController.load(params)
         },
         technicalTriage: {
           controller: technicalTriageController,
+          title: 'TI - Triagem Tecnica',
+          breadcrumb: ['TI', 'Triagem Tecnica'],
           handler: () => technicalTriageController.load(params)
         },
         committeeApproval: {
           controller: committeeApprovalController,
+          title: 'Comite - Aprovar Projeto',
+          breadcrumb: ['Aprovacoes', 'Comite'],
           handler: () => committeeApprovalController.load(params)
         },
         commercialProposal: {
           controller: commercialProposalController,
+          title: 'TI - Proposta Comercial',
+          breadcrumb: ['TI', 'Proposta Comercial'],
           handler: () => commercialProposalController.load(params)
         },
         gccCostApproval: {
           controller: gccCostApprovalController,
+          title: 'GCC - Aprovar Custo do Projeto',
+          breadcrumb: ['Aprovacoes', 'GCC'],
           handler: () => gccCostApprovalController.load(params)
         },
         committeeCostApproval: {
           controller: committeeCostApprovalController,
+          title: 'Comite - Aprovar Custo do Projeto',
+          breadcrumb: ['Aprovacoes', 'Comite - Custo'],
           handler: () => committeeCostApprovalController.load(params)
         },
         purchaseContracting: {
           controller: purchaseContractingController,
+          title: 'Compras - Realizar Contratacao',
+          breadcrumb: ['Compras', 'Realizar Contratacao'],
           handler: () => purchaseContractingController.load(params)
         },
         glpiErrorTreatment: {
           controller: glpiErrorTreatmentController,
+          title: 'TI - Tratar Erro Integracao GLPI',
+          breadcrumb: ['TI', 'Erro Integracao GLPI'],
           handler: () => glpiErrorTreatmentController.load(params)
+        },
+        dpGlpiErrorTreatment: {
+          controller: dpGlpiErrorTreatmentController,
+          title: 'TI - Tratar Erro Integracao GLPI',
+          breadcrumb: ['TI', 'Erro Integracao GLPI'],
+          handler: () => dpGlpiErrorTreatmentController.load(params)
+        },
+        dpStartExecErrorTreatment: {
+          controller: dpStartExecErrorTreatmentController,
+          title: 'TI - Tratar Erro Iniciar Execução',
+          breadcrumb: ['TI', 'Erro Iniciar Execução'],
+          handler: () => dpStartExecErrorTreatmentController.load(params)
         },
         requesterProposalApproval: {
           controller: requesterProposalApprovalController,
+          title: 'Solicitante - Aprovar Proposta Comercial',
+          breadcrumb: ['Solicitacoes', 'Aprovar Proposta Comercial'],
           handler: () => requesterProposalApprovalController.load(params)
         }
       };
@@ -123,6 +164,7 @@ const router = {
 
       this._currentController = route.controller;
       await Promise.resolve(route.handler());
+      this.applyHeader(route);
     } catch (error) {
       console.error('Router error:', error);
       this.showError('An unexpected error occurred.');
@@ -130,6 +172,49 @@ const router = {
       loading.hide();
       this._isRouting = false;
     }
+  },
+
+  applyHeader: function (route) {
+    const title = (route && route.title) || 'Dashboard';
+    const trail = (route && route.breadcrumb && route.breadcrumb.length)
+      ? route.breadcrumb
+      : [title];
+    const header = $('#header');
+    const titleEl = header.find('h1').first();
+    const breadcrumbEl = header.find('nav').first();
+
+    if (titleEl.length) {
+      titleEl.text(title);
+    }
+
+    if (breadcrumbEl.length) {
+      const trailHtml = trail.map((item, index) => {
+        const isLast = index === trail.length - 1;
+        const classes = isLast ? 'text-bevap-gold font-medium' : 'text-gray-300';
+        return `
+          <span class="${classes}">${this.escapeHtml(item)}</span>
+          ${isLast ? '' : '<span class="text-gray-400">/</span>'}
+        `;
+      }).join('');
+
+      breadcrumbEl.html(`
+        <a href="#dashboard" class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+          <i class="fa-solid fa-house text-xs"></i>
+          <span>Inicio</span>
+        </a>
+        <span class="text-gray-400">/</span>
+        ${trailHtml}
+      `);
+    }
+  },
+
+  escapeHtml: function (value) {
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
   },
 
   destroyCurrentController: function () {

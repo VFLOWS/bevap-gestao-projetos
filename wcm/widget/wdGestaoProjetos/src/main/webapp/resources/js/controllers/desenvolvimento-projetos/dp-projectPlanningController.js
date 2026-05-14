@@ -1,6 +1,6 @@
 var projectPlanningController = {
   _eventNamespace: '.projectPlanning',
-  _projectFields: ['documentid', 'titulodoprojetoNS', 'areaUnidadeNS', 'patrocinadorNS', 'prioridadeNS', 'estadoProcesso', 'projectPlanningJsonDP'],
+  _projectFields: ['documentid', 'titulodoprojetoNS', 'areaUnidadeNS', 'solicitanteNomeNS', 'patrocinadorNS', 'prioridadeNS', 'estadoProcesso', 'projectPlanningJsonDP', 'execucaoProjetoTITT'],
 
   _nextStateAfterPlanning: '16',
 
@@ -10,8 +10,9 @@ var projectPlanningController = {
   _toastTimeoutId: null,
 
   _raciMatrixData: [],
-  _raciRemovedStakeholdersByPhase: new Map(),
+  _raciRemovedStakeholdersByPhase: new Map(), // Mantido para compatibilidade, mesmo sendo manual agora
   _teamAllocationData: [],
+  _communicationPlanData: [],
 
   _state: {
     documentId: '',
@@ -22,6 +23,7 @@ var projectPlanningController = {
     formName: '',
     currentStep: 1,
     totalSteps: 5,
+    employeeOptions: [], // Trocamos o _responsibleOptions por este estado carregado dinamicamente
     stepLabels: {
       1: 'EAP/WBS',
       2: 'Cronograma',
@@ -30,17 +32,6 @@ var projectPlanningController = {
       5: 'Documentos'
     }
   },
-
-  _responsibleOptions: [
-    'Ana Costa',
-    'TechPartners',
-    'Carlos Silva',
-    'Mariana Lima',
-    'Rafael Souza',
-    'Equipe Infraestrutura',
-    'Segurança da Informação',
-    'PMO Corporativo'
-  ],
 
   load: async function (params = {}) {
     const container = $('#page-container');
@@ -59,6 +50,9 @@ var projectPlanningController = {
 
       this.backupAndSetHeader();
       await this.ensureLibsLoaded();
+
+      // Carrega os funcionários no load
+      await this.loadEmployeeOptions();
 
       this.registerGlobals();
       this.bindEvents();
@@ -86,6 +80,145 @@ var projectPlanningController = {
 
   getTemplateUrl: function () {
     return `${WCMAPI.getServerURL()}/wdGestaoProjetos/resources/js/templates/desenvolvimento-projetos/dp-project-planning.html`;
+  },
+
+  // ---------------------------
+  // Integração de Funcionários (dsBuscaFunc)
+  // ---------------------------
+  loadEmployeeOptions: async function () {
+    let rows = [];
+    try {
+      rows = await fluigService.getDatasetRows('dsBuscaFunc', {
+        fields: ['CHAPA', 'CHAPANOMEFUNCIONARIO', 'NOMEFUNCAO', 'NOMESECAO']
+      });
+    } catch (error) {
+      try {
+        rows = await fluigService.getDataset('dsBuscaFunc');
+      } catch (e) {
+        console.warn('Dataset dsBuscaFunc não encontrado. Utilizando array vazio.', e);
+      }
+    }
+
+    this._state.employeeOptions = (Array.isArray(rows) ? rows : []).map((row) => {
+      const chapa = this.asText(row.CHAPA || row.chapa);
+      const rawName = this.asText(row.CHAPANOMEFUNCIONARIO || row.chapanomefuncionario || row.NOME || row.nome);
+      const normalizedName = this.normalizeEmployeeName(rawName);
+
+      if (!normalizedName) return null;
+
+      return {
+        CHAPA: chapa || normalizedName,
+        CHAPANOMEFUNCIONARIO: rawName,
+        NOME_NORMALIZADO: normalizedName,
+        NOMEFUNCAO: this.asText(row.NOMEFUNCAO || row.nomefuncao),
+        NOMESECAO: this.asText(row.NOMESECAO || row.nomesecao)
+      };
+    }).filter(Boolean);
+  },
+
+  normalizeEmployeeName: function (value) {
+    let text = this.asText(value);
+    if (!text) return '';
+    const dashIndex = text.indexOf('-');
+    if (dashIndex >= 0) text = text.slice(dashIndex + 1);
+
+    text = text.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!text) return '';
+    return text.replace(/(^|\s)(\S)/g, (match, separator, letter) => separator + letter.toUpperCase());
+  },
+
+  initAllTagFilters: function (containerElement) {
+    if (typeof TagInputFilter === 'undefined') return;
+    const $container = $(containerElement || document);
+
+    // 1. Inputs Single (Responsável da WBS / Dependências)
+    $container.find('.single-resp-mount').each((_, mount) => {
+      if (mount._filterReady) return;
+      if (!mount.id) mount.id = `single-resp-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+
+      const hiddenInput = $(mount).next('.responsible-input');
+      const initialVal = hiddenInput.val();
+
+      const filter = new TagInputFilter(`#${mount.id}`, {
+        placeholder: 'Pesquisar responsável...',
+        data: this._state.employeeOptions,
+        labelField: 'NOME_NORMALIZADO',
+        valueField: 'CHAPA',
+        columns: [
+          { header: 'Chapa', field: 'CHAPA', width: 'w-1/4' },
+          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'w-3/4' }
+        ],
+        singleSelection: true,
+        onItemAdded: (item) => {
+          hiddenInput.val(item.NOME_NORMALIZADO).trigger('change');
+          this.onWbsChanged();
+        },
+        onItemRemoved: () => {
+          hiddenInput.val('').trigger('change');
+          this.onWbsChanged();
+        }
+      });
+
+      if (initialVal) {
+        const found = this._state.employeeOptions.find(e => e.NOME_NORMALIZADO === initialVal);
+        filter.setSelectedItems([{
+          value: found ? found.CHAPA : `legacy:${initialVal}`,
+          label: found ? found.NOME_NORMALIZADO : initialValue
+        }]);
+      }
+      mount._filterReady = true;
+    });
+
+    // 2. Inputs Múltiplos para RACI (como se fosse um search engine para os chips)
+    $container.find('.raci-tag-mount').each((_, mount) => {
+      if (mount._filterReady) return;
+      if (!mount.id) mount.id = `raci-resp-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+
+      const index = $(mount).data('index');
+      const field = $(mount).data('field');
+
+      const filter = new TagInputFilter(`#${mount.id}`, {
+        placeholder: 'Adicionar pessoa...',
+        data: this._state.employeeOptions,
+        labelField: 'NOME_NORMALIZADO',
+        valueField: 'CHAPA',
+        columns: [
+          { header: 'Chapa', field: 'CHAPA', width: 'w-1/4' },
+          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'w-3/4' }
+        ],
+        singleSelection: true, // usamos true mas limpamos em seguida para gerar a UX de chips
+        onItemAdded: (item) => {
+          this.addRaciStakeholder(index, field, item.NOME_NORMALIZADO);
+          setTimeout(() => { if (filter.removeAll) filter.removeAll(); }, 10);
+        }
+      });
+      mount._filterReady = true;
+    });
+
+    // 3. Inputs Múltiplos para Plano de Comunicação
+    $container.find('.comm-tag-mount').each((_, mount) => {
+      if (mount._filterReady) return;
+      if (!mount.id) mount.id = `comm-resp-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
+
+      const index = $(mount).data('index');
+
+      const filter = new TagInputFilter(`#${mount.id}`, {
+        placeholder: 'Adicionar público...',
+        data: this._state.employeeOptions,
+        labelField: 'NOME_NORMALIZADO',
+        valueField: 'CHAPA',
+        columns: [
+          { header: 'Chapa', field: 'CHAPA', width: 'w-1/4' },
+          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'w-3/4' }
+        ],
+        singleSelection: true,
+        onItemAdded: (item) => {
+          this.addCommunicationAudience(index, item.NOME_NORMALIZADO);
+          setTimeout(() => { if (filter.removeAll) filter.removeAll(); }, 10);
+        }
+      });
+      mount._filterReady = true;
+    });
   },
 
   backupAndSetHeader: function () {
@@ -196,7 +329,6 @@ var projectPlanningController = {
   bindEvents: function () {
     this.unbindEvents();
 
-    // Toggle de painéis (Fases e Marcos): clique no header (exceto inputs/botoes)
     $(document).on(`click${this._eventNamespace}`, (event) => {
       const header = event.target.closest('.panel-toggle-header');
       if (!header) return;
@@ -213,33 +345,38 @@ var projectPlanningController = {
       }
     });
 
-    // Fecha dropdowns de responsável quando clica fora
-    $(document).on(`click${this._eventNamespace}`, (event) => {
-      const target = event.target;
-      if (!target) return;
-      if (target.closest('.responsible-search-field')) return;
-
-      document.querySelectorAll('.responsible-search-field').forEach((field) => {
-        field.dataset.dropdownOpen = 'false';
-        this.refreshResponsibleSearchField(field);
-      });
-    });
-
-    // Fecha dropdowns de RACI quando clica fora
-    $(document).on(`click${this._eventNamespace}`, (event) => {
-      const target = event.target;
-      if (!target) return;
-      if (target.closest('.raci-stakeholder-search-field')) return;
-
-      document.querySelectorAll('.raci-stakeholder-search-field').forEach((field) => {
-        field.dataset.dropdownOpen = 'false';
-        this.refreshRaciStakeholderSearchField(field);
-      });
-    });
-
-    // Atualiza RACI/Alocação quando a WBS mudar
     $(document).on(`input${this._eventNamespace} change${this._eventNamespace}`, '#wbs-container input, #wbs-container textarea, #wbs-container select', () => {
       this.onWbsChanged();
+    });
+
+    $(document).on(`input${this._eventNamespace} change${this._eventNamespace}`, '#milestones-container input, #milestones-container select', () => {
+      this.updateMilestoneTimeline();
+      this.syncRaciWithMilestones(); // RACI agora segue o cronograma
+    });
+
+    $('#page-container').on(`click${this._eventNamespace}`, '[data-action="show-timeline"]', (event) => {
+      event.preventDefault();
+      this.showTimeline();
+    });
+
+    $('#page-container').on(`click${this._eventNamespace}`, '[data-action="show-attachments"]', (event) => {
+      event.preventDefault();
+      this.showAttachments();
+    });
+
+    $('#page-container').on(`click${this._eventNamespace}`, '#dp-dropzone', (event) => {
+      event.preventDefault();
+      $('#dp-attachment-input').trigger('click');
+    });
+
+    $('#page-container').on(`change${this._eventNamespace}`, '#dp-attachment-input', (event) => {
+      this.addAttachments(event.target.files);
+      event.target.value = '';
+    });
+
+    $('#page-container').on(`click${this._eventNamespace}`, '[data-action="remove-dp-attachment"]', (event) => {
+      const id = $(event.currentTarget).data('attachment-id');
+      this.removeAttachment(id);
     });
   },
 
@@ -250,23 +387,21 @@ var projectPlanningController = {
 
   initializeUi: function () {
     this.goToStep(1);
-    this.initResponsibleSearchFields(document);
+    this.initAllTagFilters(document);
 
-    // Inicializa daterangepicker nos inputs existentes (se a lib estiver disponivel)
     this.initializeMilestoneDatePickers(document);
 
-    // Prepara um estado inicial para o plano de comunicação
     if (!document.querySelector('#communication-plan-body tr')) {
       this.addCommunicationPlanRow();
     }
 
-    // Estado inicial vazio para RACI/Alocação
     this._raciMatrixData = [];
     this._raciRemovedStakeholdersByPhase = new Map();
     this._teamAllocationData = [];
-    this.renderRaciAndResources();
 
-    // Ajusta texto do modal de conclusão (placeholder)
+    this.renderRaciAndResources();
+    this.refreshMilestoneConfiguration();
+
     this.setConcludeModalText('-', '-');
   },
 
@@ -299,9 +434,7 @@ var projectPlanningController = {
         });
 
         input.data('gp-daterangepicker-ready', true);
-      } catch (error) {
-        // fallback silencioso
-      }
+      } catch (error) { }
     });
   },
 
@@ -449,28 +582,83 @@ var projectPlanningController = {
     const row = processContext;
     const title = this.asText(row && row.titulodoprojetoNS) || '-';
     const area = this.asText(row && row.areaUnidadeNS) || '-';
+    const requester = this.asText(row && row.solicitanteNomeNS) || '-';
     const sponsor = this.asText(row && row.patrocinadorNS) || '-';
     const priority = this.asText(row && row.prioridadeNS) || '-';
-    const processLabel = this.asText(row && row.processLabel) || fluigService.getProjectProcessLabel(this._state.processType);
-    const formName = this.asText(row && row.formName) || this.asText(this._state.formName);
+    const executionType = this.asText(row && row.execucaoProjetoTITT);
 
-    $('#project-summary-code').text(projectCode || documentId || '-');
-    $('#project-summary-title').text(title);
-    $('#project-summary-area').text(area);
-    $('#project-summary-sponsor').text(sponsor);
+    const ui = $(document).data('gpUiComponents');
+    const summaryTarget = $('#page-container').find('[data-component="project-summary"]').first();
+    const progressTarget = $('#page-container').find('[data-component="progress-status"]').first();
 
-    const priorityEl = $('#project-summary-priority');
-    if (priorityEl.length) {
-      const badge = this.getPriorityBadge(priority);
-      priorityEl.attr('class', badge.className).html(badge.html);
-    }
+    if (ui && ui.sidebar) {
+      if (summaryTarget.length) {
+        ui.sidebar.renderProjectSummary(summaryTarget, {
+          code: projectCode || documentId || '-',
+          title: title,
+          requester: requester,
+          area: area,
+          sponsor: sponsor,
+          showArea: true,
+          showSponsor: true,
+          attachmentsCount: 0,
+          showAttachmentsCount: false,
+          priority: {
+            label: this.getPriorityLabel(priority) || 'N/A',
+            iconClass: 'fa-solid fa-star',
+            badgeClasses: this.getPriorityBadgeClasses(priority)
+          },
+          customRows: [
+            {
+              variant: 'badge',
+              label: 'Tipo',
+              value: this.getExecutionTypeLabel(executionType) || 'N/A',
+              iconClass: 'fa-solid fa-arrow-up-right-from-square',
+              badgeClasses: this.getExecutionTypeBadgeClasses(executionType)
+            }
+          ],
+          showStatus: false
+        });
+      }
 
-    const typeEl = $('#project-summary-type');
-    if (typeEl.length) {
-      typeEl.text(processLabel && formName ? `${processLabel} - ${formName}` : processLabel || formName || '-');
+      if (progressTarget.length) {
+        ui.sidebar.renderProgress(progressTarget, {
+          items: this.getProgressItems()
+        });
+
+        const progressCard = progressTarget.find('[data-gp-component="progress-status"]');
+
+        if (progressCard.length) {
+          progressCard.removeClass('bg-white rounded-lg shadow-md p-5');
+
+          const titleEl = progressCard.find('h3');
+          titleEl.html('<i class="fa-solid fa-list-check mr-2 text-bevap-navy"></i> Progresso');
+
+          const masterCardHtml = `
+            <div class="bg-white rounded-lg shadow-md p-5">
+              <div class="mb-5 pb-5 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-sm font-semibold text-gray-600">Progresso do Plano</span>
+                  <span id="plan-progress-text" class="text-sm font-bold text-bevap-green">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                  <div id="plan-progress-bar" class="bg-bevap-green h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+              </div>
+              <div id="progress-list-container"></div>
+            </div>
+          `;
+
+          progressTarget.html(masterCardHtml);
+          progressTarget.find('#progress-list-container').append(progressCard);
+
+          this.updatePlanProgress();
+        }
+      }
     }
 
     this.setConcludeModalText(projectCode || documentId || '-', title);
+
   },
 
   // ---------------------------
@@ -518,6 +706,19 @@ var projectPlanningController = {
   applyPlanningPayload: function (payload) {
     const finalPayload = payload && typeof payload === 'object' ? payload : {};
 
+    // ADICIONA ESTE BLOCO AQUI (Para carregar o Checklist)
+    const chk = finalPayload.checklist || {};
+    const eapEl = document.getElementById('check-eap-wbs');
+    const milesEl = document.getElementById('check-milestones');
+    const risksEl = document.getElementById('check-risks');
+    const raciEl = document.getElementById('check-raci');
+    const docsEl = document.getElementById('check-docs');
+
+    if (eapEl) eapEl.checked = !!chk.eapWbs;
+    if (milesEl) milesEl.checked = !!chk.milestones;
+    if (risksEl) risksEl.checked = !!chk.risks;
+    if (raciEl) raciEl.checked = !!chk.raci;
+    if (docsEl) docsEl.checked = !!chk.docs;
     // limpa UI
     const wbsContainer = document.getElementById('wbs-container');
     if (wbsContainer) wbsContainer.innerHTML = '';
@@ -543,7 +744,7 @@ var projectPlanningController = {
       const nameInput = phaseEl.querySelector('.wbs-phase-name-input');
       if (nameInput) nameInput.value = this.asText(phase && phase.name);
 
-      const respInput = panel && panel.querySelector('.responsible-search-input');
+      const respInput = panel && panel.querySelector('.responsible-input');
       if (respInput) respInput.value = this.asText(phase && phase.responsible);
 
       const effortInput = panel && panel.querySelector('.wbs-phase-effort');
@@ -580,7 +781,7 @@ var projectPlanningController = {
         const taskNameInput = taskEl.querySelector('.wbs-task-name-input');
         if (taskNameInput) taskNameInput.value = this.asText(task && task.name);
 
-        const taskResp = taskEl.querySelector('.responsible-search-input');
+        const taskResp = taskEl.querySelector('.responsible-input');
         if (taskResp) taskResp.value = this.asText(task && task.responsible);
 
         const taskEffort = taskEl.querySelector('.task-effort');
@@ -599,8 +800,6 @@ var projectPlanningController = {
           if (last) last.value = this.asText(depText);
         });
       });
-
-      this.initResponsibleSearchFields(phaseEl);
     });
 
     this.updateWbsNumbers();
@@ -650,68 +849,75 @@ var projectPlanningController = {
           tasks.forEach((t) => {
             const btn = milestoneEl.querySelector('button[onclick="addMilestoneTask(this)"]');
             if (!btn) return;
-            this.addMilestoneTask(btn);
+            this.addMilestoneTask(btn, {
+              taskKey: this.asText(t && t.taskKey),
+              phaseName: this.asText(t && t.phaseName),
+              task: this.asText(t && (t.task || t.taskLabel)),
+              date: this.asText(t && t.dueDate)
+            });
             const lastRow = taskList.lastElementChild;
             if (!lastRow) return;
-            const textInput = lastRow.querySelector('input[type="text"]');
+            const taskInput = lastRow.querySelector('.milestone-task-search');
             const dateInput = lastRow.querySelector('input[type="date"]');
-            if (textInput) textInput.value = this.asText(t && t.task);
+            const taskKey = this.asText(t && (t.taskKey || ((t.phaseName && t.task) ? (t.phaseName + ':::' + t.task) : '')));
+            if (taskKey) lastRow.dataset.taskKey = taskKey;
+            if (taskInput) taskInput.value = this.asText(t && (t.task || t.taskLabel));
             if (dateInput) dateInput.value = this.asText(t && t.dueDate);
           });
         }
       }
 
       this.initializeMilestoneDatePickers(milestoneEl);
+      this.refreshMilestoneTaskSelectOptions();
     });
 
-    // Risks (addRisk usa prepend; carrega invertendo para preservar ordem)
+    // Risks
     const risks = finalPayload.risks && Array.isArray(finalPayload.risks.items) ? finalPayload.risks.items : [];
-    risks.slice().reverse().forEach((risk) => {
+    risks.forEach((risk) => {
       this.addRisk();
-      const card = document.querySelector('#risk-matrix-list > div');
+      const cards = document.querySelectorAll('#risk-matrix-list > .risk-item');
+      const card = cards && cards.length ? cards[cards.length - 1] : null;
       if (!card) return;
-      const inputs = card.querySelectorAll('input');
-      const textareas = card.querySelectorAll('textarea');
-      if (inputs[0]) inputs[0].value = this.asText(risk && risk.description);
-      if (inputs[1]) inputs[1].value = this.asText(risk && risk.probabilityImpact);
-      if (textareas[0]) textareas[0].value = this.asText(risk && risk.mitigation);
-      if (textareas[1]) textareas[1].value = this.asText(risk && risk.planB);
+
+      this.setRiskCardData(card, {
+        title: this.asText(risk && (risk.title || risk.description)),
+        level: this.asText(risk && (risk.level || risk.riskLevel)) || 'Alto',
+        probability: this.asText(risk && (risk.probability || risk.riskProbability)) || 'Alta',
+        impact: this.asText(risk && (risk.impact || risk.riskImpact)) || 'Alto',
+        mitigation: this.asText(risk && risk.mitigation),
+        fallback: this.asText(risk && (risk.fallback || risk.planB))
+      });
+      this.renderRiskReadOnlyCard(card);
     });
 
-    // External dependencies (addExternalDependency usa prepend; carrega invertendo)
+    // External dependencies
     const extDeps = finalPayload.externalDependencies && Array.isArray(finalPayload.externalDependencies.items)
       ? finalPayload.externalDependencies.items
       : [];
-    extDeps.slice().reverse().forEach((dep) => {
+    extDeps.forEach((dep) => {
       this.addExternalDependency();
-      const card = document.querySelector('#external-dependencies-list > div');
+      const cards = document.querySelectorAll('#external-dependencies-list > .dependency-item');
+      const card = cards && cards.length ? cards[cards.length - 1] : null;
       if (!card) return;
-      const inputs = card.querySelectorAll('input');
-      const textareas = card.querySelectorAll('textarea');
-      if (inputs[0]) inputs[0].value = this.asText(dep && dep.description);
-      if (inputs[1]) inputs[1].value = this.asText(dep && dep.responsible);
-      if (textareas[0]) textareas[0].value = this.asText(dep && dep.mitigation);
-      if (textareas[1]) textareas[1].value = this.asText(dep && dep.planB);
+
+      this.setDependencyCardData(card, {
+        title: this.asText(dep && (dep.title || dep.description)),
+        status: this.asText(dep && dep.status) || 'Pendente',
+        owner: this.asText(dep && (dep.owner || dep.responsible)),
+        mitigation: this.asText(dep && dep.mitigation),
+        fallback: this.asText(dep && (dep.fallback || dep.planB))
+      });
+      this.renderDependencyReadOnlyCard(card);
     });
 
     // Communication plan
-    const commItems = finalPayload.communicationPlan && Array.isArray(finalPayload.communicationPlan.items)
+    this._communicationPlanData = finalPayload.communicationPlan && Array.isArray(finalPayload.communicationPlan.items)
       ? finalPayload.communicationPlan.items
       : [];
-    if (!commItems.length) {
+    if (!this._communicationPlanData.length) {
       this.addCommunicationPlanRow();
     } else {
-      commItems.forEach((item) => {
-        this.addCommunicationPlanRow();
-        const rows = commBody ? Array.from(commBody.querySelectorAll('tr')) : [];
-        const rowEl = rows.length ? rows[rows.length - 1] : null;
-        if (!rowEl) return;
-        const audience = rowEl.querySelector('input');
-        const selects = Array.from(rowEl.querySelectorAll('select'));
-        if (audience) audience.value = this.asText(item && item.audience);
-        if (selects[0]) selects[0].value = this.asText(item && item.channel);
-        if (selects[1]) selects[1].value = this.asText(item && item.frequency);
-      });
+      this.renderCommunicationPlanTable();
     }
 
     // RACI
@@ -724,15 +930,10 @@ var projectPlanningController = {
       i: this.normalizeStakeholderField(row && row.i)
     }));
 
-    const removed = finalPayload.raci && finalPayload.raci.removedStakeholdersByPhase && typeof finalPayload.raci.removedStakeholdersByPhase === 'object'
-      ? finalPayload.raci.removedStakeholdersByPhase
-      : {};
-    this._raciRemovedStakeholdersByPhase = new Map(
-      Object.keys(removed).map((key) => [key, new Set(Array.isArray(removed[key]) ? removed[key] : [])])
-    );
-
     // re-sync + render
-    this.syncRaciAndAllocationInternal();
+    this.initAllTagFilters(document);
+    this.syncTeamAllocationInternal();
+    this.refreshMilestoneConfiguration(); // Isso engatilha o syncRaciWithMilestones
     this.renderRaciAndResources();
     this.updateDocumentsPlanSummary();
   },
@@ -807,20 +1008,494 @@ var projectPlanningController = {
     this.updatePlanProgress();
 
     if (nextStep === 4) {
+      this.syncRaciWithMilestones();
       this.renderRaciAndResources();
     }
   },
 
   onWbsChanged: function () {
-    this.syncRaciAndAllocationInternal();
+    this.syncTeamAllocationInternal();
 
     const step4 = document.getElementById('step-4');
     const isStep4Visible = step4 && !step4.classList.contains('hidden');
     if (isStep4Visible) {
-      this.renderRaciAndResources();
+      this.renderTeamAllocationList();
     }
 
     this.updateDocumentsPlanSummary();
+  },
+
+  parseMilestonePeriod: function (periodText) {
+    const text = this.asText(periodText);
+    if (!text) {
+      return { startDate: '', endDate: '' };
+    }
+
+    const separator = text.includes(' - ')
+      ? ' - '
+      : text.includes(' até ')
+        ? ' até '
+        : text.includes(' ate ')
+          ? ' ate '
+          : null;
+
+    const parts = separator ? text.split(separator).map((value) => this.normalizePeriodDateToIso(value)) : [this.normalizePeriodDateToIso(text)];
+    const startDate = this.asText(parts[0]);
+    const endDate = this.asText(parts[1] || parts[0]);
+
+    if (!startDate) {
+      return { startDate: '', endDate: '' };
+    }
+
+    return { startDate, endDate };
+  },
+
+  normalizePeriodDateToIso: function (dateValue) {
+    const text = this.asText(dateValue);
+    if (!text) return '';
+    if (/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(text)) {
+      const [day, month, year] = text.split('/');
+      return `${year}-${month}-${day}`;
+    }
+    if (/^\d{2}-\d{2}-\d{4}$/.test(text)) {
+      const [day, month, year] = text.split('-');
+      return `${year}-${month}-${day}`;
+    }
+    return '';
+  },
+
+  formatDateBr: function (dateValue) {
+    const isoDate = this.normalizePeriodDateToIso(dateValue);
+    if (!isoDate) return '';
+    const [year, month, day] = isoDate.split('-');
+    return `${day}/${month}/${year}`;
+  },
+
+  getMilestonePrimaryDate: function (periodValue) {
+    const period = this.parseMilestonePeriod(periodValue);
+    return this.asText(period.endDate || period.startDate);
+  },
+
+  formatMilestonePeriodBr: function (periodValue) {
+    const period = this.parseMilestonePeriod(periodValue);
+    if (!period.startDate) return 'Sem período definido';
+    if (!period.endDate || period.endDate === period.startDate) {
+      return this.formatDateBr(period.startDate);
+    }
+    return `${this.formatDateBr(period.startDate)} até ${this.formatDateBr(period.endDate)}`;
+  },
+
+  getMilestoneCatalog: function () {
+    const phases = [];
+    const tasks = [];
+    const phaseItems = document.querySelectorAll('#wbs-container > .wbs-item');
+
+    phaseItems.forEach((phaseItem, phaseIndex) => {
+      const phaseName = this.asText(phaseItem.querySelector('.wbs-phase-name-input')?.value) || `Fase ${phaseIndex + 1}`;
+      phases.push(phaseName);
+
+      phaseItem.querySelectorAll('.subtask-container > .wbs-subtask').forEach((subtask, taskIndex) => {
+        const taskName = this.asText(subtask.querySelector('.wbs-task-name-input')?.value) || `Tarefa ${taskIndex + 1}`;
+        const key = `${phaseName}:::${taskName}`;
+        tasks.push({
+          key,
+          phaseName,
+          taskName,
+          label: `${phaseName} - ${taskName}`
+        });
+      });
+    });
+
+    return { phases, tasks };
+  },
+
+  getMilestoneTaskAssignments: function () {
+    const assignmentCount = new Map();
+    document.querySelectorAll('.milestone-task-row').forEach((row) => {
+      const taskKey = this.asText(row.dataset.taskKey);
+      if (!taskKey) return;
+      assignmentCount.set(taskKey, (assignmentCount.get(taskKey) || 0) + 1);
+    });
+    return assignmentCount;
+  },
+
+  getMilestoneTaskRowHTML: function (rowData = {}) {
+    const taskDate = this.asText(rowData.date);
+    const taskLabel = this.escapeHtml(rowData.taskLabel || '');
+    return `
+      <div class="milestone-task-row border border-gray-200 rounded-lg bg-white p-4">
+        <div class="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_190px_auto] gap-3 items-start">
+          <div class="w-full min-w-0 relative">
+            <label class="block text-sm text-gray-600 mb-1">Descrição da Tarefa</label>
+            <div class="relative">
+              <input type="text" value="${taskLabel}" class="milestone-task-search w-full px-3 py-2 pr-16 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Pesquisar tarefa...">
+              <button type="button" class="milestone-task-clear hidden absolute top-1/2 right-8 -translate-y-1/2 text-red-500 hover:text-red-700 px-1" title="Limpar">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+              <button type="button" class="milestone-task-toggle absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 hover:text-gray-700 px-1" title="Abrir opções">
+                <i class="fa-solid fa-chevron-down text-xs"></i>
+              </button>
+            </div>
+            <div class="milestone-task-dropdown hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-56 overflow-y-auto"></div>
+            <div class="milestone-task-phase hidden mt-1 text-xs text-gray-500"></div>
+          </div>
+          <div class="w-full lg:w-auto">
+            <label class="block text-sm text-gray-600 mb-1">Data de Entrega</label>
+            <input type="date" value="${this.escapeHtml(taskDate)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+          </div>
+          <div class="flex items-center justify-end space-x-2 shrink-0 pt-6">
+            <button type="button" class="milestone-task-handle text-gray-400 hover:text-gray-600 cursor-grab px-1 py-1" title="Mover Tarefa">
+              <i class="fa-solid fa-grip-vertical"></i>
+            </button>
+            <button type="button" class="milestone-task-remove text-red-400 hover:text-red-600 px-1 py-1" title="Remover Tarefa">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  },
+
+  bindMilestoneTaskRowEvents: function (taskRow) {
+    if (!taskRow || taskRow.dataset.eventsReady === 'true') return;
+
+    const taskInput = taskRow.querySelector('.milestone-task-search');
+    const clearButton = taskRow.querySelector('.milestone-task-clear');
+    const toggleButton = taskRow.querySelector('.milestone-task-toggle');
+    const removeButton = taskRow.querySelector('.milestone-task-remove');
+    const dateInput = taskRow.querySelector('input[type="date"]');
+    if (!taskInput) return;
+
+    const syncMilestones = () => {
+      this.refreshMilestoneTaskSelectOptions();
+      this.updateMilestoneTimeline();
+    };
+
+    taskInput.addEventListener('focus', () => {
+      taskRow.dataset.dropdownOpen = 'true';
+      this.refreshMilestoneTaskSelectOptions();
+    });
+    taskInput.addEventListener('input', () => {
+      taskRow.dataset.dropdownOpen = 'true';
+      syncMilestones();
+    });
+    taskInput.addEventListener('change', syncMilestones);
+    taskInput.addEventListener('blur', () => {
+      window.setTimeout(() => {
+        taskRow.dataset.dropdownOpen = 'false';
+        this.refreshMilestoneTaskSelectOptions();
+        this.updateMilestoneTimeline();
+      }, 120);
+    });
+
+    if (clearButton) {
+      clearButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        taskInput.value = '';
+        taskRow.dataset.taskKey = '';
+        taskRow.dataset.dropdownOpen = 'false';
+        this.refreshMilestoneTaskSelectOptions();
+        this.updateMilestoneTimeline();
+        taskInput.focus();
+      });
+    }
+
+    if (toggleButton) {
+      toggleButton.addEventListener('click', (event) => {
+        event.preventDefault();
+        taskRow.dataset.dropdownOpen = taskRow.dataset.dropdownOpen === 'true' ? 'false' : 'true';
+        this.refreshMilestoneTaskSelectOptions();
+        taskInput.focus();
+      });
+    }
+
+    if (removeButton) {
+      removeButton.addEventListener('click', () => this.removeMilestoneTask(removeButton));
+    }
+
+    dateInput?.addEventListener('input', () => this.updateMilestoneTimeline());
+    dateInput?.addEventListener('change', () => this.updateMilestoneTimeline());
+
+    taskRow.dataset.eventsReady = 'true';
+  },
+
+  refreshMilestoneTaskSelectOptions: function () {
+    const tasks = this.getMilestoneCatalog().tasks;
+    const assignments = this.getMilestoneTaskAssignments();
+
+    document.querySelectorAll('.milestone-task-row').forEach((row) => {
+      const taskInput = row.querySelector('.milestone-task-search');
+      const clearButton = row.querySelector('.milestone-task-clear');
+      const toggleButton = row.querySelector('.milestone-task-toggle');
+      const dropdown = row.querySelector('.milestone-task-dropdown');
+      const phaseInfo = row.querySelector('.milestone-task-phase');
+      if (!taskInput || !dropdown || !phaseInfo) return;
+
+      const currentValue = this.asText(row.dataset.taskKey);
+      const searchText = this.asText(taskInput.value);
+      const searchLower = searchText.toLowerCase();
+      const sortedTasks = [...tasks].sort((a, b) => {
+        const phaseCompare = a.phaseName.localeCompare(b.phaseName, 'pt-BR');
+        if (phaseCompare !== 0) return phaseCompare;
+        return a.taskName.localeCompare(b.taskName, 'pt-BR');
+      });
+
+      const availableTasks = sortedTasks.filter((task) => {
+        const count = assignments.get(task.key) || 0;
+        return count === 0 || task.key === currentValue;
+      });
+
+      const availableByLabel = new Map(availableTasks.map((task) => [task.label.toLowerCase(), task]));
+      const allByLabel = new Map(sortedTasks.map((task) => [task.label.toLowerCase(), task]));
+      const selectedTask = sortedTasks.find((task) => task.key === currentValue);
+      const typedTask = searchText ? availableByLabel.get(searchLower) : null;
+      const unavailableTypedTask = searchText ? allByLabel.get(searchLower) : null;
+
+      if (typedTask) {
+        row.dataset.taskKey = typedTask.key;
+      } else if (!searchText && selectedTask) {
+        row.dataset.taskKey = selectedTask.key;
+      } else if (searchText && unavailableTypedTask && unavailableTypedTask.key !== currentValue) {
+        row.dataset.taskKey = '';
+        taskInput.value = '';
+        phaseInfo.classList.add('hidden');
+        phaseInfo.textContent = '';
+        this.showToast('Esta tarefa já está vinculada a outro marco.', 'warning');
+        return;
+      } else if (!searchText) {
+        row.dataset.taskKey = '';
+      }
+
+      const activeTaskKey = this.asText(row.dataset.taskKey);
+      const activeTask = sortedTasks.find((task) => task.key === activeTaskKey);
+      const isFocused = document.activeElement === taskInput;
+      if (activeTask && (!isFocused || typedTask)) {
+        taskInput.value = activeTask.taskName;
+      }
+
+      const showClearButton = Boolean(this.asText(taskInput.value)) || Boolean(activeTaskKey);
+      clearButton?.classList.toggle('hidden', !showClearButton);
+      toggleButton?.classList.toggle('hidden', showClearButton);
+
+      if (activeTask) {
+        phaseInfo.textContent = `Fase: ${activeTask.phaseName}`;
+        phaseInfo.classList.remove('hidden');
+      } else {
+        phaseInfo.classList.add('hidden');
+        phaseInfo.textContent = '';
+      }
+
+      const filteredTasks = searchText
+        ? availableTasks.filter((task) => task.label.toLowerCase().includes(searchLower))
+        : availableTasks;
+      const shouldShowDropdown = row.dataset.dropdownOpen === 'true' && (isFocused || Boolean(searchText));
+
+      if (!shouldShowDropdown) {
+        dropdown.classList.add('hidden');
+        dropdown.innerHTML = '';
+        return;
+      }
+
+      if (!filteredTasks.length) {
+        dropdown.innerHTML = '<div class="px-3 py-2 text-sm text-gray-500">Nenhuma tarefa encontrada</div>';
+        dropdown.classList.remove('hidden');
+        return;
+      }
+
+      const tasksByPhase = filteredTasks.reduce((accumulator, task) => {
+        if (!accumulator.has(task.phaseName)) {
+          accumulator.set(task.phaseName, []);
+        }
+        accumulator.get(task.phaseName).push(task);
+        return accumulator;
+      }, new Map());
+
+      dropdown.innerHTML = Array.from(tasksByPhase.entries()).map(([phaseName, phaseTasks]) => `
+        <div class="py-1">
+          <div class="px-3 py-1 text-sm font-bold text-black bg-gray-50 border-b border-gray-100">${this.escapeHtml(phaseName)}</div>
+          ${phaseTasks.map((task) => `
+            <button type="button" class="milestone-task-option w-full text-left px-5 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" data-task-key="${this.escapeHtml(task.key)}" data-task-label="${this.escapeHtml(task.taskName)}">
+              ${this.escapeHtml(task.taskName)}
+            </button>
+          `).join('')}
+        </div>
+      `).join('');
+      dropdown.classList.remove('hidden');
+
+      dropdown.querySelectorAll('.milestone-task-option').forEach((option) => {
+        option.addEventListener('mousedown', (event) => event.preventDefault());
+        option.addEventListener('click', () => {
+          row.dataset.taskKey = this.asText(option.getAttribute('data-task-key'));
+          taskInput.value = this.asText(option.getAttribute('data-task-label'));
+          row.dataset.dropdownOpen = 'false';
+          this.refreshMilestoneTaskSelectOptions();
+          this.updateMilestoneTimeline();
+        });
+      });
+    });
+  },
+
+  updateMilestoneTaskTitles: function () {
+    document.querySelectorAll('.milestone-card').forEach((milestoneCard) => {
+      const title = milestoneCard.querySelector('.milestone-tasks-title');
+      if (!title) return;
+      const taskCount = milestoneCard.querySelectorAll('.milestone-task-row').length;
+      title.textContent = taskCount > 1 ? 'Tarefas do Marco' : 'Tarefa do Marco';
+    });
+  },
+
+  collectMilestonesFromDom: function () {
+    const container = document.getElementById('milestones-container');
+    if (!container) return [];
+
+    return Array.from(container.querySelectorAll(':scope > .milestone-card')).map((milestoneEl, index) => {
+      const name = this.asText(milestoneEl.querySelector('.milestone-phase-input')?.value) || `Marco ${index + 1}`;
+      const period = this.asText(milestoneEl.querySelector('.milestone-period-input')?.value);
+      const parsedPeriod = this.parseMilestonePeriod(period);
+      const criteria = Array.from(milestoneEl.querySelectorAll('.milestone-criteria-row input[type="text"]'))
+        .map((input) => this.asText(input.value))
+        .filter(Boolean);
+      const tasks = Array.from(milestoneEl.querySelectorAll('.milestone-task-row')).map((row) => {
+        const taskKey = this.asText(row.dataset.taskKey);
+        const taskInput = row.querySelector('.milestone-task-search');
+        const taskDate = this.asText(row.querySelector('input[type="date"]')?.value);
+        const [taskPhase = '', ...taskNameParts] = taskKey.split(':::');
+        return {
+          taskKey,
+          phaseName: taskPhase,
+          task: taskNameParts.join(':::') || this.asText(taskInput?.value),
+          dueDate: taskDate
+        };
+      }).filter((task) => task.task || task.dueDate);
+
+      return {
+        order: index + 1,
+        name,
+        period,
+        startDate: parsedPeriod.startDate,
+        endDate: parsedPeriod.endDate,
+        criteria,
+        tasks
+      };
+    });
+  },
+
+  getTimelineWhenLabel: function (dateValue) {
+    const isoDate = this.normalizePeriodDateToIso(dateValue);
+    if (!isoDate) return 'Sem data definida';
+
+    const today = new Date();
+    const todayAtMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const [year, month, day] = isoDate.split('-').map(Number);
+    const targetDate = new Date(year, (month || 1) - 1, day || 1);
+    const diffInDays = Math.round((targetDate.getTime() - todayAtMidnight.getTime()) / 86400000);
+
+    if (diffInDays === 0) return 'Hoje';
+    if (diffInDays === -1) return 'Ontem';
+    if (diffInDays === 1) return 'Amanhã';
+    if (diffInDays < 0) return `Há ${Math.abs(diffInDays)} dias`;
+    return `Em ${diffInDays} dias`;
+  },
+
+  refreshMilestoneConfiguration: function () {
+    this.initializeMilestoneDatePickers(document);
+    this.initMilestoneSortables();
+    this.updateMilestoneTaskTitles();
+    document.querySelectorAll('.milestone-task-row').forEach((row) => this.bindMilestoneTaskRowEvents(row));
+    this.refreshMilestoneTaskSelectOptions();
+    this.updateMilestoneTimeline();
+
+    // NOVO: Sincroniza a RACI com os Marcos e re-renderiza
+    this.syncRaciWithMilestones();
+    if (this._state.currentStep === 4) {
+      this.renderRaciMatrixTable();
+    }
+  },
+
+  updateMilestoneTimeline: function () {
+    const container = document.getElementById('milestone-timeline-list');
+    if (!container) return;
+
+    const milestones = this.collectMilestonesFromDom()
+      .filter((item) => item.name || item.startDate || item.endDate)
+      .sort((a, b) => {
+        const firstDate = this.getMilestonePrimaryDate(a.period);
+        const secondDate = this.getMilestonePrimaryDate(b.period);
+        if (firstDate && secondDate) return firstDate.localeCompare(secondDate);
+        if (firstDate) return -1;
+        if (secondDate) return 1;
+        return this.asText(a.name).localeCompare(this.asText(b.name), 'pt-BR');
+      });
+
+    if (!milestones.length) {
+      container.innerHTML = '<div class="text-sm text-gray-600">Adicione marcos com data para visualizar a linha do tempo.</div>';
+      return;
+    }
+
+    container.innerHTML = milestones.map((item, index) => {
+      const currentDate = this.getMilestonePrimaryDate(item.period || item.endDate || item.startDate);
+      const hasDate = Boolean(currentDate);
+      const isReachedDate = hasDate && new Date(`${currentDate}T00:00:00`) <= new Date();
+      const isLastItem = index === milestones.length - 1;
+      let iconBg = 'bg-blue-100';
+      let iconColor = 'text-blue-600';
+      let iconClass = 'fa-solid fa-hourglass-half';
+
+      if (isLastItem) {
+        iconBg = 'bg-bevap-green/10';
+        iconColor = 'text-bevap-green';
+        iconClass = 'fa-solid fa-rocket';
+      } else if (isReachedDate) {
+        iconBg = 'bg-bevap-gold/10';
+        iconColor = 'text-bevap-gold';
+        iconClass = 'fa-solid fa-check';
+      }
+
+      const whenLabel = this.getTimelineWhenLabel(currentDate);
+      const currentDateFormatted = this.formatMilestonePeriodBr(item.period || currentDate);
+      const taskCount = item.tasks.length;
+      const previewTasks = item.tasks.slice(0, 2).map((task) => task.task).filter(Boolean);
+      const taskPreviewText = previewTasks.length ? previewTasks.join(' - ') : 'Sem tarefas vinculadas';
+      const descriptionText = `Marco: ${item.name} - ${taskPreviewText}`;
+      const extraTasks = taskCount > 2 ? ` (+${taskCount - 2})` : '';
+      const criteriaCount = item.criteria.length;
+      const criteriaPreview = item.criteria.slice(0, 2);
+      const criteriaHtml = criteriaCount === 0
+        ? '<p class="mt-2 text-xs text-slate-400">Critérios de aceite: não definidos</p>'
+        : `
+          <div class="mt-2 flex flex-wrap items-center gap-2">
+            <span class="text-[11px] uppercase tracking-wide text-slate-500">Aceite</span>
+            ${criteriaPreview.map((criteria) => `
+              <span class="inline-flex items-center gap-1 max-w-full px-2 py-1 rounded-full bg-slate-100 text-slate-700 text-xs">
+                <i class="fa-solid fa-check-double text-[10px] text-slate-500"></i>
+                <span class="truncate max-w-[260px]">${this.escapeHtml(criteria)}</span>
+              </span>
+            `).join('')}
+            ${criteriaCount > 2 ? `<span class="text-xs text-slate-500">+${criteriaCount - 2}</span>` : ''}
+          </div>
+        `;
+
+      return `
+        <div class="flex gap-4">
+          <div class="flex flex-col items-center">
+            <div class="w-10 h-10 ${iconBg} rounded-full flex items-center justify-center">
+              <i class="${iconClass} ${iconColor}"></i>
+            </div>
+            ${index < milestones.length - 1 ? '<div class="w-0.5 h-full bg-slate-200 mt-2"></div>' : ''}
+          </div>
+          <div class="flex-1 ${index < milestones.length - 1 ? 'pb-4' : ''}">
+            <div class="flex items-start justify-between mb-1">
+              <h4 class="font-semibold text-bevap-navy">${this.escapeHtml(item.name)}</h4>
+              <span class="text-xs text-slate-500 whitespace-nowrap">${whenLabel}</span>
+            </div>
+            <p class="text-xs text-slate-500 mb-1">${currentDateFormatted}</p>
+            <p class="text-sm text-slate-600">${this.escapeHtml(descriptionText)}${extraTasks}</p>
+            ${criteriaHtml}
+          </div>
+        </div>
+      `;
+    }).join('');
   },
 
   previousStep: function () {
@@ -941,9 +1616,9 @@ var projectPlanningController = {
 
     const highRisks = (payload.risks && Array.isArray(payload.risks.items))
       ? payload.risks.items.filter((r) => {
-          const text = this.asText(r && (r.probabilityImpact || r.probability || r.impact)).toLowerCase();
-          return text.indexOf('alta') !== -1 || text.indexOf('high') !== -1;
-        }).length
+        const text = this.asText(r && (r.probabilityImpact || r.probability || r.impact)).toLowerCase();
+        return text.indexOf('alta') !== -1 || text.indexOf('high') !== -1;
+      }).length
       : 0;
 
     const phasesEl = document.getElementById('plan-summary-phases');
@@ -958,133 +1633,15 @@ var projectPlanningController = {
   },
 
   // ---------------------------
-  // Responsible search field (protótipo)
+  // Utils de HTML e Inputs (Single)
   // ---------------------------
-
-  refreshResponsibleSearchField: function (fieldElement) {
-    if (!fieldElement) return;
-
-    const searchInput = fieldElement.querySelector('.responsible-search-input');
-    const clearButton = fieldElement.querySelector('.responsible-search-clear');
-    const toggleButton = fieldElement.querySelector('.responsible-search-toggle');
-    const dropdown = fieldElement.querySelector('.responsible-search-dropdown');
-    if (!searchInput || !dropdown) return;
-
-    const searchText = (searchInput.value || '').trim();
-    const searchTextLower = searchText.toLowerCase();
-
-    const exactMatch = this._responsibleOptions.find((name) => name.toLowerCase() === searchTextLower);
-    if (exactMatch && (document.activeElement !== searchInput || searchTextLower === exactMatch.toLowerCase())) {
-      searchInput.value = exactMatch;
-    }
-
-    const hasInputValue = Boolean((searchInput.value || '').trim());
-    if (clearButton) {
-      clearButton.classList.toggle('hidden', !hasInputValue);
-      clearButton.classList.toggle('right-2', hasInputValue);
-      clearButton.classList.toggle('right-8', !hasInputValue);
-    }
-    if (toggleButton) {
-      toggleButton.classList.toggle('hidden', hasInputValue);
-    }
-
-    const filteredOptions = searchText
-      ? this._responsibleOptions.filter((name) => name.toLowerCase().includes(searchTextLower))
-      : this._responsibleOptions;
-
-    const isFocused = document.activeElement === searchInput;
-    const shouldShowDropdown = fieldElement.dataset.dropdownOpen === 'true' && (isFocused || Boolean(searchText));
-
-    if (!shouldShowDropdown) {
-      dropdown.classList.add('hidden');
-      dropdown.innerHTML = '';
-      return;
-    }
-
-    if (!filteredOptions.length) {
-      dropdown.innerHTML = '<div class="px-3 py-2 text-sm text-gray-500">Nenhum responsável encontrado</div>';
-      dropdown.classList.remove('hidden');
-      return;
-    }
-
-    dropdown.innerHTML = filteredOptions
-      .map((name) => `
-        <button type="button" class="responsible-search-option w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" data-value="${this.escapeHtml(name)}">
-          ${this.escapeHtml(name)}
-        </button>
-      `)
-      .join('');
-
-    dropdown.classList.remove('hidden');
-
-    dropdown.querySelectorAll('.responsible-search-option').forEach((optionElement) => {
-      optionElement.addEventListener('mousedown', (event) => event.preventDefault());
-      optionElement.addEventListener('click', () => {
-        const selectedValue = optionElement.getAttribute('data-value') || '';
-        searchInput.value = selectedValue;
-        fieldElement.dataset.dropdownOpen = 'false';
-        this.refreshResponsibleSearchField(fieldElement);
-        searchInput.dispatchEvent(new Event('change', { bubbles: true }));
-      });
-    });
-  },
-
-  bindResponsibleSearchField: function (fieldElement) {
-    if (!fieldElement || fieldElement.dataset.eventsReady === 'true') return;
-
-    const searchInput = fieldElement.querySelector('.responsible-search-input');
-    const clearButton = fieldElement.querySelector('.responsible-search-clear');
-    const toggleButton = fieldElement.querySelector('.responsible-search-toggle');
-    if (!searchInput) return;
-
-    searchInput.addEventListener('focus', () => {
-      fieldElement.dataset.dropdownOpen = 'true';
-      this.refreshResponsibleSearchField(fieldElement);
-    });
-
-    searchInput.addEventListener('input', () => {
-      fieldElement.dataset.dropdownOpen = 'true';
-      this.refreshResponsibleSearchField(fieldElement);
-    });
-
-    searchInput.addEventListener('change', () => this.refreshResponsibleSearchField(fieldElement));
-
-    searchInput.addEventListener('blur', () => {
-      setTimeout(() => {
-        fieldElement.dataset.dropdownOpen = 'false';
-        this.refreshResponsibleSearchField(fieldElement);
-      }, 120);
-    });
-
-    if (clearButton) {
-      clearButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        searchInput.value = '';
-        fieldElement.dataset.dropdownOpen = 'false';
-        this.refreshResponsibleSearchField(fieldElement);
-        searchInput.dispatchEvent(new Event('change', { bubbles: true }));
-        searchInput.focus();
-      });
-    }
-
-    if (toggleButton) {
-      toggleButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        fieldElement.dataset.dropdownOpen = fieldElement.dataset.dropdownOpen === 'true' ? 'false' : 'true';
-        this.refreshResponsibleSearchField(fieldElement);
-        searchInput.focus();
-      });
-    }
-
-    fieldElement.dataset.eventsReady = 'true';
-    this.refreshResponsibleSearchField(fieldElement);
-  },
-
-  initResponsibleSearchFields: function (rootElement) {
-    const root = rootElement || document;
-    root.querySelectorAll('.responsible-search-field').forEach((fieldElement) => {
-      this.bindResponsibleSearchField(fieldElement);
-    });
+  getResponsibleSearchFieldHTML: function (value, inputClass = '', dataField = '') {
+    return `
+      <div class="relative">
+        <div class="single-resp-mount w-full"></div>
+        <input type="hidden" class="responsible-input ${this.escapeHtml(inputClass)}" data-field="${this.escapeHtml(dataField)}" value="${this.escapeHtml(value || '')}">
+      </div>
+    `;
   },
 
   // ---------------------------
@@ -1132,18 +1689,7 @@ var projectPlanningController = {
         <div class="grid grid-cols-1 lg:grid-cols-[3fr_1fr_1fr] gap-4">
           <div>
             <label class="block text-sm text-gray-600 mb-1">Responsável</label>
-            <div class="responsible-search-field relative">
-              <div class="relative">
-                <input type="text" value="" class="responsible-input responsible-search-input w-full px-3 py-2 pr-16 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Pesquisar responsável...">
-                <button type="button" class="responsible-search-clear hidden absolute top-1/2 right-8 -translate-y-1/2 text-red-500 hover:text-red-700 px-1" title="Limpar">
-                  <i class="fa-solid fa-xmark"></i>
-                </button>
-                <button type="button" class="responsible-search-toggle absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 hover:text-gray-700 px-1" title="Abrir opções">
-                  <i class="fa-solid fa-chevron-down text-xs"></i>
-                </button>
-              </div>
-              <div class="responsible-search-dropdown hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-56 overflow-y-auto"></div>
-            </div>
+            ${this.getResponsibleSearchFieldHTML('')}
           </div>
           <div>
             <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
@@ -1186,10 +1732,11 @@ var projectPlanningController = {
     `;
 
     container.appendChild(phase);
-    this.initResponsibleSearchFields(phase);
+    this.initAllTagFilters(phase);
     this.updateWbsNumbers();
 
     this.initWbsSortables();
+    this.onWbsChanged();
   },
 
   addDependencyItem: function (buttonElement) {
@@ -1210,6 +1757,7 @@ var projectPlanningController = {
     `;
 
     list.appendChild(dependency);
+    this.onWbsChanged();
   },
 
   createSubtaskElement: function (taskData, subtaskIndex) {
@@ -1236,18 +1784,7 @@ var projectPlanningController = {
       <div class="grid grid-cols-1 lg:grid-cols-[3fr_1fr_1fr] gap-4">
         <div>
           <label class="block text-sm text-gray-600 mb-1">Responsável</label>
-          <div class="responsible-search-field relative">
-            <div class="relative">
-              <input type="text" value="" class="responsible-input responsible-search-input w-full px-3 py-2 pr-16 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Pesquisar responsável...">
-              <button type="button" class="responsible-search-clear hidden absolute top-1/2 right-8 -translate-y-1/2 text-red-500 hover:text-red-700 px-1" title="Limpar">
-                <i class="fa-solid fa-xmark"></i>
-              </button>
-              <button type="button" class="responsible-search-toggle absolute top-1/2 right-2 -translate-y-1/2 text-gray-500 hover:text-gray-700 px-1" title="Abrir opções">
-                <i class="fa-solid fa-chevron-down text-xs"></i>
-              </button>
-            </div>
-            <div class="responsible-search-dropdown hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-56 overflow-y-auto"></div>
-          </div>
+          ${this.getResponsibleSearchFieldHTML('')}
         </div>
         <div>
           <label class="block text-sm text-gray-600 mb-1">Esforço (h)</label>
@@ -1283,8 +1820,9 @@ var projectPlanningController = {
     const subtask = this.createSubtaskElement({}, subtaskIndex);
     container.appendChild(subtask);
 
-    this.initResponsibleSearchFields(subtask);
+    this.initAllTagFilters(subtask);
     this.initTaskSortables(phaseItem);
+    this.onWbsChanged();
   },
 
   removeItem: function (element) {
@@ -1292,6 +1830,7 @@ var projectPlanningController = {
     if (subtask) {
       this.openDeleteModal('Tem certeza que deseja remover esta tarefa?', () => {
         subtask.remove();
+        this.onWbsChanged();
       });
       return;
     }
@@ -1302,6 +1841,7 @@ var projectPlanningController = {
     this.openDeleteModal('Tem certeza que deseja remover esta fase?', () => {
       item.remove();
       this.updateWbsNumbers();
+      this.onWbsChanged();
     });
   },
 
@@ -1321,7 +1861,7 @@ var projectPlanningController = {
         onEnd: () => this.updateWbsNumbers()
       });
       container.dataset.sortableReady = 'true';
-    } catch (error) {}
+    } catch (error) { }
 
     // também tenta sortables de tarefas
     Array.from(container.querySelectorAll('.wbs-item')).forEach((item) => this.initTaskSortables(item));
@@ -1341,7 +1881,7 @@ var projectPlanningController = {
           draggable: '.wbs-subtask'
         });
         subtaskContainer.dataset.sortableReady = 'true';
-      } catch (error) {}
+      } catch (error) { }
     });
   },
 
@@ -1355,7 +1895,6 @@ var projectPlanningController = {
 
     const milestone = document.createElement('div');
     milestone.className = 'milestone-card border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm';
-
     milestone.innerHTML = `
       <div class="panel-toggle-header flex items-end justify-between gap-4 px-4 py-3 bg-gray-50 border-b border-gray-200 cursor-pointer">
         <div class="flex items-end gap-4 flex-1 min-w-0">
@@ -1400,73 +1939,98 @@ var projectPlanningController = {
     `;
 
     container.appendChild(milestone);
-
-    // cria uma linha inicial
     const criteriaButton = milestone.querySelector('button[onclick="addMilestoneCriteria(this)"]');
     const taskButton = milestone.querySelector('button[onclick="addMilestoneTask(this)"]');
     if (criteriaButton) this.addMilestoneCriteria(criteriaButton);
     if (taskButton) this.addMilestoneTask(taskButton);
-
-    this.initializeMilestoneDatePickers(milestone);
-    this.initMilestoneSortables();
+    this.refreshMilestoneConfiguration();
   },
 
-  addMilestoneCriteria: function (buttonElement) {
+  getMilestoneCriteriaRowHTML: function (rowData = {}) {
+    const criteria = this.escapeHtml(rowData.criteria || '');
+    return `
+      <div class="milestone-criteria-row flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+        <i class="fa-solid fa-triangle-exclamation text-yellow-600"></i>
+        <input type="text" value="${criteria}" placeholder="Descreva um critério de aceite..." class="field-input flex-1 bg-transparent border-none focus:outline-none text-sm">
+        <button type="button" class="milestone-criteria-remove text-red-500 hover:text-red-700" title="Remover Critério">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      </div>
+    `;
+  },
+
+  addMilestoneCriteria: function (buttonElement, rowData = {}) {
     const milestoneCard = buttonElement.closest('.milestone-card');
     if (!milestoneCard) return;
 
     const list = milestoneCard.querySelector('.milestone-criteria-list');
     if (!list) return;
 
-    const row = document.createElement('div');
-    row.className = 'milestone-criteria-row flex items-center gap-2';
-    row.innerHTML = `
-      <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Descreva o critério...">
-      <button type="button" class="text-red-400 hover:text-red-600" title="Remover" data-action="remove-criteria">
-        <i class="fa-solid fa-trash"></i>
-      </button>
-    `;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = this.getMilestoneCriteriaRowHTML(rowData);
+    const row = wrapper.firstElementChild;
+    if (!row) return;
 
-    row.querySelector('[data-action="remove-criteria"]').addEventListener('click', () => {
+    const removeButton = row.querySelector('.milestone-criteria-remove');
+    removeButton?.addEventListener('click', () => {
       if (list.children.length === 1) {
-        const input = row.querySelector('input');
+        const input = row.querySelector('input[type="text"]');
         if (input) input.value = '';
+        this.refreshMilestoneConfiguration();
         return;
       }
       row.remove();
+      this.refreshMilestoneConfiguration();
     });
 
     list.appendChild(row);
+    this.refreshMilestoneConfiguration();
   },
 
-  addMilestoneTask: function (buttonElement) {
+  addMilestoneTask: function (buttonElement, taskData = {}) {
     const milestoneCard = buttonElement.closest('.milestone-card');
     if (!milestoneCard) return;
 
     const list = milestoneCard.querySelector('.milestone-tasks-list');
     if (!list) return;
 
-    const row = document.createElement('div');
-    row.className = 'milestone-task-row flex items-center gap-2';
-    row.innerHTML = `
-      <input type="text" class="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Tarefa relacionada ao marco...">
-      <input type="date" class="w-44 px-3 py-2 border border-gray-300 rounded-lg text-sm">
-      <button type="button" class="text-red-400 hover:text-red-600" title="Remover" data-action="remove-task">
-        <i class="fa-solid fa-trash"></i>
-      </button>
-    `;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = this.getMilestoneTaskRowHTML(taskData);
+    const taskRow = wrapper.firstElementChild;
+    if (!taskRow) return;
 
-    row.querySelector('[data-action="remove-task"]').addEventListener('click', () => {
+    if (taskData.phaseName && taskData.task) {
+      taskRow.dataset.taskKey = `${taskData.phaseName}:::${taskData.task}`;
+    } else if (taskData.taskKey) {
+      taskRow.dataset.taskKey = taskData.taskKey;
+    }
+
+    list.appendChild(taskRow);
+    this.bindMilestoneTaskRowEvents(taskRow);
+    this.refreshMilestoneConfiguration();
+  },
+
+  removeMilestoneTask: function (buttonElement) {
+    const row = buttonElement.closest('.milestone-task-row');
+    if (!row) return;
+
+    const list = row.closest('.milestone-tasks-list');
+    if (!list) return;
+
+    this.openDeleteModal('Tem certeza que deseja remover esta tarefa do marco?', () => {
       if (list.children.length === 1) {
-        const inputs = row.querySelectorAll('input');
-        if (inputs[0]) inputs[0].value = '';
-        if (inputs[1]) inputs[1].value = '';
+        const taskInput = row.querySelector('.milestone-task-search');
+        const dateInput = row.querySelector('input[type="date"]');
+        if (taskInput) taskInput.value = '';
+        row.dataset.taskKey = '';
+        if (dateInput) dateInput.value = '';
+        this.refreshMilestoneConfiguration();
         return;
       }
-      row.remove();
-    });
 
-    list.appendChild(row);
+      row.remove();
+      this.refreshMilestoneConfiguration();
+    });
   },
 
   removeMilestone: function (element) {
@@ -1474,87 +2038,278 @@ var projectPlanningController = {
       const milestoneCard = element.closest('.milestone-card');
       if (milestoneCard) {
         milestoneCard.remove();
+        this.refreshMilestoneConfiguration();
       }
     });
   },
 
   initMilestoneSortables: function () {
     if (typeof window.Sortable === 'undefined') return;
-
     const container = document.getElementById('milestones-container');
-    if (!container) return;
-    if (container.dataset.sortableReady === 'true') return;
+    if (!container || container.dataset.sortableReady === 'true') return;
 
     try {
       Sortable.create(container, {
         animation: 150,
         handle: '.milestone-handle',
-        draggable: '.milestone-card'
+        draggable: '.milestone-card',
+        onEnd: () => this.refreshMilestoneConfiguration()
       });
       container.dataset.sortableReady = 'true';
-    } catch (error) {}
+    } catch (error) { }
+
+    container.querySelectorAll('.milestone-tasks-list').forEach((taskList) => {
+      if (taskList.dataset.sortableReady === 'true') return;
+      try {
+        Sortable.create(taskList, {
+          animation: 150,
+          handle: '.milestone-task-handle',
+          draggable: '.milestone-task-row',
+          onEnd: () => this.refreshMilestoneConfiguration()
+        });
+        taskList.dataset.sortableReady = 'true';
+      } catch (error) { }
+    });
   },
 
-  // ---------------------------
-  // Riscos e Dependências Externas
-  // ---------------------------
+  getRiskVisual: function (level) {
+    if (level === 'Baixo') return { card: 'border border-green-200 rounded-lg p-4 bg-white', title: 'text-green-800', badge: 'px-2 py-1 bg-green-100 text-green-800 text-xs rounded', meta: 'text-sm text-green-700 mb-2' };
+    if (level === 'Médio' || level === 'Medio') return { card: 'border border-yellow-200 rounded-lg p-4 bg-yellow-50', title: 'text-yellow-800', badge: 'px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded', meta: 'text-sm text-yellow-700 mb-2' };
+    return { card: 'border border-red-300 rounded-lg p-4 bg-white', title: 'text-red-900', badge: 'px-2 py-1 bg-red-200 text-red-900 text-xs rounded', meta: 'text-sm text-red-800 mb-2' };
+  },
+
+  requestRemoveRiskCard: function (buttonElement) {
+    const card = buttonElement.closest('.risk-item');
+    if (!card) return;
+    this.openDeleteModal('Tem certeza que deseja remover este risco?', () => card.remove());
+  },
+
+  setRiskCardData: function (card, data) {
+    card.dataset.riskTitle = this.asText(data.title);
+    card.dataset.riskLevel = this.asText(data.level) || 'Alto';
+    card.dataset.riskProbability = this.asText(data.probability) || 'Alta';
+    card.dataset.riskImpact = this.asText(data.impact) || 'Alto';
+    card.dataset.riskMitigation = this.asText(data.mitigation);
+    card.dataset.riskFallback = this.asText(data.fallback);
+  },
+
+  hydrateRiskCardData: function (card) {
+    if (card.dataset.riskTitle) return;
+    const title = this.asText(card.querySelector('h5')?.textContent);
+    const level = this.asText(card.querySelector('span')?.textContent) || 'Alto';
+    const metaText = this.asText(card.querySelector('div.text-sm')?.textContent);
+    const metaMatch = metaText.match(/Probabilidade:\s*([^|]+)\|\s*Impacto:\s*(.+)/i);
+    const probability = this.asText(metaMatch && metaMatch[1]) || 'Alta';
+    const impact = this.asText(metaMatch && metaMatch[2]) || 'Alto';
+    const detailLines = Array.from(card.querySelectorAll('div.text-sm.text-gray-700'));
+    const mitigation = this.asText(detailLines[0]?.textContent).replace('Mitigação:', '').trim();
+    const fallback = this.asText(detailLines[1]?.textContent).replace('Plano B:', '').trim();
+    this.setRiskCardData(card, { title, level, probability, impact, mitigation, fallback });
+  },
+
+  renderRiskReadOnlyCard: function (card) {
+    const title = this.asText(card.dataset.riskTitle);
+    const level = this.asText(card.dataset.riskLevel) || 'Alto';
+    const probability = this.asText(card.dataset.riskProbability) || 'Alta';
+    const impact = this.asText(card.dataset.riskImpact) || 'Alto';
+    const mitigation = this.asText(card.dataset.riskMitigation);
+    const fallback = this.asText(card.dataset.riskFallback);
+    const riskVisual = this.getRiskVisual(level);
+
+    card.className = `${riskVisual.card} risk-item`;
+    card.innerHTML = `
+      <div class="flex items-start justify-between gap-3 mb-2">
+        <h5 class="font-medium ${riskVisual.title} break-all">${this.escapeHtml(title)}</h5>
+        <span class="${riskVisual.badge} shrink-0">${this.escapeHtml(level)}</span>
+      </div>
+      <div class="${riskVisual.meta} break-all">Probabilidade: ${this.escapeHtml(probability)} | Impacto: ${this.escapeHtml(impact)}</div>
+      <div class="text-sm text-gray-700 mb-2 break-all"><strong>Mitigação:</strong> ${this.escapeHtml(mitigation || 'Não informado')}</div>
+      <div class="text-sm text-gray-700 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Não informado')}</div>
+      <div class="flex justify-end items-center gap-2 mt-2">
+        <button type="button" class="risk-edit text-blue-500 hover:text-blue-700" title="Editar risco"><i class="fa-solid fa-pen"></i></button>
+        <button type="button" class="risk-remove text-red-400 hover:text-red-600" title="Remover risco"><i class="fa-solid fa-trash"></i></button>
+      </div>
+    `;
+    card.querySelector('.risk-edit')?.addEventListener('click', () => this.startEditRiskCard(card));
+    card.querySelector('.risk-remove')?.addEventListener('click', (event) => this.requestRemoveRiskCard(event.currentTarget));
+  },
+
+  renderRiskEditCard: function (card) {
+    const title = this.asText(card.dataset.riskTitle);
+    const level = this.asText(card.dataset.riskLevel) || 'Alto';
+    const probability = this.asText(card.dataset.riskProbability) || 'Alta';
+    const impact = this.asText(card.dataset.riskImpact) || 'Alto';
+    const mitigation = this.asText(card.dataset.riskMitigation);
+    const fallback = this.asText(card.dataset.riskFallback);
+
+    card.className = 'border border-gray-200 rounded-lg p-4 bg-white risk-item';
+    card.innerHTML = `
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <input data-field="risk-title" type="text" value="${this.escapeHtml(title)}" placeholder="Novo risco" class="font-medium text-bevap-navy bg-transparent border-none p-0 focus:outline-none w-full">
+        <button type="button" class="risk-remove text-red-400 hover:text-red-600" title="Remover risco"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div class="flex items-center gap-2"><span class="text-gray-600 min-w-[84px]">Nível:</span><select data-field="risk-level" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none"><option ${level === 'Baixo' ? 'selected' : ''}>Baixo</option><option ${(level === 'Médio' || level === 'Medio') ? 'selected' : ''}>Médio</option><option ${level === 'Alto' ? 'selected' : ''}>Alto</option></select></div>
+          <div class="flex items-center gap-2 text-gray-600"><span class="min-w-[84px]">Probabilidade:</span><select data-field="risk-probability" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none"><option ${probability === 'Baixa' ? 'selected' : ''}>Baixa</option><option ${(probability === 'Média' || probability === 'Media') ? 'selected' : ''}>Média</option><option ${probability === 'Alta' ? 'selected' : ''}>Alta</option></select></div>
+          <div class="flex items-center gap-2 text-gray-600"><span class="min-w-[84px]">Impacto:</span><select data-field="risk-impact" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none"><option ${impact === 'Baixo' ? 'selected' : ''}>Baixo</option><option ${(impact === 'Médio' || impact === 'Medio') ? 'selected' : ''}>Médio</option><option ${impact === 'Alto' ? 'selected' : ''}>Alto</option></select></div>
+        </div>
+        <div class="space-y-1 text-gray-700"><strong class="block">Mitigação:</strong><textarea data-field="risk-mitigation" placeholder="Descreva a mitigação..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${this.escapeHtml(mitigation)}</textarea></div>
+        <div class="space-y-1 text-gray-700"><strong class="block">Plano B:</strong><textarea data-field="risk-fallback" placeholder="Descreva o plano B..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${this.escapeHtml(fallback)}</textarea></div>
+        <button type="button" class="risk-confirm px-3 py-1.5 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors text-sm shrink-0"><i class="fa-solid fa-check mr-1"></i>Confirmar</button>
+      </div>
+    `;
+    card.querySelector('.risk-remove')?.addEventListener('click', (event) => this.requestRemoveRiskCard(event.currentTarget));
+    card.querySelector('.risk-confirm')?.addEventListener('click', () => this.confirmRiskCard(card));
+  },
+
+  startEditRiskCard: function (card) {
+    if (!card) return;
+    this.hydrateRiskCardData(card);
+    this.renderRiskEditCard(card);
+  },
+
+  confirmRiskCard: function (card) {
+    if (!card) return;
+    const title = this.asText(card.querySelector('[data-field="risk-title"]')?.value);
+    const level = this.asText(card.querySelector('[data-field="risk-level"]')?.value) || 'Alto';
+    const probability = this.asText(card.querySelector('[data-field="risk-probability"]')?.value) || 'Alta';
+    const impact = this.asText(card.querySelector('[data-field="risk-impact"]')?.value) || 'Alto';
+    const mitigation = this.asText(card.querySelector('[data-field="risk-mitigation"]')?.value);
+    const fallback = this.asText(card.querySelector('[data-field="risk-fallback"]')?.value);
+    if (!title) { this.showToast('Preencha a descrição do risco antes de confirmar.', 'warning'); return; }
+    this.setRiskCardData(card, { title, level, probability, impact, mitigation, fallback });
+    this.renderRiskReadOnlyCard(card);
+  },
 
   addRisk: function () {
     const container = document.getElementById('risk-matrix-list');
     if (!container) return;
-
     const card = document.createElement('div');
-    card.className = 'border border-gray-200 rounded-lg p-4 bg-white';
+    card.classList.add('risk-item');
+    this.setRiskCardData(card, { title: '', level: 'Alto', probability: 'Alta', impact: 'Alto', mitigation: '', fallback: '' });
+
+    // CORREÇÃO: Primeiro anexa no HTML
+    container.appendChild(card);
+
+    // Depois renderiza o conteúdo
+    this.renderRiskEditCard(card);
+  },
+
+  getDependencyStatusBadge: function (status) {
+    if (status === 'Concluída' || status === 'Concluida') return '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded"><i class="fa-solid fa-check mr-1"></i>Concluída</span>';
+    if (status === 'Em andamento') return '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded"><i class="fa-solid fa-spinner mr-1"></i>Em andamento</span>';
+    if (status === 'Bloqueada') return '<span class="px-2 py-1 bg-red-100 text-red-800 text-xs rounded"><i class="fa-solid fa-ban mr-1"></i>Bloqueada</span>';
+    return '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded"><i class="fa-solid fa-clock mr-1"></i>Pendente</span>';
+  },
+
+  requestRemoveDependencyCard: function (buttonElement) {
+    const card = buttonElement.closest('.dependency-item');
+    if (!card) return;
+    this.openDeleteModal('Tem certeza que deseja remover esta dependência?', () => card.remove());
+  },
+
+  setDependencyCardData: function (card, data) {
+    card.dataset.dependencyTitle = this.asText(data.title);
+    card.dataset.dependencyStatus = this.asText(data.status) || 'Pendente';
+    card.dataset.dependencyOwner = this.asText(data.owner);
+    card.dataset.dependencyMitigation = this.asText(data.mitigation);
+    card.dataset.dependencyFallback = this.asText(data.fallback);
+  },
+
+  hydrateDependencyCardData: function (card) {
+    if (card.dataset.dependencyTitle) return;
+    const title = this.asText(card.querySelector('h5')?.textContent);
+    const status = this.asText(card.querySelector('span')?.textContent).trim() || 'Pendente';
+    const owner = this.asText(card.querySelector('div.text-sm.text-gray-600')?.textContent).replace('Responsável:', '').trim();
+    const detailLines = Array.from(card.querySelectorAll('div.text-sm.text-gray-700'));
+    const mitigation = this.asText(detailLines[0]?.textContent).replace('Mitigação:', '').trim();
+    const fallback = this.asText(detailLines[1]?.textContent).replace('Plano B:', '').trim();
+    this.setDependencyCardData(card, { title, status, owner, mitigation, fallback });
+  },
+
+  renderDependencyReadOnlyCard: function (card) {
+    const title = this.asText(card.dataset.dependencyTitle);
+    const status = this.asText(card.dataset.dependencyStatus) || 'Pendente';
+    const owner = this.asText(card.dataset.dependencyOwner);
+    const mitigation = this.asText(card.dataset.dependencyMitigation);
+    const fallback = this.asText(card.dataset.dependencyFallback);
+
+    card.className = 'border border-gray-200 rounded-lg p-4 dependency-item';
     card.innerHTML = `
-      <div class="flex items-center justify-between mb-3">
-        <h5 class="font-medium text-bevap-navy">Novo risco</h5>
-        <button type="button" class="text-red-400 hover:text-red-600" data-action="remove-risk" title="Remover">
-          <i class="fa-solid fa-trash"></i>
-        </button>
+      <div class="flex items-start justify-between gap-3 mb-2">
+        <h5 class="font-medium text-bevap-navy break-all">${this.escapeHtml(title)}</h5>
+        ${this.getDependencyStatusBadge(status)}
       </div>
-      <div class="grid grid-cols-1 gap-3">
-        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Descrição do risco">
-        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Probabilidade / Impacto (ex.: Alta/Alto)">
-        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Mitigação"></textarea>
-        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Plano B"></textarea>
+      <div class="text-sm text-gray-600 mb-1 break-all">Responsável: ${this.escapeHtml(owner || 'Não informado')}</div>
+      <div class="text-sm text-gray-700 mb-1 break-all"><strong>Mitigação:</strong> ${this.escapeHtml(mitigation || 'Não informado')}</div>
+      <div class="text-sm text-gray-700 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Não informado')}</div>
+      <div class="flex justify-end items-center gap-2 mt-2">
+        <button type="button" class="dependency-edit text-blue-500 hover:text-blue-700" title="Editar dependência"><i class="fa-solid fa-pen"></i></button>
+        <button type="button" class="dependency-remove text-red-400 hover:text-red-600" title="Remover dependência"><i class="fa-solid fa-trash"></i></button>
       </div>
     `;
+    card.querySelector('.dependency-edit')?.addEventListener('click', () => this.startEditDependencyCard(card));
+    card.querySelector('.dependency-remove')?.addEventListener('click', (event) => this.requestRemoveDependencyCard(event.currentTarget));
+  },
 
-    card.querySelector('[data-action="remove-risk"]').addEventListener('click', () => {
-      this.openDeleteModal('Tem certeza que deseja remover este risco?', () => card.remove());
-    });
+  renderDependencyEditCard: function (card) {
+    const title = this.asText(card.dataset.dependencyTitle);
+    const status = this.asText(card.dataset.dependencyStatus) || 'Pendente';
+    const owner = this.asText(card.dataset.dependencyOwner);
+    const mitigation = this.asText(card.dataset.dependencyMitigation);
+    const fallback = this.asText(card.dataset.dependencyFallback);
 
-    container.prepend(card);
+    card.className = 'border border-gray-200 rounded-lg p-4 dependency-item';
+    card.innerHTML = `
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <input data-field="dependency-title" type="text" value="${this.escapeHtml(title)}" placeholder="Nova dependência" class="font-medium text-bevap-navy bg-transparent border-none p-0 focus:outline-none w-full">
+        <button type="button" class="dependency-remove text-red-400 hover:text-red-600" title="Remover dependência"><i class="fa-solid fa-trash"></i></button>
+      </div>
+      <div class="space-y-3 text-sm">
+        <div class="flex items-center gap-2"><span class="text-gray-600 min-w-[84px]">Status:</span><select data-field="dependency-status" class="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded border-none focus:outline-none"><option ${status === 'Pendente' ? 'selected' : ''}>Pendente</option><option ${status === 'Em andamento' ? 'selected' : ''}>Em andamento</option><option ${status === 'Bloqueada' ? 'selected' : ''}>Bloqueada</option><option ${(status === 'Concluída' || status === 'Concluida') ? 'selected' : ''}>Concluída</option></select></div>
+        <div class="space-y-1 text-gray-600"><span class="block">Responsável:</span>${this.getResponsibleSearchFieldHTML(owner, 'dependency-owner-input', 'dependency-owner')}</div>
+        <div class="space-y-1 text-gray-700"><strong class="block">Mitigação:</strong><textarea data-field="dependency-mitigation" placeholder="Descreva a mitigação..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${this.escapeHtml(mitigation)}</textarea></div>
+        <div class="space-y-1 text-gray-700"><strong class="block">Plano B:</strong><textarea data-field="dependency-fallback" placeholder="Descreva o plano B..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${this.escapeHtml(fallback)}</textarea></div>
+        <button type="button" class="dependency-confirm px-3 py-1.5 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors text-sm shrink-0"><i class="fa-solid fa-check mr-1"></i>Confirmar</button>
+      </div>
+    `;
+    this.initAllTagFilters(card);
+    card.querySelector('.dependency-remove')?.addEventListener('click', (event) => this.requestRemoveDependencyCard(event.currentTarget));
+    card.querySelector('.dependency-confirm')?.addEventListener('click', () => this.confirmDependencyCard(card));
+  },
+
+  startEditDependencyCard: function (card) {
+    if (!card) return;
+    this.hydrateDependencyCardData(card);
+    this.renderDependencyEditCard(card);
+  },
+
+  confirmDependencyCard: function (card) {
+    if (!card) return;
+    const title = this.asText(card.querySelector('[data-field="dependency-title"]')?.value);
+    const status = this.asText(card.querySelector('[data-field="dependency-status"]')?.value) || 'Pendente';
+    const owner = this.asText(card.querySelector('[data-field="dependency-owner"]')?.value);
+    const mitigation = this.asText(card.querySelector('[data-field="dependency-mitigation"]')?.value);
+    const fallback = this.asText(card.querySelector('[data-field="dependency-fallback"]')?.value);
+    if (!title) { this.showToast('Preencha a dependência antes de confirmar.', 'warning'); return; }
+    this.setDependencyCardData(card, { title, status, owner, mitigation, fallback });
+    this.renderDependencyReadOnlyCard(card);
   },
 
   addExternalDependency: function () {
     const container = document.getElementById('external-dependencies-list');
     if (!container) return;
-
     const card = document.createElement('div');
-    card.className = 'border border-gray-200 rounded-lg p-4 bg-white';
-    card.innerHTML = `
-      <div class="flex items-center justify-between mb-3">
-        <h5 class="font-medium text-bevap-navy">Nova dependência</h5>
-        <button type="button" class="text-red-400 hover:text-red-600" data-action="remove-dependency" title="Remover">
-          <i class="fa-solid fa-trash"></i>
-        </button>
-      </div>
-      <div class="grid grid-cols-1 gap-3">
-        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Descrição da dependência">
-        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Responsável">
-        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Mitigação"></textarea>
-        <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows="2" placeholder="Plano B"></textarea>
-      </div>
-    `;
+    card.classList.add('dependency-item');
+    this.setDependencyCardData(card, { title: '', status: 'Pendente', owner: '', mitigation: '', fallback: '' });
 
-    card.querySelector('[data-action="remove-dependency"]').addEventListener('click', () => {
-      this.openDeleteModal('Tem certeza que deseja remover esta dependência?', () => card.remove());
-    });
+    // CORREÇÃO: Primeiro anexa o card no HTML da página
+    container.appendChild(card);
 
-    container.prepend(card);
+    // Depois injeta o conteúdo interno e INICIALIZA os componentes (TagInputFilter)
+    this.renderDependencyEditCard(card);
   },
-
   // ---------------------------
   // Plano de Comunicação
   // ---------------------------
@@ -1563,42 +2318,79 @@ var projectPlanningController = {
     const body = document.getElementById('communication-plan-body');
     if (!body) return;
 
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td class="px-3 py-2 align-top border-r border-gray-200">
-        <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="Público">
-      </td>
-      <td class="w-36 px-3 py-2 align-top border-r border-gray-200">
-        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white focus:outline-none">
-          <option value="E-mail">E-mail</option>
-          <option value="Daily">Daily</option>
-          <option value="Reunião">Reunião</option>
-          <option value="Teams">Teams</option>
-          <option value="Comitê">Comitê</option>
-        </select>
-      </td>
-      <td class="w-36 px-3 py-2 align-top border-r border-gray-200">
-        <select class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white focus:outline-none">
-          <option value="Diária">Diária</option>
-          <option value="Semanal" selected>Semanal</option>
-          <option value="Quinzenal">Quinzenal</option>
-          <option value="Mensal">Mensal</option>
-          <option value="Sob demanda">Sob demanda</option>
-        </select>
-      </td>
-      <td class="px-2 py-2 text-center align-top">
-        <button type="button" class="text-red-400 hover:text-red-600" title="Remover linha" data-action="remove-comm-row">
-          <i class="fa-solid fa-trash"></i>
-        </button>
-      </td>
-    `;
-
-    row.querySelector('[data-action="remove-comm-row"]').addEventListener('click', () => {
-      this.openDeleteModal('Tem certeza que deseja remover esta linha do plano de comunicação?', () => row.remove());
-    });
-
-    body.appendChild(row);
+    this._communicationPlanData.push({ audience: [], channel: 'E-mail', frequency: 'Semanal' });
+    this.renderCommunicationPlanTable();
   },
+
+  addCommunicationAudience: function (index, stakeholderName) {
+    const row = this._communicationPlanData[index];
+    if (!row) return;
+    const selected = stakeholderName?.trim();
+    if (!selected) return;
+    const current = this.normalizeStakeholderField(row.audience);
+    if (!current.includes(selected)) {
+      row.audience = [...current, selected];
+      this.renderCommunicationPlanTable();
+    }
+  },
+
+  removeCommunicationAudience: function (index, stakeholderName) {
+    const row = this._communicationPlanData[index];
+    if (!row) return;
+    row.audience = this.normalizeStakeholderField(row.audience).filter((name) => name !== stakeholderName);
+    this.renderCommunicationPlanTable();
+  },
+
+  renderCommunicationPlanTable: function () {
+    const body = document.getElementById('communication-plan-body');
+    if (!body) return;
+
+    body.innerHTML = this._communicationPlanData.map((row, index) => {
+      const channelOptions = ['E-mail', 'Daily', 'Reunião', 'Teams', 'Comitê']
+        .map(o => `<option value="${this.escapeHtml(o)}" ${row.channel === o ? 'selected' : ''}>${this.escapeHtml(o)}</option>`)
+        .join('');
+
+      const frequencyOptions = ['Diária', 'Semanal', 'Quinzenal', 'Mensal', 'Sob demanda']
+        .map(o => `<option value="${this.escapeHtml(o)}" ${row.frequency === o ? 'selected' : ''}>${this.escapeHtml(o)}</option>`)
+        .join('');
+
+      return `
+        <tr>
+          <td class="px-3 py-2 align-top border-r border-gray-200">
+            <div class="comm-tag-mount w-full" data-index="${index}"></div>
+            <div class="space-y-1 min-h-[34px] mt-2">
+              ${row.audience.length ? row.audience.map(name => `
+                <div class="flex items-center justify-between gap-2 px-2 py-1 rounded border border-gray-200 bg-white text-xs text-gray-700">
+                  <span class="block text-left whitespace-normal break-words flex-1">${this.escapeHtml(name)}</span>
+                  <button type="button" onclick="projectPlanningController.removeCommunicationAudience(${index}, '${this.escapeHtml(name)}')" class="shrink-0 text-red-500 hover:text-red-700">
+                    <i class="fa-solid fa-xmark text-[11px]"></i>
+                  </button>
+                </div>
+              `).join('') : '<span class="text-xs text-gray-400">Ninguém adicionado</span>'}
+            </div>
+          </td>
+          <td class="w-36 px-3 py-2 align-top border-r border-gray-200">
+            <select onchange="projectPlanningController._communicationPlanData[${index}].channel = this.value" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white focus:outline-none">
+              ${channelOptions}
+            </select>
+          </td>
+          <td class="w-36 px-3 py-2 align-top border-r border-gray-200">
+            <select onchange="projectPlanningController._communicationPlanData[${index}].frequency = this.value" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 bg-white focus:outline-none">
+              ${frequencyOptions}
+            </select>
+          </td>
+          <td class="px-2 py-2 text-center align-top">
+            <button onclick="projectPlanningController._communicationPlanData.splice(${index}, 1); projectPlanningController.renderCommunicationPlanTable()" class="text-red-400 hover:text-red-600" title="Remover linha">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    this.initAllTagFilters(body);
+  },
+
 
   // ---------------------------
   // RACI + Alocação (baseado no protótipo)
@@ -1621,22 +2413,27 @@ var projectPlanningController = {
     return phaseItems.map((phaseItem, index) => {
       const phasePanel = phaseItem.querySelector('.wbs-panel-content');
       const phaseName = this.asText(phaseItem.querySelector('.wbs-phase-name-input')?.value) || `Fase ${index + 1}`;
-      const responsible = this.asText(phasePanel?.querySelector('.responsible-search-input')?.value);
+      const responsible = this.asText(phasePanel?.querySelector('.responsible-input')?.value);
       const effort = this.parseNumber(phasePanel?.querySelector('.wbs-phase-effort')?.value);
 
-      const taskResponsibles = Array.from(phaseItem.querySelectorAll('.wbs-subtask .responsible-search-input') || [])
+      const taskResponsibles = Array.from(phaseItem.querySelectorAll('.wbs-subtask .responsible-input') || [])
         .map((inputEl) => this.asText(inputEl && inputEl.value))
         .filter(Boolean);
 
-      const responsibles = Array.from(new Set([responsible, ...taskResponsibles].filter(Boolean)));
-      return { phaseName, responsible, effort, responsibles };
+      return {
+        phaseName,
+        responsible,
+        effort,
+        taskResponsibles: Array.from(new Set(taskResponsibles)),
+        responsibles: Array.from(new Set([responsible, ...taskResponsibles].filter(Boolean)))
+      };
     });
   },
 
   getTeamProfileByMember: function (memberName) {
     const normalizedName = this.asText(memberName).toLowerCase();
     if (!normalizedName) return 'TI';
-    if (normalizedName.includes('techpartners')) return 'Fornecedor';
+    if (normalizedName.includes('techpartners') || normalizedName.includes('fornecedor')) return 'Fornecedor';
     if (normalizedName.includes('diretoria') || normalizedName.includes('solicitante') || normalizedName.includes('negócio') || normalizedName.includes('negocio')) {
       return 'Negócio';
     }
@@ -1693,77 +2490,40 @@ var projectPlanningController = {
       }));
   },
 
-  syncRaciMatrixWithWbsPhasesData: function (phasesBase, existingRows, removedStakeholdersByPhase) {
-    const phases = Array.isArray(phasesBase) ? phasesBase : [];
-    const existing = Array.isArray(existingRows) ? existingRows : [];
-    const removedMap = removedStakeholdersByPhase instanceof Map ? removedStakeholdersByPhase : new Map();
+  syncRaciWithMilestones: function () {
+    const milestones = this.collectMilestonesFromDom();
+    const existingRowsMap = new Map(this._raciMatrixData.map(r => [this.getRaciPhaseKey(r.phase), r]));
 
-    const activePhaseKeys = new Set(phases.map((phase) => this.getRaciPhaseKey(phase.phaseName)));
-    const nextRemovedMap = new Map(
-      Array.from(removedMap.entries()).filter(([phaseKey]) => activePhaseKeys.has(phaseKey))
-    );
-
-    const existingByPhase = new Map(
-      existing.map((row) => [
-        this.asText(row && row.phase),
-        {
-          phase: this.asText(row && row.phase),
-          r: this.normalizeStakeholderField(row && row.r),
-          a: this.normalizeStakeholderField(row && row.a),
-          c: this.normalizeStakeholderField(row && row.c),
-          i: this.normalizeStakeholderField(row && row.i)
-        }
-      ])
-    );
-
-    const nextRows = phases.map((phase, index) => {
-      const phaseName = this.asText(phase && phase.phaseName) || `Fase ${index + 1}`;
-      const existingRow = existingByPhase.get(phaseName);
-      const defaultR = Array.from(new Set((Array.isArray(phase && phase.responsibles) ? phase.responsibles : [])
-        .map((n) => this.asText(n)).filter(Boolean)));
-
-      if (!existingRow) {
-        return {
-          phase: phaseName,
-          r: defaultR,
-          a: [],
-          c: [],
-          i: []
-        };
+    this._raciMatrixData = milestones.map((m, index) => {
+      const phaseName = this.asText(m.name) || `Marco ${index + 1}`;
+      const key = this.getRaciPhaseKey(phaseName);
+      if (existingRowsMap.has(key)) {
+        return { ...existingRowsMap.get(key), phase: phaseName };
       }
-
-      const phaseKey = this.getRaciPhaseKey(phaseName);
-      const removed = nextRemovedMap.get(phaseKey) || new Set();
-      const preservedDefaultR = defaultR.filter((name) => !removed.has(name));
-      const existingR = this.normalizeStakeholderField(existingRow.r).filter((name) => !removed.has(name));
-
-      return {
-        ...existingRow,
-        phase: phaseName,
-        r: Array.from(new Set([...preservedDefaultR, ...existingR]))
-      };
+      return { phase: phaseName, r: [], a: [], c: [], i: [] };
     });
-
-    return { rows: nextRows, removedByPhase: nextRemovedMap };
   },
 
   buildWbsSnapshotFromDom: function () {
     const container = document.getElementById('wbs-container');
     const phases = [];
     if (!container) {
-      return { phases: [] };
+      return { phases: [], summary: { totalEffortHours: 0, totalDurationDays: 0 } };
     }
+
+    const summary = { totalEffortHours: 0, totalDurationDays: 0 };
 
     Array.from(container.querySelectorAll(':scope > .wbs-item')).forEach((phaseEl, index) => {
       const panel = phaseEl.querySelector('.wbs-panel-content');
       const name = this.asText(phaseEl.querySelector('.wbs-phase-name-input')?.value) || `Fase ${index + 1}`;
-      const responsible = this.asText(panel?.querySelector('.responsible-search-input')?.value);
+      const responsible = this.asText(panel?.querySelector('.responsible-input')?.value);
       const effortHours = this.parseNumber(panel?.querySelector('.wbs-phase-effort')?.value);
+      const durationDays = this.parseNumber(panel?.querySelector('.wbs-phase-duration')?.value);
 
       const tasks = [];
       phaseEl.querySelectorAll('.subtask-container .wbs-subtask').forEach((taskEl) => {
         tasks.push({
-          responsible: this.asText(taskEl.querySelector('.responsible-search-input')?.value),
+          responsible: this.asText(taskEl.querySelector('.responsible-input')?.value),
           effortHours: this.parseNumber(taskEl.querySelector('.task-effort')?.value)
         });
       });
@@ -1772,137 +2532,20 @@ var projectPlanningController = {
         name,
         responsible,
         effortHours,
+        durationDays,
         tasks
       });
+
+      summary.totalEffortHours += effortHours;
+      summary.totalDurationDays += durationDays;
     });
 
-    return { phases };
+    return { phases, summary };
   },
 
-  syncRaciAndAllocationInternal: function () {
-    const phasesBase = this.getWbsPhaseBaseDataFromDom();
-
-    const result = this.syncRaciMatrixWithWbsPhasesData(
-      phasesBase,
-      this._raciMatrixData,
-      this._raciRemovedStakeholdersByPhase
-    );
-
-    this._raciMatrixData = result.rows;
-    this._raciRemovedStakeholdersByPhase = result.removedByPhase;
-
+  syncTeamAllocationInternal: function () {
     const wbsSnapshot = this.buildWbsSnapshotFromDom();
     this._teamAllocationData = this.computeTeamAllocationFromWbsPayload(wbsSnapshot);
-  },
-
-  getAvailableStakeholderOptions: function (selectedNames) {
-    const selectedSet = new Set(this.normalizeStakeholderField(selectedNames));
-    return (Array.isArray(this._responsibleOptions) ? this._responsibleOptions : []).filter((name) => !selectedSet.has(name));
-  },
-
-  getRaciStakeholderSearchFieldHTML: function (index, field) {
-    return `
-      <div class="raci-stakeholder-search-field relative" data-raci-index="${index}" data-raci-field="${this.escapeHtml(field)}">
-        <div class="relative">
-          <input type="text" value="" class="raci-stakeholder-search-input w-full px-2.5 py-2 pr-16 border border-gray-300 rounded-lg text-xs bg-white" placeholder="Adicionar...">
-          <button type="button" class="raci-stakeholder-search-clear hidden absolute top-1/2 right-7 -translate-y-1/2 text-red-500 hover:text-red-700 px-1" title="Limpar">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-          <button type="button" class="raci-stakeholder-search-toggle absolute top-1/2 right-1 -translate-y-1/2 text-gray-500 hover:text-gray-700 px-1" title="Abrir opções">
-            <i class="fa-solid fa-chevron-down text-[10px]"></i>
-          </button>
-        </div>
-        <div class="raci-stakeholder-search-dropdown hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-56 overflow-y-auto"></div>
-      </div>
-    `;
-  },
-
-  getRaciStakeholderChipsHTML: function (index, field, names) {
-    if (!Array.isArray(names) || !names.length) {
-      return '<span class="text-xs text-gray-400">Nenhum selecionado</span>';
-    }
-
-    return names.map((name) => {
-      const safeName = this.escapeHtml(name);
-      return `
-        <div title="${safeName}" class="flex items-center justify-between gap-2 w-full px-2 py-1 rounded-md border border-gray-200 bg-white text-xs text-gray-700">
-          <span class="block text-left whitespace-normal break-words flex-1">${safeName}</span>
-          <button type="button" class="raci-chip-remove shrink-0 text-red-500 hover:text-red-700" title="Remover" data-index="${index}" data-field="${this.escapeHtml(field)}" data-name="${safeName}">
-            <i class="fa-solid fa-xmark text-[11px]"></i>
-          </button>
-        </div>
-      `;
-    }).join('');
-  },
-
-  renderRaciMatrixTable: function () {
-    this.syncRaciAndAllocationInternal();
-
-    const body = document.getElementById('raci-matrix-body');
-    if (!body) return;
-
-    if (!this._raciMatrixData.length) {
-      body.innerHTML = '<div class="text-sm text-gray-500">Adicione ao menos uma fase na WBS para gerar a matriz RACI.</div>';
-      return;
-    }
-
-    body.innerHTML = this._raciMatrixData.map((row, index) => `
-      <div class="border border-gray-200 rounded-lg">
-        <div class="px-3 py-2 bg-gray-50 border-b border-gray-200">
-          <p class="text-base text-gray-700"><span class="font-semibold text-gray-600">Fase:</span> ${this.escapeHtml(row.phase)}</p>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-4">
-          <div class="p-2 border-b md:border-b-0 md:border-r border-gray-200 align-top">
-            <div class="text-xs font-semibold text-gray-600 mb-1 text-center">R</div>
-            <div class="space-y-1.5">
-              ${this.getRaciStakeholderSearchFieldHTML(index, 'r')}
-              <div class="space-y-1 min-h-[34px]">
-                ${this.getRaciStakeholderChipsHTML(index, 'r', this.normalizeStakeholderField(row.r))}
-              </div>
-            </div>
-          </div>
-          <div class="p-2 border-b md:border-b-0 md:border-r border-gray-200 align-top">
-            <div class="text-xs font-semibold text-gray-600 mb-1 text-center">A</div>
-            <div class="space-y-1.5">
-              ${this.getRaciStakeholderSearchFieldHTML(index, 'a')}
-              <div class="space-y-1 min-h-[34px]">
-                ${this.getRaciStakeholderChipsHTML(index, 'a', this.normalizeStakeholderField(row.a))}
-              </div>
-            </div>
-          </div>
-          <div class="p-2 border-b md:border-b-0 md:border-r border-gray-200 align-top">
-            <div class="text-xs font-semibold text-gray-600 mb-1 text-center">C</div>
-            <div class="space-y-1.5">
-              ${this.getRaciStakeholderSearchFieldHTML(index, 'c')}
-              <div class="space-y-1 min-h-[34px]">
-                ${this.getRaciStakeholderChipsHTML(index, 'c', this.normalizeStakeholderField(row.c))}
-              </div>
-            </div>
-          </div>
-          <div class="p-2 align-top">
-            <div class="text-xs font-semibold text-gray-600 mb-1 text-center">I</div>
-            <div class="space-y-1.5">
-              ${this.getRaciStakeholderSearchFieldHTML(index, 'i')}
-              <div class="space-y-1 min-h-[34px]">
-                ${this.getRaciStakeholderChipsHTML(index, 'i', this.normalizeStakeholderField(row.i))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `).join('');
-
-    this.initRaciStakeholderSearchFields(body);
-
-    body.querySelectorAll('.raci-chip-remove').forEach((btn) => {
-      btn.addEventListener('click', (event) => {
-        event.preventDefault();
-        const index = Number(btn.dataset.index);
-        const field = this.asText(btn.dataset.field);
-        const name = this.asText(btn.dataset.name);
-        this.removeRaciStakeholder(index, field, name);
-      });
-    });
   },
 
   addRaciStakeholder: function (index, field, stakeholderName) {
@@ -1931,24 +2574,6 @@ var projectPlanningController = {
     this.renderRaciMatrixTable();
   },
 
-  addRaciStakeholderFromSearch: function (index, field, inputElement) {
-    const typedValue = this.asText(inputElement && inputElement.value);
-    if (!typedValue) return;
-    const row = this._raciMatrixData[index];
-    if (!row) return;
-
-    const selectedNames = this.normalizeStakeholderField(row[field]);
-    const available = this.getAvailableStakeholderOptions(selectedNames);
-    const matched = available.find((name) => name.toLowerCase() === typedValue.toLowerCase());
-    if (!matched) {
-      this.showToast('Selecione uma pessoa válida da lista.', 'warning');
-      return;
-    }
-
-    inputElement.value = '';
-    this.addRaciStakeholder(index, field, matched);
-  },
-
   removeRaciStakeholder: function (index, field, stakeholderName) {
     const row = this._raciMatrixData[index];
     if (!row) return;
@@ -1965,144 +2590,44 @@ var projectPlanningController = {
     this.renderRaciMatrixTable();
   },
 
-  refreshRaciStakeholderSearchField: function (fieldElement) {
-    if (!fieldElement) return;
+  renderRaciMatrixTable: function () {
+    this.syncRaciWithMilestones();
 
-    const index = Number(fieldElement.dataset.raciIndex);
-    const field = fieldElement.dataset.raciField || '';
-    if (Number.isNaN(index) || !field) return;
+    const body = document.getElementById('raci-matrix-body');
+    if (!body) return;
 
-    const row = this._raciMatrixData[index];
-    if (!row) return;
-
-    const searchInput = fieldElement.querySelector('.raci-stakeholder-search-input');
-    const clearButton = fieldElement.querySelector('.raci-stakeholder-search-clear');
-    const toggleButton = fieldElement.querySelector('.raci-stakeholder-search-toggle');
-    const dropdown = fieldElement.querySelector('.raci-stakeholder-search-dropdown');
-    if (!searchInput || !dropdown) return;
-
-    const selectedNames = this.normalizeStakeholderField(row[field]);
-    const availableOptions = this.getAvailableStakeholderOptions(selectedNames);
-    const searchText = (searchInput.value || '').trim();
-    const searchLower = searchText.toLowerCase();
-    const filtered = searchText
-      ? availableOptions.filter((name) => name.toLowerCase().includes(searchLower))
-      : availableOptions;
-
-    const hasInputValue = Boolean(searchText);
-    if (clearButton) {
-      clearButton.classList.toggle('hidden', !hasInputValue);
-    }
-    if (toggleButton) {
-      toggleButton.classList.toggle('hidden', hasInputValue);
-    }
-
-    const isFocused = document.activeElement === searchInput;
-    const shouldShowDropdown = fieldElement.dataset.dropdownOpen === 'true' && (isFocused || hasInputValue);
-
-    if (!shouldShowDropdown) {
-      dropdown.classList.add('hidden');
-      dropdown.innerHTML = '';
+    if (!this._raciMatrixData.length) {
+      body.innerHTML = '<div class="text-sm text-gray-500">Adicione ao menos um Marco para gerar a matriz RACI.</div>';
       return;
     }
 
-    if (!filtered.length) {
-      dropdown.innerHTML = '<div class="px-3 py-2 text-sm text-gray-500">Nenhuma pessoa encontrada</div>';
-      dropdown.classList.remove('hidden');
-      return;
-    }
+    body.innerHTML = this._raciMatrixData.map((row, index) => `
+      <div class="border border-gray-200 rounded-lg">
+        <div class="px-3 py-2 bg-gray-50 border-b border-gray-200">
+          <p class="text-base text-gray-700"><span class="font-semibold text-gray-600">Marco:</span> ${this.escapeHtml(row.phase)}</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4">
+          ${['r', 'a', 'c', 'i'].map(f => `
+            <div class="p-2 border-b md:border-b-0 md:border-r border-gray-200 align-top">
+              <div class="text-xs font-semibold text-gray-600 mb-1 text-center">${f.toUpperCase()}</div>
+              <div class="raci-tag-mount w-full" data-index="${index}" data-field="${f}"></div>
+              <div class="space-y-1 min-h-[34px] mt-2">
+                ${row[f].length ? row[f].map(name => `
+                  <div title="${this.escapeHtml(name)}" class="flex items-center justify-between gap-2 w-full px-2 py-1 rounded-md border border-gray-200 bg-white text-xs text-gray-700">
+                    <span class="block text-left whitespace-normal break-words flex-1">${this.escapeHtml(name)}</span>
+                    <button type="button" onclick="projectPlanningController.removeRaciStakeholder(${index}, '${f}', '${this.escapeHtml(name)}')" class="shrink-0 text-red-500 hover:text-red-700" title="Remover">
+                      <i class="fa-solid fa-xmark text-[11px]"></i>
+                    </button>
+                  </div>
+                `).join('') : '<span class="text-xs text-gray-400">Nenhum selecionado</span>'}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
 
-    dropdown.innerHTML = filtered
-      .map((name) => `
-        <button type="button" class="raci-stakeholder-option w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" data-value="${this.escapeHtml(name)}">
-          ${this.escapeHtml(name)}
-        </button>
-      `)
-      .join('');
-
-    dropdown.classList.remove('hidden');
-
-    dropdown.querySelectorAll('.raci-stakeholder-option').forEach((optionElement) => {
-      optionElement.addEventListener('mousedown', (event) => event.preventDefault());
-      optionElement.addEventListener('click', () => {
-        const selectedValue = optionElement.getAttribute('data-value') || '';
-        if (!selectedValue) return;
-        searchInput.value = '';
-        fieldElement.dataset.dropdownOpen = 'false';
-        this.addRaciStakeholder(index, field, selectedValue);
-      });
-    });
-  },
-
-  bindRaciStakeholderSearchField: function (fieldElement) {
-    if (!fieldElement || fieldElement.dataset.eventsReady === 'true') return;
-
-    const index = Number(fieldElement.dataset.raciIndex);
-    const field = fieldElement.dataset.raciField || '';
-    if (Number.isNaN(index) || !field) return;
-
-    const searchInput = fieldElement.querySelector('.raci-stakeholder-search-input');
-    const clearButton = fieldElement.querySelector('.raci-stakeholder-search-clear');
-    const toggleButton = fieldElement.querySelector('.raci-stakeholder-search-toggle');
-    if (!searchInput) return;
-
-    searchInput.addEventListener('focus', () => {
-      fieldElement.dataset.dropdownOpen = 'true';
-      this.refreshRaciStakeholderSearchField(fieldElement);
-    });
-
-    searchInput.addEventListener('input', () => {
-      fieldElement.dataset.dropdownOpen = 'true';
-      this.refreshRaciStakeholderSearchField(fieldElement);
-    });
-
-    searchInput.addEventListener('change', () => {
-      this.addRaciStakeholderFromSearch(index, field, searchInput);
-      this.refreshRaciStakeholderSearchField(fieldElement);
-    });
-
-    searchInput.addEventListener('keydown', (event) => {
-      if (event.key !== 'Enter') return;
-      event.preventDefault();
-      this.addRaciStakeholderFromSearch(index, field, searchInput);
-      this.refreshRaciStakeholderSearchField(fieldElement);
-    });
-
-    searchInput.addEventListener('blur', () => {
-      setTimeout(() => {
-        fieldElement.dataset.dropdownOpen = 'false';
-        this.refreshRaciStakeholderSearchField(fieldElement);
-      }, 120);
-    });
-
-    if (clearButton) {
-      clearButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        searchInput.value = '';
-        fieldElement.dataset.dropdownOpen = 'false';
-        this.refreshRaciStakeholderSearchField(fieldElement);
-        searchInput.focus();
-      });
-    }
-
-    if (toggleButton) {
-      toggleButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        fieldElement.dataset.dropdownOpen = fieldElement.dataset.dropdownOpen === 'true' ? 'false' : 'true';
-        this.refreshRaciStakeholderSearchField(fieldElement);
-        searchInput.focus();
-      });
-    }
-
-    fieldElement.dataset.eventsReady = 'true';
-    this.refreshRaciStakeholderSearchField(fieldElement);
-  },
-
-  initRaciStakeholderSearchFields: function (rootElement) {
-    const root = rootElement || document;
-    root.querySelectorAll('.raci-stakeholder-search-field').forEach((fieldElement) => {
-      this.bindRaciStakeholderSearchField(fieldElement);
-    });
+    this.initAllTagFilters(body);
   },
 
   getTeamBadge: function (profile) {
@@ -2116,7 +2641,7 @@ var projectPlanningController = {
   },
 
   renderTeamAllocationList: function () {
-    this.syncRaciAndAllocationInternal();
+    this.syncTeamAllocationInternal();
 
     const container = document.getElementById('team-allocation-list');
     if (!container) return;
@@ -2210,7 +2735,7 @@ var projectPlanningController = {
     if (modal) modal.classList.add('hidden');
   },
 
-  confirmConcludePlanning: function () {
+  confirmConcludePlanning: async function () {
     this.closeConcludeModal();
 
     const errors = this.validatePlanningForConclude();
@@ -2229,23 +2754,35 @@ var projectPlanningController = {
       return;
     }
 
-    (async () => {
-      try {
-        await this.persistPlanningJsonDP({ silent: true });
+    const legacyLoading = typeof FLUIGC !== 'undefined' ? FLUIGC.loading($('#page-container')) : null;
+    if (legacyLoading) legacyLoading.show();
 
-        const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
-        await fluigService.saveAndSendTask({
-          id: processInstanceId,
-          numState: this._nextStateAfterPlanning,
-          documentId: documentId
-        });
+    try {
+      const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
+      const attachmentsPayload = await this.collectAttachmentsPayload();
+      const formDatasetName = this.asText(this._state.formName) || 'DSFormDesenvolvimentoProjetos_1778522207146';
 
-        this.showToast('Planejamento concluído e enviado para execução.', 'success');
-      } catch (error) {
-        console.error('[projectPlanningController] concludePlanning error:', error);
-        this.showToast(`Falha ao concluir: ${this.asText(error && (error.message || error)) || 'erro'}`, 'error');
-      }
-    })();
+      await fluigService.saveAndSendTask({
+        id: processInstanceId,
+        numState: this._nextStateAfterPlanning,
+        documentId: documentId,
+        datasetName: formDatasetName,
+        comments: 'Planejamento concluído via Widget',
+        attachments: attachmentsPayload
+      }, this.collectPlanningTaskFields());
+
+      this.showToast('Planejamento concluído e enviado para execução.', 'success');
+
+      setTimeout(() => {
+        location.hash = '#dashboard';
+      }, 800);
+
+    } catch (error) {
+      console.error('[projectPlanningController] concludePlanning error:', error);
+      this.showToast(`Falha ao concluir: ${this.asText(error && (error.message || error)) || 'erro'}`, 'error');
+    } finally {
+      if (legacyLoading) legacyLoading.hide();
+    }
   },
 
   validatePlanningForConclude: function () {
@@ -2283,21 +2820,21 @@ var projectPlanningController = {
       }
     }
 
-    this.syncRaciAndAllocationInternal();
+    this.syncRaciWithMilestones();
 
     for (let i = 0; i < this._raciMatrixData.length; i++) {
       const row = this._raciMatrixData[i];
-      const phaseName = this.asText(row && row.phase) || `Fase ${i + 1}`;
+      const phaseName = this.asText(row && row.phase) || `Marco ${i + 1}`;
       const r = this.normalizeStakeholderField(row && row.r);
       const a = this.normalizeStakeholderField(row && row.a);
 
       if (!r.length) {
-        issues.push({ step: 4, message: `Defina ao menos um "R" na matriz RACI para: ${phaseName}.` });
+        issues.push({ step: 4, message: `Defina ao menos um "R" na matriz RACI para o Marco: ${phaseName}.` });
         break;
       }
 
       if (!a.length) {
-        issues.push({ step: 4, message: `Defina ao menos um "A" na matriz RACI para: ${phaseName}.` });
+        issues.push({ step: 4, message: `Defina ao menos um "A" na matriz RACI para o Marco: ${phaseName}.` });
         break;
       }
     }
@@ -2327,7 +2864,7 @@ var projectPlanningController = {
     if (typeof this._pendingDeleteAction === 'function') {
       try {
         this._pendingDeleteAction();
-      } catch (error) {}
+      } catch (error) { }
     }
 
     this.closeDeleteModal();
@@ -2405,15 +2942,10 @@ var projectPlanningController = {
       throw new Error('documentId não informado');
     }
 
-    const payload = this.buildPlanningPayload();
-    const json = JSON.stringify(payload);
-
     await fluigService.saveDraft({
       mode: 'updateCardDraft',
       documentId: documentId,
-      cardData: {
-        projectPlanningJsonDP: json
-      }
+      taskFields: this.collectPlanningTaskFields()
     });
 
     if (!silent) {
@@ -2427,6 +2959,14 @@ var projectPlanningController = {
         documentId: this.asText(this._state.documentId),
         savedAt: new Date().toISOString(),
         version: 1
+      },
+      // ADICIONA ESTE BLOCO AQUI
+      checklist: {
+        eapWbs: document.getElementById('check-eap-wbs')?.checked || false,
+        milestones: document.getElementById('check-milestones')?.checked || false,
+        risks: document.getElementById('check-risks')?.checked || false,
+        raci: document.getElementById('check-raci')?.checked || false,
+        docs: document.getElementById('check-docs')?.checked || false
       },
       wbs: {
         phases: [],
@@ -2464,7 +3004,7 @@ var projectPlanningController = {
       phaseElements.forEach((phaseEl, index) => {
         const phasePanel = phaseEl.querySelector('.wbs-panel-content');
         const phaseName = this.asText(phaseEl.querySelector('.wbs-phase-name-input')?.value);
-        const phaseResponsible = this.asText(phasePanel?.querySelector('.responsible-search-input')?.value);
+        const phaseResponsible = this.asText(phasePanel?.querySelector('.responsible-input')?.value);
         const phaseEffortHours = this.parseNumber(phasePanel?.querySelector('.wbs-phase-effort')?.value);
         const phaseDurationDays = this.parseNumber(phasePanel?.querySelector('.wbs-phase-duration')?.value);
         const phaseNotes = this.asText(phasePanel?.querySelector('textarea')?.value);
@@ -2481,7 +3021,7 @@ var projectPlanningController = {
         const tasks = [];
         phaseEl.querySelectorAll('.subtask-container .wbs-subtask').forEach((taskEl, taskIndex) => {
           const taskName = this.asText(taskEl.querySelector('.wbs-task-name-input')?.value);
-          const taskResponsible = this.asText(taskEl.querySelector('.responsible-search-input')?.value);
+          const taskResponsible = this.asText(taskEl.querySelector('.responsible-input')?.value);
           const taskEffortHours = this.parseNumber(taskEl.querySelector('.task-effort')?.value);
           const taskDurationDays = this.parseNumber(taskEl.querySelector('.task-duration')?.value);
 
@@ -2527,13 +3067,7 @@ var projectPlanningController = {
         const name = this.asText(milestoneEl.querySelector('.milestone-phase-input')?.value);
         const period = this.asText(milestoneEl.querySelector('.milestone-period-input')?.value);
 
-        let startDate = '';
-        let endDate = '';
-        const match = period.match(/^\s*(\d{4}-\d{2}-\d{2})\s*(?:ate|até|\-|\u2013)\s*(\d{4}-\d{2}-\d{2})\s*$/i);
-        if (match) {
-          startDate = match[1];
-          endDate = match[2];
-        }
+        const parsedPeriod = this.parseMilestonePeriod(period);
 
         const criteria = [];
         milestoneEl.querySelectorAll('.milestone-criteria-row input').forEach((input) => {
@@ -2543,10 +3077,19 @@ var projectPlanningController = {
 
         const tasks = [];
         milestoneEl.querySelectorAll('.milestone-task-row').forEach((row) => {
-          const taskText = this.asText(row.querySelector('input[type="text"]')?.value);
+          const taskKey = this.asText(row.dataset.taskKey);
+          const taskLabel = this.asText(row.querySelector('.milestone-task-search')?.value);
           const dueDate = this.asText(row.querySelector('input[type="date"]')?.value);
-          if (taskText || dueDate) {
-            tasks.push({ task: taskText, dueDate });
+          const [phaseName = '', ...taskNameParts] = taskKey.split(':::');
+          const taskName = taskNameParts.join(':::') || taskLabel;
+          if (taskKey || taskName || dueDate) {
+            tasks.push({
+              taskKey,
+              phaseName,
+              task: taskName,
+              taskLabel,
+              dueDate
+            });
           }
         });
 
@@ -2555,8 +3098,8 @@ var projectPlanningController = {
           order: index + 1,
           name,
           period,
-          startDate,
-          endDate,
+          startDate: parsedPeriod.startDate,
+          endDate: parsedPeriod.endDate,
           criteria,
           tasks
         });
@@ -2566,23 +3109,27 @@ var projectPlanningController = {
     // Risks
     const risksContainer = document.getElementById('risk-matrix-list');
     if (risksContainer) {
-      const riskCards = Array.from(risksContainer.querySelectorAll(':scope > div'));
+      const riskCards = Array.from(risksContainer.querySelectorAll(':scope > .risk-item'));
       riskCards.forEach((cardEl, index) => {
-        const inputs = Array.from(cardEl.querySelectorAll('input'));
-        const textareas = Array.from(cardEl.querySelectorAll('textarea'));
+        const title = this.asText(cardEl.querySelector('[data-field="risk-title"]')?.value || cardEl.dataset.riskTitle);
+        const level = this.asText(cardEl.querySelector('[data-field="risk-level"]')?.value || cardEl.dataset.riskLevel) || 'Alto';
+        const probability = this.asText(cardEl.querySelector('[data-field="risk-probability"]')?.value || cardEl.dataset.riskProbability) || 'Alta';
+        const impact = this.asText(cardEl.querySelector('[data-field="risk-impact"]')?.value || cardEl.dataset.riskImpact) || 'Alto';
+        const mitigation = this.asText(cardEl.querySelector('[data-field="risk-mitigation"]')?.value || cardEl.dataset.riskMitigation);
+        const fallback = this.asText(cardEl.querySelector('[data-field="risk-fallback"]')?.value || cardEl.dataset.riskFallback);
 
-        const description = this.asText(inputs[0]?.value);
-        const probabilityImpact = this.asText(inputs[1]?.value);
-        const mitigation = this.asText(textareas[0]?.value);
-        const planB = this.asText(textareas[1]?.value);
-
-        if (description || probabilityImpact || mitigation || planB) {
+        if (title || mitigation || fallback) {
           payload.risks.items.push({
             id: `risk-${index + 1}`,
-            description,
-            probabilityImpact,
+            title,
+            level,
+            probability,
+            impact,
             mitigation,
-            planB
+            fallback,
+            description: title,
+            probabilityImpact: [probability, impact].filter(Boolean).join(' | '),
+            planB: fallback
           });
         }
       });
@@ -2591,54 +3138,39 @@ var projectPlanningController = {
     // External dependencies
     const depsContainer = document.getElementById('external-dependencies-list');
     if (depsContainer) {
-      const depCards = Array.from(depsContainer.querySelectorAll(':scope > div'));
+      const depCards = Array.from(depsContainer.querySelectorAll(':scope > .dependency-item'));
       depCards.forEach((cardEl, index) => {
-        const inputs = Array.from(cardEl.querySelectorAll('input'));
-        const textareas = Array.from(cardEl.querySelectorAll('textarea'));
+        const title = this.asText(cardEl.querySelector('[data-field="dependency-title"]')?.value || cardEl.dataset.dependencyTitle);
+        const status = this.asText(cardEl.querySelector('[data-field="dependency-status"]')?.value || cardEl.dataset.dependencyStatus) || 'Pendente';
+        const owner = this.asText(cardEl.querySelector('[data-field="dependency-owner"]')?.value || cardEl.dataset.dependencyOwner);
+        const mitigation = this.asText(cardEl.querySelector('[data-field="dependency-mitigation"]')?.value || cardEl.dataset.dependencyMitigation);
+        const fallback = this.asText(cardEl.querySelector('[data-field="dependency-fallback"]')?.value || cardEl.dataset.dependencyFallback);
 
-        const description = this.asText(inputs[0]?.value);
-        const responsible = this.asText(inputs[1]?.value);
-        const mitigation = this.asText(textareas[0]?.value);
-        const planB = this.asText(textareas[1]?.value);
-
-        if (description || responsible || mitigation || planB) {
+        if (title || owner || mitigation || fallback) {
           payload.externalDependencies.items.push({
             id: `external-dep-${index + 1}`,
-            description,
-            responsible,
+            title,
+            status,
+            owner,
             mitigation,
-            planB
+            fallback,
+            description: title,
+            responsible: owner,
+            planB: fallback
           });
         }
       });
     }
 
     // Communication plan
-    const commBody = document.getElementById('communication-plan-body');
-    if (commBody) {
-      const rows = Array.from(commBody.querySelectorAll('tr'));
-      rows.forEach((rowEl, index) => {
-        const audience = this.asText(rowEl.querySelector('input')?.value);
-        const selects = Array.from(rowEl.querySelectorAll('select'));
-        const channel = this.asText(selects[0]?.value);
-        const frequency = this.asText(selects[1]?.value);
-
-        if (audience || channel || frequency) {
-          payload.communicationPlan.items.push({
-            id: `comm-${index + 1}`,
-            audience,
-            channel,
-            frequency
-          });
-        }
-      });
-    }
+    payload.communicationPlan.items = this._communicationPlanData;
 
     payload.wbs.summary.totalEffortHours = Math.max(0, Math.round(payload.wbs.summary.totalEffortHours));
     payload.wbs.summary.totalDurationDays = Math.max(0, Math.round(payload.wbs.summary.totalDurationDays));
 
     // RACI + Team allocation
-    this.syncRaciAndAllocationInternal();
+    this.syncTeamAllocationInternal();
+    this.syncRaciWithMilestones();
 
     payload.raci.rows = this._raciMatrixData.map((row) => ({
       phase: this.asText(row && row.phase),
@@ -2659,12 +3191,185 @@ var projectPlanningController = {
     return payload;
   },
 
+  collectPlanningTaskFields: function () {
+    const payload = this.buildPlanningPayload();
+    const fields = [];
+
+    // 1. JSON completos para carregar na widget facilmente
+    fields.push({ name: 'projectPlanningJsonDP', value: JSON.stringify(payload) });
+    fields.push({ name: 'raciJsonDP', value: JSON.stringify(payload.raci || {}) });
+
+    // 2. Checklist (Campos booleanos)
+    fields.push({ name: 'chkEapWbsDP', value: String(payload.checklist.eapWbs) });
+    fields.push({ name: 'chkMilestonesDP', value: String(payload.checklist.milestones) });
+    fields.push({ name: 'chkRisksDP', value: String(payload.checklist.risks) });
+    fields.push({ name: 'chkRaciDP', value: String(payload.checklist.raci) });
+    fields.push({ name: 'chkDocsDP', value: String(payload.checklist.docs) });
+
+    // 3. Fases e Tarefas (WBS)
+    let phaseIdx = 1;
+    let taskIdx = 1;
+    const phases = payload.wbs && Array.isArray(payload.wbs.phases) ? payload.wbs.phases : [];
+
+    phases.forEach(phase => {
+      fields.push({ name: `wbsPhaseIdDP___${phaseIdx}`, value: this.asText(phase.id) });
+      fields.push({ name: `wbsPhaseOrderDP___${phaseIdx}`, value: this.asText(phase.order) });
+      fields.push({ name: `wbsPhaseNameDP___${phaseIdx}`, value: this.asText(phase.name) });
+      fields.push({ name: `wbsPhaseResponsibleDP___${phaseIdx}`, value: this.asText(phase.responsible) });
+      fields.push({ name: `wbsPhaseEffortHoursDP___${phaseIdx}`, value: this.asText(phase.effortHours) });
+      fields.push({ name: `wbsPhaseDurationDaysDP___${phaseIdx}`, value: this.asText(phase.durationDays) });
+      fields.push({ name: `wbsPhaseNotesDP___${phaseIdx}`, value: this.asText(phase.notes) });
+
+      const tasks = Array.isArray(phase.tasks) ? phase.tasks : [];
+      tasks.forEach(task => {
+        fields.push({ name: `wbsTaskIdDP___${taskIdx}`, value: this.asText(task.id) });
+        fields.push({ name: `wbsTaskPhaseIdDP___${taskIdx}`, value: this.asText(phase.id) });
+        fields.push({ name: `wbsTaskOrderDP___${taskIdx}`, value: this.asText(task.order) });
+        fields.push({ name: `wbsTaskNameDP___${taskIdx}`, value: this.asText(task.name) });
+        fields.push({ name: `wbsTaskResponsibleDP___${taskIdx}`, value: this.asText(task.responsible) });
+        fields.push({ name: `wbsTaskEffortHoursDP___${taskIdx}`, value: this.asText(task.effortHours) });
+        fields.push({ name: `wbsTaskDurationDaysDP___${taskIdx}`, value: this.asText(task.durationDays) });
+        taskIdx++;
+      });
+      phaseIdx++;
+    });
+
+    // 4. Marcos (Milestones), Critérios e Tarefas do Marco
+    let milestoneIdx = 1;
+    let criteriaIdx = 1;
+    let mTaskIdx = 1;
+    let mTaskSummaryIdx = 1;
+    const milestones = payload.milestones && Array.isArray(payload.milestones.items) ? payload.milestones.items : [];
+
+    milestones.forEach(m => {
+      fields.push({ name: `milestoneIdDP___${milestoneIdx}`, value: this.asText(m.id) });
+      fields.push({ name: `milestoneNameDP___${milestoneIdx}`, value: this.asText(m.name) });
+      fields.push({ name: `milestoneStartDateDP___${milestoneIdx}`, value: this.asText(m.startDate) });
+      fields.push({ name: `milestoneEndDateDP___${milestoneIdx}`, value: this.asText(m.endDate) });
+
+      const criteria = Array.isArray(m.criteria) ? m.criteria : [];
+      criteria.forEach(c => {
+        fields.push({ name: `milestoneCriteriaMilestoneIdDP___${criteriaIdx}`, value: this.asText(m.id) });
+        fields.push({ name: `milestoneCriteriaTextDP___${criteriaIdx}`, value: this.asText(c) });
+        criteriaIdx++;
+      });
+
+      const mTasks = Array.isArray(m.tasks) ? m.tasks : [];
+      mTasks.forEach(t => {
+        fields.push({ name: `milestoneTaskMilestoneIdDP___${mTaskIdx}`, value: this.asText(m.id) });
+        fields.push({ name: `milestoneTaskTextDP___${mTaskIdx}`, value: this.asText(t.task || t.taskLabel) });
+        fields.push({ name: `milestoneTaskDueDateDP___${mTaskIdx}`, value: this.asText(t.dueDate) });
+
+        // Snapshot consolidado: 1 linha por tarefa de marco com fase + marco de destino.
+        fields.push({ name: `milestoneTaskSummaryTextDP___${mTaskSummaryIdx}`, value: this.asText(t.task || t.taskLabel) });
+        fields.push({ name: `milestoneTaskSummaryDueDateDP___${mTaskSummaryIdx}`, value: this.asText(t.dueDate) });
+        fields.push({ name: `milestoneTaskSummaryPhaseDP___${mTaskSummaryIdx}`, value: this.asText(t.phaseName) });
+        fields.push({ name: `milestoneTaskSummaryMarcoDP___${mTaskSummaryIdx}`, value: this.asText(m.name) });
+
+        mTaskIdx++;
+        mTaskSummaryIdx++;
+      });
+      milestoneIdx++;
+    });
+
+    // 5. Matriz de Riscos
+    let riskIdx = 1;
+    const risks = payload.risks && Array.isArray(payload.risks.items) ? payload.risks.items : [];
+    risks.forEach(r => {
+      fields.push({ name: `riskIdDP___${riskIdx}`, value: this.asText(r.id) });
+      fields.push({ name: `riskDescriptionDP___${riskIdx}`, value: this.asText(r.description) });
+      fields.push({ name: `riskProbabilityDP___${riskIdx}`, value: this.asText(r.probability) });
+      fields.push({ name: `riskImpactDP___${riskIdx}`, value: this.asText(r.impact) });
+      fields.push({ name: `riskMitigationDP___${riskIdx}`, value: this.asText(r.mitigation) });
+      fields.push({ name: `riskPlanBDP___${riskIdx}`, value: this.asText(r.planB) });
+      riskIdx++;
+    });
+
+    // 6. Dependências Externas (Adicionado o 'Status')
+    let extDepIdx = 1;
+    const deps = payload.externalDependencies && Array.isArray(payload.externalDependencies.items) ? payload.externalDependencies.items : [];
+    deps.forEach(d => {
+      fields.push({ name: `externalDependencyIdDP___${extDepIdx}`, value: this.asText(d.id) });
+      fields.push({ name: `externalDependencyDescriDP___${extDepIdx}`, value: this.asText(d.description) });
+      fields.push({ name: `externalDependencyStatusDP___${extDepIdx}`, value: this.asText(d.status) }); // <--- CORREÇÃO AQUI
+      fields.push({ name: `externalDependencyResponDP___${extDepIdx}`, value: this.asText(d.responsible) });
+      fields.push({ name: `externalDependencyMitiDP___${extDepIdx}`, value: this.asText(d.mitigation) });
+      fields.push({ name: `externalDependencyPlanBDP___${extDepIdx}`, value: this.asText(d.planB) });
+      extDepIdx++;
+    });
+
+    // 7. Plano de Comunicação
+    let commIdx = 1;
+    const comms = payload.communicationPlan && Array.isArray(payload.communicationPlan.items) ? payload.communicationPlan.items : [];
+    comms.forEach(c => {
+      // Salva os públicos separados por vírgula
+      fields.push({ name: `commAudienceDP___${commIdx}`, value: Array.isArray(c.audience) ? c.audience.join(', ') : this.asText(c.audience) });
+      fields.push({ name: `commChannelDP___${commIdx}`, value: this.asText(c.channel) });
+      fields.push({ name: `commFrequencyDP___${commIdx}`, value: this.asText(c.frequency) });
+      commIdx++;
+    });
+
+    // 8. Alocação de Equipe
+    let allocIdx = 1;
+    const allocs = payload.teamAllocation && Array.isArray(payload.teamAllocation.items) ? payload.teamAllocation.items : [];
+    allocs.forEach(a => {
+      fields.push({ name: `allocMemberDP___${allocIdx}`, value: this.asText(a.member) });
+      fields.push({ name: `allocProfileDP___${allocIdx}`, value: this.asText(a.profile) });
+      fields.push({ name: `allocDedicationDP___${allocIdx}`, value: String(a.dedication) });
+      allocIdx++;
+    });
+
+    return fields;
+  },
   showTimeline: function () {
     this.showToast('Abrindo histórico do projeto...', 'info');
   },
 
   showAttachments: function () {
     this.showToast('Abrindo visualização de anexos...', 'info');
+  },
+
+  getPriorityLabel: function (priority) {
+    const normalized = this.asText(priority).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('critico') !== -1) return 'Critico';
+    if (normalized.indexOf('estrategico') !== -1) return 'Estrategico';
+    if (normalized.indexOf('operacional') !== -1) return 'Operacional';
+    return this.asText(priority);
+  },
+
+  getProgressItems: function () {
+    return [
+      { style: 'success', label: 'Solicitação aprovada', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Análise TI concluída', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Impacto na área concluído', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Triagem técnica (Externo)', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Proposta Comercial Aprovada', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Realizar contratação concluído', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'warning', label: 'Planejamento do projeto pendente', iconClass: 'fa-solid fa-clock' }
+    ];
+  },
+
+  getPriorityBadgeClasses: function (priority) {
+    const normalized = this.asText(priority).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('critico') !== -1) return 'bg-red-100 text-red-800';
+    if (normalized.indexOf('estrategico') !== -1) return 'bg-yellow-100 text-yellow-800';
+    if (normalized.indexOf('operacional') !== -1) return 'bg-gray-100 text-gray-700';
+    return 'bg-gray-100 text-gray-800';
+  },
+
+  getExecutionTypeLabel: function (value) {
+    const raw = this.asText(value);
+    const normalized = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('extern') !== -1) return 'Externo';
+    if (normalized.indexOf('intern') !== -1) return 'Interno';
+    return raw || 'N/A';
+  },
+
+  getExecutionTypeBadgeClasses: function (value) {
+    const normalized = this.asText(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('extern') !== -1) return 'bg-purple-100 text-purple-800';
+    if (normalized.indexOf('intern') !== -1) return 'bg-blue-100 text-blue-800';
+    return 'bg-gray-100 text-gray-800';
   },
 
   // ---------------------------
@@ -2675,7 +3380,6 @@ var projectPlanningController = {
     if (value === null || value === undefined || value === 'null') {
       return '';
     }
-
     return String(value).trim();
   },
 
@@ -2692,5 +3396,105 @@ var projectPlanningController = {
     const text = this.asText(value).replace(',', '.');
     const parsed = parseFloat(text);
     return Number.isFinite(parsed) ? parsed : 0;
+  },
+
+  addAttachments: function (fileList) {
+    const files = fileList ? Array.from(fileList) : [];
+    if (!files.length) return;
+    if (!this._state.attachments) this._state.attachments = [];
+
+    files.forEach((file) => {
+      this._state.attachments.push({
+        id: `local:${Date.now()}:${Math.random().toString(16).slice(2)}`,
+        file: file
+      });
+    });
+    this.renderAttachmentsList();
+  },
+
+  removeAttachment: function (id) {
+    if (!this._state.attachments) return;
+    this._state.attachments = this._state.attachments.filter((att) => String(att.id) !== String(id));
+    this.renderAttachmentsList();
+  },
+
+  formatAttachmentSize: function (bytes) {
+    const size = Number(bytes);
+    if (!isFinite(size) || size <= 0) return '';
+    const kb = size / 1024;
+    if (kb < 1024) return `${kb.toFixed(0)} KB`;
+    const mb = kb / 1024;
+    return `${mb.toFixed(1)} MB`;
+  },
+
+  getAttachmentIconClass: function (fileName) {
+    const ext = String(fileName || '').split('.').pop().toLowerCase();
+    if (ext === 'pdf') return 'fa-file-pdf text-red-500';
+    if (['png', 'jpg', 'jpeg', 'gif', 'webp'].indexOf(ext) >= 0) return 'fa-file-image text-blue-500';
+    if (['xls', 'xlsx', 'csv'].indexOf(ext) >= 0) return 'fa-file-excel text-green-600';
+    if (['doc', 'docx'].indexOf(ext) >= 0) return 'fa-file-word text-blue-600';
+    return 'fa-file text-gray-500';
+  },
+
+  renderAttachmentsList: function () {
+    const list = document.getElementById('dp-attachment-list');
+    if (!list) return;
+
+    const items = this._state.attachments || [];
+    if (!items.length) {
+      list.innerHTML = '<div class="text-sm text-gray-500">Nenhum anexo selecionado.</div>';
+      return;
+    }
+
+    list.innerHTML = items.map((att) => {
+      const safeName = this.escapeHtml(att.file ? (att.file.name || '') : (att.fileName || 'arquivo'));
+      const sizeLabel = att.file ? this.escapeHtml(this.formatAttachmentSize(att.file.size || 0)) : '';
+      const iconClass = this.escapeHtml(this.getAttachmentIconClass(safeName));
+      const safeId = this.escapeHtml(att.id);
+
+      return `
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div class="flex items-center min-w-0">
+            <i class="fa-solid ${iconClass} text-xl mr-3"></i>
+            <div class="min-w-0 text-left">
+              <div class="font-medium text-sm text-gray-900 truncate">${safeName}</div>
+              <div class="text-xs text-gray-500">${sizeLabel || ''}</div>
+            </div>
+          </div>
+          <button type="button" data-action="remove-dp-attachment" data-attachment-id="${safeId}" class="text-red-500 hover:text-red-700" title="Remover">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </div>
+      `;
+    }).join('');
+  },
+
+  readFileAsBase64: function (file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const raw = String(event.target.result || '');
+        const base64 = raw.indexOf(',') >= 0 ? raw.split(',')[1] : raw;
+        resolve(base64);
+      };
+      reader.onerror = () => reject(new Error('Falha ao ler anexo'));
+      reader.readAsDataURL(file);
+    });
+  },
+
+  collectAttachmentsPayload: async function () {
+    const items = this._state.attachments || [];
+    if (!items.length) return [];
+
+    const payload = await Promise.all(items.map(async (att) => {
+      const content = await this.readFileAsBase64(att.file);
+      return {
+        fileName: this.asText(att.file.name),
+        fileContent: this.asText(content),
+        fileSize: String(att.file.size || '').trim()
+      };
+    }));
+    return payload;
   }
+
 };

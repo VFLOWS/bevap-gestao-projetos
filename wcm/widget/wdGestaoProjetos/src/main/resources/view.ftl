@@ -5,10 +5,10 @@
             <div class="flex items-center justify-between h-16">
                 <div class="flex items-center space-x-4 ">
                     <div class="flex items-center space-x-2 bg-white px-4 py-1 rounded-lg">
-                        <img src="bevap.png" class="h-auto w-24" alt="">
+                        <img src="/wdGestaoProjetos/resources/images/logoBevap.png" class="h-auto w-24" alt="BEVAP">
                     </div>
                     <div class="h-8 w-px bg-gray-400"></div>
-                    <h1 class="text-white font-montserrat font-semibold text-lg">Dashboard</h1>
+                    <h1 id="gp-page-title_${instanceId}" class="text-white font-montserrat font-semibold text-lg">Dashboard</h1>
                 </div>
                 <div class="flex items-center space-x-3">
                     <button class="text-white hover:text-bevap-gold transition-colors">
@@ -20,8 +20,8 @@
         </div>
         <div class="">
             <div class="w-full px-4 sm:px-6 lg:px-8 h-10 flex items-center">
-                <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
-                    <a href="ux-dashboard.html" class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+                <nav id="gp-page-breadcrumb_${instanceId}" class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                    <a href="#dashboard" class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
                         <i class="fa-solid fa-house text-xs"></i>
                         <span>Início</span>
                     </a>

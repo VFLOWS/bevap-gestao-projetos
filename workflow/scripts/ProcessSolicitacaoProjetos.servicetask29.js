@@ -2,8 +2,9 @@ function servicetask29(attempt, message) {
     var FIELD_ID_GLPI = 'idGLPI';
     var FIELD_STATUS = 'statusIntegracaoGLPI';
     var FIELD_ERROR = 'mensagemErroGLPI';
+    var FIELD_PAYLOAD = 'payloadJsonGLPI'; // <--- 1. DECLARAMOS O CAMPO AQUI
 
-    // 🚨 1ª TRAVA: Bloqueia as retentativas invisíveis (Assíncronas) do Fluig por instabilidade
+    // ? 1ª TRAVA: Bloqueia as retentativas invisíveis (Assíncronas) do Fluig por instabilidade
     if (attempt > 1) {
         log.warn("=== BLOQUEANDO EXECUCAO DUPLICADA NO GLPI === Tentativa: " + attempt);
         throw "A integração demorou a responder na primeira tentativa. Verifique manualmente no GLPI antes de prosseguir."; 
@@ -39,6 +40,9 @@ function servicetask29(attempt, message) {
         // 4. Montar o Payload dinâmico usando o código já salvo no formulário
         var projectInput = buildGlpiProjectInput(isUpdate, glpiUserId, glpiGroupId);
 
+        // <--- 2. SALVA O PAYLOAD NA TELA (EM FORMATO TEXTO) PARA USO FUTURO --->
+        setCardValueSafe(FIELD_PAYLOAD, JSON.stringify(projectInput));
+
         // 5. Enviar para o dataset de Upsert (criação/atualização)
         var upsertResult = upsertGlpiProject(sessionToken, projectInput, existingIdGlpi);
 
@@ -61,7 +65,6 @@ function servicetask29(attempt, message) {
         throw errMsg;
     }
 }
-
 // ==========================================
 // FUNÇÕES DE BUSCA (FLUIG E GLPI)
 // ==========================================
@@ -142,8 +145,21 @@ function buildGlpiProjectInput(isUpdate, glpiUserId, glpiGroupId) {
     var mappedPriority = mapPrioridade(prioridade);
     var projectCode = getCardValueSafe('codigoglpi');
 
+    // Se não existir código no formulário, geramos aqui usando a mesma regra
+    // de safra (início 01/04) no formato PRJ-{YYstart}{YYend}-{processId}
     if (!projectCode) {
-        throw "Campo codigoglpi não preenchido no formulário.";
+        var procId = '';
+        try {
+            procId = getProcessInstanceId();
+        } catch (e) {
+            procId = '';
+        }
+        projectCode = buildProjectCode(procId, null);
+        if (projectCode) {
+            setCardValueSafe('codigoglpi', projectCode);
+        } else {
+            throw "Campo codigoglpi não preenchido no formulário e não foi possível gerar automaticamente.";
+        }
     }
 
     var payload = {
@@ -279,4 +295,43 @@ function formatErrorMessage(error) {
         return 'Falha SSL (PKIX): certificado nao confiavel.';
     }
     return raw;
+}
+
+// Obtém o ID da solicitação / processo (tenta campo do formulário, depois WorkflowAPI)
+function getProcessInstanceId() {
+    try {
+        var nrSolicitacao = hAPI.getCardValue('NR_SOLICITACAO');
+        if (nrSolicitacao) {
+            return asText(nrSolicitacao);
+        }
+    } catch (e) {}
+    
+    try {
+        if (typeof WorkflowAPI !== 'undefined' && WorkflowAPI.getProcessInstanceId) {
+            return asText(WorkflowAPI.getProcessInstanceId());
+        }
+    } catch (e) {}
+    
+    throw 'Não foi possível obter o ID da solicitação (processInstanceId)';
+}
+
+// Gera código do projeto com base na safra (início 01/04): PRJ-{YYstart}{YYend}-{processId}
+function buildProjectCode(processInstanceId, referenceDate) {
+    var pid = String(processInstanceId || '').replace(/^\s+|\s+$/g, '');
+    if (!pid) return '';
+
+    var ref = referenceDate || new Date().toISOString();
+    var dt = new Date(ref);
+    if (isNaN(dt.getTime())) dt = new Date();
+    var year = dt.getFullYear();
+    var month = dt.getMonth() + 1;
+
+    var startYear = (month >= 4) ? year : (year - 1);
+    var endYear = startYear + 1;
+    var startYY = String(startYear).slice(-2);
+    var endYY = String(endYear).slice(-2);
+    var safraCode = startYY + endYY;
+
+    var paddedProcessId = String(pid || '0').replace(/^0+/, '').padStart(4, '0');
+    return 'PRJ-' + safraCode + '-' + paddedProcessId;
 }
