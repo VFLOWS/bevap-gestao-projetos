@@ -329,10 +329,16 @@
                     <div class="mb-6">
                         <div class="flex items-center justify-between mb-4">
                             <h4 class="text-lg font-semibold text-bevap-navy">Marcos do Projeto</h4>
-                            <button onclick="addMilestone()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
-                                <i class="fa-solid fa-plus mr-2"></i>
-                                Adicionar Marco
-                            </button>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <a href="marcos/ux-marcos-documentacao.html" target="_blank" class="px-4 py-2 border border-bevap-navy text-bevap-navy rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
+                                    <i class="fa-solid fa-book-open mr-2"></i>
+                                    Documentação do Fluxo
+                                </a>
+                                <button onclick="addMilestone()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fa-solid fa-plus mr-2"></i>
+                                    Adicionar Marco
+                                </button>
+                            </div>
                         </div>
                         
                         <div id="milestones-container" class="space-y-4">
@@ -1430,10 +1436,10 @@
                 responsible: 'Ana Costa',
                 effort: 40,
                 duration: 5,
-                dependency: 'Aprovação',
+                dependency: 'Aprovação formal do escopo funcional inicial',
                 notes: 'Levantamento de requisitos com áreas de negócio.',
                 tasks: [
-                    { name: 'Mapear sistemas impactados', responsible: 'Carlos Silva', effort: 12, duration: 2, dependency: 'Kickoff' },
+                    { name: 'Mapear sistemas impactados', responsible: 'Carlos Silva', effort: 12, duration: 2, dependency: 'Kickoff inicial validado com todas as áreas' },
                     { name: 'Entrevistar stakeholders', responsible: 'Ana Costa', effort: 16, duration: 2, dependency: 'Agenda executiva' },
                     { name: 'Definir escopo funcional', responsible: 'PMO Corporativo', effort: 20, duration: 3, dependency: 'Inputs do negócio' },
                     { name: 'Consolidar documentação inicial', responsible: 'Mariana Lima', effort: 24, duration: 3, dependency: 'Validação do escopo' }
@@ -2058,6 +2064,213 @@
         return `Em ${diffInDays} dias`;
     }
 
+    function getExecutionFlowRoute(stage, milestoneIndex, taskIndex) {
+        const stageRoutes = {
+            pending: 'marcos/ux-marco-aguardando-execucao.html',
+            execution: 'marcos/ux-marco-execucao-atividade.html',
+            requester: 'marcos/ux-marco-validacao-solicitante.html',
+            ti: 'marcos/ux-marco-validacao-ti.html'
+        };
+        const fileName = stageRoutes[stage] || stageRoutes.pending;
+        return `${fileName}?milestone=${milestoneIndex}&task=${taskIndex}`;
+    }
+
+    function getPhaseResponsiblesMap() {
+        const map = {};
+        document.querySelectorAll('#wbs-container > .wbs-item').forEach((phaseItem) => {
+            const phaseName = phaseItem.querySelector('.wbs-phase-name-input')?.value?.trim();
+            const responsible = phaseItem.querySelector('.responsible-input')?.value?.trim();
+            if (phaseName && responsible) {
+                map[phaseName] = responsible;
+            }
+        });
+        return map;
+    }
+
+    function getWbsTaskDetailsMap() {
+        const map = {};
+        document.querySelectorAll('#wbs-container > .wbs-item').forEach((phaseItem) => {
+            const phaseName = phaseItem.querySelector('.wbs-phase-name-input')?.value?.trim() || '';
+            const phaseDependency = phaseItem.querySelector('.dependency-field .dependency-list input[type="text"]')?.value?.trim() || '';
+            const taskItems = Array.from(phaseItem.querySelectorAll('.subtask-container > .wbs-subtask'));
+            taskItems.forEach((subtask) => {
+                const taskName = subtask.querySelector('.wbs-task-name-input')?.value?.trim() || '';
+                const responsible = subtask.querySelector('.task-responsible')?.value?.trim() || '';
+                const effort = Number(subtask.querySelector('.task-effort')?.value || 0);
+                const duration = Number(subtask.querySelector('.task-duration')?.value || 0);
+                const taskDependency = subtask.querySelector('.dependency-field .dependency-list input[type="text"]')?.value?.trim() || '';
+                if (!phaseName || !taskName) return;
+                map[`${phaseName}:::${taskName}`] = {
+                    phaseName,
+                    responsible,
+                    effort,
+                    duration,
+                    dependency: taskDependency,
+                    phaseDependency
+                };
+            });
+        });
+        return map;
+    }
+
+    function expandDependencyLabel(value) {
+        const label = String(value || '').trim();
+        if (!label) return '';
+
+        const legacyMap = {
+            'Kickoff': 'Kickoff inicial validado com todas as áreas',
+            'Aprovacao': 'Aprovação formal do escopo funcional inicial',
+            'Aprovação': 'Aprovação formal do escopo funcional inicial',
+            'Acesso cloud': 'Acesso cloud liberado para ambiente de homologação',
+            'Descoberta': 'Descoberta técnica concluída e validada pela equipe',
+            'Credenciais de diretorio': 'Credenciais de diretório liberadas para integração segura',
+            'Implementacao SSO': 'Implementação SSO preparada para configuração técnica inicial',
+            'Baseline de seguranca': 'Baseline de segurança revisada e aprovada pela TI',
+            'Roteiro aprovado': 'Roteiro aprovado para homologação funcional com usuários',
+            'Evidencias completas': 'Evidências completas anexadas para aprovação de go-live'
+        };
+
+        return legacyMap[label] || label;
+    }
+
+    function buildExecutionFlowPayload() {
+        const timelineItems = getMilestoneTimelineData();
+        const phaseResponsibles = getPhaseResponsiblesMap();
+        const wbsTaskDetails = getWbsTaskDetailsMap();
+        const projectCode = document.querySelector('#summary-panel .font-mono')?.textContent?.trim() || 'PRJ-2026-033';
+        const projectTitle = document.querySelector('#summary-panel .font-medium.text-gray-900.mt-1')?.textContent?.trim() || 'Implantar SSO corporativo';
+        const projectArea = Array.from(document.querySelectorAll('#summary-panel .text-gray-600'))
+            .find((element) => element.textContent.trim() === 'Área')
+            ?.parentElement?.querySelector('.font-medium.text-gray-900')?.textContent?.trim() || 'TI';
+        const projectSponsor = Array.from(document.querySelectorAll('#summary-panel .text-gray-600'))
+            .find((element) => element.textContent.trim() === 'Patrocinador')
+            ?.parentElement?.querySelector('.font-medium.text-gray-900')?.textContent?.trim() || 'Diretoria TI';
+        const projectPriority = document.querySelector('#summary-panel .bg-red-100, #summary-panel .bg-yellow-100, #summary-panel .bg-green-100')?.textContent?.replace(/\s+/g, ' ')?.trim() || 'Crítico';
+
+        return {
+            project: {
+                code: projectCode,
+                title: projectTitle,
+                area: projectArea,
+                sponsor: projectSponsor,
+                priority: projectPriority,
+                requester: 'João Vieira',
+                projectManager: 'Ana Costa',
+                techLead: 'Segurança da Informação',
+                planningSource: 'ux-planejamento.html',
+                generatedAt: new Date().toLocaleString('pt-BR')
+            },
+            milestones: timelineItems
+                .filter((item) => item.tasks.length)
+                .map((item, milestoneIndex) => {
+                    const periodData = parseMilestonePeriod(item.period || '');
+                    const startDate = normalizePeriodDateToIso(periodData.start);
+                    const endDate = normalizePeriodDateToIso(periodData.end || periodData.start);
+                    const firstTask = item.tasks[0] || {};
+                    return {
+                        code: `MK-${String(milestoneIndex + 1).padStart(2, '0')}`,
+                        name: item.phaseName || `Marco ${milestoneIndex + 1}`,
+                        period: formatMilestonePeriodBr(item.period || ''),
+                        plannedStart: startDate,
+                        plannedEnd: endDate,
+                        owner: phaseResponsibles[firstTask.taskPhase] || phaseResponsibles[item.phaseName] || 'PMO Corporativo',
+                        phaseName: item.phaseName || `Marco ${milestoneIndex + 1}`,
+                        description: `Execução do marco "${item.phaseName || `Marco ${milestoneIndex + 1}`}" a partir do cronograma planejado.`,
+                        acceptanceCriteria: item.acceptanceCriteria,
+                        tasks: item.tasks.map((task, taskIndex) => {
+                            const taskName = task.taskName || `Tarefa ${taskIndex + 1}`;
+                            const taskPhase = task.taskPhase || item.phaseName || 'Fase não definida';
+                            const taskDetails = wbsTaskDetails[`${taskPhase}:::${taskName}`] || {};
+                            const taskDependency = expandDependencyLabel(taskDetails.dependency || '');
+                            const phaseDependency = expandDependencyLabel(taskDetails.phaseDependency || '');
+                            const dependencies = [taskDependency, phaseDependency].filter(Boolean);
+                            return {
+                                code: `ATV-${String(milestoneIndex + 1).padStart(2, '0')}${String(taskIndex + 1).padStart(2, '0')}`,
+                                name: taskName,
+                                phaseName: taskPhase,
+                                responsible: taskDetails.responsible || phaseResponsibles[task.taskPhase] || phaseResponsibles[item.phaseName] || 'Responsável não definido',
+                                backupResponsible: 'PMO Corporativo',
+                                requester: 'João Vieira',
+                                techApprover: 'Segurança da Informação',
+                                plannedStart: task.date || startDate,
+                                plannedEnd: task.date || endDate || startDate,
+                                plannedHours: taskDetails.effort || 16,
+                                actualHours: 0,
+                                progress: 0,
+                                statusLabel: 'Pendente para início',
+                                priority: 'Alta',
+                                description: `Executar a tarefa "${taskName}" vinculada ao marco "${item.phaseName || `Marco ${milestoneIndex + 1}`}".`,
+                                preparationNotes: 'Conferir escopo, critérios de aceite, anexos e dependências antes do início da execução.',
+                                dependencies,
+                                importedPlanning: [
+                                    `Marco: ${item.phaseName || `Marco ${milestoneIndex + 1}`}`,
+                                    `Período do marco: ${formatMilestonePeriodBr(item.period || '')}`,
+                                    `Fase vinculada: ${taskPhase}`
+                                ],
+                                blockers: [],
+                                attachments: [],
+                                deliverables: [
+                                    {
+                                        name: `Entregável de ${taskName}`,
+                                        owner: taskDetails.responsible || phaseResponsibles[task.taskPhase] || phaseResponsibles[item.phaseName] || 'Responsável não definido',
+                                        status: 'Planejado'
+                                    }
+                                ],
+                                comments: [],
+                                history: [
+                                    {
+                                        title: 'Tarefa publicada a partir do planejamento',
+                                        actor: 'Planejamento do Projeto',
+                                        when: new Date().toLocaleString('pt-BR'),
+                                        detail: 'Protótipo do fluxo gerado a partir do cronograma e marcos definidos.'
+                                    }
+                                ],
+                                requesterChecklist: [
+                                    'Entregável aderente ao escopo aprovado no planejamento.',
+                                    'Feedback do solicitante registrado.',
+                                    'Pendências documentadas antes do envio para TI.'
+                                ],
+                                technicalChecklist: [
+                                    'Checklist técnico revisado.',
+                                    'Evidências anexadas.',
+                                    'Requisitos técnicos validados.'
+                                ],
+                                technicalTests: [
+                                    {
+                                        name: 'Validação inicial',
+                                        result: 'Pendente',
+                                        note: 'Será executada na etapa de validação técnica.'
+                                    }
+                                ],
+                                currentStage: 'pending'
+                            };
+                        })
+                    };
+                })
+        };
+    }
+
+    function persistExecutionFlowData() {
+        const payload = buildExecutionFlowPayload();
+        try {
+            window.localStorage.setItem('bevapExecutionFlowData', JSON.stringify(payload));
+        } catch (error) {
+            console.warn('Não foi possível persistir o payload do fluxo de execução.', error);
+        }
+        return payload;
+    }
+
+    function getFirstExecutionFlowRoute(payload) {
+        const milestoneIndex = payload.milestones.findIndex((milestone) => Array.isArray(milestone.tasks) && milestone.tasks.length);
+        if (milestoneIndex < 0) return 'marcos/ux-marcos-documentacao.html';
+        return getExecutionFlowRoute('pending', milestoneIndex, 0);
+    }
+
+    function openExecutionFlow(stage, milestoneIndex, taskIndex) {
+        persistExecutionFlowData();
+        window.open(getExecutionFlowRoute(stage, milestoneIndex, taskIndex), '_blank');
+    }
+
     function renderMilestoneTimeline() {
         const timelineContainer = document.getElementById('milestone-timeline-list');
         if (!timelineContainer) return;
@@ -2093,6 +2306,25 @@
             const taskPreviewText = previewTasks.length ? previewTasks.join(' • ') : 'Sem tarefas vinculadas';
             const descriptionText = `Marco: ${item.phaseName} • ${taskPreviewText}`;
             const extraTasks = taskCount > 2 ? ` (+${taskCount - 2})` : '';
+            const tasksHtml = taskCount === 0
+                ? '<div class="mt-3 rounded-lg border border-dashed border-slate-300 bg-white p-3 text-xs text-slate-500">Nenhuma tarefa vinculada ao marco.</div>'
+                : `
+                    <div class="mt-4 space-y-2">
+                        ${item.tasks.map((task, taskIndex) => `
+                            <div class="rounded-lg border border-slate-200 bg-white p-3">
+                                <div class="flex flex-wrap items-start justify-between gap-2">
+                                    <div class="min-w-0">
+                                        <div class="text-sm font-semibold text-bevap-navy">${escapeHtml(task.taskName || `Tarefa ${taskIndex + 1}`)}</div>
+                                        <div class="text-xs text-slate-500">${escapeHtml(task.taskPhase || 'Fase não definida')} • ${task.date ? formatDateBr(task.date) : 'Sem data definida'}</div>
+                                    </div>
+                                    <button type="button" onclick="openExecutionFlow('pending', ${index}, ${taskIndex})" class="shrink-0 rounded-lg border border-bevap-green px-3 py-1.5 text-xs font-medium text-bevap-green hover:bg-green-50 transition-colors">
+                                        <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Abrir Fluxo
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
             const criteriaCount = item.acceptanceCriteria.length;
             const criteriaPreview = item.acceptanceCriteria.slice(0, 2);
             const criteriaHtml = criteriaCount === 0
@@ -2126,6 +2358,7 @@
                         <p class="text-xs text-slate-500 mb-1">${currentDateFormatted}</p>
                         <p class="text-sm text-slate-600">${escapeHtml(descriptionText)}${extraTasks}</p>
                         ${criteriaHtml}
+                        ${tasksHtml}
                     </div>
                 </div>
             `;
@@ -3780,9 +4013,10 @@
 
     function confirmConcludePlanning() {
         closeConcludeModal();
+        const payload = persistExecutionFlowData();
         showToast('Planejamento concluído! O projeto seguirá para Execução do Projeto.', 'success');
         setTimeout(() => {
-            window.open('http://127.0.0.1:5500/reports/prototype/ux-execucao-projeto.html', '_blank');
+            window.open(getFirstExecutionFlowRoute(payload), '_blank');
         }, 1200);
     }
 
