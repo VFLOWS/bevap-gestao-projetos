@@ -144,7 +144,7 @@
       </children>
     </children>
     <children xsi:type="pi:ContainerShape" visible="true" active="true">
-      <graphicsAlgorithm xsi:type="al:Rectangle" lineWidth="1" filled="false" lineVisible="false" transparency="0.0" width="60" height="124" x="1240" y="344">
+      <graphicsAlgorithm xsi:type="al:Rectangle" lineWidth="1" filled="false" lineVisible="false" transparency="0.0" width="60" height="108" x="1240" y="344">
         <graphicsAlgorithmChildren xsi:type="al:Polygon" lineWidth="1" filled="true" transparency="0.0" width="60" height="60" style="/0/@styles.22">
           <points y="30"/>
           <points x="30"/>
@@ -164,7 +164,7 @@
         <graphicsAlgorithm xsi:type="al:Ellipse" filled="false" lineVisible="false"/>
       </anchors>
       <children visible="true">
-        <graphicsAlgorithm xsi:type="al:MultiText" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="60" height="64" y="60" style="/0/@styles.23" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" value="Validad&#xA;o&#xA;?&#xA;"/>
+        <graphicsAlgorithm xsi:type="al:MultiText" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="60" height="48" y="60" style="/0/@styles.23" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" value="Validad&#xA;o?&#xA;"/>
       </children>
     </children>
     <children xsi:type="pi:ContainerShape" visible="true" active="true">
@@ -182,7 +182,7 @@
       </children>
     </children>
     <children xsi:type="pi:ContainerShape" visible="true" active="true">
-      <graphicsAlgorithm xsi:type="al:Rectangle" lineWidth="1" filled="false" lineVisible="false" transparency="0.0" width="60" height="124" x="1580" y="360">
+      <graphicsAlgorithm xsi:type="al:Rectangle" lineWidth="1" filled="false" lineVisible="false" transparency="0.0" width="60" height="108" x="1580" y="360">
         <graphicsAlgorithmChildren xsi:type="al:Polygon" lineWidth="1" filled="true" transparency="0.0" width="60" height="60" style="/0/@styles.26">
           <points y="30"/>
           <points x="30"/>
@@ -202,7 +202,7 @@
         <graphicsAlgorithm xsi:type="al:Ellipse" filled="false" lineVisible="false"/>
       </anchors>
       <children visible="true">
-        <graphicsAlgorithm xsi:type="al:MultiText" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="60" height="64" y="60" style="/0/@styles.27" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" value="Validad&#xA;o&#xA;?&#xA;"/>
+        <graphicsAlgorithm xsi:type="al:MultiText" lineWidth="1" filled="false" lineVisible="true" transparency="0.0" width="60" height="48" y="60" style="/0/@styles.27" font="/0/@fonts.1" horizontalAlignment="ALIGNMENT_CENTER" value="Validad&#xA;o?&#xA;"/>
       </children>
     </children>
     <children xsi:type="pi:ContainerShape" visible="true" active="true">
@@ -2292,7 +2292,7 @@
   <bpmn2:BpmnEndEvent id="endcancel56" name="Fim com cancelamento de processo" incoming="flow58" type="65" extendedFields="&lt;list/>" signalId="0"/>
   <bpmn2:BpmnIntermediateEvent id="intermediateerror59" name="Intermedi&#xe1;rio" outgoing="flow60" type="43" extendedFields="&lt;list/>" sequenceAttached="36" signalId="0" linkId="servicetask36" parentTask="servicetask36"/>
   <bpmn2:BpmnIntermediateEvent id="intermediateerror62" name="Intermedi&#xe1;rio" outgoing="flow63" type="43" extendedFields="&lt;list/>" sequenceAttached="12" signalId="0" linkId="servicetask12" parentTask="servicetask12"/>
-  <bpmn2:BpmnProcess id="execucaoFasesAtividades" name="execucaoFasesAtividades" serverId="bevap homo" version="1" author="" extendedFields="&lt;list/>" cardIndex="113630" formSource="server" managerMechanism="Papel" category="" volume="Default" expedient="Default" instruction="" complementsLevel="1" notifyResponsibleComplements="true" notifyRequisitionerComplements="true" formType="ECM_FORM_BUILDER"/>
+  <bpmn2:BpmnProcess id="execucaoFasesAtividades" name="execucaoFasesAtividades" serverId="BEVAP - QA" version="7" author="" extendedFields="&lt;list/>" cardIndex="113630 - formExecucaoFasesAtividades" formSource="local" managerMechanism="Papel" managerAssignmentController="&lt;org.eclipse.bpmn2.impl.AssignmentControllerRole>&#xA;  &lt;roleId>admin&lt;/roleId>&#xA;  &lt;mechanismName>Papel&lt;/mechanismName>&#xA;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerRole>" category="" volume="Default" expedient="Default" instruction="" keyWord="" complementsLevel="1" notifyResponsibleComplements="true" notifyRequisitionerComplements="true" formType="ECM_FORM_BUILDER"/>
   <bpmn2:SequenceFlow id="flow13" name="" sourceRef="startevent4" targetRef="servicetask12" atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/>"/>
   <bpmn2:SequenceFlow id="flow15" name="" sourceRef="servicetask12" targetRef="task14" atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/>"/>
   <bpmn2:SequenceFlow id="flow17" name="" sourceRef="task14" targetRef="task18" atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/>"/>

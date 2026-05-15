@@ -1,92 +1,227 @@
-<main id="main-content" class="pt-32 pb-24">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <div id="phases-container" class="lg:col-span-2 space-y-6">
-                </div>
+<style>
+    :root {
+        --bevap-navy: #3D567E;
+        --bevap-green: #1C8C5D;
+        --bevap-gold: #F1B434;
+    }
 
-            <aside id="summary-panel" class="lg:col-span-1">
-                <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
-                    
-                    <div class="mb-6">
-                        <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
-                            <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i> Resumo do Projeto
+    .font-montserrat {
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .bg-bevap-navy {
+        background-color: var(--bevap-navy);
+    }
+
+    .text-bevap-navy {
+        color: var(--bevap-navy);
+    }
+
+    .text-bevap-green {
+        color: var(--bevap-green);
+    }
+
+    .border-bevap-green {
+        border-color: var(--bevap-green);
+    }
+
+    .text-bevap-gold {
+        color: var(--bevap-gold);
+    }
+
+    #execution-tabs-scroll {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    #execution-tabs-scroll::-webkit-scrollbar {
+        display: none;
+    }
+</style>
+
+<main class="pt-32 pb-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <div class="space-y-6 lg:col-span-2">
+                <section class="rounded-lg bg-white shadow-md">
+                    <div class="border-b border-gray-200">
+                        <div class="relative">
+                            <div id="execution-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
+                                <button type="button" id="tab-execution-phases" class="whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
+                                    <i class="fa-solid fa-layer-group mr-2"></i>Fases
+                                </button>
+                                <button type="button" id="tab-execution-milestones" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-flag-checkered mr-2"></i>Marcos
+                                </button>
+                                <button type="button" id="tab-execution-risks" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-triangle-exclamation mr-2"></i>Riscos
+                                </button>
+                                <button type="button" id="tab-execution-raci" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-users mr-2"></i>RACI
+                                </button>
+                            </div>
+                            <button id="execution-tabs-left-arrow" type="button" class="pointer-events-none absolute left-0 top-0 bottom-0 flex w-24 items-center justify-start rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent pl-2 text-bevap-navy opacity-0 transition-opacity duration-300">
+                                <span class="flex items-center gap-0 text-base leading-none">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </span>
+                            </button>
+                            <button id="execution-tabs-right-arrow" type="button" class="pointer-events-none absolute right-0 top-0 bottom-0 flex w-24 items-center justify-end rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent pr-2 text-bevap-navy opacity-0 transition-opacity duration-300">
+                                <span class="flex items-center gap-0 text-base leading-none">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="tab-content-execution-phases" class="p-6">
+                        <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                            <p class="text-sm leading-6 text-gray-700">Acompanhe a execuÃ§Ã£o agrupada por fases planejadas na EAP, visualizando responsÃ¡veis, esforÃ§o previsto, duraÃ§Ã£o e todas as tarefas previstas para cada fase do projeto.</p>
+                        </div>
+                        <div id="execution-phases-list" class="mt-6 space-y-5"></div>
+                    </div>
+
+                    <div id="tab-content-execution-milestones" class="hidden p-6">
+                        <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                            <p class="text-sm leading-6 text-gray-700">Visualize o cronograma executivo por marcos, com perÃ­odo, status, critÃ©rios de aceite e as tarefas vinculadas de cada fase que compÃµem a entrega planejada.</p>
+                        </div>
+                        <div id="execution-milestones-list" class="mt-6 space-y-5"></div>
+                    </div>
+
+                    <div id="tab-content-execution-risks" class="hidden p-6">
+                        <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+                            <p class="text-sm leading-6 text-gray-700">Consolide os riscos do projeto com severidade, probabilidade, impacto, mitigaÃ§Ã£o e plano de contingÃªncia para apoiar a execuÃ§Ã£o e o acompanhamento dos marcos.</p>
+                        </div>
+                        <div id="execution-risks-list" class="mt-6 space-y-4"></div>
+                    </div>
+
+                    <div id="tab-content-execution-raci" class="hidden p-6">
+                        <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4">
+                            <p class="text-sm leading-6 text-gray-700">A matriz RACI apresenta os papÃ©is por marco do projeto, deixando claro quem executa, aprova, precisa ser consultado e quem deve ser informado ao longo da execuÃ§Ã£o.</p>
+                        </div>
+                        <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 bg-white">
+                            <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Marco</th>
+                                        <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">ResponsÃ¡vel (R)</th>
+                                        <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Aprovador (A)</th>
+                                        <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Consultado (C)</th>
+                                        <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Informado (I)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="execution-raci-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                            </table>
+                        </div>
+                        <div class="mt-6 rounded-xl border border-gray-200 bg-white p-4">
+                            <div class="mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-comments text-sm text-bevap-gold"></i>
+                                <h4 class="text-sm font-montserrat font-semibold text-gray-900">Plano de ComunicaÃ§Ã£o</h4>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-4 py-3 text-left font-semibold text-gray-700">PÃºblico</th>
+                                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Canal</th>
+                                            <th class="px-4 py-3 text-left font-semibold text-gray-700">Periodicidade</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="execution-communication-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="lg:col-span-1">
+                <div class="sticky top-24 space-y-4">
+                    <div class="rounded-lg bg-white p-5 shadow-md">
+                        <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                            <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
+                            Resumo do Projeto
                         </h3>
                         <div class="space-y-3 text-sm">
-                            <div class="flex items-center justify-between pb-2 border-b">
-                                <span class="text-gray-600">Código</span>
-                                <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-014</span>
-                            </div>
-                            <div class="pb-2 border-b">
-                                <span class="text-gray-600">Título</span>
-                                <p class="font-medium text-gray-900 mt-1">Implantar SSO corporativo</p>
-                            </div>
-                            <div class="flex items-center justify-between pb-2 border-b">
-                                <span class="text-gray-600">Área</span>
-                                <span class="font-medium text-gray-900">TI</span>
-                            </div>
-                            <div class="flex items-center justify-between pb-2 border-b">
-                                <span class="text-gray-600">Patrocinador</span>
-                                <span class="font-medium text-gray-900">Diretoria TI</span>
-                            </div>
+                            <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">CÃ³digo</span><span id="project-code" class="font-mono font-semibold text-bevap-navy">-</span></div>
+                            <div class="border-b pb-2"><span class="text-gray-600">TÃ­tulo</span><p id="project-title" class="mt-1 font-medium text-gray-900">-</p></div>
+                            <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Ãrea</span><span id="project-area" class="font-medium text-gray-900">-</span></div>
+                            <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Patrocinador</span><span id="project-sponsor" class="font-medium text-gray-900">-</span></div>
+                            <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">PrevisÃ£o Final</span><span id="project-deadline" class="font-medium text-gray-900">-</span></div>
+                            <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span id="project-requester" class="font-medium text-gray-900">-</span></div>
+                            <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span id="project-state-badge" class="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800"><i class="fa-solid fa-clock mr-1"></i><span id="project-state">ExecuÃ§Ã£o em andamento</span></span></div>
                         </div>
-                        <div class="mt-4 pt-4 border-t space-y-2">
-                            <button class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
-                                <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
-                            </button>
-                            <button class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
-                                <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos
+                        <div class="mt-4 space-y-2 border-t pt-4">
+                            <a href="#" class="flex w-full items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy transition-colors hover:bg-gray-50">
+                                <i class="fa-solid fa-timeline mr-2"></i>Linha do Tempo
+                            </a>
+                            <button type="button" class="flex w-full items-center justify-center rounded-lg border border-bevap-green px-4 py-2 text-sm font-medium text-bevap-green transition-colors hover:bg-green-50">
+                                <i class="fa-solid fa-paperclip mr-2"></i>Ver Anexos
                             </button>
                         </div>
                     </div>
 
-                    <div class="mb-6 pb-6 border-b border-gray-200">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm text-gray-600">Progresso da Execução</span>
-                            <span id="execution-progress-text" class="text-sm font-bold text-blue-700">0%</span>
-                        </div>
-                        <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
-                            <div id="execution-progress-bar" class="bg-blue-500 h-2 rounded-full transition-all" style="width: 0%"></div>
-                        </div>
-                        <div class="text-sm text-gray-700">
-                            <strong>Fases concluídas:</strong> <span id="completed-phases-count">0 de 0</span>
-                        </div>
-                    </div>
-
-                    <div class="mb-6">
-                        <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
-                            <i class="fa-solid fa-list-check mr-2 text-bevap-green"></i> Progresso Macro
+                    <div class="rounded-lg bg-white p-5 shadow-md">
+                        <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                            <i class="fa-solid fa-list-check mr-2 text-bevap-green"></i>
+                            Progresso
                         </h3>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex items-center text-green-600">
-                                <i class="fa-solid fa-check-circle mr-2"></i><span>Planejamento do projeto concluído</span>
-                            </div>
-                            <div class="flex items-center text-bevap-gold">
-                                <i class="fa-solid fa-clock mr-2"></i><span>Execução do projeto em andamento</span>
-                            </div>
-                        </div>
+                        <div id="macro-progress-list" class="space-y-2 text-sm"></div>
                     </div>
-
                 </div>
             </aside>
         </div>
     </div>
 </main>
 
-<footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <button class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all inline-flex items-center justify-center">
-                <i class="fa-solid fa-save mr-2"></i> Salvar Avanço
+<footer class="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white shadow-lg">
+    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <button type="button" data-action="save-draft" class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50">
+                <i class="fa-solid fa-save mr-2"></i>Salvar Rascunho
             </button>
             <div class="flex flex-wrap items-center gap-2">
-                <button class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all inline-flex items-center">
-                    <i class="fa-solid fa-rotate-left mr-2"></i> Realizar Novo Planejamento
+                <button type="button" data-action="return-planning" class="inline-flex items-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
+                    <i class="fa-solid fa-rotate-left mr-2"></i>Realizar Novo Planejamento
                 </button>
-                <button class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md inline-flex items-center">
-                    <i class="fa-solid fa-paper-plane mr-2"></i> Concluir Execução
+                <button type="button" data-action="conclude-execution" class="inline-flex items-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
+                    <i class="fa-solid fa-paper-plane mr-2"></i>Concluir ExecuÃ§Ã£o
                 </button>
             </div>
         </div>
     </div>
 </footer>
+
+<div id="return-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+        <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Realizar Novo Planejamento</h3>
+        <p class="mb-4 text-sm text-gray-600">Descreva os pontos que exigem um novo planejamento antes de retornar o projeto para essa etapa.</p>
+        <textarea id="return-reason" rows="4" placeholder="Motivo do novo planejamento..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-green-500"></textarea>
+        <div class="flex justify-end space-x-3">
+            <button type="button" data-action="close-return-modal" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
+            <button type="button" data-action="confirm-return-modal" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm text-white transition-all hover:bg-yellow-600">Devolver</button>
+        </div>
+    </div>
+</div>
+
+<div id="conclude-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+        <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Concluir ExecuÃ§Ã£o</h3>
+        <p class="mb-5 text-sm text-gray-600">Deseja concluir a execuÃ§Ã£o do projeto e enviar para a prÃ³xima etapa?</p>
+        <div class="flex justify-end space-x-3">
+            <button type="button" data-action="close-conclude-modal" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
+            <button type="button" data-action="confirm-conclude-modal" class="rounded-lg bg-bevap-green px-4 py-2 text-sm text-white transition-all hover:bg-green-700">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="hidden fixed top-24 right-4 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+    <div class="flex items-start gap-3">
+        <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600"></i>
+        <div>
+            <div id="toast-title" class="font-semibold text-bevap-navy"></div>
+            <div id="toast-message" class="text-sm text-gray-600"></div>
+        </div>
+    </div>
+</div>

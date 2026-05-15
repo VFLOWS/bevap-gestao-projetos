@@ -519,7 +519,7 @@ const executionActivityController = {
       fields.push({ name: `executionEntryDateEF___${idx}`, value: this.asText(entry.date) });
       fields.push({ name: `executionEntryStartEF___${idx}`, value: this.asText(entry.start) });
       fields.push({ name: `executionEntryEndEF___${idx}`, value: this.asText(entry.end) });
-      fields.push({ name: `executionEntryDurationMinutesEF___${idx}`, value: String(Number(entry.durationMinutes) || 0) });
+      fields.push({ name: `executionEntryDurationEF___${idx}`, value: String(Number(entry.durationMinutes) || 0) });
       fields.push({ name: `executionEntryCommentEF___${idx}`, value: this.asText(entry.comment) });
       fields.push({ name: `executionEntryAuthorIdEF___${idx}`, value: this.asText(entry.authorId) });
       fields.push({ name: `executionEntryAuthorNameEF___${idx}`, value: this.asText(entry.authorName) });
@@ -565,7 +565,7 @@ const executionActivityController = {
   parseExecutionEntries(card) {
     const source = card || {};
     const rowsByIndex = {};
-    const fieldPattern = /^(executionEntryIdEF|executionEntryStatusEF|executionEntryDateEF|executionEntryStartEF|executionEntryEndEF|executionEntryDurationMinutesEF|executionEntryCommentEF|executionEntryAuthorIdEF|executionEntryAuthorNameEF|executionEntryCreatedAtEF|executionEntryUpdatedAtEF)___(\d+)$/;
+    const fieldPattern = /^(executionEntryIdEF|executionEntryStatusEF|executionEntryDateEF|executionEntryStartEF|executionEntryEndEF|executionEntryDurationEF|executionEntryCommentEF|executionEntryAuthorIdEF|executionEntryAuthorNameEF|executionEntryCreatedAtEF|executionEntryUpdatedAtEF)___(\d+)$/;
 
     Object.keys(source).forEach((fieldName) => {
       const match = fieldName.match(fieldPattern);
@@ -587,7 +587,7 @@ const executionActivityController = {
           date: this.asText(row.executionEntryDateEF),
           start: this.asText(row.executionEntryStartEF),
           end: this.asText(row.executionEntryEndEF),
-          durationMinutes: Number(row.executionEntryDurationMinutesEF) || this.calculateDurationMinutes(row.executionEntryStartEF, row.executionEntryEndEF),
+          durationMinutes: Number(row.executionEntryDurationEF) || this.calculateDurationMinutes(row.executionEntryStartEF, row.executionEntryEndEF),
           comment: this.asText(row.executionEntryCommentEF),
           authorId: this.asText(row.executionEntryAuthorIdEF),
           authorName: this.asText(row.executionEntryAuthorNameEF),
