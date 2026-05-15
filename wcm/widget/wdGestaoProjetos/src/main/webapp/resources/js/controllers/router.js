@@ -163,7 +163,14 @@ const router = {
           title: 'Solicitante - Aprovar Proposta Comercial',
           breadcrumb: ['Solicitacoes', 'Aprovar Proposta Comercial'],
           handler: () => requesterProposalApprovalController.load(params)
-        }
+        },
+        // ADICIONE ESTA NOVA ROTA:
+        projectExecution: {
+          controller: projectExecutionController,
+          title: 'Desenvolvimento - Execução do Projeto',
+          breadcrumb: ['Desenvolvimento', 'Execução do Projeto'],
+          handler: () => projectExecutionController.load(params)
+        },
       };
 
       const route = routes[page];

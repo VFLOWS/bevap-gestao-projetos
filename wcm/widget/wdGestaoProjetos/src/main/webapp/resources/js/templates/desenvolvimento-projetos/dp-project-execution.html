@@ -1,0 +1,92 @@
+<main id="main-content" class="pt-32 pb-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <div id="phases-container" class="lg:col-span-2 space-y-6">
+                </div>
+
+            <aside id="summary-panel" class="lg:col-span-1">
+                <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+                    
+                    <div class="mb-6">
+                        <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                            <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i> Resumo do Projeto
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center justify-between pb-2 border-b">
+                                <span class="text-gray-600">Código</span>
+                                <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-014</span>
+                            </div>
+                            <div class="pb-2 border-b">
+                                <span class="text-gray-600">Título</span>
+                                <p class="font-medium text-gray-900 mt-1">Implantar SSO corporativo</p>
+                            </div>
+                            <div class="flex items-center justify-between pb-2 border-b">
+                                <span class="text-gray-600">Área</span>
+                                <span class="font-medium text-gray-900">TI</span>
+                            </div>
+                            <div class="flex items-center justify-between pb-2 border-b">
+                                <span class="text-gray-600">Patrocinador</span>
+                                <span class="font-medium text-gray-900">Diretoria TI</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t space-y-2">
+                            <button class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
+                                <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
+                            </button>
+                            <button class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
+                                <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="mb-6 pb-6 border-b border-gray-200">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm text-gray-600">Progresso da Execução</span>
+                            <span id="execution-progress-text" class="text-sm font-bold text-blue-700">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
+                            <div id="execution-progress-bar" class="bg-blue-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+                        </div>
+                        <div class="text-sm text-gray-700">
+                            <strong>Fases concluídas:</strong> <span id="completed-phases-count">0 de 0</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                            <i class="fa-solid fa-list-check mr-2 text-bevap-green"></i> Progresso Macro
+                        </h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex items-center text-green-600">
+                                <i class="fa-solid fa-check-circle mr-2"></i><span>Planejamento do projeto concluído</span>
+                            </div>
+                            <div class="flex items-center text-bevap-gold">
+                                <i class="fa-solid fa-clock mr-2"></i><span>Execução do projeto em andamento</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </aside>
+        </div>
+    </div>
+</main>
+
+<footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <button class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all inline-flex items-center justify-center">
+                <i class="fa-solid fa-save mr-2"></i> Salvar Avanço
+            </button>
+            <div class="flex flex-wrap items-center gap-2">
+                <button class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all inline-flex items-center">
+                    <i class="fa-solid fa-rotate-left mr-2"></i> Realizar Novo Planejamento
+                </button>
+                <button class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md inline-flex items-center">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Concluir Execução
+                </button>
+            </div>
+        </div>
+    </div>
+</footer>

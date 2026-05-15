@@ -408,6 +408,12 @@ var fluigService = {
                  enabled: true,
                  route: 'dpStartExecErrorTreatment',
                  label: 'Tratar Erro Iniciar Execução'
+                 },
+                 
+                 18: {
+                 enabled: true,
+                 route: 'projectExecution', // Aponta para a chave criada no router
+                 label: 'Executar Projeto'
                  }
             };
         }
@@ -489,6 +495,7 @@ var fluigService = {
                 0: 'Planejamento do Projeto',
                 4: 'Planejamento do Projeto',
                 14: 'Aguardando Planejamento do Projeto',
+                18: 'Execução do Projeto',
                 46: 'Erro de Integracao GLPI',
                 72: 'Finalizado'
             };
