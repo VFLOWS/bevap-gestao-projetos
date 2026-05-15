@@ -1,0 +1,217 @@
+<div id="execution-activity-page" class="min-h-screen bg-gray-50 text-gray-900 pb-28">
+  <div id="ef-exec-page-alert" class="hidden mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8"></div>
+
+  <main id="ef-exec-content" class="hidden pt-6 pb-8">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="space-y-6 lg:col-span-2">
+          <section class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+            <div class="relative overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm">
+              <div class="h-1 w-full bg-gradient-to-r from-blue-500 via-blue-400 to-blue-200"></div>
+              <div class="space-y-4 px-5 py-4">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div class="flex min-w-0 items-start gap-3">
+                    <span class="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-700">
+                      <i class="fa-solid fa-list-check text-sm" aria-hidden="true"></i>
+                    </span>
+                    <div class="min-w-0">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-blue-700">Atividade</p>
+                      <h2 id="ef-exec-activity-name" class="mt-1 text-xl font-semibold text-bevap-navy">-</h2>
+                    </div>
+                  </div>
+                  <div id="ef-exec-effort-badge" class="hidden shrink-0 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-800">
+                    Esforco: <span id="ef-exec-estimated-effort">-</span>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 text-sm">
+                  <span id="ef-exec-responsible-badge" class="hidden items-center rounded-full bg-blue-700 px-3 py-1.5 font-semibold text-white">
+                    <i class="fa-solid fa-user mr-1 text-blue-100" aria-hidden="true"></i>
+                    Responsavel: <span id="ef-exec-responsible" class="ml-1">-</span>
+                  </span>
+                  <span class="inline-flex items-center rounded-full bg-red-600 px-3 py-1.5 font-semibold text-white">
+                    <i class="fa-solid fa-calendar-alt mr-1 text-red-100" aria-hidden="true"></i>
+                    Data de Entrega: <span id="ef-exec-due-date" class="ml-1">-</span>
+                  </span>
+                </div>
+
+                <div class="rounded-lg border border-slate-300 bg-slate-100 px-4 py-3 text-sm text-gray-700">
+                  <div class="flex flex-wrap items-center gap-3 rounded-lg bg-amber-300 px-3 py-2">
+                    <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-amber-500 text-gray-700">
+                      <i class="fa-solid fa-flag-checkered text-xs" aria-hidden="true"></i>
+                    </span>
+                    <span class="font-medium">Marco: <span id="ef-exec-milestone-name">-</span></span>
+                  </div>
+                  <div class="mt-3 flex flex-wrap items-center gap-3 rounded-lg bg-emerald-300 px-3 py-2">
+                    <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-gray-700">
+                      <i class="fa-solid fa-layer-group text-xs" aria-hidden="true"></i>
+                    </span>
+                    <span class="font-medium">Fase: <span id="ef-exec-phase-name">-</span></span>
+                  </div>
+                  <div id="ef-exec-dependencies-block" class="hidden mt-3 rounded-lg border border-yellow-300 bg-yellow-100 px-3 py-3">
+                    <div class="flex items-center gap-3">
+                      <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-yellow-400 text-gray-700">
+                        <i class="fa-solid fa-link text-xs" aria-hidden="true"></i>
+                      </span>
+                      <span class="font-medium">Dependencias da Atividade</span>
+                    </div>
+                    <div id="ef-exec-dependencies-list" class="mt-3 space-y-2 pl-10"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-lg bg-white shadow-md">
+            <div class="border-b border-gray-200">
+              <button type="button" class="border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
+                <i class="fa-solid fa-clipboard-list mr-2" aria-hidden="true"></i>Execucao da Atividade
+              </button>
+            </div>
+
+            <div class="p-6">
+              <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+                <div class="flex items-center gap-3">
+                  <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                    <i class="fa-regular fa-clock text-base" aria-hidden="true"></i>
+                  </span>
+                  <div>
+                    <h3 class="text-sm font-semibold text-gray-900">Lancamentos da Atividade</h3>
+                    <p class="text-xs text-gray-500">Registre data, intervalo e comentario no mesmo apontamento.</p>
+                  </div>
+                </div>
+
+                <div class="mt-4 rounded-lg border border-blue-100 bg-gradient-to-r from-slate-50 via-blue-50 to-slate-50 px-4 py-3">
+                  <div class="flex flex-wrap items-center justify-between gap-2 text-sm">
+                    <span id="ef-exec-estimated-summary" class="hidden rounded-full border border-blue-500 bg-blue-500 px-3 py-1.5 text-white">
+                      Esforco Estimado: <strong id="ef-exec-estimated-hours">-</strong>
+                    </span>
+                    <span class="rounded-full border border-violet-500 bg-violet-500 px-3 py-1.5 text-white">
+                      Esforco Utilizado: <strong id="ef-exec-used-hours">0h</strong>
+                    </span>
+                    <span id="ef-exec-remaining-summary" class="hidden rounded-full border border-emerald-500 bg-emerald-500 px-3 py-1.5 text-white">
+                      Esforco Restante: <strong id="ef-exec-remaining-hours">-</strong>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="mt-4 rounded-lg border border-gray-200 bg-slate-50 p-4">
+                  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <div class="text-sm font-semibold text-gray-900">Apontamento de Tempo</div>
+                      <p class="mt-1 text-sm text-gray-500">Os apontamentos so sao gravados no card ao salvar ou enviar.</p>
+                    </div>
+                    <button type="button" data-action="open-add-entry-modal" class="inline-flex items-center justify-center rounded-lg bg-bevap-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:opacity-95">
+                      <i class="fa-solid fa-plus mr-2" aria-hidden="true"></i>Adicionar Apontamento
+                    </button>
+                  </div>
+                </div>
+
+                <div class="mt-4">
+                  <div class="mb-3 flex items-center justify-between gap-3">
+                    <h4 class="text-sm font-semibold text-gray-900">Historico de Lancamentos</h4>
+                    <button type="button" id="ef-exec-entry-history-toggle" class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50" aria-expanded="true">
+                      <i class="fa-solid fa-chevron-up text-[10px]" aria-hidden="true"></i>
+                      <span>Recolher</span>
+                    </button>
+                  </div>
+                  <div id="ef-exec-entry-history" class="space-y-3"></div>
+                  <div id="ef-exec-entry-empty" class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-500">
+                    Nenhum apontamento registrado.
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6 rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
+                <div class="flex items-center gap-3">
+                  <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-700">
+                    <i class="fa-solid fa-paperclip text-base" aria-hidden="true"></i>
+                  </span>
+                  <div>
+                    <h3 class="text-sm font-semibold text-gray-900">Anexos e Envio</h3>
+                    <p class="text-xs text-gray-500">Arquivos novos ficam pendentes no salvar e sao anexados ao enviar.</p>
+                  </div>
+                </div>
+
+                <input type="file" id="ef-exec-attachment-input" class="hidden" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
+
+                <button type="button" id="ef-exec-dropzone" class="mt-4 w-full rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-8 text-center transition-all hover:border-bevap-green">
+                  <i class="fa-solid fa-cloud-arrow-up mb-3 text-4xl text-gray-400" aria-hidden="true"></i>
+                  <p class="mb-1 font-medium text-gray-600">Arraste arquivos aqui ou clique para selecionar</p>
+                  <p class="text-sm text-gray-500">PDF, DOC, XLS, PNG, JPG</p>
+                </button>
+
+                <div id="ef-exec-files-pending-warning" class="hidden mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+                  Existem anexos pendentes. Eles serao anexados apenas ao enviar para validacao.
+                </div>
+                <div id="ef-exec-files-list" class="mt-4 space-y-2"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <aside class="lg:col-span-1">
+          <div class="sticky top-24 space-y-4">
+            <div class="rounded-lg bg-white p-5 shadow-md">
+              <h3 class="mb-4 flex items-center text-lg font-bold text-bevap-navy">
+                <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold" aria-hidden="true"></i>Resumo do Projeto
+              </h3>
+              <dl class="space-y-3 text-sm">
+                <div class="flex items-center justify-between border-b pb-2"><dt class="text-gray-600">Codigo</dt><dd id="ef-exec-project-code" class="font-mono font-semibold text-bevap-navy">-</dd></div>
+                <div class="border-b pb-2"><dt class="text-gray-600">Titulo</dt><dd id="ef-exec-project-title" class="mt-1 font-medium text-gray-900">-</dd></div>
+                <div class="flex items-center justify-between border-b pb-2"><dt class="text-gray-600">Area</dt><dd id="ef-exec-project-area" class="font-medium text-gray-900">-</dd></div>
+                <div class="flex items-center justify-between border-b pb-2"><dt class="text-gray-600">Patrocinador</dt><dd id="ef-exec-project-sponsor" class="font-medium text-gray-900">-</dd></div>
+                <div class="flex items-center justify-between border-b pb-2"><dt class="text-gray-600">Prioridade</dt><dd id="ef-exec-project-priority" class="font-medium text-gray-900">-</dd></div>
+                <div class="flex items-center justify-between"><dt class="text-gray-600">Solicitante</dt><dd id="ef-exec-project-requester" class="font-medium text-gray-900">-</dd></div>
+              </dl>
+            </div>
+
+            <div class="rounded-lg bg-white p-5 shadow-md">
+              <h3 class="mb-4 flex items-center text-lg font-bold text-bevap-navy">
+                <i class="fa-solid fa-list-check mr-2 text-bevap-green" aria-hidden="true"></i>Progresso
+              </h3>
+              <div class="space-y-2 text-sm">
+                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2" aria-hidden="true"></i><span>Planejamento do projeto concluido</span></div>
+                <div class="flex items-center text-blue-600"><i class="fa-solid fa-play mr-2" aria-hidden="true"></i><span>Execucao da atividade em andamento</span></div>
+                <div class="flex items-center text-gray-400"><i class="fa-regular fa-circle mr-2" aria-hidden="true"></i><span>Validacao do solicitante</span></div>
+                <div class="flex items-center text-gray-400"><i class="fa-regular fa-circle mr-2" aria-hidden="true"></i><span>Validacao do TI</span></div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <footer id="ef-exec-action-footer" class="hidden fixed bottom-0 left-0 right-0 z-50 border-t border-gray-200 bg-white shadow-lg">
+    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <button type="button" data-action="save-activity" class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          <i class="fa-solid fa-save mr-2" aria-hidden="true"></i>Salvar
+        </button>
+        <button type="button" data-action="send-requester" class="inline-flex items-center justify-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md hover:bg-green-700">
+          <i class="fa-solid fa-paper-plane mr-2" aria-hidden="true"></i>Enviar para Validacao do Solicitante
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <div id="modal-root"></div>
+  <div id="toast" class="hidden fixed right-4 top-24 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+    <div class="flex items-start gap-3">
+      <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600" aria-hidden="true"></i>
+      <div>
+        <div id="toast-title" class="font-semibold text-bevap-navy"></div>
+        <div id="toast-message" class="text-sm text-gray-600"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ui-loading-overlay" class="hidden fixed inset-0 z-[80] bg-white/70 backdrop-blur-sm">
+    <div class="flex h-full items-center justify-center">
+      <div class="rounded-lg border border-gray-200 bg-white px-5 py-4 shadow-lg">
+        <p id="ui-loading-label" class="text-sm font-medium text-gray-700">Carregando...</p>
+      </div>
+    </div>
+  </div>
+</div>

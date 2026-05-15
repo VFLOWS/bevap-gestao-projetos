@@ -967,6 +967,45 @@
 	<input type="hidden" name="milestoneTaskSummaryStartedDP" id="milestoneTaskSummaryStartedDP"/>
 
 	<hr>
+	<label><strong>EXECUCAO DA ATIVIDADE - EF</strong></label>
+	<label>Anexos Execucao Atividade</label>
+	<textarea name="anexosExecucaoAtividade" id="anexosExecucaoAtividade" class="form-control" rows="4"></textarea>
+
+	<label>Apontamentos de Horas</label>
+	<table class="table table-bordered" id="tblExecutionTimeEntriesEF" tablename="tblExecutionTimeEntriesEF" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Entry Id</th>
+				<th>Status</th>
+				<th>Data</th>
+				<th>Inicio</th>
+				<th>Fim</th>
+				<th>Duracao Minutos</th>
+				<th>Comentario</th>
+				<th>Autor Id</th>
+				<th>Autor Nome</th>
+				<th>Criado Em</th>
+				<th>Atualizado Em</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="executionEntryIdEF" class="form-control"></td>
+				<td><input type="text" name="executionEntryStatusEF" class="form-control"></td>
+				<td><input type="text" name="executionEntryDateEF" class="form-control"></td>
+				<td><input type="text" name="executionEntryStartEF" class="form-control"></td>
+				<td><input type="text" name="executionEntryEndEF" class="form-control"></td>
+				<td><input type="text" name="executionEntryDurationMinutesEF" class="form-control"></td>
+				<td><input type="text" name="executionEntryCommentEF" class="form-control"></td>
+				<td><input type="text" name="executionEntryAuthorIdEF" class="form-control"></td>
+				<td><input type="text" name="executionEntryAuthorNameEF" class="form-control"></td>
+				<td><input type="text" name="executionEntryCreatedAtEF" class="form-control"></td>
+				<td><input type="text" name="executionEntryUpdatedAtEF" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
+	<hr>
 	<label><strong>Tratar Erro - Iniciar Execução Atividades do Projeto</strong></label>
 	<label>Mensagem de Erro</label>
 	<input type="text" name="erroIniciarExecucaoMsg" id="erroIniciarExecucaoMsg" class="form-control">

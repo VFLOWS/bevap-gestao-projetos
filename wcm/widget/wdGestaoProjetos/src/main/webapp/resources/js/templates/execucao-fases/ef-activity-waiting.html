@@ -1,0 +1,120 @@
+<div id="execution-activity-waiting-page" class="min-h-screen bg-gray-50 text-gray-900 pb-28">
+  <div id="ef-page-alert" class="hidden mx-auto max-w-6xl px-4 pt-6"></div>
+
+  <main id="ef-content" class="hidden mx-auto max-w-6xl px-4 py-6">
+    <div class="grid gap-6 lg:grid-cols-3">
+      <section class="lg:col-span-2 space-y-6">
+        <div class="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden">
+          <div class="border-b border-gray-200 px-5 pt-4">
+            <div class="flex items-center gap-2 text-sm font-medium text-green-700 border-b-2 border-green-600 w-fit pb-3">
+              <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+              Detalhamento da Atividade
+            </div>
+          </div>
+
+          <div class="p-5 space-y-5">
+            <div class="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-yellow-700">Aguardando execucao</p>
+                  <h2 id="ef-activity-name" class="mt-1 text-2xl font-semibold text-gray-900">-</h2>
+                </div>
+                <span id="ef-glpi-status" class="inline-flex w-fit items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-800">
+                  Status nao informado
+                </span>
+              </div>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Data de entrega</p>
+                <p id="ef-due-date" class="mt-2 text-lg font-semibold text-gray-900">-</p>
+              </div>
+              <div id="ef-parent-process-row" class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Processo pai</p>
+                <p id="ef-parent-process" class="mt-2 text-lg font-semibold text-gray-900">-</p>
+              </div>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2">
+              <div id="ef-phase-block" class="rounded-lg border border-gray-200 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Fase</p>
+                <p id="ef-phase-name" class="mt-2 text-base font-semibold text-gray-900">-</p>
+              </div>
+              <div id="ef-milestone-block" class="rounded-lg border border-gray-200 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Marco</p>
+                <p id="ef-milestone-name" class="mt-2 text-base font-semibold text-gray-900">-</p>
+              </div>
+            </div>
+
+            <div id="ef-glpi-details" class="rounded-lg border border-gray-200 p-4">
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-gray-500">Integracao GLPI da atividade</p>
+                  <p id="ef-glpi-id" class="mt-2 text-sm font-medium text-gray-900">-</p>
+                </div>
+                <p id="ef-glpi-error" class="hidden max-w-xl rounded-md bg-red-50 px-3 py-2 text-sm text-red-700"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="space-y-6">
+        <div class="bg-white border border-gray-200 shadow-sm rounded-lg p-5">
+          <h3 class="text-base font-semibold text-gray-900">Resumo do Projeto</h3>
+          <dl class="mt-4 space-y-4">
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Codigo GLPI</dt>
+              <dd id="ef-project-code" class="mt-1 text-sm font-medium text-gray-900">-</dd>
+            </div>
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Projeto</dt>
+              <dd id="ef-project-title" class="mt-1 text-sm font-medium text-gray-900">-</dd>
+            </div>
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Area / Unidade</dt>
+              <dd id="ef-project-area" class="mt-1 text-sm font-medium text-gray-900">-</dd>
+            </div>
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Patrocinador</dt>
+              <dd id="ef-project-sponsor" class="mt-1 text-sm font-medium text-gray-900">-</dd>
+            </div>
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Prioridade</dt>
+              <dd id="ef-project-priority" class="mt-1 text-sm font-medium text-gray-900">-</dd>
+            </div>
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-wide text-gray-500">Solicitante</dt>
+              <dd id="ef-project-requester" class="mt-1 text-sm font-medium text-gray-900">-</dd>
+            </div>
+          </dl>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer id="ef-action-footer" class="hidden fixed inset-x-0 bottom-0 z-30 border-t border-gray-200 bg-white/95 backdrop-blur">
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+      <p class="text-sm text-gray-600">Ao iniciar, a solicitacao seguira para a atividade de execucao.</p>
+      <button id="ef-start-button" type="button" data-action="start-execution" class="inline-flex items-center justify-center rounded-md bg-green-700 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2">
+        <i class="fa-solid fa-play mr-2" aria-hidden="true"></i>
+        Iniciar Execucao
+      </button>
+    </div>
+  </footer>
+
+  <div id="modal-root"></div>
+
+  <div id="toast" class="hidden fixed right-4 top-4 z-50 max-w-sm rounded-lg border border-green-200 bg-white px-4 py-3 shadow-lg">
+    <p id="toast-message" class="text-sm font-medium text-gray-900"></p>
+  </div>
+
+  <div id="ui-loading-overlay" class="hidden fixed inset-0 z-50 bg-white/70 backdrop-blur-sm">
+    <div class="flex h-full items-center justify-center">
+      <div class="rounded-lg bg-white px-5 py-4 shadow-lg border border-gray-200">
+        <p id="ui-loading-label" class="text-sm font-medium text-gray-700">Carregando...</p>
+      </div>
+    </div>
+  </div>
+</div>

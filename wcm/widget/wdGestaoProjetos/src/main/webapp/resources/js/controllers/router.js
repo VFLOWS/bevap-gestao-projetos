@@ -146,6 +146,18 @@ const router = {
           breadcrumb: ['TI', 'Erro Iniciar Execução'],
           handler: () => dpStartExecErrorTreatmentController.load(params)
         },
+        executionActivityWaiting: {
+          controller: executionActivityWaitingController,
+          title: 'Aguardando Execucao da Atividade',
+          breadcrumb: ['Execucao de Fases', 'Aguardando Execucao'],
+          handler: () => executionActivityWaitingController.load(params)
+        },
+        executionActivity: {
+          controller: executionActivityController,
+          title: 'Execucao da Atividade',
+          breadcrumb: ['Execucao de Fases', 'Execucao da Atividade'],
+          handler: () => executionActivityController.load(params)
+        },
         requesterProposalApproval: {
           controller: requesterProposalApprovalController,
           title: 'Solicitante - Aprovar Proposta Comercial',
