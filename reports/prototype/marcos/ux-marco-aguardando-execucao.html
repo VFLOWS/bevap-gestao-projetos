@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aguardando Execução da Atividade</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#3D567E',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434'
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 font-inter text-gray-900">
+    <header class="fixed left-0 right-0 top-0 z-50 bg-bevap-navy shadow-lg">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 rounded-lg bg-white px-4 py-1">
+                    <img src="../logoBevap.png" class="h-auto w-24" alt="BEVAP">
+                </div>
+                <div class="hidden h-8 w-px bg-gray-400 md:block"></div>
+                <h1 class="hidden font-montserrat text-lg font-semibold text-white md:block">Aguardando Execução da
+                    Atividade</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Usuário"
+                    class="h-9 w-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="mx-auto flex h-10 max-w-7xl items-center px-4 text-sm sm:px-6 lg:px-8">
+            <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                <a href="../ux-dashboard.html"
+                    class="inline-flex items-center gap-2 text-gray-300 transition-colors hover:text-white"><i
+                        class="fa-solid fa-house text-xs"></i><span>Início</span></a>
+                <span class="text-gray-400">/</span>
+                <a href="../ux-planejamento.html"
+                    class="text-gray-300 transition-colors hover:text-white">Planejamento</a>
+                <span class="text-gray-400">/</span>
+                <span class="font-medium text-bevap-gold">Aguardando</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <section id="pending-form" class="bg-white rounded-lg shadow-md">
+                        <div id="pending-form-tabs" class="border-b border-gray-200 mb-6">
+                            <div class="flex">
+                                <button type="button" id="tab-pending-detail"
+                                    class="px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50 whitespace-nowrap">
+                                    <i class="fa-solid fa-clipboard-list mr-2"></i>Detalhamento da Atividade
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="tab-content-pending-detail" class="p-6">
+                            <div class="space-y-6">
+                                <div
+                                    class="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm">
+                                    <div
+                                        class="h-1 w-full bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-200">
+                                    </div>
+                                    <div class="px-5 py-4">
+                                        <div class="space-y-4">
+                                            <div class="flex items-start justify-between gap-4">
+                                                <div class="min-w-0 flex-1">
+                                                    <div class="flex items-center gap-3 min-w-0">
+                                                        <span
+                                                            class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-yellow-50 text-yellow-700 shrink-0 self-start">
+                                                            <i class="fa-regular fa-clock text-sm"></i>
+                                                        </span>
+                                                        <div class="min-w-0">
+                                                            <div
+                                                                class="text-base font-bold text-bevap-navy leading-6">
+                                                                Mapear Sistemas Impactados</div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div
+                                                    class="shrink-0 rounded-xl border border-yellow-200 bg-yellow-50 px-3 py-2 text-sm font-bold text-bevap-navy">
+                                                    Esforço: 12h
+                                                </div>
+                                            </div>
+                                             <div class="flex flex-nowrap items-center gap-2 overflow-x-auto text-gray-600 pb-1"
+                                                style="font-size: 13px;">
+                                                <span
+                                                    class="inline-flex items-center px-3 py-1.5 font-bold rounded-full whitespace-nowrap shrink-0 bg-blue-700 text-white">
+                                                    <i class="fa-solid fa-user mr-1 text-blue-100"></i>
+                                                    <span>Responsável: Carlos Silva</span>
+                                                </span>
+                                                <span
+                                                    class="inline-flex items-center px-3 py-1.5 font-bold rounded-full whitespace-nowrap shrink-0 bg-red-600 text-white">
+                                                    <i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>
+                                                    <span>Data de Entrega: 05/02/2026</span>
+                                                </span>
+                                            </div>
+                                            <div
+                                                class="rounded-xl border border-slate-300 bg-slate-100 px-4 py-3 text-sm text-gray-600">
+                                                <div
+                                                    class="inline-flex w-full flex-wrap items-center gap-x-3 gap-y-2 rounded-xl bg-amber-300 px-3 py-2 text-gray-700">
+                                                    <span
+                                                        class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-amber-500 text-gray-700 shrink-0">
+                                                        <i class="fa-solid fa-flag-checkered text-xs"></i>
+                                                    </span>
+                                                    <span class="font-medium">Marco: concluir descoberta e baseline técnico</span>
+                                                    <span class="font-medium text-gray-700">Período do Marco: 05/02/26 a 10/02/26</span>
+                                                </div>
+                                                <div
+                                                    class="mt-3 flex items-center justify-between gap-4 rounded-xl bg-emerald-300 px-3 py-2 text-gray-700">
+                                                    <div class="min-w-0 flex flex-wrap items-center gap-x-3 gap-y-2">
+                                                        <span
+                                                            class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-gray-700 shrink-0">
+                                                            <i class="fa-solid fa-layer-group text-xs"></i>
+                                                        </span>
+                                                        <span class="font-medium">Fase: Descoberta e Análise</span>
+                                                        <span
+                                                            class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-emerald-500 text-gray-700 shrink-0">
+                                                            <i class="fa-solid fa-user text-xs"></i>
+                                                        </span>
+                                                        <span class="font-medium">Responsável da Fase: Ana Clara</span>
+                                                    </div>
+                                                    <span class="shrink-0 text-sm font-medium text-gray-700">Esforço: 40h</span>
+                                                </div>
+                                            </div>
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+                                    <div class="flex items-center mb-2">
+                                        <i class="fa-solid fa-link text-yellow-600 mr-2"></i>
+                                        <h4 class="text-sm font-montserrat font-semibold text-gray-900">Dependências da
+                                            Atividade</h4>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <div class="flex items-center gap-2 text-sm text-gray-700"><i
+                                                class="fa-solid fa-triangle-exclamation text-yellow-500"></i><span>Kickoff
+                                                inicial validado com todas as áreas</span></div>
+                                        <div class="flex items-center gap-2 text-sm text-gray-700"><i
+                                                class="fa-solid fa-triangle-exclamation text-yellow-500"></i><span>Aprovação
+                                                formal do escopo funcional inicial</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <aside class="lg:col-span-1">
+                    <div class="sticky top-24 space-y-4">
+                        <div class="bg-white rounded-lg shadow-md p-5">
+                            <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
+                                <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
+                                Resumo do Projeto
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-center justify-between pb-2 border-b"><span
+                                        class="text-gray-600">Código</span><span
+                                        class="font-mono font-semibold text-bevap-navy">PRJ-2026-033</span></div>
+                                <div class="pb-2 border-b"><span class="text-gray-600">Título</span>
+                                    <p class="font-medium text-gray-900 mt-1">Implantar SSO corporativo</p>
+                                </div>
+                                <div class="flex items-center justify-between pb-2 border-b"><span
+                                        class="text-gray-600">Área</span><span
+                                        class="font-medium text-gray-900">Tecnologia da Informação</span></div>
+                                <div class="flex items-center justify-between pb-2 border-b"><span
+                                        class="text-gray-600">Patrocinador</span><span
+                                        class="font-medium text-gray-900">Diretoria TI</span></div>
+                                <div class="flex items-center justify-between pb-2 border-b"><span
+                                        class="text-gray-600">Prioridade</span><span
+                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs bg-red-100 text-red-800 font-medium"><i
+                                            class="fa-solid fa-circle-exclamation mr-1"></i>Crítico</span></div>
+                                <div class="flex items-center justify-between pb-2 border-b"><span
+                                        class="text-gray-600">Solicitante</span><span
+                                        class="font-medium text-gray-900">João Vieira</span></div>
+                                <div class="flex items-center justify-between pb-2 border-b"><span
+                                        class="text-gray-600">Responsável</span><span
+                                        class="font-medium text-gray-900">Carlos Silva</span></div>
+                                <div class="flex items-center justify-between"><span
+                                        class="text-gray-600">Status</span><span
+                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800 font-medium"><i
+                                            class="fa-regular fa-clock mr-1"></i>Aguardando execução</span></div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t space-y-2">
+                                <a href="../ux-planejamento.html"
+                                    class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors"><i
+                                        class="fa-solid fa-timeline mr-2"></i> Linha do Tempo</a>
+                                <button type="button"
+                                    class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors"><i
+                                        class="fa-solid fa-paperclip mr-2"></i> Anexos Existentes</button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md p-5">
+                            <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center"><i
+                                    class="fa-solid fa-list-check mr-2 text-bevap-green"></i>Progresso</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center text-green-600"><i
+                                        class="fa-solid fa-check-circle mr-2"></i><span>Planejamento do projeto
+                                        concluído</span></div>
+                                <div class="flex items-center text-bevap-gold"><i
+                                        class="fa-solid fa-clock mr-2"></i><span>Execução da atividade aguardando
+                                        início</span></div>
+                                <div class="flex items-center text-gray-400"><i
+                                        class="fa-regular fa-circle mr-2"></i><span>Validação do solicitante</span>
+                                </div>
+                                <div class="flex items-center text-gray-400"><i
+                                        class="fa-regular fa-circle mr-2"></i><span>Validação do TI</span></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="flex justify-end">
+                <button type="button" data-action="start-execution"
+                    class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md inline-flex items-center">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Iniciar Execução
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <div id="modal-root"></div>
+    <div id="toast"
+        class="hidden fixed top-24 right-4 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+        <div class="flex items-start gap-3">
+            <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600"></i>
+            <div>
+                <div id="toast-title" class="font-semibold text-bevap-navy"></div>
+                <div id="toast-message" class="text-sm text-gray-600"></div>
+            </div>
+        </div>
+    </div>
+    <div id="ui-loading-overlay"
+        class="pointer-events-none fixed inset-0 z-[60] hidden bg-slate-900/40 backdrop-blur-[2px]">
+        <div class="flex h-full items-center justify-center">
+            <div class="rounded-2xl bg-white px-6 py-5 text-center shadow-2xl">
+                <i class="fa-solid fa-spinner fa-spin text-2xl text-bevap-green"></i>
+                <div class="mt-3 font-semibold text-bevap-navy">Processando interação...</div>
+                <div class="mt-1 text-sm text-gray-600">Estado de loading para demonstração do protótipo.</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ux-marco-aguardando-execucao.js"></script>
+</body>
+
+</html>

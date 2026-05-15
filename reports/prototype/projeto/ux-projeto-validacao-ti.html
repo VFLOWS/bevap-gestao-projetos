@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TI - Validação do Projeto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#3D567E',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434'
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+        #project-ti-panel-tabs-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        #project-ti-panel-tabs-scroll::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="bg-gray-50 font-inter text-gray-900">
+    <header class="fixed left-0 right-0 top-0 z-50 bg-bevap-navy shadow-lg">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 rounded-lg bg-white px-4 py-1">
+                    <img src="../logoBevap.png" class="h-auto w-24" alt="BEVAP">
+                </div>
+                <div class="hidden h-8 w-px bg-gray-400 md:block"></div>
+                <h1 class="hidden font-montserrat text-lg font-semibold text-white md:block">TI - Validação do Projeto</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Usuário" class="h-9 w-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="mx-auto flex h-10 max-w-7xl items-center px-4 text-sm sm:px-6 lg:px-8">
+            <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                <a href="../ux-dashboard.html" class="inline-flex items-center gap-2 text-gray-300 transition-colors hover:text-white"><i class="fa-solid fa-house text-xs"></i><span>Início</span></a>
+                <span class="text-gray-400">/</span>
+                <a href="../ux-planejamento.html" class="text-gray-300 transition-colors hover:text-white">Planejamento</a>
+                <span class="text-gray-400">/</span>
+                <a href="ux-execucao-projeto.html" class="text-gray-300 transition-colors hover:text-white">Execução do Projeto</a>
+                <span class="text-gray-400">/</span>
+                <span class="font-medium text-bevap-gold">Validação TI</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-3">
+                <div class="space-y-6 lg:col-span-2">
+                    <div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                        <p class="text-sm leading-6 text-gray-700">Revise a execução do projeto, analise os comentários do solicitante, valide os marcos e tarefas executadas e registre o parecer da TI antes de aprovar, devolver para correção ou encerrar por não continuidade.</p>
+                    </div>
+
+                    <section id="project-ti-panel" class="rounded-lg bg-white shadow-md">
+                        <div id="project-ti-panel-tabs" class="mb-6 border-b border-gray-200">
+                            <div class="relative">
+                                <div id="project-ti-panel-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
+                                    <button type="button" id="tab-project-ti-detail" class="px-6 py-4 text-sm font-medium border-b-2 border-bevap-green text-bevap-green bg-green-50 whitespace-nowrap">
+                                        <i class="fa-solid fa-clipboard-list mr-2"></i>Execução do Projeto
+                                    </button>
+                                    <button type="button" id="tab-project-ti-requester" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                        <i class="fa-solid fa-user-check mr-2"></i>Comentários do Solicitante
+                                    </button>
+                                    <button type="button" id="tab-project-ti-checklist" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
+                                        <span id="project-ti-checklist-notice" class="absolute top-2 right-2 flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-white ring-2 ring-white" title="Checklist pendente" aria-label="Checklist pendente">
+                                            <i class="fa-solid fa-exclamation text-[10px]"></i>
+                                        </span>
+                                        <i class="fa-solid fa-list-check mr-2"></i>Checklist
+                                    </button>
+                                </div>
+                                <button id="project-ti-panel-tabs-left-arrow" type="button" class="absolute left-0 top-0 bottom-0 flex w-24 items-center justify-start rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent pl-2 text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300">
+                                    <span class="flex items-center gap-0 text-base leading-none"><i class="fa-solid fa-chevron-left"></i><i class="fa-solid fa-chevron-left"></i></span>
+                                </button>
+                                <button id="project-ti-panel-tabs-right-arrow" type="button" class="absolute right-0 top-0 bottom-0 flex w-24 items-center justify-end rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent pr-2 text-bevap-navy opacity-0 pointer-events-none transition-opacity duration-300">
+                                    <span class="flex items-center gap-0 text-base leading-none"><i class="fa-solid fa-chevron-right"></i><i class="fa-solid fa-chevron-right"></i></span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="tab-content-project-ti-detail" class="p-6">
+                            <div class="space-y-6">
+                                <div class="rounded-xl border border-blue-100 bg-gradient-to-r from-slate-50 via-blue-50 to-slate-50 px-4 py-3">
+                                    <div class="flex flex-wrap justify-between items-center gap-x-4 gap-y-2 text-sm">
+                                        <span class="inline-flex items-center rounded-full border border-blue-500 bg-blue-500 px-3 py-1.5 text-white shadow-sm">Marcos Planejados: <span class="ml-1 font-semibold text-white">3</span></span>
+                                        <span class="inline-flex items-center rounded-full border border-violet-500 bg-violet-500 px-3 py-1.5 text-white shadow-sm">Tarefas Concluídas: <span class="ml-1 font-semibold text-white">11/11</span></span>
+                                        <span class="inline-flex items-center rounded-full border border-emerald-500 bg-emerald-500 px-3 py-1.5 text-white shadow-sm">Esforço Consolidado: <span class="ml-1 font-semibold text-white">358h</span></span>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                    <div class="px-5 py-4 bg-white">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <h3 class="text-base sm:text-lg font-montserrat font-bold text-bevap-navy">1. Concluir descoberta e baseline técnico</h3>
+                                                <div class="mt-2 flex flex-wrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-bevap-navy border border-bevap-navy text-white"><i class="fa-solid fa-user-tie mr-1 text-blue-100"></i>Responsável: Ana Costa</span>
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full border text-white bg-red-600 border-red-600"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>05/02/2026 - 10/02/2026</span>
+                                                </div>
+                                            </div>
+                                            <div class="inline-flex items-center gap-1.5 px-3 py-1 border border-green-200 bg-green-50 text-green-700 text-xs font-semibold rounded-full shrink-0">
+                                                <i class="fa-solid fa-circle-check text-green-600"></i><span>Concluído</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Progresso</label>
+                                                <span class="text-sm font-bold text-bevap-navy">100%</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div class="bg-blue-500 h-2.5 rounded-full transition-all" style="width: 100%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 border-b border-gray-200"></div>
+                                    </div>
+                                    <div class="p-5 space-y-4">
+                                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-700">
+                                                    <i class="fa-solid fa-check-double text-[10px]"></i>
+                                                </span>
+                                                <div class="text-sm uppercase tracking-wide text-blue-700">Aceite</div>
+                                            </div>
+                                            <div class="space-y-1.5">
+                                                <div class="text-sm text-gray-700 flex items-start gap-2">
+                                                    <i class="fa-solid fa-check text-[9px] text-bevap-green mt-1"></i>
+                                                    <span>Baseline técnico consolidado e validado com as áreas envolvidas.</span>
+                                                </div>
+                                                <div class="text-sm text-gray-700 flex items-start gap-2">
+                                                    <i class="fa-solid fa-check text-[9px] text-bevap-green mt-1"></i>
+                                                    <span>Dependências críticas mapeadas e prontas para continuidade do projeto.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <span class="text-sm font-semibold text-gray-600 tracking-wide">Tarefas</span>
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div class="relative rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-start gap-2 min-w-0">
+                                                                <span class="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white">
+                                                                    <i class="fa-solid fa-check text-[10px]"></i>
+                                                                </span>
+                                                                <a href="http://127.0.0.1:5500/reports/prototype/marcos/ux-marco-validacao-solicitante.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
+                                                                    <span class="truncate">Mapear sistemas impactados</span>
+                                                                    <i class="fa-solid fa-link text-[11px] shrink-0"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-bevap-navy border-bevap-navy">
+                                                                    <i class="fa-solid fa-user mr-1 text-blue-100"></i>
+                                                                    <span>Responsável: Carlos Silva</span>
+                                                                </span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-[#1C8C5D] border-[#1C8C5D]">
+                                                                    <i class="fa-solid fa-layer-group mr-1 text-emerald-100"></i>
+                                                                    <span>Fase: Descoberta e Análise</span>
+                                                                </span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-red-600 border-red-600">
+                                                                    <i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>
+                                                                    <span>27/01/2026</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+                                                            <span class="text-xs text-gray-500">Status:</span>
+                                                            <span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                                                                <span class="inline-flex h-2 w-2 rounded-full bg-green-600"></span>
+                                                                <span>Concluído</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1" style="font-size: 13px;">
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Estimado:</span><span class="font-semibold text-blue-700">40h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Utilizado:</span><span class="font-semibold text-blue-700">40h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Horas Restantes:</span><span class="font-semibold text-blue-700">0h</span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="relative rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-start gap-2 min-w-0">
+                                                                <span class="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white">
+                                                                    <i class="fa-solid fa-check text-[10px]"></i>
+                                                                </span>
+                                                                <a href="http://127.0.0.1:5500/reports/prototype/marcos/ux-marco-validacao-solicitante.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
+                                                                    <span class="truncate">Provisionar ambiente de homologação</span>
+                                                                    <i class="fa-solid fa-link text-[11px] shrink-0"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-bevap-navy border-bevap-navy">
+                                                                    <i class="fa-solid fa-user mr-1 text-blue-100"></i>
+                                                                    <span>Responsável: Equipe Infraestrutura</span>
+                                                                </span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-[#1C8C5D] border-[#1C8C5D]">
+                                                                    <i class="fa-solid fa-layer-group mr-1 text-emerald-100"></i>
+                                                                    <span>Fase: Implementação SSO</span>
+                                                                </span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-red-600 border-red-600">
+                                                                    <i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>
+                                                                    <span>31/01/2026</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+                                                            <span class="text-xs text-gray-500">Status:</span>
+                                                            <span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                                                                <span class="inline-flex h-2 w-2 rounded-full bg-green-600"></span>
+                                                                <span>Concluído</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1" style="font-size: 13px;">
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Estimado:</span><span class="font-semibold text-blue-700">32h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Utilizado:</span><span class="font-semibold text-blue-700">32h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Horas Restantes:</span><span class="font-semibold text-blue-700">0h</span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="relative rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-start gap-2 min-w-0">
+                                                                <span class="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white">
+                                                                    <i class="fa-solid fa-check text-[10px]"></i>
+                                                                </span>
+                                                                <a href="http://127.0.0.1:5500/reports/prototype/marcos/ux-marco-validacao-solicitante.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
+                                                                    <span class="truncate">Planejar roteiro de testes UAT</span>
+                                                                    <i class="fa-solid fa-link text-[11px] shrink-0"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-bevap-navy border-bevap-navy">
+                                                                    <i class="fa-solid fa-user mr-1 text-blue-100"></i>
+                                                                    <span>Responsável: Ana Costa</span>
+                                                                </span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-[#1C8C5D] border-[#1C8C5D]">
+                                                                    <i class="fa-solid fa-layer-group mr-1 text-emerald-100"></i>
+                                                                    <span>Fase: Validação e Go-Live</span>
+                                                                </span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-red-600 border-red-600">
+                                                                    <i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>
+                                                                    <span>03/02/2026</span>
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+                                                            <span class="text-xs text-gray-500">Status:</span>
+                                                            <span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                                                                <span class="inline-flex h-2 w-2 rounded-full bg-green-600"></span>
+                                                                <span>Concluído</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1" style="font-size: 13px;">
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Estimado:</span><span class="font-semibold text-blue-700">24h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Utilizado:</span><span class="font-semibold text-blue-700">24h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Horas Restantes:</span><span class="font-semibold text-blue-700">0h</span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Observação do Marco</label>
+                                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none bg-gray-50" rows="2" readonly>Marco encerrado com baseline técnico consolidado e sem pendências relevantes para o solicitante.</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                    <div class="px-5 py-4 bg-white">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <h3 class="text-base sm:text-lg font-montserrat font-bold text-bevap-navy">2. Go-live e estabilização inicial</h3>
+                                                <div class="mt-2 flex flex-wrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-bevap-navy border border-bevap-navy text-white"><i class="fa-solid fa-user-tie mr-1 text-blue-100"></i>Responsável: PMO Corporativo</span>
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full border text-white bg-red-600 border-red-600"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>14/03/2026 - 20/03/2026</span>
+                                                </div>
+                                            </div>
+                                            <div class="inline-flex items-center gap-1.5 px-3 py-1 border border-green-200 bg-green-50 text-green-700 text-xs font-semibold rounded-full shrink-0">
+                                                <i class="fa-solid fa-circle-check text-green-600"></i><span>Concluído</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Progresso</label>
+                                                <span class="text-sm font-bold text-bevap-navy">100%</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div class="bg-blue-500 h-2.5 rounded-full transition-all" style="width: 100%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 border-b border-gray-200"></div>
+                                    </div>
+                                    <div class="p-5 space-y-4">
+                                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-700">
+                                                    <i class="fa-solid fa-check-double text-[10px]"></i>
+                                                </span>
+                                                <div class="text-sm uppercase tracking-wide text-blue-700">Aceite</div>
+                                            </div>
+                                            <div class="space-y-1.5">
+                                                <div class="text-sm text-gray-700 flex items-start gap-2">
+                                                    <i class="fa-solid fa-check text-[9px] text-bevap-green mt-1"></i>
+                                                    <span>Fluxo funcional deve refletir o comportamento esperado pelo solicitante.</span>
+                                                </div>
+                                                <div class="text-sm text-gray-700 flex items-start gap-2">
+                                                    <i class="fa-solid fa-check text-[9px] text-bevap-green mt-1"></i>
+                                                    <span>Evidências e estabilização inicial precisam sustentar a aprovação do marco.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <span class="text-sm font-semibold text-gray-600 tracking-wide">Tarefas</span>
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div class="relative rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-start gap-2 min-w-0">
+                                                                <span class="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white">
+                                                                    <i class="fa-solid fa-check text-[10px]"></i>
+                                                                </span>
+                                                                <a href="http://127.0.0.1:5500/reports/prototype/marcos/ux-marco-validacao-solicitante.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
+                                                                    <span class="truncate">Implementar fluxo OAuth2/SAML</span>
+                                                                    <i class="fa-solid fa-link text-[11px] shrink-0"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-bevap-navy border-bevap-navy"><i class="fa-solid fa-user mr-1 text-blue-100"></i><span>Responsável: Rafael Souza</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-[#1C8C5D] border-[#1C8C5D]"><i class="fa-solid fa-layer-group mr-1 text-emerald-100"></i><span>Fase: Implementação SSO</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-red-600 border-red-600"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i><span>08/03/2026</span></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+                                                            <span class="text-xs text-gray-500">Status:</span>
+                                                            <span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                                                                <span class="inline-flex h-2 w-2 rounded-full bg-green-600"></span>
+                                                                <span>Concluído</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1" style="font-size: 13px;">
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Estimado:</span><span class="font-semibold text-blue-700">64h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Utilizado:</span><span class="font-semibold text-blue-700">44h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Horas Restantes:</span><span class="font-semibold text-emerald-700">20h</span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="relative rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-start gap-2 min-w-0">
+                                                                <span class="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white">
+                                                                    <i class="fa-solid fa-check text-[10px]"></i>
+                                                                </span>
+                                                                <a href="http://127.0.0.1:5500/reports/prototype/marcos/ux-marco-validacao-solicitante.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
+                                                                    <span class="truncate">Monitorar estabilização inicial</span>
+                                                                    <i class="fa-solid fa-link text-[11px] shrink-0"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-bevap-navy border-bevap-navy"><i class="fa-solid fa-user mr-1 text-blue-100"></i><span>Responsável: Rafael Souza</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-[#1C8C5D] border-[#1C8C5D]"><i class="fa-solid fa-layer-group mr-1 text-emerald-100"></i><span>Fase: Validação e Go-Live</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-red-600 border-red-600"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i><span>14/03/2026</span></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+                                                            <span class="text-xs text-gray-500">Status:</span>
+                                                            <span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                                                                <span class="inline-flex h-2 w-2 rounded-full bg-green-600"></span>
+                                                                <span>Concluído</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1" style="font-size: 13px;">
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Estimado:</span><span class="font-semibold text-blue-700">36h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Utilizado:</span><span class="font-semibold text-emerald-700">18h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Horas Restantes:</span><span class="font-semibold text-emerald-700">18h</span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="relative rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-start gap-2 min-w-0">
+                                                                <span class="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white">
+                                                                    <i class="fa-solid fa-check text-[10px]"></i>
+                                                                </span>
+                                                                <a href="http://127.0.0.1:5500/reports/prototype/marcos/ux-marco-validacao-solicitante.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
+                                                                    <span class="truncate">Aprovar checklist de produção</span>
+                                                                    <i class="fa-solid fa-link text-[11px] shrink-0"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-bevap-navy border-bevap-navy"><i class="fa-solid fa-user mr-1 text-blue-100"></i><span>Responsável: Segurança da Informação</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-[#1C8C5D] border-[#1C8C5D]"><i class="fa-solid fa-layer-group mr-1 text-emerald-100"></i><span>Fase: Validação e Go-Live</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-red-600 border-red-600"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i><span>12/03/2026</span></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
+                                                            <span class="text-xs text-gray-500">Status:</span>
+                                                            <span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                                                                <span class="inline-flex h-2 w-2 rounded-full bg-green-600"></span>
+                                                                <span>Concluído</span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1" style="font-size: 13px;">
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Estimado:</span><span class="font-semibold text-blue-700">16h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Utilizado:</span><span class="font-semibold text-blue-700">0h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Horas Restantes:</span><span class="font-semibold text-emerald-700">16h</span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Observação do Marco</label>
+                                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none bg-gray-50" rows="2" readonly>Marco concluído com validação funcional registrada e estabilização inicial consolidada para continuidade do projeto.</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+                                    <div class="px-5 py-4 bg-white">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="min-w-0">
+                                                <h3 class="text-base sm:text-lg font-montserrat font-bold text-bevap-navy">3. Entrega da implementação SSO em homologação</h3>
+                                                <div class="mt-2 flex flex-wrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-bevap-navy border border-bevap-navy text-white"><i class="fa-solid fa-user-tie mr-1 text-blue-100"></i>Responsável: TechPartners</span>
+                                                    <span class="inline-flex items-center px-2 py-1 rounded-full border text-white bg-red-600 border-red-600"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>10/03/2026 - 18/03/2026</span>
+                                                </div>
+                                            </div>
+                                            <div class="inline-flex items-center gap-1.5 px-3 py-1 border border-green-200 bg-green-50 text-green-700 text-xs font-semibold rounded-full shrink-0">
+                                                <i class="fa-solid fa-circle-check text-green-600"></i><span>Concluído</span>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <label class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Progresso</label>
+                                                <span class="text-sm font-bold text-bevap-navy">100%</span>
+                                            </div>
+                                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                                <div class="bg-blue-500 h-2.5 rounded-full transition-all" style="width: 100%"></div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3 border-b border-gray-200"></div>
+                                    </div>
+                                    <div class="p-5 space-y-4">
+                                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                            <div class="flex items-center gap-2 mb-2">
+                                                <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-700">
+                                                    <i class="fa-solid fa-check-double text-[10px]"></i>
+                                                </span>
+                                                <div class="text-sm uppercase tracking-wide text-blue-700">Aceite</div>
+                                            </div>
+                                            <div class="space-y-1.5">
+                                                <div class="text-sm text-gray-700 flex items-start gap-2">
+                                                    <i class="fa-solid fa-check text-[9px] text-bevap-green mt-1"></i>
+                                                    <span>Homologação deve estar suportada por evidências técnicas e funcionais.</span>
+                                                </div>
+                                                <div class="text-sm text-gray-700 flex items-start gap-2">
+                                                    <i class="fa-solid fa-check text-[9px] text-bevap-green mt-1"></i>
+                                                    <span>Solicitante valida a aderência final antes do avanço para TI.</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <span class="text-sm font-semibold text-gray-600 tracking-wide">Tarefas</span>
+                                            </div>
+                                            <div class="space-y-3">
+                                                <div class="relative rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-start gap-2 min-w-0">
+                                                                <span class="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white">
+                                                                    <i class="fa-solid fa-check text-[10px]"></i>
+                                                                </span>
+                                                                <a href="http://127.0.0.1:5500/reports/prototype/marcos/ux-marco-validacao-solicitante.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
+                                                                    <span class="truncate">Configurar federação com AD</span>
+                                                                    <i class="fa-solid fa-link text-[11px] shrink-0"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-bevap-navy border-bevap-navy"><i class="fa-solid fa-user mr-1 text-blue-100"></i><span>Responsável: TechPartners</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-[#1C8C5D] border-[#1C8C5D]"><i class="fa-solid fa-layer-group mr-1 text-emerald-100"></i><span>Fase: Implementação SSO</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-red-600 border-red-600"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i><span>12/02/2026</span></span>
+                                                            </div>
+                                                        </div>
+                                                        <span class="inline-flex items-center rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">Concluído</span>
+                                                    </div>
+                                                    <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1" style="font-size: 13px;">
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Estimado:</span><span class="font-semibold text-blue-700">48h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Utilizado:</span><span class="font-semibold text-blue-700">48h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Horas Restantes:</span><span class="font-semibold text-blue-700">0h</span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="relative rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-start gap-2 min-w-0">
+                                                                <span class="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white">
+                                                                    <i class="fa-solid fa-check text-[10px]"></i>
+                                                                </span>
+                                                                <a href="http://127.0.0.1:5500/reports/prototype/marcos/ux-marco-validacao-solicitante.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
+                                                                    <span class="truncate">Aplicar políticas de segurança</span>
+                                                                    <i class="fa-solid fa-link text-[11px] shrink-0"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-bevap-navy border-bevap-navy"><i class="fa-solid fa-user mr-1 text-blue-100"></i><span>Responsável: Segurança da Informação</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-[#1C8C5D] border-[#1C8C5D]"><i class="fa-solid fa-layer-group mr-1 text-emerald-100"></i><span>Fase: Implementação SSO</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-red-600 border-red-600"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i><span>20/02/2026</span></span>
+                                                            </div>
+                                                        </div>
+                                                        <span class="inline-flex items-center rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">Concluído</span>
+                                                    </div>
+                                                    <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1" style="font-size: 13px;">
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Estimado:</span><span class="font-semibold text-blue-700">28h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Utilizado:</span><span class="font-semibold text-red-600">34h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Horas Restantes:</span><span class="font-semibold text-red-600">-6h</span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="relative rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
+                                                    <div class="flex items-start justify-between gap-3">
+                                                        <div class="min-w-0 flex-1">
+                                                            <div class="flex items-start gap-2 min-w-0">
+                                                                <span class="inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white">
+                                                                    <i class="fa-solid fa-check text-[10px]"></i>
+                                                                </span>
+                                                                <a href="http://127.0.0.1:5500/reports/prototype/marcos/ux-marco-validacao-solicitante.html" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
+                                                                    <span class="truncate">Executar bateria de testes UAT</span>
+                                                                    <i class="fa-solid fa-link text-[11px] shrink-0"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-bevap-navy border-bevap-navy"><i class="fa-solid fa-user mr-1 text-blue-100"></i><span>Responsável: Carlos Silva</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-[#1C8C5D] border-[#1C8C5D]"><i class="fa-solid fa-layer-group mr-1 text-emerald-100"></i><span>Fase: Validação e Go-Live</span></span>
+                                                                <span class="inline-flex items-center px-2 py-1 rounded-full border text-white whitespace-nowrap bg-red-600 border-red-600"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i><span>22/02/2026</span></span>
+                                                            </div>
+                                                        </div>
+                                                        <span class="inline-flex items-center rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">Concluído</span>
+                                                    </div>
+                                                    <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
+                                                        <div class="flex flex-wrap items-center gap-x-4 gap-y-1" style="font-size: 13px;">
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Estimado:</span><span class="font-semibold text-blue-700">32h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Esforço Utilizado:</span><span class="font-semibold text-emerald-700">20h</span></span>
+                                                            <span class="inline-flex items-center gap-1"><span class="text-gray-500">Horas Restantes:</span><span class="font-semibold text-emerald-700">12h</span></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700 mb-2">Observação do Marco</label>
+                                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm resize-none bg-gray-50" rows="2" readonly>Marco concluído com homologação validada, documentação consolidada e entregas finais prontas para o próximo fluxo.</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div id="tab-content-project-ti-requester" class="hidden p-6">
+                            <div class="space-y-6">
+                                <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                                    <div class="flex items-center gap-3">
+                                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-700 shrink-0">
+                                            <i class="fa-solid fa-user-check text-base"></i>
+                                        </span>
+                                        <div>
+                                            <h4 class="text-sm font-montserrat font-semibold text-gray-900">Comentários do Solicitante</h4>
+                                            <p class="text-xs text-gray-500">Histórico do parecer funcional registrado antes da validação técnica do projeto.</p>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 space-y-3">
+                                        <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                                            <div class="flex items-start justify-between gap-3">
+                                                <div class="flex items-center gap-3">
+                                                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">JV</span>
+                                                    <div>
+                                                        <div class="font-semibold leading-5 text-bevap-navy">João Vieira</div>
+                                                        <div class="mt-1 text-xs text-gray-500">Comentário do Solicitante</div>
+                                                    </div>
+                                                </div>
+                                                <div class="flex items-center gap-2">
+                                                    <span class="inline-flex items-center rounded-full border border-green-200 bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">Solicitante aprovou</span>
+                                                    <div class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">18/03/2026 15:20</div>
+                                                </div>
+                                            </div>
+                                            <p class="mt-2 text-sm text-gray-700">As entregas do projeto atendem ao esperado pelo solicitante. O fluxo funcional, os marcos executados e os registros apresentados estão coerentes com o planejamento aprovado.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="tab-content-project-ti-checklist" class="hidden p-6 pt-2">
+                            <div class="space-y-6">
+                                <div class="p-4">
+                                    <h3 class="mb-4 text-lg font-montserrat font-semibold text-bevap-navy">Itens de Verificação</h3>
+
+                                    <div class="space-y-3">
+                                        <label class="flex items-start">
+                                            <input type="checkbox" class="project-ti-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
+                                            <span class="ml-3 text-sm text-gray-700">
+                                                <span class="font-medium">As entregas técnicas do projeto estão aderentes ao escopo aprovado</span>
+                                                <p class="mt-1 text-xs text-gray-500">Confirma se os marcos e tarefas executados refletem o desenho técnico e a solução planejada.</p>
+                                            </span>
+                                        </label>
+                                        <label class="flex items-start">
+                                            <input type="checkbox" class="project-ti-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
+                                            <span class="ml-3 text-sm text-gray-700">
+                                                <span class="font-medium">Evidências e documentação suportam a validação técnica</span>
+                                                <p class="mt-1 text-xs text-gray-500">Verifica se os comentários, evidências e registros apresentados sustentam a conclusão técnica do projeto.</p>
+                                            </span>
+                                        </label>
+                                        <label class="flex items-start">
+                                            <input type="checkbox" class="project-ti-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
+                                            <span class="ml-3 text-sm text-gray-700">
+                                                <span class="font-medium">Checklist técnico, segurança e pendências estão concluídos</span>
+                                                <p class="mt-1 text-xs text-gray-500">Confirma que não existem bloqueios técnicos relevantes para o encerramento do projeto.</p>
+                                            </span>
+                                        </label>
+                                        <label class="flex items-start">
+                                            <input type="checkbox" class="project-ti-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
+                                            <span class="ml-3 text-sm text-gray-700">
+                                                <span class="font-medium">O projeto está apto para conclusão no fluxo técnico</span>
+                                                <p class="mt-1 text-xs text-gray-500">Indica que a TI concluiu a análise e que o projeto pode seguir sem nova devolução.</p>
+                                            </span>
+                                        </label>
+                                    </div>
+
+                                    <div class="mt-6 border-t pt-4">
+                                        <div class="mb-2 flex items-center justify-between text-sm">
+                                            <span class="text-gray-600">Completude do Checklist</span>
+                                            <span class="font-semibold text-bevap-navy" id="project-ti-checklist-percentage">0%</span>
+                                        </div>
+                                        <div class="h-2 w-full rounded-full bg-gray-200">
+                                            <div class="h-2 rounded-full bg-bevap-green" style="width: 0%" id="project-ti-checklist-progress"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <div class="rounded-lg bg-white p-6 shadow-md">
+                        <h3 class="mb-6 flex items-center text-xl font-montserrat font-bold text-bevap-navy">
+                            <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
+                            Comentário da TI
+                        </h3>
+                        <div class="mb-6">
+                            <label for="project-ti-feedback-text" class="mb-2 block text-sm font-medium text-gray-700">Observações</label>
+                            <textarea id="project-ti-feedback-text" rows="4" placeholder="Adicione o parecer técnico, riscos, validações finais ou orientações da TI..." class="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+                        </div>
+                        <div class="mb-2">
+                            <label class="flex items-start">
+                                <input type="checkbox" id="project-ti-agreement-checkbox" class="mr-3 mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
+                                <span class="text-sm text-gray-700">Li e confirmo que a validação técnica do projeto foi realizada e que a entrega está apta para continuidade <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="lg:col-span-1">
+                    <div class="sticky top-24 space-y-4">
+                        <div class="rounded-lg bg-white p-5 shadow-md">
+                            <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                                <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
+                                Resumo do Projeto
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Código</span><span class="font-mono font-semibold text-bevap-navy">PRJ-2026-033</span></div>
+                                <div class="border-b pb-2"><span class="text-gray-600">Título</span><p class="mt-1 font-medium text-gray-900">Implantar SSO corporativo</p></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Área</span><span class="font-medium text-gray-900">Tecnologia da Informação</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span class="font-medium text-gray-900">João Vieira</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Responsável</span><span class="font-medium text-gray-900">Carlos Silva</span></div>
+                                <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-800"><i class="fa-solid fa-shield-halved mr-1"></i>Validação TI</span></div>
+                            </div>
+                            <div class="mt-4 space-y-2 border-t pt-4">
+                                <a href="../ux-planejamento.html" class="flex w-full items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy transition-colors hover:bg-gray-50"><i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo</a>
+                                <button type="button" class="flex w-full items-center justify-center rounded-lg border border-bevap-green px-4 py-2 text-sm font-medium text-bevap-green transition-colors hover:bg-green-50"><i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos</button>
+                            </div>
+                        </div>
+
+                        <div class="rounded-lg bg-white p-5 shadow-md">
+                            <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy"><i class="fa-solid fa-list-check mr-2 text-bevap-green"></i>Progresso</h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Planejamento do projeto concluído</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Execução do projeto concluída</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Validação do solicitante concluída</span></div>
+                                <div class="flex items-center text-indigo-600"><i class="fa-solid fa-shield-halved mr-2"></i><span>Validação TI do projeto em andamento</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white shadow-lg">
+        <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col justify-end gap-3 sm:flex-row">
+                <button type="button" data-action="stop-flow" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-red-700">
+                    <i class="fa-solid fa-ban mr-2"></i> Não Continuidade
+                </button>
+                <button type="button" data-action="return-corrections" class="inline-flex items-center justify-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
+                    <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
+                </button>
+                <button type="button" data-action="approve-project" class="inline-flex items-center justify-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white transition-all shadow-md hover:bg-green-700">
+                    <i class="fa-solid fa-check mr-2"></i> Validar Projeto
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <div id="approve-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <div class="flex items-center mb-4">
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
+                    <i class="fa-solid fa-check-circle text-bevap-green text-2xl"></i>
+                </div>
+                <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Validação Técnica do Projeto</h3>
+            </div>
+            <p class="text-gray-700 mb-6">Você está confirmando a validação técnica do projeto <strong>Implantar SSO corporativo</strong>.</p>
+            <p class="text-sm text-gray-600 mb-6">Ao confirmar, o projeto será concluído com o registro final da análise técnica.</p>
+            <div class="flex justify-end space-x-3">
+                <button type="button" data-action="close-approve-modal" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Cancelar</button>
+                <button type="button" data-action="confirm-approve-modal" class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">Confirmar Validação</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="return-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correção</h3>
+            <p class="text-sm text-gray-600 mb-4">Descreva os pontos do projeto que precisam ser ajustados antes de reenviar para a execução:</p>
+            <textarea id="return-reason" rows="4" placeholder="Motivo da devolução..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+            <div class="flex justify-end space-x-3">
+                <button type="button" data-action="close-return-modal" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+                <button type="button" data-action="confirm-return-modal" class="px-4 py-2 text-sm text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg transition-all">Devolver</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="discontinue-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Não Continuidade do Projeto</h3>
+            <p class="text-sm text-gray-600 mb-4">Justifique a não continuidade do projeto para notificar os stakeholders:</p>
+            <select id="discontinue-category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
+                <option value="">Selecione a categoria</option>
+                <option value="tecnica">Inviabilidade técnica</option>
+                <option value="prioridades">Mudança de prioridades</option>
+                <option value="recursos">Recursos indisponíveis</option>
+                <option value="riscos">Risco elevado</option>
+                <option value="escopo">Escopo indefinido</option>
+                <option value="outro">Outro</option>
+            </select>
+            <textarea id="discontinue-reason" rows="4" placeholder="Descrição detalhada..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+            <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
+                <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> Os stakeholders serão notificados automaticamente.</p>
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button type="button" data-action="close-discontinue-modal" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
+                <button type="button" data-action="confirm-discontinue-modal" class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="hidden fixed top-24 right-4 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+        <div class="flex items-start gap-3">
+            <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600"></i>
+            <div>
+                <div id="toast-title" class="font-semibold text-bevap-navy"></div>
+                <div id="toast-message" class="text-sm text-gray-600"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ux-projeto-validacao-ti.js"></script>
+</body>
+</html>

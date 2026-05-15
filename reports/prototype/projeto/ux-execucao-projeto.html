@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Execução do Projeto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#3D567E',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434'
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        #execution-tabs-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #execution-tabs-scroll::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-inter text-gray-900">
+    <header class="fixed left-0 right-0 top-0 z-50 bg-bevap-navy shadow-lg">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 rounded-lg bg-white px-4 py-1">
+                    <img src="../logoBevap.png" class="h-auto w-24" alt="BEVAP">
+                </div>
+                <div class="hidden h-8 w-px bg-gray-400 md:block"></div>
+                <h1 class="hidden font-montserrat text-lg font-semibold text-white md:block">Execução do Projeto</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Usuário" class="h-9 w-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="mx-auto flex h-10 max-w-7xl items-center px-4 text-sm sm:px-6 lg:px-8">
+            <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                <a href="../ux-dashboard.html" class="inline-flex items-center gap-2 text-gray-300 transition-colors hover:text-white">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Início</span>
+                </a>
+                <span class="text-gray-400">/</span>
+                <a href="../ux-dashboard.html" class="text-gray-300 transition-colors hover:text-white">Portfólio</a>
+                <span class="text-gray-400">/</span>
+                <a href="../ux-planejamento.html" class="text-gray-300 transition-colors hover:text-white">Planejamento</a>
+                <span class="text-gray-400">/</span>
+                <span class="font-medium text-bevap-gold">Execução do Projeto</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                <div class="space-y-6 lg:col-span-2">
+                    <section class="rounded-lg bg-white shadow-md">
+                        <div class="border-b border-gray-200">
+                            <div class="relative">
+                                <div id="execution-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
+                                    <button type="button" id="tab-execution-phases" class="whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
+                                        <i class="fa-solid fa-layer-group mr-2"></i>Fases
+                                    </button>
+                                    <button type="button" id="tab-execution-milestones" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-flag-checkered mr-2"></i>Marcos
+                                    </button>
+                                    <button type="button" id="tab-execution-risks" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-triangle-exclamation mr-2"></i>Riscos
+                                    </button>
+                                    <button type="button" id="tab-execution-raci" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-users mr-2"></i>RACI
+                                    </button>
+                                </div>
+                                <button id="execution-tabs-left-arrow" type="button" class="pointer-events-none absolute left-0 top-0 bottom-0 flex w-24 items-center justify-start rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent pl-2 text-bevap-navy opacity-0 transition-opacity duration-300">
+                                    <span class="flex items-center gap-0 text-base leading-none">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </span>
+                                </button>
+                                <button id="execution-tabs-right-arrow" type="button" class="pointer-events-none absolute right-0 top-0 bottom-0 flex w-24 items-center justify-end rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent pr-2 text-bevap-navy opacity-0 transition-opacity duration-300">
+                                    <span class="flex items-center gap-0 text-base leading-none">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="tab-content-execution-phases" class="p-6">
+                            <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">Acompanhe a execução agrupada por fases planejadas na EAP, visualizando responsáveis, esforço previsto, duração e todas as tarefas previstas para cada fase do projeto.</p>
+                            </div>
+                            <div id="execution-phases-list" class="mt-6 space-y-5"></div>
+                        </div>
+
+                        <div id="tab-content-execution-milestones" class="hidden p-6">
+                            <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">Visualize o cronograma executivo por marcos, com período, status, critérios de aceite e as tarefas vinculadas de cada fase que compõem a entrega planejada.</p>
+                            </div>
+                            <div id="execution-milestones-list" class="mt-6 space-y-5"></div>
+                        </div>
+
+                        <div id="tab-content-execution-risks" class="hidden p-6">
+                            <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">Consolide os riscos do projeto com severidade, probabilidade, impacto, mitigação e plano de contingência para apoiar a execução e o acompanhamento dos marcos.</p>
+                            </div>
+                            <div id="execution-risks-list" class="mt-6 space-y-4"></div>
+                        </div>
+
+                        <div id="tab-content-execution-raci" class="hidden p-6">
+                            <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">A matriz RACI apresenta os papéis por marco do projeto, deixando claro quem executa, aprova, precisa ser consultado e quem deve ser informado ao longo da execução.</p>
+                            </div>
+                            <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 bg-white">
+                                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Marco</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Responsável (R)</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Aprovador (A)</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Consultado (C)</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Informado (I)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="execution-raci-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                                </table>
+                            </div>
+                            <div class="mt-6 rounded-xl border border-gray-200 bg-white p-4">
+                                <div class="mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-comments text-sm text-bevap-gold"></i>
+                                    <h4 class="text-sm font-montserrat font-semibold text-gray-900">Plano de Comunicação</h4>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Público</th>
+                                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Canal</th>
+                                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Periodicidade</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="execution-communication-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <aside class="lg:col-span-1">
+                    <div class="sticky top-24 space-y-4">
+                        <div class="rounded-lg bg-white p-5 shadow-md">
+                            <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                                <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
+                                Resumo do Projeto
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Código</span><span class="font-mono font-semibold text-bevap-navy">PRJ-2026-014</span></div>
+                                <div class="border-b pb-2"><span class="text-gray-600">Título</span><p class="mt-1 font-medium text-gray-900">Implantar SSO corporativo</p></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Área</span><span class="font-medium text-gray-900">Tecnologia da Informação</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Patrocinador</span><span class="font-medium text-gray-900">Diretoria TI</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Previsão Final</span><span class="font-medium text-gray-900">20/03/2026</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span class="font-medium text-gray-900">João Vieira</span></div>
+                                <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800"><i class="fa-solid fa-clock mr-1"></i>Execução em andamento</span></div>
+                            </div>
+                            <div class="mt-4 space-y-2 border-t pt-4">
+                                <a href="../ux-planejamento.html" class="flex w-full items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy transition-colors hover:bg-gray-50">
+                                    <i class="fa-solid fa-timeline mr-2"></i>Linha do Tempo
+                                </a>
+                                <button type="button" class="flex w-full items-center justify-center rounded-lg border border-bevap-green px-4 py-2 text-sm font-medium text-bevap-green transition-colors hover:bg-green-50">
+                                    <i class="fa-solid fa-paperclip mr-2"></i>Ver Anexos
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="rounded-lg bg-white p-5 shadow-md">
+                            <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                                <i class="fa-solid fa-list-check mr-2 text-bevap-green"></i>
+                                Progresso
+                            </h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Solicitação aprovada</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Análise TI concluída</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Planejamento do projeto concluído</span></div>
+                                <div class="flex items-center text-bevap-gold"><i class="fa-solid fa-clock mr-2"></i><span>Execução do projeto em andamento</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white shadow-lg">
+        <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <button type="button" class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50">
+                    <i class="fa-solid fa-save mr-2"></i>Salvar Rascunho
+                </button>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" data-action="return-planning" class="inline-flex items-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
+                        <i class="fa-solid fa-rotate-left mr-2"></i>Realizar Novo Planejamento
+                    </button>
+                    <button type="button" class="inline-flex items-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
+                        <i class="fa-solid fa-paper-plane mr-2"></i>Concluir Execução
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="return-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Realizar Novo Planejamento</h3>
+            <p class="mb-4 text-sm text-gray-600">Descreva os pontos que exigem um novo planejamento antes de retornar o projeto para essa etapa.</p>
+            <textarea id="return-reason" rows="4" placeholder="Motivo do novo planejamento..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+            <div class="flex justify-end space-x-3">
+                <button type="button" data-action="close-return-modal" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
+                <button type="button" data-action="confirm-return-modal" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm text-white transition-all hover:bg-yellow-600">Devolver</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="hidden fixed top-24 right-4 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+        <div class="flex items-start gap-3">
+            <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600"></i>
+            <div>
+                <div id="toast-title" class="font-semibold text-bevap-navy"></div>
+                <div id="toast-message" class="text-sm text-gray-600"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var projectSummary = {
+            code: 'PRJ-2026-014',
+            title: 'Implantar SSO corporativo',
+            area: 'Tecnologia da Informação',
+            sponsor: 'Diretoria TI',
+            requester: 'João Vieira',
+            endDate: '20/03/2026'
+        };
+
+        var phasesData = [
+            {
+                name: 'Descoberta e Análise',
+                responsible: 'Ana Costa',
+                effort: 72,
+                duration: 10,
+                dependencies: [
+                    'Kickoff inicial validado com todas as áreas',
+                    'Aprovação formal do escopo funcional inicial'
+                ],
+                notes: 'Levantamento de requisitos, consolidação documental e preparação da base funcional para a execução.',
+                tasks: [
+                    { name: 'Mapear sistemas impactados', responsible: 'Carlos Silva', effort: 12, duration: 2, dependency: 'Kickoff inicial validado com todas as áreas' },
+                    { name: 'Entrevistar stakeholders', responsible: 'Ana Costa', effort: 16, duration: 2, dependency: 'Agenda executiva' },
+                    { name: 'Definir escopo funcional', responsible: 'PMO Corporativo', effort: 20, duration: 3, dependency: 'Inputs do negócio' },
+                    { name: 'Consolidar documentação inicial', responsible: 'Mariana Lima', effort: 24, duration: 3, dependency: 'Validação do escopo' }
+                ]
+            },
+            {
+                name: 'Implementação SSO',
+                responsible: 'TechPartners',
+                effort: 160,
+                duration: 20,
+                dependencies: [
+                    'Conclusão da fase de Descoberta e Análise',
+                    'Liberação do ambiente de homologação pela infraestrutura'
+                ],
+                notes: 'Construção técnica da integração, federação de identidade e preparação dos componentes de autenticação.',
+                tasks: [
+                    { name: 'Provisionar ambiente de homologação', responsible: 'Equipe Infraestrutura', effort: 24, duration: 3, dependency: 'Acesso cloud' },
+                    { name: 'Configurar federação com AD', responsible: 'TechPartners', effort: 32, duration: 4, dependency: 'Credenciais de diretório' },
+                    { name: 'Implementar fluxo OAuth2/SAML', responsible: 'Rafael Souza', effort: 40, duration: 5, dependency: 'Definição técnica' },
+                    { name: 'Aplicar políticas de segurança', responsible: 'Segurança da Informação', effort: 16, duration: 2, dependency: 'Baseline de segurança' },
+                    { name: 'Executar testes integrados', responsible: 'Mariana Lima', effort: 24, duration: 3, dependency: 'Build estável' }
+                ]
+            },
+            {
+                name: 'Validação e Go-Live',
+                responsible: 'PMO Corporativo',
+                effort: 100,
+                duration: 13,
+                dependencies: [
+                    'Conclusão da implementação SSO',
+                    'Evidências técnicas aprovadas pela Segurança da Informação'
+                ],
+                notes: 'Validação final com negócio, estabilização inicial e preparação da entrada assistida em produção.',
+                tasks: [
+                    { name: 'Planejar roteiro de testes UAT', responsible: 'Ana Costa', effort: 16, duration: 2, dependency: 'Ambiente homologado' },
+                    { name: 'Executar bateria de testes UAT', responsible: 'Carlos Silva', effort: 24, duration: 3, dependency: 'Roteiro aprovado' },
+                    { name: 'Corrigir pendências críticas', responsible: 'TechPartners', effort: 24, duration: 3, dependency: 'Resultado UAT' },
+                    { name: 'Aprovar checklist de produção', responsible: 'Segurança da Informação', effort: 8, duration: 1, dependency: 'Evidências completas' },
+                    { name: 'Realizar go-live assistido', responsible: 'Equipe Infraestrutura', effort: 16, duration: 2, dependency: 'Janela de mudança' },
+                    { name: 'Monitorar estabilização inicial', responsible: 'Rafael Souza', effort: 12, duration: 2, dependency: 'Go-live concluído' }
+                ]
+            }
+        ];
+
+        var milestonesData = [
+            {
+                name: 'Concluir descoberta e baseline técnico',
+                period: '05/02/2026 até 10/02/2026',
+                status: 'concluido',
+                owner: 'Ana Costa',
+                criteria: [
+                    'Escopo funcional validado com negócio e TI.',
+                    'Matriz de sistemas impactados aprovada.'
+                ],
+                tasks: [
+                    { phaseName: 'Descoberta e Análise', taskName: 'Mapear sistemas impactados', responsible: 'Carlos Silva', date: '27/01/2026', status: 'concluido' },
+                    { phaseName: 'Implementação SSO', taskName: 'Provisionar ambiente de homologação', responsible: 'Equipe Infraestrutura', date: '31/01/2026', status: 'concluido' },
+                    { phaseName: 'Validação e Go-Live', taskName: 'Planejar roteiro de testes UAT', responsible: 'Ana Costa', date: '03/02/2026', status: 'concluido' }
+                ]
+            },
+            {
+                name: 'Entrega da implementação SSO em homologação',
+                period: '10/03/2026 até 18/03/2026',
+                status: 'em_andamento',
+                owner: 'TechPartners',
+                criteria: [
+                    'Federação com AD funcionando para usuários piloto.',
+                    'Políticas de segurança aplicadas e auditadas.'
+                ],
+                tasks: [
+                    { phaseName: 'Implementação SSO', taskName: 'Configurar federação com AD', responsible: 'TechPartners', date: '12/02/2026', status: 'em_execucao' },
+                    { phaseName: 'Descoberta e Análise', taskName: 'Definir escopo funcional', responsible: 'Ana Costa', date: '15/02/2026', status: 'concluido' },
+                    { phaseName: 'Implementação SSO', taskName: 'Aplicar políticas de segurança', responsible: 'Segurança da Informação', date: '20/02/2026', status: 'validacao_ti' },
+                    { phaseName: 'Validação e Go-Live', taskName: 'Executar bateria de testes UAT', responsible: 'Carlos Silva', date: '22/02/2026', status: 'validacao_solicitante' }
+                ]
+            },
+            {
+                name: 'Go-live e estabilização inicial',
+                period: '14/03/2026 até 20/03/2026',
+                status: 'planejado',
+                owner: 'PMO Corporativo',
+                criteria: [
+                    'UAT concluído sem pendências críticas abertas.',
+                    'Checklist de produção aprovado pelas áreas responsáveis.'
+                ],
+                tasks: [
+                    { phaseName: 'Descoberta e Análise', taskName: 'Consolidar documentação inicial', responsible: 'Rafael Souza', date: '02/03/2026', status: 'concluido' },
+                    { phaseName: 'Implementação SSO', taskName: 'Implementar fluxo OAuth2/SAML', responsible: 'TechPartners', date: '08/03/2026', status: 'aguardando_execucao' },
+                    { phaseName: 'Validação e Go-Live', taskName: 'Monitorar estabilização inicial', responsible: 'Rafael Souza', date: '14/03/2026', status: 'aguardando_execucao' },
+                    { phaseName: 'Validação e Go-Live', taskName: 'Aprovar checklist de produção', responsible: 'Segurança da Informação', date: '12/03/2026', status: 'aguardando_execucao' }
+                ]
+            }
+        ];
+
+        var risksData = [
+            {
+                title: 'Integração SSO com legado',
+                severity: 'Alto',
+                probability: 'Alta',
+                impact: 'Alto',
+                mitigation: 'Executar validação antecipada com os sistemas legados prioritários e reservar janela técnica para ajustes de compatibilidade.',
+                fallback: 'Realizar rollout gradual por sistema, priorizando os módulos compatíveis e postergando integrações com maior risco.',
+                owner: 'TechPartners'
+            },
+            {
+                title: 'Disponibilidade da equipe-chave',
+                severity: 'Médio',
+                probability: 'Média',
+                impact: 'Médio',
+                mitigation: 'Definir backup operacional para as atividades críticas e alinhar capacidade semanal com os gestores envolvidos.',
+                fallback: 'Replanejar entregas intermediárias e redistribuir atividades entre infraestrutura, PMO e fornecedor.',
+                owner: 'Ana Costa'
+            },
+            {
+                title: 'Aprovação de segurança para produção',
+                severity: 'Alto',
+                probability: 'Média',
+                impact: 'Alto',
+                mitigation: 'Antecipar evidências técnicas e checkpoints com Segurança da Informação antes do marco de go-live.',
+                fallback: 'Executar entrada assistida em ondas, mantendo os sistemas críticos na autenticação atual até aprovação completa.',
+                owner: 'Segurança da Informação'
+            }
+        ];
+
+        var raciData = [
+            {
+                milestone: 'Concluir descoberta e baseline técnico',
+                responsible: 'Ana Costa',
+                approver: 'Diretoria TI',
+                consulted: 'João Vieira, PMO Corporativo',
+                informed: 'Segurança da Informação, Gestores das áreas impactadas'
+            },
+            {
+                milestone: 'Entrega da implementação SSO em homologação',
+                responsible: 'TechPartners',
+                approver: 'Ana Costa',
+                consulted: 'Equipe Infraestrutura, Segurança da Informação',
+                informed: 'João Vieira, Diretoria TI'
+            },
+            {
+                milestone: 'Go-live e estabilização inicial',
+                responsible: 'PMO Corporativo',
+                approver: 'PMO Corporativo',
+                consulted: 'Equipe Infraestrutura, TechPartners, Segurança da Informação',
+                informed: 'Diretoria TI, João Vieira, Gestores das áreas envolvidas'
+            }
+        ];
+
+        var communicationPlanData = [
+            {
+                audience: 'Diretoria TI',
+                channel: 'Comitê',
+                frequency: 'Semanal'
+            },
+            {
+                audience: 'João Vieira e solicitante',
+                channel: 'Reunião',
+                frequency: 'Semanal'
+            },
+            {
+                audience: 'Segurança da Informação',
+                channel: 'Teams',
+                frequency: 'Por marco'
+            },
+            {
+                audience: 'Gestores das áreas impactadas',
+                channel: 'E-mail',
+                frequency: 'Conforme go-live'
+            }
+        ];
+
+        var collapsedPhases = {};
+        var collapsedMilestones = {};
+
+        function getStatusMeta(status) {
+            var map = {
+                concluido: {
+                    label: 'Concluído',
+                    badge: 'border-green-200 bg-green-50 text-green-700',
+                    icon: 'fa-solid fa-circle-check text-green-600'
+                },
+                em_andamento: {
+                    label: 'Em andamento',
+                    badge: 'border-yellow-200 bg-yellow-50 text-yellow-700',
+                    icon: 'fa-solid fa-hourglass-half text-yellow-600'
+                },
+                planejado: {
+                    label: 'Planejado',
+                    badge: 'border-gray-200 bg-gray-50 text-gray-700',
+                    icon: 'fa-regular fa-circle text-gray-500'
+                }
+            };
+            return map[status] || map.planejado;
+        }
+
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function renderPhases() {
+            var container = document.getElementById('execution-phases-list');
+            if (!container) return;
+            container.innerHTML = phasesData.map(function (phase, index) {
+                var dependencies = Array.isArray(phase.dependencies)
+                    ? phase.dependencies
+                    : (phase.dependency ? [phase.dependency] : []);
+                var isCollapsed = collapsedPhases[index] === true;
+                return '' +
+                    '<div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">' +
+                        '<div class="flex items-start gap-3">' +
+                            '<span class="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700 shrink-0">' +
+                                '<i class="fa-solid fa-layer-group text-base"></i>' +
+                            '</span>' +
+                            '<div class="min-w-0 flex-1 pt-0.5">' +
+                                '<h3 class="text-base font-montserrat font-semibold text-bevap-navy">FASE: ' + escapeHtml(phase.name) + '</h3>' +
+                                '<p class="mt-1 text-sm leading-6 text-gray-600">' + escapeHtml(phase.notes) + '</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-4 flex flex-wrap items-center justify-between gap-3">' +
+                            '<div class="flex flex-wrap gap-2 text-[13px]">' +
+                                '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user-tie mr-1" style="color: #dbeafe;"></i>Responsável: ' + escapeHtml(phase.responsible) + '</span>' +
+                                '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-days mr-1 text-red-100"></i>Duração: ' + phase.duration + ' dias</span>' +
+                                '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #16a34a; border-color: #16a34a;"><i class="fa-regular fa-clock mr-1 text-green-200"></i>Esforço Total: ' + phase.effort + 'h</span>' +
+                            '</div>' +
+                            '<button type="button" onclick="togglePhaseCollapse(' + index + ')" class="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50">' +
+                                '<i class="fa-solid ' + (isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up') + ' mr-2 text-gray-400"></i>' + (isCollapsed ? 'Expandir' : 'Recolher') +
+                            '</button>' +
+                        '</div>' +
+                        '<div class="' + (isCollapsed ? 'hidden' : 'block') + '">' +
+                        '<div class="mt-4 rounded-xl border border-yellow-200 bg-yellow-50 p-4">' +
+                            '<div class="flex items-center gap-3 text-sm font-semibold text-gray-900">' +
+                                '<span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-yellow-200 text-yellow-700 shrink-0">' +
+                                    '<i class="fa-solid fa-link text-xs"></i>' +
+                                '</span>' +
+                                '<span>Dependências da Fase</span>' +
+                            '</div>' +
+                            '<div class="mt-3 space-y-2 pl-12">' +
+                                dependencies.map(function (dependency) {
+                                    return '' +
+                                        '<div class="flex items-start gap-3 text-sm text-gray-700">' +
+                                            '<span class="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-yellow-700 shrink-0"></span>' +
+                                            '<span class="font-medium text-gray-700">' + escapeHtml(dependency) + '</span>' +
+                                        '</div>';
+                                }).join('') +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-4 rounded-xl border border-gray-200 bg-slate-50 p-4">' +
+                            '<div class="mb-3 flex items-center justify-between gap-3">' +
+                                '<div>' +
+                                    '<h4 class="text-sm font-montserrat font-semibold text-gray-900">Tarefas da Fase</h4>' +
+                                    '<p class="text-xs text-gray-500">Relação de tarefas planejadas com esforço e duração.</p>' +
+                                '</div>' +
+                                '<span class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600">' + phase.tasks.length + ' tarefas</span>' +
+                            '</div>' +
+                            '<div class="space-y-3">' +
+                                phase.tasks.map(function (task) {
+                                    return '' +
+                                        '<div class="rounded-xl border border-gray-200 bg-white p-4">' +
+                                            '<div class="flex items-start justify-between gap-3">' +
+                                                '<div class="min-w-0 flex-1">' +
+                                                    '<div class="text-sm font-semibold text-bevap-navy">' + escapeHtml(task.name) + '</div>' +
+                                                    '<div class="mt-2 flex flex-wrap gap-2 text-[13px]">' +
+                                                        '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user mr-1" style="color: #dbeafe;"></i>Responsável: ' + escapeHtml(task.responsible) + '</span>' +
+                                                        '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #16a34a; border-color: #16a34a;"><i class="fa-regular fa-clock mr-1 text-green-200"></i>' + task.effort + 'h</span>' +
+                                                        '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-days mr-1 text-red-100"></i>' + task.duration + ' dias</span>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                            '</div>' +
+                                            '<div class="mt-3 border-t border-gray-100 pt-3 text-sm text-gray-600"><span class="font-medium text-gray-700">Dependência:</span> ' + escapeHtml(task.dependency) + '</div>' +
+                                        '</div>';
+                                }).join('') +
+                            '</div>' +
+                        '</div>' +
+                        '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function togglePhaseCollapse(index) {
+            collapsedPhases[index] = !collapsedPhases[index];
+            renderPhases();
+        }
+
+        function getTaskStatusMeta(status) {
+            var map = {
+                aguardando_execucao: {
+                    label: 'Aguardando Execução',
+                    badge: 'border-gray-200 bg-gray-50 text-gray-700',
+                    icon: 'fa-regular fa-clock text-gray-500'
+                },
+                em_execucao: {
+                    label: 'Em Execução',
+                    badge: 'border-blue-200 bg-blue-50 text-blue-700',
+                    icon: 'fa-solid fa-play text-blue-600'
+                },
+                validacao_solicitante: {
+                    label: 'Validação do Solicitante',
+                    badge: 'border-yellow-200 bg-yellow-50 text-yellow-700',
+                    icon: 'fa-solid fa-user-check text-yellow-600'
+                },
+                validacao_ti: {
+                    label: 'Validação do TI',
+                    badge: 'border-indigo-200 bg-indigo-50 text-indigo-700',
+                    icon: 'fa-solid fa-shield-halved text-indigo-600'
+                },
+                concluido: {
+                    label: 'Concluído',
+                    badge: 'border-green-200 bg-green-50 text-green-700',
+                    icon: 'fa-solid fa-circle-check text-green-600'
+                }
+            };
+            return map[status] || map.aguardando_execucao;
+        }
+
+        function renderMilestones() {
+            var container = document.getElementById('execution-milestones-list');
+            if (!container) return;
+            container.innerHTML = milestonesData.map(function (milestone, index) {
+                var status = getStatusMeta(milestone.status);
+                var isCollapsed = collapsedMilestones[index] === true;
+                var executionActivityLink = '../marcos/ux-marco-execucao-atividade.html';
+                return '' +
+                    '<div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">' +
+                        '<div class="flex items-start justify-between gap-4">' +
+                            '<div class="min-w-0 flex-1">' +
+                                '<div class="flex items-center gap-3">' +
+                                    '<span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-50 text-yellow-700 shrink-0">' +
+                                        '<i class="fa-solid fa-flag-checkered text-base"></i>' +
+                                    '</span>' +
+                                    '<div class="min-w-0 flex-1">' +
+                                        '<h3 class="text-base font-montserrat font-semibold text-bevap-navy">Marco: ' + escapeHtml(milestone.name) + '</h3>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<span class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold shrink-0 ' + status.badge + '">' +
+                                '<i class="' + status.icon + '"></i>' +
+                                '<span>' + status.label + '</span>' +
+                            '</span>' +
+                        '</div>' +
+                        '<div class="mt-4 flex flex-wrap items-center justify-between gap-3">' +
+                            '<div class="flex flex-wrap gap-2 text-[13px]">' +
+                                '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user-tie mr-1" style="color: #dbeafe;"></i>Responsável: ' + escapeHtml(milestone.owner) + '</span>' +
+                                '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>' + escapeHtml(milestone.period) + '</span>' +
+                            '</div>' +
+                            '<button type="button" onclick="toggleMilestoneCollapse(' + index + ')" class="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50">' +
+                                '<i class="fa-solid ' + (isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up') + ' mr-2 text-gray-400"></i>' + (isCollapsed ? 'Expandir' : 'Recolher') +
+                            '</button>' +
+                        '</div>' +
+                        '<div class="' + (isCollapsed ? 'hidden' : 'block') + '">' +
+                        '<div class="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">' +
+                            '<div class="mb-1.5 flex items-center gap-2">' +
+                                '<i class="fa-solid fa-check-double text-sm text-blue-700"></i>' +
+                                '<h4 class="text-sm font-montserrat font-semibold text-gray-900">Critérios de Aceite</h4>' +
+                            '</div>' +
+                            '<div class="space-y-0.5">' +
+                                milestone.criteria.map(function (item) {
+                                    return '<div class="flex items-start gap-1 rounded-lg bg-blue-50 px-3 py-1 text-sm leading-snug text-gray-700"><i class="fa-solid fa-check mt-0.5 text-[10px] text-bevap-green"></i><span>' + escapeHtml(item) + '</span></div>';
+                                }).join('') +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-4 rounded-xl border border-gray-200 bg-slate-50 p-4">' +
+                                '<div class="mb-3 flex items-center justify-between gap-3">' +
+                                    '<div>' +
+                                        '<h4 class="text-sm font-montserrat font-semibold text-gray-900">Tarefas do Marco</h4>' +
+                                        '<p class="text-xs text-gray-500">Tarefas relacionadas no planejamento para compor esta entrega.</p>' +
+                                    '</div>' +
+                                    '<span class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600">' + milestone.tasks.length + ' tarefas</span>' +
+                                '</div>' +
+                                '<div class="space-y-3">' +
+                                    milestone.tasks.map(function (task) {
+                                        var taskStatus = getTaskStatusMeta(task.status);
+                                        return '' +
+                                            '<div class="rounded-xl border border-gray-200 bg-white p-4">' +
+                                                '<div class="flex items-start justify-between gap-3">' +
+                                                    '<div class="min-w-0 flex-1">' +
+                                                        '<a href="' + executionActivityLink + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-bevap-navy hover:text-blue-700 transition-colors">' +
+                                                            '<span>' + escapeHtml(task.taskName) + '</span>' +
+                                                            '<i class="fa-solid fa-link text-[11px] shrink-0"></i>' +
+                                                        '</a>' +
+                                                        '<div class="mt-2 flex flex-wrap gap-2 text-[13px]">' +
+                                                            '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user-tie mr-1 text-blue-100"></i>Responsável: ' + escapeHtml(task.responsible || '-') + '</span>' +
+                                                            '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #16a34a; border-color: #16a34a;"><i class="fa-solid fa-layer-group mr-1 text-green-200"></i>Fase: ' + escapeHtml(task.phaseName) + '</span>' +
+                                                            '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-days mr-1 text-red-100"></i>' + escapeHtml(task.date) + '</span>' +
+                                                        '</div>' +
+                                                    '</div>' +
+                                                    '<span class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold shrink-0 ' + taskStatus.badge + '">' +
+                                                        '<i class="' + taskStatus.icon + '"></i>' +
+                                                        '<span>' + taskStatus.label + '</span>' +
+                                                    '</span>' +
+                                                '</div>' +
+                                            '</div>';
+                                    }).join('') +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function toggleMilestoneCollapse(index) {
+            collapsedMilestones[index] = !collapsedMilestones[index];
+            renderMilestones();
+        }
+
+        function renderRisks() {
+            var container = document.getElementById('execution-risks-list');
+            if (!container) return;
+            container.innerHTML = risksData.map(function (risk) {
+                var accent = risk.severity === 'Alto'
+                    ? 'border-red-300 bg-white'
+                    : risk.severity === 'Médio'
+                        ? 'border-yellow-200 bg-yellow-50'
+                        : 'border-green-200 bg-green-50';
+                var badge = risk.severity === 'Alto'
+                    ? 'bg-red-200 text-red-900'
+                    : risk.severity === 'Médio'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-green-100 text-green-800';
+                var metaText = risk.severity === 'Alto'
+                    ? 'text-red-800'
+                    : risk.severity === 'Médio'
+                        ? 'text-yellow-700'
+                        : 'text-green-700';
+                return '' +
+                    '<div class="rounded-xl border p-5 shadow-sm ' + accent + '">' +
+                        '<div class="flex items-start justify-between gap-3">' +
+                            '<div class="min-w-0 flex-1">' +
+                                '<div class="flex items-center gap-2">' +
+                                    '<i class="fa-solid fa-triangle-exclamation text-sm ' + (risk.severity === 'Alto' ? 'text-red-600' : (risk.severity === 'Médio' ? 'text-yellow-600' : 'text-green-600')) + '"></i>' +
+                                    '<h4 class="text-base font-montserrat font-semibold text-bevap-navy">' + escapeHtml(risk.title) + '</h4>' +
+                                '</div>' +
+                                '<div class="mt-2 text-sm ' + metaText + '">Probabilidade: ' + escapeHtml(risk.probability) + ' | Impacto: ' + escapeHtml(risk.impact) + '</div>' +
+                            '</div>' +
+                            '<span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ' + badge + '">' + escapeHtml(risk.severity) + '</span>' +
+                        '</div>' +
+                        '<div class="mt-3 text-sm text-gray-600"><span class="font-medium text-gray-700">Responsável:</span> ' + escapeHtml(risk.owner) + '</div>' +
+                        '<div class="mt-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700"><strong>Mitigação:</strong> ' + escapeHtml(risk.mitigation) + '</div>' +
+                        '<div class="mt-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700"><strong>Plano B:</strong> ' + escapeHtml(risk.fallback) + '</div>' +
+                    '</div>';
+            }).join('');
+        }
+
+        function renderRaci() {
+            var body = document.getElementById('execution-raci-body');
+            if (!body) return;
+            body.innerHTML = raciData.map(function (row) {
+                return '' +
+                    '<tr>' +
+                        '<td class="px-4 py-3 align-top">' +
+                            '<div class="font-medium text-bevap-navy">' + escapeHtml(row.milestone) + '</div>' +
+                        '</td>' +
+                        '<td class="px-4 py-3 align-top text-gray-700">' + escapeHtml(row.responsible) + '</td>' +
+                        '<td class="px-4 py-3 align-top text-gray-700">' + escapeHtml(row.approver) + '</td>' +
+                        '<td class="px-4 py-3 align-top text-gray-700">' + escapeHtml(row.consulted) + '</td>' +
+                        '<td class="px-4 py-3 align-top text-gray-700">' + escapeHtml(row.informed) + '</td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        function renderCommunicationPlan() {
+            var body = document.getElementById('execution-communication-body');
+            if (!body) return;
+            body.innerHTML = communicationPlanData.map(function (row) {
+                return '' +
+                    '<tr>' +
+                        '<td class="px-4 py-3 text-gray-700">' + escapeHtml(row.audience) + '</td>' +
+                        '<td class="px-4 py-3 text-gray-700">' + escapeHtml(row.channel) + '</td>' +
+                        '<td class="px-4 py-3 text-gray-700">' + escapeHtml(row.frequency) + '</td>' +
+                    '</tr>';
+            }).join('');
+        }
+
+        function updateSummary() {
+            return;
+        }
+
+        function toggleTab(tabName) {
+            ['phases', 'milestones', 'risks', 'raci'].forEach(function (tab) {
+                var button = document.getElementById('tab-execution-' + tab);
+                var content = document.getElementById('tab-content-execution-' + tab);
+                if (!button || !content) return;
+                var active = tab === tabName;
+                button.classList.toggle('border-bevap-green', active);
+                button.classList.toggle('text-bevap-green', active);
+                button.classList.toggle('bg-green-50', active);
+                button.classList.toggle('border-transparent', !active);
+                button.classList.toggle('text-gray-500', !active);
+                button.classList.toggle('hover:text-gray-700', !active);
+                content.classList.toggle('hidden', !active);
+            });
+        }
+
+        function bindTabs() {
+            var scroller = document.getElementById('execution-tabs-scroll');
+            var leftArrow = document.getElementById('execution-tabs-left-arrow');
+            var rightArrow = document.getElementById('execution-tabs-right-arrow');
+
+            function updateArrows() {
+                if (!scroller || !leftArrow || !rightArrow) return;
+                var maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+                var hasOverflow = maxScroll > 2;
+                var atStart = scroller.scrollLeft <= 2;
+                var atEnd = scroller.scrollLeft >= maxScroll - 2;
+                leftArrow.classList.toggle('opacity-0', !hasOverflow || atStart);
+                leftArrow.classList.toggle('pointer-events-none', !hasOverflow || atStart);
+                rightArrow.classList.toggle('opacity-0', !hasOverflow || atEnd);
+                rightArrow.classList.toggle('pointer-events-none', !hasOverflow || atEnd);
+            }
+
+            document.getElementById('tab-execution-phases')?.addEventListener('click', function () {
+                toggleTab('phases');
+            });
+            document.getElementById('tab-execution-milestones')?.addEventListener('click', function () {
+                toggleTab('milestones');
+            });
+            document.getElementById('tab-execution-risks')?.addEventListener('click', function () {
+                toggleTab('risks');
+            });
+            document.getElementById('tab-execution-raci')?.addEventListener('click', function () {
+                toggleTab('raci');
+            });
+            leftArrow?.addEventListener('click', function () {
+                scroller.scrollTo({ left: 0, behavior: 'smooth' });
+                window.setTimeout(updateArrows, 360);
+            });
+            rightArrow?.addEventListener('click', function () {
+                scroller.scrollTo({ left: scroller.scrollWidth - scroller.clientWidth, behavior: 'smooth' });
+                window.setTimeout(updateArrows, 360);
+            });
+            scroller?.addEventListener('scroll', updateArrows);
+            window.setTimeout(updateArrows, 0);
+            toggleTab('phases');
+        }
+
+        function showToast(title, message, type) {
+            var toast = document.getElementById('toast');
+            var icon = document.getElementById('toast-icon');
+            var titleElement = document.getElementById('toast-title');
+            var messageElement = document.getElementById('toast-message');
+            if (!toast || !icon || !titleElement || !messageElement) return;
+            var types = {
+                success: { border: 'border-emerald-500', icon: 'fa-solid fa-circle-check text-emerald-600' },
+                error: { border: 'border-red-500', icon: 'fa-solid fa-circle-xmark text-red-600' },
+                info: { border: 'border-blue-500', icon: 'fa-solid fa-circle-info text-blue-600' }
+            };
+            var selected = types[type] || types.info;
+            toast.className = 'fixed top-24 right-4 z-[70] hidden max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl ' + selected.border;
+            icon.className = selected.icon + ' text-xl';
+            titleElement.textContent = title;
+            messageElement.textContent = message;
+            toast.classList.remove('hidden');
+            window.clearTimeout(window.__projectExecutionToastTimeout);
+            window.__projectExecutionToastTimeout = window.setTimeout(function () {
+                toast.classList.add('hidden');
+            }, 3200);
+        }
+
+        function openReturnModal() {
+            document.getElementById('return-modal')?.classList.remove('hidden');
+        }
+
+        function closeReturnModal() {
+            document.getElementById('return-modal')?.classList.add('hidden');
+        }
+
+        function confirmReturnModal() {
+            var reason = document.getElementById('return-reason');
+            if (!reason || !reason.value.trim()) {
+                showToast('Campo obrigatório', 'Descreva o motivo para retornar ao planejamento.', 'error');
+                reason?.focus();
+                return;
+            }
+            closeReturnModal();
+            window.location.href = '../ux-planejamento.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderPhases();
+            renderMilestones();
+            renderRisks();
+            renderRaci();
+            renderCommunicationPlan();
+            updateSummary();
+            bindTabs();
+
+            document.querySelector('[data-action="return-planning"]')?.addEventListener('click', openReturnModal);
+            document.querySelector('[data-action="close-return-modal"]')?.addEventListener('click', closeReturnModal);
+            document.querySelector('[data-action="confirm-return-modal"]')?.addEventListener('click', confirmReturnModal);
+            document.getElementById('return-modal')?.addEventListener('click', function (event) {
+                if (event.target && event.target.id === 'return-modal') closeReturnModal();
+            });
+        });
+    </script>
+</body>
+</html>
