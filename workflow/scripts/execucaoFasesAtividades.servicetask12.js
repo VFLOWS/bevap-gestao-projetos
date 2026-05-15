@@ -1,14 +1,14 @@
 function servicetask12(attempt, message) {
-    var FIELD_PROJECT_ID = 'idGLPIProjeto';
+    var FIELD_PROJECT_ID = 'idGLPI';
     var FIELD_TASK_ID = 'idGLPIAtividade';
     var FIELD_STATUS = 'statusIntegracaoGLPIAtividade';
     var FIELD_ERROR = 'mensagemErroGLPIAtividade';
     var FIELD_RESPONSE = 'retornoIntegracaoGLPIAtividade';
-    var FIELD_NAME = 'nomeAtividadeGLPI';
-    var FIELD_CONTENT = 'descricaoAtividadeGLPI';
+    var FIELD_NAME = 'milestoneTaskSummaryTextDP';
+    var FIELD_CONTENT = 'milestoneTaskSummaryPhaseDP';
     var FIELD_TECH_USER = 'responsavelTecnicoGlpiId';
     var FIELD_PLAN_START = 'dataInicioPlanejadaGLPI';
-    var FIELD_PLAN_END = 'dataFimPlanejadaGLPI';
+    var FIELD_PLAN_END = 'milestoneTaskSummaryDueDateDP';
 
     if (attempt > 1) {
         log.warn('=== BLOQUEANDO EXECUCAO DUPLICADA DE PROJECTTASK NO GLPI === Tentativa: ' + attempt);
@@ -63,21 +63,21 @@ function servicetask12(attempt, message) {
 }
 
 function buildProjectTaskInput() {
-    var name = getCardValueSafe('nomeAtividadeGLPI');
-    var content = getCardValueSafe('descricaoAtividadeGLPI');
-    var projectId = parsePositiveInt(getCardValueSafe('idGLPIProjeto'));
+    var name = getCardValueSafe('milestoneTaskSummaryTextDP');
+    var content = getCardValueSafe('milestoneTaskSummaryPhaseDP');
+    var projectId = parsePositiveInt(getCardValueSafe('idGLPI'));
     var techUserId = parsePositiveInt(getCardValueSafe('responsavelTecnicoGlpiId'));
     var planStart = normalizeDateTime(getCardValueSafe('dataInicioPlanejadaGLPI'));
-    var planEnd = normalizeDateTime(getCardValueSafe('dataFimPlanejadaGLPI'));
+    var planEnd = normalizeDateTime(getCardValueSafe('milestoneTaskSummaryDueDateDP'));
 
     if (!name) {
-        throw 'Campo nomeAtividadeGLPI nao preenchido.';
+        throw 'Campo milestoneTaskSummaryTextDP nao preenchido.';
     }
     if (!content) {
-        throw 'Campo descricaoAtividadeGLPI nao preenchido.';
+        throw 'Campo milestoneTaskSummaryPhaseDP nao preenchido.';
     }
     if (!projectId) {
-        throw 'Campo idGLPIProjeto nao preenchido ou invalido.';
+        throw 'Campo idGLPI nao preenchido ou invalido.';
     }
 
     var input = {

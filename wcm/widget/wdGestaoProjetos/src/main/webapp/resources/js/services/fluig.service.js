@@ -246,7 +246,7 @@ var fluigService = {
             response.forEach(function (item) {
                 var cardId = item.cardId;
                 var cardData = {};
-                item.values.forEach(function (field) {
+                (item.values || []).forEach(function (field) {
                     cardData[field.fieldId] = field.value;
                 });
                 data.push({

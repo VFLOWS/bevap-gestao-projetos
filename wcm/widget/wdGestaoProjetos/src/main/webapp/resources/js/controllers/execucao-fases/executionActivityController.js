@@ -1,6 +1,7 @@
 const executionActivityController = {
-  _formId: '113630',
-  _datasetName: 'formExecucaoFasesAtividades',
+  _formId: '113669',
+  _datasetId: 'dsGetExecucaoAtividade',
+  _datasetName: 'formExecucaoAtividade',
   _eventNamespace: '.executionActivity',
   _toastTimer: null,
   _state: {
@@ -25,7 +26,7 @@ const executionActivityController = {
       isSubmitting: false
     };
 
-    const container = $('#route-content');
+    const container = $('#page-container');
     const template = await $.get(this.getTemplateUrl());
     container.html(template);
 
@@ -101,8 +102,14 @@ const executionActivityController = {
       this.setLoading(true, 'Carregando execucao da atividade...');
       await this.resolveContextIds();
 
-      const cards = await fluigService.searchCard(this._formId, this._state.documentId);
-      const card = Array.isArray(cards) ? cards[0] : cards;
+      const rows = await fluigService.getDatasetRows(this._datasetId, {
+        fields: this.getExecutionDatasetFields(),
+        filters: {
+          documentid: this._state.documentId,
+          sqlLimit: 1
+        }
+      });
+      const card = Array.isArray(rows) ? rows[0] : rows;
       if (!card) {
         this.renderError('Card nao encontrado para a atividade informada.');
         return;
@@ -118,6 +125,62 @@ const executionActivityController = {
     } finally {
       this.setLoading(false);
     }
+  },
+
+  getExecutionDatasetFields() {
+    return [
+      'documentid',
+      'milestoneTaskSummaryTextDP',
+      'milestoneTaskSummaryDueDateDP',
+      'milestoneTaskSummaryPhaseDP',
+      'milestoneTaskSummaryMarcoDP',
+      'milestoneTaskSummaryProcessDP',
+      'codigoglpi',
+      'titulodoprojetoNS',
+      'areaUnidadeNS',
+      'patrocinadorNS',
+      'prioridadeNS',
+      'solicitanteNomeNS',
+      'idGLPIAtividade',
+      'dependenciastecnicasAPTI',
+      'dependenciasNS',
+      'anexosExecucaoAtividade',
+      'tblExecutionTimeEntriesEF.executionEntryIdEF',
+      'tblExecutionTimeEntriesEF.executionEntryStatusEF',
+      'tblExecutionTimeEntriesEF.executionEntryDateEF',
+      'tblExecutionTimeEntriesEF.executionEntryStartEF',
+      'tblExecutionTimeEntriesEF.executionEntryEndEF',
+      'tblExecutionTimeEntriesEF.executionEntryDurationEF',
+      'tblExecutionTimeEntriesEF.executionEntryCommentEF',
+      'tblExecutionTimeEntriesEF.executionEntryAuthorIdEF',
+      'tblExecutionTimeEntriesEF.executionEntryAuthorNameEF',
+      'tblExecutionTimeEntriesEF.executionEntryCreatedAtEF',
+      'tblExecutionTimeEntriesEF.executionEntryUpdatedAtEF',
+      'tblWbsTasksDP.wbsTaskIdDP',
+      'tblWbsTasksDP.wbsTaskPhaseIdDP',
+      'tblWbsTasksDP.wbsTaskOrderDP',
+      'tblWbsTasksDP.wbsTaskNameDP',
+      'tblWbsTasksDP.wbsTaskResponsibleDP',
+      'tblWbsTasksDP.wbsTaskEffortHoursDP',
+      'tblWbsTasksDP.wbsTaskDurationDaysDP',
+      'tblWbsPhasesDP.wbsPhaseIdDP',
+      'tblWbsPhasesDP.wbsPhaseOrderDP',
+      'tblWbsPhasesDP.wbsPhaseNameDP',
+      'tblWbsPhasesDP.wbsPhaseResponsibleDP',
+      'tblWbsPhasesDP.wbsPhaseEffortHoursDP',
+      'tblWbsPhasesDP.wbsPhaseDurationDaysDP',
+      'tblWbsPhasesDP.wbsPhaseNotesDP',
+      'tblMilestonesDP.milestoneIdDP',
+      'tblMilestonesDP.milestoneNameDP',
+      'tblMilestonesDP.milestoneStartDateDP',
+      'tblMilestonesDP.milestoneEndDateDP',
+      'tblExternalDependenciesDP.externalDependencyIdDP',
+      'tblExternalDependenciesDP.externalDependencyDescriDP',
+      'tblExternalDependenciesDP.externalDependencyStatusDP',
+      'tblExternalDependenciesDP.externalDependencyResponDP',
+      'tblExternalDependenciesDP.externalDependencyMitiDP',
+      'tblExternalDependenciesDP.externalDependencyPlanBDP'
+    ];
   },
 
   async resolveContextIds() {
@@ -146,43 +209,91 @@ const executionActivityController = {
 
   normalizeCard(card) {
     const source = card || {};
+    const activity = this.firstFilledValue(source, ['milestoneTaskSummaryTextDP']);
+    const phase = this.firstFilledValue(source, ['milestoneTaskSummaryPhaseDP']);
+    const milestone = this.firstFilledValue(source, ['milestoneTaskSummaryMarcoDP']);
+    const taskDetails = this.resolveTaskDetails(source, activity);
+    const phaseDetails = this.resolvePhaseDetails(source, phase, taskDetails.phaseId);
+    const milestoneDetails = this.resolveMilestoneDetails(source, milestone);
 
     return {
-      documentId: this.firstFilledValue(source, ['documentId', 'cardId']),
-      activity: this.firstFilledValue(source, ['milestoneTaskSummaryTextDP']),
+      documentId: this.firstFilledValue(source, ['documentid', 'documentId', 'cardId']),
+      activity: activity,
       dueDate: this.firstFilledValue(source, ['milestoneTaskSummaryDueDateDP']),
-      phase: this.firstFilledValue(source, ['milestoneTaskSummaryPhaseDP']),
-      milestone: this.firstFilledValue(source, ['milestoneTaskSummaryMarcoDP']),
+      phase: phase,
+      phaseResponsible: phaseDetails.responsible,
+      phaseEffort: phaseDetails.effortHours,
+      milestone: milestone,
+      milestonePeriod: milestoneDetails.period,
       parentProcess: this.firstFilledValue(source, ['milestoneTaskSummaryProcessDP']),
+      activityResponsible: taskDetails.responsible,
+      activityEffort: taskDetails.effortHours,
       projectCode: this.firstFilledValue(source, ['codigoglpi']),
       projectTitle: this.firstFilledValue(source, ['titulodoprojetoNS']),
       projectArea: this.firstFilledValue(source, ['areaUnidadeNS']),
       projectSponsor: this.firstFilledValue(source, ['patrocinadorNS']),
       projectPriority: this.firstFilledValue(source, ['prioridadeNS']),
       requesterName: this.firstFilledValue(source, ['solicitanteNomeNS']),
-      glpiActivityId: this.firstFilledValue(source, ['idGLPIAtividade'])
+      glpiActivityId: this.firstFilledValue(source, ['idGLPIAtividade']),
+      dependencies: this.resolveDependencies(source)
     };
   },
 
   render() {
     const card = this._state.card || {};
     this.setText('#ef-exec-activity-name', card.activity || 'Atividade sem nome informado');
+    this.setText('#ef-exec-responsible', card.activityResponsible || 'Nao informado');
     this.setText('#ef-exec-due-date', this.formatDate(card.dueDate) || '-');
     this.setText('#ef-exec-phase-name', card.phase || '-');
+    this.setText('#ef-exec-phase-responsible', card.phaseResponsible || '-');
+    this.setText('#ef-exec-phase-effort', this.formatEffort(card.phaseEffort) || '-');
     this.setText('#ef-exec-milestone-name', card.milestone || '-');
+    this.setText('#ef-exec-milestone-period', card.milestonePeriod || '-');
+    this.setText('#ef-exec-estimated-effort', this.formatEffort(card.activityEffort) || '-');
+    this.setText('#ef-exec-estimated-hours', this.formatEffort(card.activityEffort) || '-');
     this.setText('#ef-exec-project-code', card.projectCode || '-');
     this.setText('#ef-exec-project-title', card.projectTitle || '-');
     this.setText('#ef-exec-project-area', card.projectArea || '-');
     this.setText('#ef-exec-project-sponsor', card.projectSponsor || '-');
     this.setText('#ef-exec-project-priority', card.projectPriority || '-');
     this.setText('#ef-exec-project-requester', card.requesterName || '-');
+    this.setText('#ef-exec-project-responsible', card.activityResponsible || card.phaseResponsible || '-');
 
+    $('#ef-exec-responsible-badge').toggleClass('hidden', !this.asText(card.activityResponsible));
+    $('#ef-exec-effort-badge').toggleClass('hidden', !this.asText(card.activityEffort));
+    $('#ef-exec-estimated-summary').toggleClass('hidden', !this.asText(card.activityEffort));
+    $('#ef-exec-remaining-summary').toggleClass('hidden', !this.asText(card.activityEffort));
+    $('#ef-exec-phase-responsible-row').toggleClass('hidden', !this.asText(card.phaseResponsible));
+    $('#ef-exec-phase-effort-row').toggleClass('hidden', !this.asText(card.phaseEffort));
+    $('#ef-exec-milestone-period-row').toggleClass('hidden', !this.asText(card.milestonePeriod));
+
+    this.renderDependencies(card.dependencies);
     this.renderEntries();
     this.renderEffortSummary();
     this.renderAttachmentsList();
 
     $('#ef-exec-page-alert').addClass('hidden').empty();
     $('#ef-exec-content, #ef-exec-action-footer').removeClass('hidden');
+  },
+
+  renderDependencies(dependencies) {
+    const items = Array.isArray(dependencies) ? dependencies.filter(Boolean) : [];
+    const block = $('#ef-exec-dependencies-block');
+    const list = $('#ef-exec-dependencies-list');
+
+    if (!items.length) {
+      block.addClass('hidden');
+      list.empty();
+      return;
+    }
+
+    list.html(items.map((dependency) => `
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-circle text-[8px] text-yellow-700" aria-hidden="true"></i>
+        <span class="font-medium text-gray-700">${this.escapeHtml(dependency)}</span>
+      </div>
+    `).join(''));
+    block.removeClass('hidden');
   },
 
   renderEntries() {
@@ -233,7 +344,14 @@ const executionActivityController = {
 
   renderEffortSummary() {
     const usedMinutes = this.sumActiveDurationMinutes(this._state.entries);
+    const estimatedMinutes = this.parseEffortMinutes(this._state.card && this._state.card.activityEffort);
+    const remainingMinutes = estimatedMinutes ? Math.max(0, estimatedMinutes - usedMinutes) : 0;
+
     $('#ef-exec-used-hours').text(this.formatHoursAndMinutes(usedMinutes));
+    if (estimatedMinutes) {
+      $('#ef-exec-estimated-hours').text(this.formatHoursAndMinutes(estimatedMinutes));
+      $('#ef-exec-remaining-hours').text(this.formatHoursAndMinutes(remainingMinutes));
+    }
   },
 
   renderAttachmentsList() {
@@ -327,8 +445,12 @@ const executionActivityController = {
     `);
   },
 
-  upsertEntryFromModal() {
+  async upsertEntryFromModal() {
     const button = $('[data-action="confirm-entry"]').first();
+    if (button.prop('disabled')) {
+      return;
+    }
+
     const entryId = this.asText(button.attr('data-entry-id'));
     const date = this.asText($('#ef-entry-date').val());
     const start = this.normalizeTimeInputValue($('#ef-entry-start').val());
@@ -340,6 +462,10 @@ const executionActivityController = {
       this.showToast('Apontamento invalido', validation.message, 'error');
       return;
     }
+
+    this.setModalButtonState(button, true, entryId ? 'Atualizando...' : 'Adicionando...');
+    this.setLoading(true, entryId ? 'Atualizando apontamento...' : 'Adicionando apontamento...');
+    await this.waitForUiTick();
 
     const now = new Date().toISOString();
     const existing = entryId ? this.findEntryById(entryId) : null;
@@ -366,6 +492,7 @@ const executionActivityController = {
     }
 
     this.closeModal();
+    this.setLoading(false);
     this.renderEntries();
     this.renderEffortSummary();
     this.showToast(existing ? 'Lancamento atualizado' : 'Lancamento adicionado', 'Salve a atividade para gravar no card.', 'success');
@@ -395,7 +522,16 @@ const executionActivityController = {
     `);
   },
 
-  markEntryDeleted(entryId) {
+  async markEntryDeleted(entryId) {
+    const button = $('[data-action="confirm-delete-entry"]').first();
+    if (button.prop('disabled')) {
+      return;
+    }
+
+    this.setModalButtonState(button, true, 'Excluindo...');
+    this.setLoading(true, 'Excluindo apontamento...');
+    await this.waitForUiTick();
+
     this._state.entries = this._state.entries.map((entry) => {
       if (entry.id !== entryId) return entry;
       return {
@@ -406,6 +542,7 @@ const executionActivityController = {
     });
 
     this.closeModal();
+    this.setLoading(false);
     this.renderEntries();
     this.renderEffortSummary();
     this.showToast('Lancamento excluido', 'A exclusao sera gravada no proximo salvar ou enviar.', 'info');
@@ -451,8 +588,11 @@ const executionActivityController = {
 
     try {
       this._state.isSubmitting = true;
+      this.setActionButtonsState(true);
+      this.setModalButtonState($('[data-action="confirm-save-activity"]').first(), true, 'Salvando...');
       this.closeModal();
       this.setLoading(true, 'Salvando apontamentos...');
+      await this.waitForUiTick();
 
       const taskFields = this.collectExecutionTaskFields(this._state.entries);
       await fluigService.saveDraft({
@@ -471,6 +611,7 @@ const executionActivityController = {
       this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar os apontamentos.', 'error');
     } finally {
       this._state.isSubmitting = false;
+      this.setActionButtonsState(false);
       this.setLoading(false);
     }
   },
@@ -480,8 +621,11 @@ const executionActivityController = {
 
     try {
       this._state.isSubmitting = true;
+      this.setActionButtonsState(true);
+      this.setModalButtonState($('[data-action="confirm-send-requester"]').first(), true, 'Enviando...');
       this.closeModal();
       this.setLoading(true, 'Enviando para validacao...');
+      await this.waitForUiTick();
 
       const taskFields = this.collectExecutionTaskFields(this._state.entries);
       const attachments = await this.collectAttachmentsPayload();
@@ -504,6 +648,7 @@ const executionActivityController = {
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel enviar a atividade.', 'error');
     } finally {
       this._state.isSubmitting = false;
+      this.setActionButtonsState(false);
       this.setLoading(false);
     }
   },
@@ -565,7 +710,16 @@ const executionActivityController = {
   parseExecutionEntries(card) {
     const source = card || {};
     const rowsByIndex = {};
-    const fieldPattern = /^(executionEntryIdEF|executionEntryStatusEF|executionEntryDateEF|executionEntryStartEF|executionEntryEndEF|executionEntryDurationEF|executionEntryCommentEF|executionEntryAuthorIdEF|executionEntryAuthorNameEF|executionEntryCreatedAtEF|executionEntryUpdatedAtEF)___(\d+)$/;
+    const fieldNames = this.getExecutionEntryFieldNames();
+    const fieldPattern = new RegExp(`^(${fieldNames.join('|')})___(\\d+)$`);
+    const tableRows = this.parseTableJson(source.tblExecutionTimeEntriesEF || source['tblExecutionTimeEntriesEF']);
+
+    tableRows.forEach((row, index) => {
+      this.mergeExecutionEntryRow(rowsByIndex, {
+        ...row,
+        rowIndex: row && (row.rowIndex || row.index || row.seq || row.sequence || row['tablename___index'] || row['__index']) || (index + 1)
+      }, index + 1);
+    });
 
     Object.keys(source).forEach((fieldName) => {
       const match = fieldName.match(fieldPattern);
@@ -579,25 +733,73 @@ const executionActivityController = {
     return Object.keys(rowsByIndex)
       .map((idx) => {
         const row = rowsByIndex[idx] || {};
-        const id = this.asText(row.executionEntryIdEF) || `legacy:${idx}`;
-        return {
-          id: id,
-          rowIndex: Number(row.rowIndex) || Number(idx),
-          status: this.asText(row.executionEntryStatusEF) || 'active',
-          date: this.asText(row.executionEntryDateEF),
-          start: this.asText(row.executionEntryStartEF),
-          end: this.asText(row.executionEntryEndEF),
-          durationMinutes: Number(row.executionEntryDurationEF) || this.calculateDurationMinutes(row.executionEntryStartEF, row.executionEntryEndEF),
-          comment: this.asText(row.executionEntryCommentEF),
-          authorId: this.asText(row.executionEntryAuthorIdEF),
-          authorName: this.asText(row.executionEntryAuthorNameEF),
-          createdAt: this.asText(row.executionEntryCreatedAtEF),
-          updatedAt: this.asText(row.executionEntryUpdatedAtEF),
-          persisted: true
-        };
+        return this.normalizeExecutionEntryRow(row, idx);
       })
-      .filter((entry) => entry.id || entry.date || entry.start || entry.end || entry.comment)
+      .filter((entry) => this.hasEntryPayload(entry))
       .sort((a, b) => (Number(a.rowIndex) || 0) - (Number(b.rowIndex) || 0));
+  },
+
+  getExecutionEntryFieldNames() {
+    return [
+      'executionEntryIdEF',
+      'executionEntryStatusEF',
+      'executionEntryDateEF',
+      'executionEntryStartEF',
+      'executionEntryEndEF',
+      'executionEntryDurationEF',
+      'executionEntryCommentEF',
+      'executionEntryAuthorIdEF',
+      'executionEntryAuthorNameEF',
+      'executionEntryCreatedAtEF',
+      'executionEntryUpdatedAtEF'
+    ];
+  },
+
+  mergeExecutionEntryRow(rowsByIndex, row, fallbackIndex) {
+    if (!row) {
+      return;
+    }
+
+    const existingIndex = Number(row.rowIndex);
+    const rowIndex = existingIndex > 0 ? existingIndex : Number(fallbackIndex) || 1;
+    rowsByIndex[rowIndex] = rowsByIndex[rowIndex] || { rowIndex };
+
+    this.getExecutionEntryFieldNames().forEach((fieldName) => {
+      const value = row[fieldName];
+      if (value !== undefined && value !== null && this.asText(value)) {
+        rowsByIndex[rowIndex][fieldName] = value;
+      }
+    });
+  },
+
+  normalizeExecutionEntryRow(row, idx) {
+    const rowIndex = Number(row.rowIndex) || Number(idx);
+    return {
+      id: this.asText(row.executionEntryIdEF) || `legacy:${rowIndex}`,
+      rowIndex: rowIndex,
+      status: this.asText(row.executionEntryStatusEF) || 'active',
+      date: this.asText(row.executionEntryDateEF),
+      start: this.asText(row.executionEntryStartEF),
+      end: this.asText(row.executionEntryEndEF),
+      durationMinutes: Number(row.executionEntryDurationEF) || this.calculateDurationMinutes(row.executionEntryStartEF, row.executionEntryEndEF),
+      comment: this.asText(row.executionEntryCommentEF),
+      authorId: this.asText(row.executionEntryAuthorIdEF),
+      authorName: this.asText(row.executionEntryAuthorNameEF),
+      createdAt: this.asText(row.executionEntryCreatedAtEF),
+      updatedAt: this.asText(row.executionEntryUpdatedAtEF),
+      persisted: true
+    };
+  },
+
+  hasEntryPayload(entry) {
+    return Boolean(
+      this.asText(entry && entry.date)
+      || this.asText(entry && entry.start)
+      || this.asText(entry && entry.end)
+      || this.asText(entry && entry.comment)
+      || this.asText(entry && entry.authorName)
+      || Number(entry && entry.durationMinutes) > 0
+    );
   },
 
   getActiveEntries(entries) {
@@ -809,6 +1011,31 @@ const executionActivityController = {
     $('#ui-loading-overlay').toggleClass('hidden', !isVisible);
   },
 
+  setActionButtonsState(isDisabled) {
+    const buttons = $('[data-action="save-activity"], [data-action="send-requester"], [data-action="open-add-entry-modal"]');
+    buttons
+      .prop('disabled', Boolean(isDisabled))
+      .toggleClass('opacity-70 cursor-not-allowed', Boolean(isDisabled));
+  },
+
+  setModalButtonState(button, isDisabled, label) {
+    const target = button && button.length ? button : $();
+    if (!target.length) {
+      return;
+    }
+
+    const currentLabel = target.data('defaultLabel') || target.text();
+    target.data('defaultLabel', currentLabel);
+    target
+      .prop('disabled', Boolean(isDisabled))
+      .toggleClass('opacity-70 cursor-not-allowed', Boolean(isDisabled))
+      .text(isDisabled ? label : currentLabel);
+  },
+
+  waitForUiTick() {
+    return new Promise((resolve) => setTimeout(resolve, 80));
+  },
+
   showToast(title, message, type = 'info') {
     const toast = $('#toast');
     const icon = $('#toast-icon');
@@ -839,6 +1066,189 @@ const executionActivityController = {
     return normalized || null;
   },
 
+  resolveTaskDetails(source, activityName) {
+    const rows = this.getTableRows(source, 'tblWbsTasksDP', [
+      'wbsTaskIdDP',
+      'wbsTaskPhaseIdDP',
+      'wbsTaskOrderDP',
+      'wbsTaskNameDP',
+      'wbsTaskResponsibleDP',
+      'wbsTaskEffortHoursDP',
+      'wbsTaskDurationDaysDP'
+    ]);
+
+    if (!rows.length) {
+      return {};
+    }
+
+    const activityKey = this.normalizeLookup(activityName);
+    const matched = rows.find((row) => this.normalizeLookup(row.wbsTaskNameDP) === activityKey)
+      || rows.find((row) => {
+        const rowKey = this.normalizeLookup(row.wbsTaskNameDP);
+        return activityKey && rowKey && (rowKey.indexOf(activityKey) >= 0 || activityKey.indexOf(rowKey) >= 0);
+      })
+      || {};
+
+    return {
+      id: this.asText(matched.wbsTaskIdDP),
+      phaseId: this.asText(matched.wbsTaskPhaseIdDP),
+      responsible: this.asText(matched.wbsTaskResponsibleDP),
+      effortHours: this.asText(matched.wbsTaskEffortHoursDP)
+    };
+  },
+
+  resolvePhaseDetails(source, phaseName, phaseId) {
+    const rows = this.getTableRows(source, 'tblWbsPhasesDP', [
+      'wbsPhaseIdDP',
+      'wbsPhaseOrderDP',
+      'wbsPhaseNameDP',
+      'wbsPhaseResponsibleDP',
+      'wbsPhaseEffortHoursDP',
+      'wbsPhaseDurationDaysDP',
+      'wbsPhaseNotesDP'
+    ]);
+
+    if (!rows.length) {
+      return {};
+    }
+
+    const finalPhaseId = this.asText(phaseId);
+    const phaseKey = this.normalizeLookup(phaseName);
+    const matched = rows.find((row) => finalPhaseId && this.asText(row.wbsPhaseIdDP) === finalPhaseId)
+      || rows.find((row) => this.normalizeLookup(row.wbsPhaseNameDP) === phaseKey)
+      || {};
+
+    return {
+      id: this.asText(matched.wbsPhaseIdDP),
+      responsible: this.asText(matched.wbsPhaseResponsibleDP),
+      effortHours: this.asText(matched.wbsPhaseEffortHoursDP)
+    };
+  },
+
+  resolveMilestoneDetails(source, milestoneName) {
+    const rows = this.getTableRows(source, 'tblMilestonesDP', [
+      'milestoneIdDP',
+      'milestoneNameDP',
+      'milestoneStartDateDP',
+      'milestoneEndDateDP'
+    ]);
+
+    if (!rows.length) {
+      return {};
+    }
+
+    const milestoneKey = this.normalizeLookup(milestoneName);
+    const matched = rows.find((row) => this.normalizeLookup(row.milestoneNameDP) === milestoneKey) || {};
+
+    return {
+      id: this.asText(matched.milestoneIdDP),
+      period: this.joinDateRange(matched.milestoneStartDateDP, matched.milestoneEndDateDP)
+    };
+  },
+
+  resolveDependencies(source) {
+    const dependencies = [];
+    const rows = this.getTableRows(source, 'tblExternalDependenciesDP', [
+      'externalDependencyIdDP',
+      'externalDependencyDescriDP',
+      'externalDependencyStatusDP',
+      'externalDependencyResponDP',
+      'externalDependencyMitiDP',
+      'externalDependencyPlanBDP'
+    ]);
+
+    rows.forEach((row) => {
+      this.pushUnique(dependencies, row.externalDependencyDescriDP);
+    });
+
+    this.parseDependencyText(source.dependenciastecnicasAPTI).forEach((item) => {
+      this.pushUnique(dependencies, item);
+    });
+
+    this.parseDependencyText(source.dependenciasNS).forEach((item) => {
+      this.pushUnique(dependencies, item);
+    });
+
+    return dependencies;
+  },
+
+  extractIndexedRows(source, fieldNames) {
+    const rowsByIndex = {};
+    const allowed = {};
+
+    (fieldNames || []).forEach((fieldName) => {
+      allowed[fieldName] = true;
+    });
+
+    Object.keys(source || {}).forEach((fieldName) => {
+      const match = String(fieldName).match(/^(.+)___(\d+)$/);
+      if (!match || !allowed[match[1]]) {
+        return;
+      }
+
+      const baseName = match[1];
+      const rowIndex = Number(match[2]);
+      rowsByIndex[rowIndex] = rowsByIndex[rowIndex] || { rowIndex };
+      rowsByIndex[rowIndex][baseName] = source[fieldName];
+    });
+
+    return Object.keys(rowsByIndex)
+      .sort((a, b) => Number(a) - Number(b))
+      .map((idx) => rowsByIndex[idx]);
+  },
+
+  getTableRows(source, tableName, fallbackFieldNames) {
+    const rows = this.parseTableJson(source && (source[tableName] || source[String(tableName)]));
+    if (rows.length) {
+      return rows;
+    }
+
+    return this.extractIndexedRows(source, fallbackFieldNames);
+  },
+
+  parseTableJson(value) {
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    const text = this.asText(value);
+    if (!text) {
+      return [];
+    }
+
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  },
+
+  parseDependencyText(value) {
+    const text = this.asText(value);
+    if (!text) {
+      return [];
+    }
+
+    return text
+      .split(/\r?\n|;/)
+      .map((item) => this.asText(item).replace(/^[-*\s]+/, ''))
+      .filter(Boolean);
+  },
+
+  pushUnique(list, value) {
+    const text = this.asText(value);
+    if (!text) {
+      return;
+    }
+
+    const key = this.normalizeLookup(text);
+    const exists = list.some((item) => this.normalizeLookup(item) === key);
+    if (!exists) {
+      list.push(text);
+    }
+  },
+
   firstFilledValue(source, fields) {
     for (const field of fields) {
       const value = this.asText(source[field]);
@@ -849,7 +1259,16 @@ const executionActivityController = {
 
   asText(value) {
     if (value === null || value === undefined) return '';
+    if (String(value).trim().toLowerCase() === 'null') return '';
     return String(value).trim();
+  },
+
+  normalizeLookup(value) {
+    return this.asText(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ');
   },
 
   formatDate(value) {
@@ -860,6 +1279,40 @@ const executionActivityController = {
       return `${day}/${month}/${year}`;
     }
     return text;
+  },
+
+  joinDateRange(startDate, endDate) {
+    const start = this.formatDate(startDate);
+    const end = this.formatDate(endDate);
+
+    if (start && end) {
+      return `${start} a ${end}`;
+    }
+
+    return start || end || '';
+  },
+
+  formatEffort(value) {
+    const text = this.asText(value);
+    if (!text) {
+      return '';
+    }
+
+    if (/[a-zA-Z]/.test(text)) {
+      return text;
+    }
+
+    return `${text}h`;
+  },
+
+  parseEffortMinutes(value) {
+    const text = this.asText(value).toLowerCase().replace(',', '.');
+    const match = text.match(/(\d+(?:\.\d+)?)/);
+    if (!match) {
+      return 0;
+    }
+
+    return Math.round(Number(match[1]) * 60) || 0;
   },
 
   formatDateTime(value) {

@@ -1,6 +1,7 @@
 const executionActivityWaitingController = {
-  _formId: '113630',
-  _datasetName: 'formExecucaoFasesAtividades',
+  _formId: '113669',
+  _datasetId: 'dsGetExecucaoAtividade',
+  _datasetName: 'formExecucaoAtividade',
   _eventNamespace: '.executionActivityWaiting',
   _toastTimer: null,
   _state: {
@@ -19,7 +20,7 @@ const executionActivityWaitingController = {
       isSubmitting: false
     };
 
-    const container = $('#route-content');
+    const container = $('#page-container');
     const template = await $.get(this.getTemplateUrl());
     container.html(template);
 
@@ -59,8 +60,14 @@ const executionActivityWaitingController = {
       this.setLoading(true, 'Carregando dados da atividade...');
 
       await this.resolveContextIds();
-      const cards = await fluigService.searchCard(this._formId, this._state.documentId);
-      const card = Array.isArray(cards) ? cards[0] : cards;
+      const rows = await fluigService.getDatasetRows(this._datasetId, {
+        fields: this.getExecutionDatasetFields(),
+        filters: {
+          documentid: this._state.documentId,
+          sqlLimit: 1
+        }
+      });
+      const card = Array.isArray(rows) ? rows[0] : rows;
 
       if (!card) {
         this.renderError('Card nao encontrado para a solicitacao informada.');
@@ -75,6 +82,49 @@ const executionActivityWaitingController = {
     } finally {
       this.setLoading(false);
     }
+  },
+
+  getExecutionDatasetFields() {
+    return [
+      'documentid',
+      'milestoneTaskSummaryTextDP',
+      'milestoneTaskSummaryDueDateDP',
+      'milestoneTaskSummaryPhaseDP',
+      'milestoneTaskSummaryMarcoDP',
+      'milestoneTaskSummaryProcessDP',
+      'codigoglpi',
+      'titulodoprojetoNS',
+      'areaUnidadeNS',
+      'patrocinadorNS',
+      'prioridadeNS',
+      'solicitanteNomeNS',
+      'dependenciastecnicasAPTI',
+      'dependenciasNS',
+      'tblWbsTasksDP.wbsTaskIdDP',
+      'tblWbsTasksDP.wbsTaskPhaseIdDP',
+      'tblWbsTasksDP.wbsTaskOrderDP',
+      'tblWbsTasksDP.wbsTaskNameDP',
+      'tblWbsTasksDP.wbsTaskResponsibleDP',
+      'tblWbsTasksDP.wbsTaskEffortHoursDP',
+      'tblWbsTasksDP.wbsTaskDurationDaysDP',
+      'tblWbsPhasesDP.wbsPhaseIdDP',
+      'tblWbsPhasesDP.wbsPhaseOrderDP',
+      'tblWbsPhasesDP.wbsPhaseNameDP',
+      'tblWbsPhasesDP.wbsPhaseResponsibleDP',
+      'tblWbsPhasesDP.wbsPhaseEffortHoursDP',
+      'tblWbsPhasesDP.wbsPhaseDurationDaysDP',
+      'tblWbsPhasesDP.wbsPhaseNotesDP',
+      'tblMilestonesDP.milestoneIdDP',
+      'tblMilestonesDP.milestoneNameDP',
+      'tblMilestonesDP.milestoneStartDateDP',
+      'tblMilestonesDP.milestoneEndDateDP',
+      'tblExternalDependenciesDP.externalDependencyIdDP',
+      'tblExternalDependenciesDP.externalDependencyDescriDP',
+      'tblExternalDependenciesDP.externalDependencyStatusDP',
+      'tblExternalDependenciesDP.externalDependencyResponDP',
+      'tblExternalDependenciesDP.externalDependencyMitiDP',
+      'tblExternalDependenciesDP.externalDependencyPlanBDP'
+    ];
   },
 
   async resolveContextIds() {
@@ -103,82 +153,83 @@ const executionActivityWaitingController = {
 
   normalizeCard(card) {
     const source = card || {};
+    const activity = this.firstFilledValue(source, ['milestoneTaskSummaryTextDP']);
+    const phase = this.firstFilledValue(source, ['milestoneTaskSummaryPhaseDP']);
+    const milestone = this.firstFilledValue(source, ['milestoneTaskSummaryMarcoDP']);
+    const taskDetails = this.resolveTaskDetails(source, activity);
+    const phaseDetails = this.resolvePhaseDetails(source, phase, taskDetails.phaseId);
+    const milestoneDetails = this.resolveMilestoneDetails(source, milestone);
 
     return {
-      documentId: this.firstFilledValue(source, ['documentId', 'cardId']),
-      activity: this.firstFilledValue(source, ['milestoneTaskSummaryTextDP']),
+      documentId: this.firstFilledValue(source, ['documentid', 'documentId', 'cardId']),
+      activity: activity,
       dueDate: this.firstFilledValue(source, ['milestoneTaskSummaryDueDateDP']),
-      phase: this.firstFilledValue(source, ['milestoneTaskSummaryPhaseDP']),
-      milestone: this.firstFilledValue(source, ['milestoneTaskSummaryMarcoDP']),
+      phase: phase,
+      phaseResponsible: phaseDetails.responsible,
+      phaseEffort: phaseDetails.effortHours,
+      milestone: milestone,
+      milestonePeriod: milestoneDetails.period,
       parentProcess: this.firstFilledValue(source, ['milestoneTaskSummaryProcessDP']),
+      activityResponsible: taskDetails.responsible,
+      activityEffort: taskDetails.effortHours,
       projectCode: this.firstFilledValue(source, ['codigoglpi']),
       projectTitle: this.firstFilledValue(source, ['titulodoprojetoNS']),
       projectArea: this.firstFilledValue(source, ['areaUnidadeNS']),
       projectSponsor: this.firstFilledValue(source, ['patrocinadorNS']),
       projectPriority: this.firstFilledValue(source, ['prioridadeNS']),
       requesterName: this.firstFilledValue(source, ['solicitanteNomeNS']),
-      glpiStatus: this.firstFilledValue(source, ['statusIntegracaoGLPIAtividade']),
-      glpiError: this.firstFilledValue(source, ['mensagemErroGLPIAtividade']),
-      glpiActivityId: this.firstFilledValue(source, ['idGLPIAtividade'])
+      dependencies: this.resolveDependencies(source)
     };
   },
 
   renderCard(card) {
     this.setText('#ef-activity-name', card.activity || 'Atividade sem nome informado');
+    this.setText('#ef-responsible', card.activityResponsible || 'Nao informado');
     this.setText('#ef-due-date', this.formatDate(card.dueDate) || '-');
     this.setText('#ef-phase-name', card.phase || '-');
+    this.setText('#ef-phase-responsible', card.phaseResponsible || '-');
+    this.setText('#ef-phase-effort', this.formatEffort(card.phaseEffort) || '-');
     this.setText('#ef-milestone-name', card.milestone || '-');
-    this.setText('#ef-parent-process', card.parentProcess || '-');
+    this.setText('#ef-milestone-period', card.milestonePeriod || '-');
+    this.setText('#ef-activity-effort', this.formatEffort(card.activityEffort) || '-');
     this.setText('#ef-project-code', card.projectCode || '-');
     this.setText('#ef-project-title', card.projectTitle || '-');
     this.setText('#ef-project-area', card.projectArea || '-');
     this.setText('#ef-project-sponsor', card.projectSponsor || '-');
     this.setText('#ef-project-priority', card.projectPriority || '-');
     this.setText('#ef-project-requester', card.requesterName || '-');
-    this.setText('#ef-glpi-id', card.glpiActivityId ? `ID da atividade: ${card.glpiActivityId}` : 'ID da atividade nao informado');
+    this.setText('#ef-project-responsible', card.activityResponsible || card.phaseResponsible || '-');
 
-    this.renderGlpiStatus(card.glpiStatus);
-    this.renderGlpiError(card.glpiError);
+    $('#ef-responsible-badge').toggleClass('hidden', !this.asText(card.activityResponsible));
+    $('#ef-effort-badge').toggleClass('hidden', !this.asText(card.activityEffort));
+    $('#ef-phase-responsible-row').toggleClass('hidden', !this.asText(card.phaseResponsible));
+    $('#ef-phase-effort-row').toggleClass('hidden', !this.asText(card.phaseEffort));
+    $('#ef-milestone-period-row').toggleClass('hidden', !this.asText(card.milestonePeriod));
+
+    this.renderDependencies(card.dependencies);
 
     $('#ef-page-alert').addClass('hidden').empty();
     $('#ef-content, #ef-action-footer').removeClass('hidden');
   },
 
-  renderGlpiStatus(status) {
-    const normalized = this.asText(status);
-    const label = normalized || 'Status nao informado';
-    const statusClass = this.getGlpiStatusClass(normalized);
+  renderDependencies(dependencies) {
+    const items = Array.isArray(dependencies) ? dependencies.filter(Boolean) : [];
+    const block = $('#ef-dependencies-block');
+    const list = $('#ef-dependencies-list');
 
-    $('#ef-glpi-status')
-      .removeClass()
-      .addClass(`inline-flex w-fit items-center rounded-full px-3 py-1 text-xs font-semibold ${statusClass}`)
-      .text(label);
-  },
-
-  renderGlpiError(message) {
-    const error = this.asText(message);
-    const element = $('#ef-glpi-error');
-
-    if (!error) {
-      element.addClass('hidden').text('');
+    if (!items.length) {
+      block.addClass('hidden');
+      list.empty();
       return;
     }
 
-    element.removeClass('hidden').text(error);
-  },
-
-  getGlpiStatusClass(status) {
-    const normalized = this.asText(status).toLowerCase();
-
-    if (normalized.includes('erro')) {
-      return 'bg-red-100 text-red-800';
-    }
-
-    if (normalized.includes('sucesso') || normalized.includes('integrado')) {
-      return 'bg-green-100 text-green-800';
-    }
-
-    return 'bg-yellow-100 text-yellow-800';
+    list.html(items.map((dependency) => `
+      <div class="flex items-center gap-2 text-sm text-gray-700">
+        <i class="fa-solid fa-triangle-exclamation text-yellow-500" aria-hidden="true"></i>
+        <span>${this.escapeHtml(dependency)}</span>
+      </div>
+    `).join(''));
+    block.removeClass('hidden');
   },
 
   renderError(message) {
@@ -276,16 +327,28 @@ const executionActivityWaitingController = {
 
   showToast(message, type = 'success') {
     const toast = $('#toast');
+    const toastTitle = $('#toast-title');
     const toastMessage = $('#toast-message');
+    const toastIcon = $('#toast-icon');
     const isError = type === 'error';
+    const selected = isError
+      ? {
+        border: 'border-red-500',
+        icon: 'fa-solid fa-circle-xmark text-xl text-red-600',
+        title: 'Erro'
+      }
+      : {
+        border: 'border-emerald-500',
+        icon: 'fa-solid fa-circle-check text-xl text-emerald-600',
+        title: 'Sucesso'
+      };
 
     toast
-      .removeClass('hidden border-green-200 border-red-200')
-      .addClass(isError ? 'border-red-200' : 'border-green-200');
-    toastMessage
-      .removeClass('text-gray-900 text-red-800')
-      .addClass(isError ? 'text-red-800' : 'text-gray-900')
-      .text(message);
+      .removeClass('hidden border-emerald-500 border-red-500 border-blue-500')
+      .addClass(selected.border);
+    toastIcon.removeClass().addClass(selected.icon);
+    toastTitle.text(selected.title);
+    toastMessage.text(message);
 
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
@@ -305,6 +368,189 @@ const executionActivityWaitingController = {
     return normalized || null;
   },
 
+  resolveTaskDetails(source, activityName) {
+    const rows = this.getTableRows(source, 'tblWbsTasksDP', [
+      'wbsTaskIdDP',
+      'wbsTaskPhaseIdDP',
+      'wbsTaskOrderDP',
+      'wbsTaskNameDP',
+      'wbsTaskResponsibleDP',
+      'wbsTaskEffortHoursDP',
+      'wbsTaskDurationDaysDP'
+    ]);
+
+    if (!rows.length) {
+      return {};
+    }
+
+    const activityKey = this.normalizeLookup(activityName);
+    const matched = rows.find((row) => this.normalizeLookup(row.wbsTaskNameDP) === activityKey)
+      || rows.find((row) => {
+        const rowKey = this.normalizeLookup(row.wbsTaskNameDP);
+        return activityKey && rowKey && (rowKey.indexOf(activityKey) >= 0 || activityKey.indexOf(rowKey) >= 0);
+      })
+      || {};
+
+    return {
+      id: this.asText(matched.wbsTaskIdDP),
+      phaseId: this.asText(matched.wbsTaskPhaseIdDP),
+      responsible: this.asText(matched.wbsTaskResponsibleDP),
+      effortHours: this.asText(matched.wbsTaskEffortHoursDP)
+    };
+  },
+
+  resolvePhaseDetails(source, phaseName, phaseId) {
+    const rows = this.getTableRows(source, 'tblWbsPhasesDP', [
+      'wbsPhaseIdDP',
+      'wbsPhaseOrderDP',
+      'wbsPhaseNameDP',
+      'wbsPhaseResponsibleDP',
+      'wbsPhaseEffortHoursDP',
+      'wbsPhaseDurationDaysDP',
+      'wbsPhaseNotesDP'
+    ]);
+
+    if (!rows.length) {
+      return {};
+    }
+
+    const finalPhaseId = this.asText(phaseId);
+    const phaseKey = this.normalizeLookup(phaseName);
+    const matched = rows.find((row) => finalPhaseId && this.asText(row.wbsPhaseIdDP) === finalPhaseId)
+      || rows.find((row) => this.normalizeLookup(row.wbsPhaseNameDP) === phaseKey)
+      || {};
+
+    return {
+      id: this.asText(matched.wbsPhaseIdDP),
+      responsible: this.asText(matched.wbsPhaseResponsibleDP),
+      effortHours: this.asText(matched.wbsPhaseEffortHoursDP)
+    };
+  },
+
+  resolveMilestoneDetails(source, milestoneName) {
+    const rows = this.getTableRows(source, 'tblMilestonesDP', [
+      'milestoneIdDP',
+      'milestoneNameDP',
+      'milestoneStartDateDP',
+      'milestoneEndDateDP'
+    ]);
+
+    if (!rows.length) {
+      return {};
+    }
+
+    const milestoneKey = this.normalizeLookup(milestoneName);
+    const matched = rows.find((row) => this.normalizeLookup(row.milestoneNameDP) === milestoneKey) || {};
+
+    return {
+      id: this.asText(matched.milestoneIdDP),
+      period: this.joinDateRange(matched.milestoneStartDateDP, matched.milestoneEndDateDP)
+    };
+  },
+
+  resolveDependencies(source) {
+    const dependencies = [];
+    const rows = this.getTableRows(source, 'tblExternalDependenciesDP', [
+      'externalDependencyIdDP',
+      'externalDependencyDescriDP',
+      'externalDependencyStatusDP',
+      'externalDependencyResponDP',
+      'externalDependencyMitiDP',
+      'externalDependencyPlanBDP'
+    ]);
+
+    rows.forEach((row) => {
+      this.pushUnique(dependencies, row.externalDependencyDescriDP);
+    });
+
+    this.parseDependencyText(source.dependenciastecnicasAPTI).forEach((item) => {
+      this.pushUnique(dependencies, item);
+    });
+
+    this.parseDependencyText(source.dependenciasNS).forEach((item) => {
+      this.pushUnique(dependencies, item);
+    });
+
+    return dependencies;
+  },
+
+  extractIndexedRows(source, fieldNames) {
+    const rowsByIndex = {};
+    const allowed = {};
+
+    (fieldNames || []).forEach((fieldName) => {
+      allowed[fieldName] = true;
+    });
+
+    Object.keys(source || {}).forEach((fieldName) => {
+      const match = String(fieldName).match(/^(.+)___(\d+)$/);
+      if (!match || !allowed[match[1]]) {
+        return;
+      }
+
+      const baseName = match[1];
+      const rowIndex = Number(match[2]);
+      rowsByIndex[rowIndex] = rowsByIndex[rowIndex] || { rowIndex };
+      rowsByIndex[rowIndex][baseName] = source[fieldName];
+    });
+
+    return Object.keys(rowsByIndex)
+      .sort((a, b) => Number(a) - Number(b))
+      .map((idx) => rowsByIndex[idx]);
+  },
+
+  getTableRows(source, tableName, fallbackFieldNames) {
+    const rows = this.parseTableJson(source && source[tableName]);
+    if (rows.length) {
+      return rows;
+    }
+
+    return this.extractIndexedRows(source, fallbackFieldNames);
+  },
+
+  parseTableJson(value) {
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    const text = this.asText(value);
+    if (!text) {
+      return [];
+    }
+
+    try {
+      const parsed = JSON.parse(text);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  },
+
+  parseDependencyText(value) {
+    const text = this.asText(value);
+    if (!text) {
+      return [];
+    }
+
+    return text
+      .split(/\r?\n|;/)
+      .map((item) => this.asText(item).replace(/^[-*\s]+/, ''))
+      .filter(Boolean);
+  },
+
+  pushUnique(list, value) {
+    const text = this.asText(value);
+    if (!text) {
+      return;
+    }
+
+    const key = this.normalizeLookup(text);
+    const exists = list.some((item) => this.normalizeLookup(item) === key);
+    if (!exists) {
+      list.push(text);
+    }
+  },
+
   firstFilledValue(source, fields) {
     for (const field of fields) {
       const value = this.asText(source[field]);
@@ -321,7 +567,19 @@ const executionActivityWaitingController = {
       return '';
     }
 
+    if (String(value).trim().toLowerCase() === 'null') {
+      return '';
+    }
+
     return String(value).trim();
+  },
+
+  normalizeLookup(value) {
+    return this.asText(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ');
   },
 
   formatDate(value) {
@@ -341,6 +599,30 @@ const executionActivityWaitingController = {
     }
 
     return text;
+  },
+
+  joinDateRange(startDate, endDate) {
+    const start = this.formatDate(startDate);
+    const end = this.formatDate(endDate);
+
+    if (start && end) {
+      return `${start} a ${end}`;
+    }
+
+    return start || end || '';
+  },
+
+  formatEffort(value) {
+    const text = this.asText(value);
+    if (!text) {
+      return '';
+    }
+
+    if (/[a-zA-Z]/.test(text)) {
+      return text;
+    }
+
+    return `${text}h`;
   },
 
   escapeHtml(value) {
