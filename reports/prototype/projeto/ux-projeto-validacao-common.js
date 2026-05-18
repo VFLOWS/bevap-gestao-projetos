@@ -306,7 +306,9 @@
         var scroller = document.getElementById('execution-tabs-scroll');
         var leftArrow = document.getElementById('execution-tabs-left-arrow');
         var rightArrow = document.getElementById('execution-tabs-right-arrow');
+        var checklistArrowNotice = document.getElementById('execution-checklist-arrow-notice');
         var scrollStep = 220;
+        var showChecklistArrowNotice = false;
 
         function updateArrows() {
             if (!scroller || !leftArrow || !rightArrow) return;
@@ -318,6 +320,11 @@
             leftArrow.classList.toggle('pointer-events-none', !hasOverflow || atStart);
             rightArrow.classList.toggle('opacity-0', !hasOverflow || atEnd);
             rightArrow.classList.toggle('pointer-events-none', !hasOverflow || atEnd);
+            if (checklistArrowNotice) {
+                var shouldShowArrowNotice = showChecklistArrowNotice && hasOverflow && !atEnd;
+                checklistArrowNotice.classList.toggle('hidden', !shouldShowArrowNotice);
+                checklistArrowNotice.classList.toggle('flex', shouldShowArrowNotice);
+            }
         }
 
         function toggleTab(tabName) {
@@ -409,9 +416,13 @@
             var items = document.querySelectorAll(config.checklist.itemSelector);
             var checked = document.querySelectorAll(config.checklist.itemSelector + ':checked').length;
             var percentage = items.length ? Math.round((checked / items.length) * 100) : 0;
+            var hasPendingItems = items.length > 0 && checked < items.length;
+            var noticeByIncomplete = !!config.checklist.noticeByIncomplete;
             document.getElementById(config.checklist.percentageId).textContent = percentage + '%';
             document.getElementById(config.checklist.progressId).style.width = percentage + '%';
-            document.getElementById(config.checklist.noticeId)?.classList.toggle('hidden', checklistVisited);
+            document.getElementById(config.checklist.noticeId)?.classList.toggle('hidden', noticeByIncomplete ? !hasPendingItems : checklistVisited);
+            showChecklistArrowNotice = noticeByIncomplete ? hasPendingItems : !checklistVisited;
+            updateArrows();
         }
 
         function validateApprovalRequirements() {
