@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solicitante - Validação do Projeto</title>
+    <title>Projeto Encerrado</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -45,10 +45,10 @@
                     <img src="../logoBevap.png" class="h-auto w-24" alt="BEVAP">
                 </div>
                 <div class="hidden h-8 w-px bg-gray-400 md:block"></div>
-                <h1 class="hidden font-montserrat text-lg font-semibold text-white md:block">Solicitante - Validação do Projeto</h1>
+                <h1 class="hidden font-montserrat text-lg font-semibold text-white md:block">Projeto Encerrado</h1>
             </div>
             <div class="flex items-center space-x-3">
-                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Usuario" class="h-9 w-9 rounded-full border-2 border-bevap-gold">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Usuário" class="h-9 w-9 rounded-full border-2 border-bevap-gold">
             </div>
         </div>
         <div class="mx-auto flex h-10 max-w-7xl items-center px-4 text-sm sm:px-6 lg:px-8">
@@ -62,17 +62,17 @@
                 <span class="text-gray-400">/</span>
                 <a href="ux-execucao-projeto.html" class="text-gray-300 transition-colors hover:text-white">Execução do Projeto</a>
                 <span class="text-gray-400">/</span>
-                <span class="font-medium text-bevap-gold">Validação do Solicitante</span>
+                <span class="font-medium text-bevap-gold">Projeto Encerrado</span>
             </nav>
         </div>
     </header>
 
-    <main class="pt-32 pb-24">
+    <main class="pt-32 pb-16">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div class="space-y-6 lg:col-span-2">
-                    <div class="rounded-lg border border-amber-200 bg-amber-50 p-4">
-                        <p class="text-sm leading-6 text-gray-700">Valide os marcos, tarefas, riscos e registros do projeto antes de registrar o parecer do solicitante.</p>
+                    <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-gray-700">
+                        O projeto foi encerrado com sucesso após a conclusão da execução, aprovação do solicitante e validação técnica da TI. Toda a documentação, evidências e registros operacionais permaneceram consolidados nesta visão final.
                     </div>
 
                     <section class="rounded-lg bg-white shadow-md">
@@ -91,11 +91,11 @@
                                     <button type="button" id="tab-execution-raci" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                                         <i class="fa-solid fa-users mr-2"></i>RACI
                                     </button>
-                                    <button type="button" id="tab-execution-checklist" class="relative whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
-                                        <span id="execution-checklist-notice" class="absolute right-2 top-2 flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-white ring-2 ring-white">
-                                            <i class="fa-solid fa-exclamation text-[10px]"></i>
-                                        </span>
-                                        <i class="fa-solid fa-list-check mr-2"></i>Checklist
+                                    <button type="button" id="tab-execution-requester" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-user-check mr-2"></i>Validação do Solicitante
+                                    </button>
+                                    <button type="button" id="tab-execution-ti" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-shield-halved mr-2"></i>Validação do TI
                                     </button>
                                 </div>
                                 <button id="execution-tabs-left-arrow" type="button" class="pointer-events-none absolute left-0 top-0 bottom-0 flex w-24 items-center justify-start rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent pl-2 text-bevap-navy opacity-0 transition-opacity duration-300">
@@ -129,14 +129,14 @@
 
                         <div id="tab-content-execution-risks" class="hidden p-6">
                             <div class="rounded-lg border border-red-200 bg-red-50 p-4">
-                                <p class="text-sm leading-6 text-gray-700">Consolide os riscos do projeto com severidade, probabilidade, impacto, mitigação e plano de contingência para apoiar a validação do solicitante.</p>
+                                <p class="text-sm leading-6 text-gray-700">Consulte os riscos consolidados do projeto com severidade, probabilidade, impacto, mitigação e contingência definidos no encerramento.</p>
                             </div>
                             <div id="execution-risks-list" class="mt-6 space-y-4"></div>
                         </div>
 
                         <div id="tab-content-execution-raci" class="hidden p-6">
                             <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4">
-                                <p class="text-sm leading-6 text-gray-700">A matriz RACI apresenta os papéis por marco do projeto, deixando claro quem executa, aprova, precisa ser consultado e quem deve ser informado ao longo da execução.</p>
+                                <p class="text-sm leading-6 text-gray-700">A matriz RACI final mantém a visão de responsabilidades por marco e o plano de comunicação utilizado ao longo do projeto.</p>
                             </div>
                             <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 bg-white">
                                 <table class="min-w-full divide-y divide-gray-200 text-sm">
@@ -172,68 +172,87 @@
                             </div>
                         </div>
 
-                        <div id="tab-content-execution-checklist" class="hidden p-6 pt-2">
-                            <div class="p-4">
-                                <h3 class="mb-4 text-lg font-montserrat font-semibold text-bevap-navy">Itens de Verificação</h3>
-                                <div class="space-y-3">
-                                    <label class="flex items-start">
-                                        <input type="checkbox" class="validation-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
-                                        <span class="ml-3 text-sm text-gray-700">
-                                            <span class="font-medium">Os marcos executados atendem ao planejamento aprovado</span>
-                                            <p class="mt-1 text-xs text-gray-500">Confirma se os marcos e entregas refletem o escopo e a sequência aprovados no planejamento.</p>
-                                        </span>
-                                    </label>
-                                    <label class="flex items-start">
-                                        <input type="checkbox" class="validation-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
-                                        <span class="ml-3 text-sm text-gray-700">
-                                            <span class="font-medium">As tarefas vinculadas aos marcos possuem evidências suficientes</span>
-                                            <p class="mt-1 text-xs text-gray-500">Valida se anexos, comentários e registros apresentados sustentam a conclusão das tarefas do projeto.</p>
-                                        </span>
-                                    </label>
-                                    <label class="flex items-start">
-                                        <input type="checkbox" class="validation-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
-                                        <span class="ml-3 text-sm text-gray-700">
-                                            <span class="font-medium">Os riscos e status refletem o momento real do projeto</span>
-                                            <p class="mt-1 text-xs text-gray-500">Confirma se o andamento apresentado está coerente com o contexto atual da execução do projeto.</p>
-                                        </span>
-                                    </label>
-                                    <label class="flex items-start">
-                                        <input type="checkbox" class="validation-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
-                                        <span class="ml-3 text-sm text-gray-700">
-                                            <span class="font-medium">O projeto está pronto para seguir para a validação técnica</span>
-                                            <p class="mt-1 text-xs text-gray-500">Indica que não há pendências funcionais do solicitante e que o projeto pode avançar no fluxo.</p>
-                                        </span>
-                                    </label>
-                                </div>
-                                <div class="mt-6 border-t pt-4">
-                                    <div class="mb-2 flex items-center justify-between text-sm">
-                                        <span class="text-gray-600">Completude do Checklist</span>
-                                        <span class="font-semibold text-bevap-navy" id="validation-checklist-percentage">0%</span>
+                        <div id="tab-content-execution-requester" class="hidden p-6">
+                            <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-700 shrink-0">
+                                        <i class="fa-solid fa-user-check text-base"></i>
+                                    </span>
+                                    <div>
+                                        <h4 class="text-sm font-montserrat font-semibold text-gray-900">Validação do Solicitante</h4>
+                                        <p class="text-xs text-gray-500">Histórico consolidado da análise do solicitante até a aprovação final desta etapa.</p>
                                     </div>
-                                    <div class="h-2 w-full rounded-full bg-gray-200">
-                                        <div class="h-2 rounded-full bg-bevap-green" id="validation-checklist-progress" style="width: 0%"></div>
+                                </div>
+                                <div class="mt-4 space-y-3">
+                                    <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">JV</span>
+                                                <div>
+                                                    <div class="font-semibold leading-5 text-bevap-navy">João Vieira</div>
+                                                    <div class="mt-1 text-xs text-gray-500">Solicitou novo planejamento</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full border border-yellow-200 bg-yellow-50 px-2.5 py-1 text-xs font-semibold text-yellow-700">Replanejamento solicitado</span>
+                                                <div class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">12/03/2026 14:20</div>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-700">Solicitei revisão do planejamento para consolidar as evidências do marco de homologação e ajustar os pontos pendentes antes da aprovação final.</p>
+                                    </div>
+                                    <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">JV</span>
+                                                <div>
+                                                    <div class="font-semibold leading-5 text-bevap-navy">João Vieira</div>
+                                                    <div class="mt-1 text-xs text-gray-500">Aprovação do solicitante</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Aprovado</span>
+                                                <div class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">15/03/2026 10:05</div>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-700">Validei o projeto conforme o detalhamento apresentado. Os marcos, evidências e registros enviados ficaram coerentes com a entrega esperada para esta etapa.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="tab-content-execution-ti" class="hidden p-6">
+                            <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 shrink-0">
+                                        <i class="fa-solid fa-shield-halved text-base"></i>
+                                    </span>
+                                    <div>
+                                        <h4 class="text-sm font-montserrat font-semibold text-gray-900">Validação do TI</h4>
+                                        <p class="text-xs text-gray-500">Comentário final aprovado pela equipe de Tecnologia da Informação.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">TI</span>
+                                                <div>
+                                                    <div class="font-semibold leading-5 text-bevap-navy">Equipe de Tecnologia da Informação</div>
+                                                    <div class="mt-1 text-xs text-gray-500">Aprovação da TI</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Aprovado</span>
+                                                <div class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">16/03/2026 16:40</div>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-700">A validação técnica foi concluída com êxito. O desenho implementado, os controles aplicados, as evidências apresentadas e o encerramento operacional do projeto foram aprovados pela TI.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </section>
 
-                    <div class="rounded-lg bg-white p-6 shadow-md">
-                        <h3 class="mb-6 flex items-center text-xl font-montserrat font-bold text-bevap-navy">
-                            <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
-                            Comentário do Solicitante
-                        </h3>
-                        <div class="mb-6">
-                            <label for="validation-feedback-text" class="mb-2 block text-sm font-medium text-gray-700">Observações / Negociação</label>
-                            <textarea id="validation-feedback-text" rows="4" placeholder="Adicione comentários, observações funcionais ou pontos para alinhamento com a TI..." class="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
-                        </div>
-                        <div class="mb-2">
-                            <label class="flex items-start">
-                                <input type="checkbox" id="validation-agreement-checkbox" class="mr-3 mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
-                                <span class="text-sm text-gray-700">Li e concordo que o projeto apresentado está correto e apto para continuidade <span class="text-red-500">*</span></span>
-                            </label>
-                        </div>
-                    </div>
                 </div>
 
                 <aside class="lg:col-span-1">
@@ -250,7 +269,7 @@
                                 <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Patrocinador</span><span class="font-medium text-gray-900">Diretoria TI</span></div>
                                 <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Previsão Final</span><span class="font-medium text-gray-900">20/03/2026</span></div>
                                 <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span class="font-medium text-gray-900">João Vieira</span></div>
-                                <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800"><i class="fa-solid fa-user-check mr-1"></i>Validação do Solicitante</span></div>
+                                <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-800"><i class="fa-solid fa-circle-check mr-1"></i>Projeto Concluído</span></div>
                             </div>
                             <div class="mt-4 space-y-2 border-t pt-4">
                                 <a href="../ux-planejamento.html" class="flex w-full items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy transition-colors hover:bg-gray-50">
@@ -272,8 +291,8 @@
                                 <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Análise TI concluída</span></div>
                                 <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Planejamento do projeto concluído</span></div>
                                 <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Execução do projeto concluída</span></div>
-                                <div class="flex items-center text-amber-600"><i class="fa-solid fa-user-check mr-2"></i><span>Validação do solicitante em andamento</span></div>
-                                <div class="flex items-center text-gray-400"><i class="fa-regular fa-circle mr-2"></i><span>Validação do TI</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Validação do solicitante concluída</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Validação do TI concluída</span></div>
                             </div>
                         </div>
                     </div>
@@ -281,75 +300,6 @@
             </div>
         </div>
     </main>
-
-    <footer class="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white shadow-lg">
-        <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
-                <button type="button" data-action="stop-flow" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-red-700">
-                    <i class="fa-solid fa-ban mr-2"></i>Não Continuidade
-                </button>
-                <button type="button" data-action="return-corrections" class="inline-flex items-center justify-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
-                    <i class="fa-solid fa-rotate-left mr-2"></i>Realizar Novo Planejamento
-                </button>
-                <button type="button" data-action="approve-project" class="inline-flex items-center justify-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
-                    <i class="fa-solid fa-check mr-2"></i>Validar Projeto
-                </button>
-            </div>
-        </div>
-    </footer>
-
-    <div id="approve-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <div class="mb-4 flex items-center">
-                <div class="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                    <i class="fa-solid fa-check-circle text-2xl text-bevap-green"></i>
-                </div>
-                <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Validação do Projeto</h3>
-            </div>
-            <p class="mb-6 text-gray-700">Você está confirmando a validação do projeto <strong>Implantar SSO corporativo</strong>.</p>
-            <p class="mb-6 text-sm text-gray-600">Ao confirmar, o projeto será encaminhado para a etapa de validação da TI.</p>
-            <div class="flex justify-end space-x-3">
-                <button type="button" data-action="close-approve-modal" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50">Cancelar</button>
-                <button type="button" data-action="confirm-approve-modal" class="rounded-lg bg-bevap-green px-6 py-2 font-medium text-white transition-colors hover:bg-green-700">Confirmar Validação</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="return-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Realizar Novo Planejamento</h3>
-            <p class="mb-4 text-sm text-gray-600">Descreva os pontos do projeto que exigem revisão do planejamento antes de seguir novamente pelo fluxo.</p>
-            <textarea id="return-reason" rows="4" placeholder="Motivo do novo planejamento..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
-            <div class="flex justify-end space-x-3">
-                <button type="button" data-action="close-return-modal" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
-                <button type="button" data-action="confirm-return-modal" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm text-white transition-all hover:bg-yellow-600">Confirmar</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="discontinue-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Não Continuidade do Projeto</h3>
-            <p class="mb-4 text-sm text-gray-600">Justifique a não continuidade do projeto para notificar os stakeholders.</p>
-            <select id="discontinue-category" class="mb-3 w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-bevap-green">
-                <option value="">Selecione a categoria</option>
-                <option value="tecnica">Inviabilidade técnica</option>
-                <option value="prioridades">Mudança de prioridades</option>
-                <option value="recursos">Recursos indisponíveis</option>
-                <option value="riscos">Risco elevado</option>
-                <option value="escopo">Escopo indefinido</option>
-                <option value="outro">Outro</option>
-            </select>
-            <textarea id="discontinue-reason" rows="4" placeholder="Descrição detalhada..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
-            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
-                <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i>Os stakeholders serão notificados automaticamente.</p>
-            </div>
-            <div class="flex justify-end space-x-3">
-                <button type="button" data-action="close-discontinue-modal" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
-                <button type="button" data-action="confirm-discontinue-modal" class="rounded-lg bg-red-600 px-4 py-2 text-sm text-white transition-all hover:bg-red-700">Confirmar</button>
-            </div>
-        </div>
-    </div>
 
     <div id="toast" class="hidden fixed top-24 right-4 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
         <div class="flex items-start gap-3">
@@ -362,6 +312,6 @@
     </div>
 
     <script src="ux-projeto-validacao-common.js"></script>
-    <script src="ux-projeto-validacao-solicitante.js"></script>
+    <script src="ux-projeto-final.js"></script>
 </body>
 </html>
