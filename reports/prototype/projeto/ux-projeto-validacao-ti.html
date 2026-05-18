@@ -334,7 +334,7 @@
                     <i class="fa-solid fa-ban mr-2"></i>Não Continuidade
                 </button>
                 <button type="button" data-action="return-corrections" class="inline-flex items-center justify-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
-                    <i class="fa-solid fa-rotate-left mr-2"></i>Devolver para Correção
+                    <i class="fa-solid fa-rotate-left mr-2"></i>Realizar Novo Planejamento
                 </button>
                 <button type="button" data-action="approve-project" class="inline-flex items-center justify-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
                     <i class="fa-solid fa-check mr-2"></i>Confirmar Validação
@@ -362,12 +362,12 @@
 
     <div id="return-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-            <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Devolver para Correção</h3>
-            <p class="mb-4 text-sm text-gray-600">Descreva os pontos do projeto que precisam ser ajustados antes de reenviar para a execução.</p>
-            <textarea id="return-reason" rows="4" placeholder="Motivo da devolução..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+            <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Realizar Novo Planejamento</h3>
+            <p class="mb-4 text-sm text-gray-600">Descreva os pontos do projeto que exigem revisão do planejamento antes de seguir novamente pelo fluxo.</p>
+            <textarea id="return-reason" rows="4" placeholder="Motivo do novo planejamento..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
             <div class="flex justify-end space-x-3">
                 <button type="button" data-action="close-return-modal" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
-                <button type="button" data-action="confirm-return-modal" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm text-white transition-all hover:bg-yellow-600">Devolver</button>
+                <button type="button" data-action="confirm-return-modal" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm text-white transition-all hover:bg-yellow-600">Confirmar</button>
             </div>
         </div>
     </div>
