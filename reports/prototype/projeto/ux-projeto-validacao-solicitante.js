@@ -17,20 +17,20 @@ document.addEventListener('DOMContentLoaded', function () {
         messages: {
             checklistPendingTitle: 'Checklist pendente',
             checklistPendingMessage: 'Conclua o checklist do solicitante antes de validar o projeto.',
-            commentPendingTitle: 'Comentario obrigatorio',
+            commentPendingTitle: 'Comentário obrigatório',
             commentPendingMessage: 'Informe o parecer do solicitante antes de validar o projeto.',
-            confirmationPendingTitle: 'Confirmacao pendente',
-            confirmationPendingMessage: 'Marque a confirmacao do solicitante antes de validar o projeto.',
+            confirmationPendingTitle: 'Confirmação pendente',
+            confirmationPendingMessage: 'Marque a confirmação do solicitante antes de validar o projeto.',
             approveSuccessTitle: 'Projeto validado',
-            approveSuccessMessage: 'A validacao do solicitante foi registrada e o projeto seguira para a TI.',
-            returnPendingTitle: 'Campo obrigatorio',
-            returnPendingMessage: 'Informe o motivo da devolucao.',
+            approveSuccessMessage: 'A validação do solicitante foi registrada e o projeto seguirá para a TI.',
+            returnPendingTitle: 'Campo obrigatório',
+            returnPendingMessage: 'Informe o motivo da devolução.',
             returnSuccessTitle: 'Projeto devolvido',
-            returnSuccessMessage: 'O projeto retornou para a execucao para ajustes.',
-            discontinuePendingTitle: 'Campos obrigatorios',
+            returnSuccessMessage: 'O projeto retornou para a execução para ajustes.',
+            discontinuePendingTitle: 'Campos obrigatórios',
             discontinuePendingMessage: 'Selecione a categoria e descreva o motivo.',
-            discontinueSuccessTitle: 'Nao continuidade registrada',
-            discontinueSuccessMessage: 'A nao continuidade foi registrada e os stakeholders serao notificados.'
+            discontinueSuccessTitle: 'Não continuidade registrada',
+            discontinueSuccessMessage: 'A não continuidade foi registrada e os stakeholders serão notificados.'
         }
     });
 });

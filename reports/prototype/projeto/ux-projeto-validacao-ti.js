@@ -17,20 +17,20 @@ document.addEventListener('DOMContentLoaded', function () {
         messages: {
             checklistPendingTitle: 'Checklist pendente',
             checklistPendingMessage: 'Conclua o checklist da TI antes de validar o projeto.',
-            commentPendingTitle: 'Comentario obrigatorio',
-            commentPendingMessage: 'Informe o parecer tecnico da TI antes de validar o projeto.',
-            confirmationPendingTitle: 'Confirmacao pendente',
-            confirmationPendingMessage: 'Marque a confirmacao da TI antes de validar o projeto.',
-            approveSuccessTitle: 'Validacao concluida',
-            approveSuccessMessage: 'A validacao da TI foi registrada com sucesso.',
-            returnPendingTitle: 'Campo obrigatorio',
-            returnPendingMessage: 'Informe o motivo da devolucao.',
-            returnSuccessTitle: 'Devolvido para correcao',
-            returnSuccessMessage: 'O projeto retornou para a execucao para ajustes.',
-            discontinuePendingTitle: 'Campos obrigatorios',
+            commentPendingTitle: 'Comentário obrigatório',
+            commentPendingMessage: 'Informe o parecer técnico da TI antes de validar o projeto.',
+            confirmationPendingTitle: 'Confirmação pendente',
+            confirmationPendingMessage: 'Marque a confirmação da TI antes de validar o projeto.',
+            approveSuccessTitle: 'Validação concluída',
+            approveSuccessMessage: 'A validação da TI foi registrada com sucesso.',
+            returnPendingTitle: 'Campo obrigatório',
+            returnPendingMessage: 'Informe o motivo da devolução.',
+            returnSuccessTitle: 'Devolvido para correção',
+            returnSuccessMessage: 'O projeto retornou para a execução para ajustes.',
+            discontinuePendingTitle: 'Campos obrigatórios',
             discontinuePendingMessage: 'Selecione a categoria e descreva o motivo.',
-            discontinueSuccessTitle: 'Nao continuidade registrada',
-            discontinueSuccessMessage: 'A nao continuidade foi registrada e os stakeholders serao notificados.'
+            discontinueSuccessTitle: 'Não continuidade registrada',
+            discontinueSuccessMessage: 'A não continuidade foi registrada e os stakeholders serão notificados.'
         }
     });
 });
