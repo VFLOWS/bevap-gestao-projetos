@@ -218,13 +218,30 @@
                     <button type="button" data-action="return-planning" class="inline-flex items-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
                         <i class="fa-solid fa-rotate-left mr-2"></i>Realizar Novo Planejamento
                     </button>
-                    <button type="button" class="inline-flex items-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
+                    <button type="button" data-action="complete-execution" class="inline-flex items-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
                         <i class="fa-solid fa-paper-plane mr-2"></i>Concluir Execução
                     </button>
                 </div>
             </div>
         </div>
     </footer>
+
+    <div id="approve-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <div class="mb-4 flex items-center">
+                <div class="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                    <i class="fa-solid fa-check-circle text-2xl text-bevap-green"></i>
+                </div>
+                <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Conclusão da Execução</h3>
+            </div>
+            <p class="mb-6 text-gray-700">Você está confirmando a conclusão da execução do projeto <strong>Implantar SSO corporativo</strong>.</p>
+            <p class="mb-6 text-sm text-gray-600">Ao confirmar, o projeto seguirá para a etapa de validação do solicitante.</p>
+            <div class="flex justify-end space-x-3">
+                <button type="button" data-action="close-approve-modal" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50">Cancelar</button>
+                <button type="button" data-action="confirm-approve-modal" class="rounded-lg bg-bevap-green px-6 py-2 font-medium text-white transition-colors hover:bg-green-700">Confirmar</button>
+            </div>
+        </div>
+    </div>
 
     <div id="return-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
@@ -841,6 +858,14 @@
             document.getElementById('return-modal')?.classList.add('hidden');
         }
 
+        function openApproveModal() {
+            document.getElementById('approve-modal')?.classList.remove('hidden');
+        }
+
+        function closeApproveModal() {
+            document.getElementById('approve-modal')?.classList.add('hidden');
+        }
+
         function confirmReturnModal() {
             var reason = document.getElementById('return-reason');
             if (!reason || !reason.value.trim()) {
@@ -850,6 +875,14 @@
             }
             closeReturnModal();
             window.location.href = '../ux-planejamento.html';
+        }
+
+        function confirmApproveModal() {
+            closeApproveModal();
+            showToast('Execução concluída', 'O projeto foi encaminhado para a validação do solicitante.', 'success');
+            window.setTimeout(function () {
+                window.location.href = 'ux-projeto-validacao-solicitante.html';
+            }, 900);
         }
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -862,10 +895,16 @@
             bindTabs();
 
             document.querySelector('[data-action="return-planning"]')?.addEventListener('click', openReturnModal);
+            document.querySelector('[data-action="complete-execution"]')?.addEventListener('click', openApproveModal);
             document.querySelector('[data-action="close-return-modal"]')?.addEventListener('click', closeReturnModal);
             document.querySelector('[data-action="confirm-return-modal"]')?.addEventListener('click', confirmReturnModal);
+            document.querySelector('[data-action="close-approve-modal"]')?.addEventListener('click', closeApproveModal);
+            document.querySelector('[data-action="confirm-approve-modal"]')?.addEventListener('click', confirmApproveModal);
             document.getElementById('return-modal')?.addEventListener('click', function (event) {
                 if (event.target && event.target.id === 'return-modal') closeReturnModal();
+            });
+            document.getElementById('approve-modal')?.addEventListener('click', function (event) {
+                if (event.target && event.target.id === 'approve-modal') closeApproveModal();
             });
         });
     </script>
