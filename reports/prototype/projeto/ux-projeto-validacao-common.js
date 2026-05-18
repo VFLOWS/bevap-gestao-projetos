@@ -412,6 +412,13 @@
         var currentParams = window.location.search || '';
         var checklistVisited = false;
 
+        phasesData.forEach(function (_, index) {
+            collapsedPhases[index] = true;
+        });
+        milestonesData.forEach(function (_, index) {
+            collapsedMilestones[index] = true;
+        });
+
         function updateChecklistProgress() {
             var items = document.querySelectorAll(config.checklist.itemSelector);
             var checked = document.querySelectorAll(config.checklist.itemSelector + ':checked').length;
