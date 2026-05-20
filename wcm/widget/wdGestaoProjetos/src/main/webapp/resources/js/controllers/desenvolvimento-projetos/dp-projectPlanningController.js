@@ -1,6 +1,6 @@
-var projectPlanningController = {
+﻿var projectPlanningController = {
   _eventNamespace: '.projectPlanning',
-  _projectFields: ['documentid', 'titulodoprojetoNS', 'areaUnidadeNS', 'solicitanteNomeNS', 'patrocinadorNS', 'prioridadeNS', 'estadoProcesso', 'projectPlanningJsonDP', 'execucaoProjetoTITT'],
+  _projectFields: ['documentid', 'titulodoprojetoNS', 'areaUnidadeNS', 'solicitanteNomeNS', 'patrocinadorNS', 'prioridadeNS', 'estadoProcesso', 'projectPlanningJsonDP', 'documentsJsonDP', 'execucaoProjetoTITT', 'execFasesAtividadesCorrecao', 'milestoneTaskCancelProcDP'],
 
   _nextStateAfterPlanning: '16',
 
@@ -24,6 +24,9 @@ var projectPlanningController = {
     currentStep: 1,
     totalSteps: 5,
     employeeOptions: [], // Trocamos o _responsibleOptions por este estado carregado dinamicamente
+    isExecutionCorrection: false,
+    lockedTaskKeys: new Set(),
+    lockedMilestoneIds: new Set(),
     stepLabels: {
       1: 'EAP/WBS',
       2: 'Cronograma',
@@ -127,13 +130,37 @@ var projectPlanningController = {
     return text.replace(/(^|\s)(\S)/g, (match, separator, letter) => separator + letter.toUpperCase());
   },
 
+  getNextPersistentTaskSequenceId: function () {
+    if (!Number.isFinite(this._state.wbsTaskSeqRuntime)) {
+      const baseValue = parseInt(this.asText($('input[name="milestoneTaskSeqCtrlDP"]').val()), 10);
+      this._state.wbsTaskSeqRuntime = isNaN(baseValue) ? 0 : baseValue;
+    }
+    this._state.wbsTaskSeqRuntime += 1;
+    return String(this._state.wbsTaskSeqRuntime);
+  },
+
+  ensurePersistentTaskId: function (rawId) {
+    const text = this.asText(rawId);
+    if (/^\d+$/.test(text)) {
+      const numericValue = parseInt(text, 10);
+      if (!Number.isFinite(this._state.wbsTaskSeqRuntime) || numericValue > this._state.wbsTaskSeqRuntime) {
+        this._state.wbsTaskSeqRuntime = numericValue;
+      }
+      return text;
+    }
+    return this.getNextPersistentTaskSequenceId();
+  },
+
   initAllTagFilters: function (containerElement) {
     if (typeof TagInputFilter === 'undefined') return;
     const $container = $(containerElement || document);
 
     // 1. Inputs Single (Responsável da WBS / Dependências)
     $container.find('.single-resp-mount').each((_, mount) => {
-      if (mount._filterReady) return;
+      if (mount._filterReady) {
+        this.refreshResponsibleTagFilter(mount);
+        return;
+      }
       if (!mount.id) mount.id = `single-resp-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`;
 
       const hiddenInput = $(mount).next('.responsible-input');
@@ -159,13 +186,8 @@ var projectPlanningController = {
         }
       });
 
-      if (initialVal) {
-        const found = this._state.employeeOptions.find(e => e.NOME_NORMALIZADO === initialVal);
-        filter.setSelectedItems([{
-          value: found ? found.CHAPA : `legacy:${initialVal}`,
-          label: found ? found.NOME_NORMALIZADO : initialValue
-        }]);
-      }
+      mount._filterInstance = filter;
+      this.refreshResponsibleTagFilter(mount);
       mount._filterReady = true;
     });
 
@@ -219,6 +241,25 @@ var projectPlanningController = {
       });
       mount._filterReady = true;
     });
+  },
+
+  refreshResponsibleTagFilter: function (mount) {
+    if (!mount || !mount._filterInstance) return;
+    const hiddenInput = $(mount).next('.responsible-input');
+    const initialVal = this.asText(hiddenInput.val());
+    if (!initialVal) return;
+    const normalizedInitialValue = this.normalizeEmployeeName(initialVal);
+    if (!normalizedInitialValue) return;
+    const found = this._state.employeeOptions.find(e => e.NOME_NORMALIZADO === normalizedInitialValue);
+    mount._filterInstance.setSelectedItems([{
+      value: found ? found.CHAPA : `legacy:${normalizedInitialValue}`,
+      label: found ? found.NOME_NORMALIZADO : normalizedInitialValue
+    }]);
+  },
+
+  refreshAllResponsibleTagFilters: function (containerElement) {
+    const $container = $(containerElement || document);
+    $container.find('.single-resp-mount').each((_, mount) => this.refreshResponsibleTagFilter(mount));
   },
 
   backupAndSetHeader: function () {
@@ -675,7 +716,20 @@ var projectPlanningController = {
 
     try {
       const rows = await fluigService.getDatasetRows(datasetId, {
-        fields: ['documentid', 'projectPlanningJsonDP'],
+        fields: [
+          'documentid',
+          'projectPlanningJsonDP',
+          'documentsJsonDP',
+          'raciJsonDP',
+          'chkEapWbsDP',
+          'chkMilestonesDP',
+          'chkRisksDP',
+          'chkRaciDP',
+          'chkDocsDP',
+          'execFasesAtividadesCorrecao',
+          'milestoneTaskCancelProcDP',
+          
+        ],
         filters: {
           documentid: documentId,
           sqlLimit: 1
@@ -683,24 +737,340 @@ var projectPlanningController = {
       });
 
       const row = rows && rows.length ? rows[0] : null;
-      const rawJson = this.asText(row && row.projectPlanningJsonDP);
-      if (!rawJson) {
+      if (!row) {
         return;
       }
 
-      let payload = null;
-      try {
-        payload = JSON.parse(rawJson);
-      } catch (error) {
-        throw new Error('JSON de planejamento inválido no card');
+      const payload = this.buildPlanningPayloadFromStoredRow(row);
+      if (!payload) {
+        return;
       }
 
+      this._state.isExecutionCorrection = this.normalizeBoolean(row && row.execFasesAtividadesCorrecao);
+      this._state.cancelledMilestoneProcesses = this.parseJson(row && row.milestoneTaskCancelProcDP) || [];
+      this.loadStoredAttachments(row && row.documentsJsonDP);
+      this.prepareCorrectionLocks(payload, row);
       this.applyPlanningPayload(payload);
       this.showToast('Rascunho carregado.', 'info');
     } catch (error) {
       console.error('[projectPlanningController] loadPlanningDraft error:', error);
       this.showToast(`Falha ao carregar rascunho: ${this.asText(error && (error.message || error)) || 'erro'}`, 'warning');
     }
+  },
+
+  buildPlanningPayloadFromStoredRow: function (row) {
+    const payload = this.parseJson(row && row.projectPlanningJsonDP) || this.createEmptyPlanningPayload();
+    const currentChecklist = payload.checklist || {};
+
+    payload.checklist = {
+      eapWbs: this.asText(row && row.chkEapWbsDP) ? this.normalizeBoolean(row && row.chkEapWbsDP) : !!currentChecklist.eapWbs,
+      milestones: this.asText(row && row.chkMilestonesDP) ? this.normalizeBoolean(row && row.chkMilestonesDP) : !!currentChecklist.milestones,
+      risks: this.asText(row && row.chkRisksDP) ? this.normalizeBoolean(row && row.chkRisksDP) : !!currentChecklist.risks,
+      raci: this.asText(row && row.chkRaciDP) ? this.normalizeBoolean(row && row.chkRaciDP) : !!currentChecklist.raci,
+      docs: this.asText(row && row.chkDocsDP) ? this.normalizeBoolean(row && row.chkDocsDP) : !!currentChecklist.docs
+    };
+
+    const phaseRows = this.parseJson(row && row.tblWbsPhasesDP);
+    const taskRows = this.parseJson(row && row.tblWbsTasksDP);
+    const milestoneRows = this.parseJson(row && row.tblMilestonesDP);
+    const criteriaRows = this.parseJson(row && row.tblMilestoneCriteriaDP);
+    const milestoneTaskRows = this.parseJson(row && row.tblMilestoneTasksDP);
+    const summaryRows = this.parseJson(row && row.tblMilestoneTasksSummaryDP);
+    const riskRows = this.parseJson(row && row.tblRisksDP);
+    const dependencyRows = this.parseJson(row && row.tblExternalDependenciesDP);
+    const communicationRows = this.parseJson(row && row.tblCommunicationPlanDP);
+    const allocationRows = this.parseJson(row && row.tblTeamAllocationDP);
+    const raciJson = this.parseJson(row && row.raciJsonDP);
+
+    const storedWbs = this.buildStoredWbsPayload(phaseRows, taskRows, payload.wbs);
+    const storedMilestones = this.buildStoredMilestonesPayload(milestoneRows, criteriaRows, milestoneTaskRows, summaryRows, storedWbs, payload.milestones);
+    const storedRisks = this.buildStoredRisksPayload(riskRows, payload.risks);
+    const storedDependencies = this.buildStoredDependenciesPayload(dependencyRows, payload.externalDependencies);
+    const storedCommunication = this.buildStoredCommunicationPayload(communicationRows, payload.communicationPlan);
+    const storedAllocation = this.buildStoredAllocationPayload(allocationRows, payload.teamAllocation);
+    const storedRaci = this.buildStoredRaciPayload(raciJson, payload.raci);
+
+    payload.wbs = storedWbs;
+    payload.milestones = storedMilestones;
+    payload.risks = storedRisks;
+    payload.externalDependencies = storedDependencies;
+    payload.communicationPlan = storedCommunication;
+    payload.teamAllocation = storedAllocation;
+    payload.raci = storedRaci;
+
+    return payload;
+  },
+
+  createEmptyPlanningPayload: function () {
+    return {
+      meta: {
+        documentId: this.asText(this._state.documentId),
+        savedAt: '',
+        version: 1
+      },
+      checklist: {
+        eapWbs: false,
+        milestones: false,
+        risks: false,
+        raci: false,
+        docs: false
+      },
+      wbs: {
+        phases: [],
+        summary: {
+          totalEffortHours: 0,
+          totalDurationDays: 0
+        }
+      },
+      milestones: { items: [] },
+      risks: { items: [] },
+      externalDependencies: { items: [] },
+      communicationPlan: { items: [] },
+      raci: { rows: [], removedStakeholdersByPhase: {} },
+      teamAllocation: { items: [] }
+    };
+  },
+
+  buildStoredWbsPayload: function (phaseRows, taskRows, existingWbs) {
+    const phases = Array.isArray(phaseRows) ? phaseRows.slice() : [];
+    const tasks = Array.isArray(taskRows) ? taskRows.slice() : [];
+    if (!phases.length && !tasks.length) {
+      return existingWbs && typeof existingWbs === 'object' ? existingWbs : this.createEmptyPlanningPayload().wbs;
+    }
+    const taskMap = new Map();
+    const existingPhaseMap = new Map();
+
+    (((existingWbs || {}).phases) || []).forEach((phase) => {
+      existingPhaseMap.set(this.asText(phase && phase.id), phase || {});
+    });
+
+    tasks.forEach((task) => {
+      const phaseId = this.asText(task && task.wbsTaskPhaseIdDP);
+      if (!taskMap.has(phaseId)) taskMap.set(phaseId, []);
+      taskMap.get(phaseId).push(task);
+    });
+
+    phases.sort((left, right) => (parseInt(left && left.wbsPhaseOrderDP, 10) || 0) - (parseInt(right && right.wbsPhaseOrderDP, 10) || 0));
+
+    const normalizedPhases = phases.map((phase, phaseIndex) => {
+      const phaseId = this.asText(phase && phase.wbsPhaseIdDP) || `phase-${phaseIndex + 1}`;
+      const existingPhase = existingPhaseMap.get(phaseId) || {};
+      const normalizedTasks = (taskMap.get(phaseId) || []).sort((left, right) => {
+        return (parseInt(left && left.wbsTaskOrderDP, 10) || 0) - (parseInt(right && right.wbsTaskOrderDP, 10) || 0);
+      }).map((task, taskIndex) => {
+        const taskId = this.ensurePersistentTaskId(this.asText(task && task.wbsTaskIdDP));
+        const existingTask = ((existingPhase.tasks) || []).find((item) => this.asText(item && item.id) === taskId)
+          || ((existingPhase.tasks) || []).find((item) => this.asText(item && item.name) === this.asText(task && task.wbsTaskNameDP))
+          || {};
+        return {
+          id: taskId,
+          order: parseInt(task && task.wbsTaskOrderDP, 10) || (taskIndex + 1),
+          name: this.asText(task && task.wbsTaskNameDP),
+          responsible: this.asText(task && task.wbsTaskResponsibleDP),
+          effortHours: this.parseNumber(task && task.wbsTaskEffortHoursDP),
+          durationDays: this.parseNumber(task && task.wbsTaskDurationDaysDP),
+          dependencies: Array.isArray(existingTask.dependencies) ? existingTask.dependencies : []
+        };
+      });
+
+      return {
+        id: phaseId,
+        order: parseInt(phase && phase.wbsPhaseOrderDP, 10) || (phaseIndex + 1),
+        name: this.asText(phase && phase.wbsPhaseNameDP),
+        responsible: this.asText(phase && phase.wbsPhaseResponsibleDP),
+        effortHours: this.parseNumber(phase && phase.wbsPhaseEffortHoursDP),
+        durationDays: this.parseNumber(phase && phase.wbsPhaseDurationDaysDP),
+        notes: this.asText(phase && phase.wbsPhaseNotesDP) || this.asText(existingPhase.notes),
+        dependencies: Array.isArray(existingPhase.dependencies) ? existingPhase.dependencies : [],
+        tasks: normalizedTasks
+      };
+    });
+
+    return {
+      phases: normalizedPhases,
+      summary: {
+        totalEffortHours: normalizedPhases.reduce((sum, phase) => sum + this.parseNumber(phase.effortHours), 0),
+        totalDurationDays: normalizedPhases.reduce((sum, phase) => sum + this.parseNumber(phase.durationDays), 0)
+      }
+    };
+  },
+
+  buildStoredMilestonesPayload: function (milestoneRows, criteriaRows, milestoneTaskRows, summaryRows, wbsPayload, existingMilestones) {
+    const milestones = Array.isArray(milestoneRows) ? milestoneRows.slice() : [];
+    const criteria = Array.isArray(criteriaRows) ? criteriaRows.slice() : [];
+    const milestoneTasks = Array.isArray(milestoneTaskRows) ? milestoneTaskRows.slice() : [];
+    const summaries = Array.isArray(summaryRows) ? summaryRows.slice() : [];
+    if (!milestones.length && !criteria.length && !milestoneTasks.length && !summaries.length) {
+      return existingMilestones && typeof existingMilestones === 'object' ? existingMilestones : { items: [] };
+    }
+    const phaseNameByTask = new Map();
+
+    (((wbsPayload || {}).phases) || []).forEach((phase) => {
+      (phase.tasks || []).forEach((task) => {
+        phaseNameByTask.set(this.buildMilestoneTaskIdentityKey({
+          milestoneId: '',
+          taskName: task.name,
+          dueDate: ''
+        }), this.asText(phase.name));
+      });
+    });
+
+    const criteriaByMilestoneId = new Map();
+    criteria.forEach((item) => {
+      const milestoneId = this.asText(item && item.milestoneCriteriaMilestoneIdDP);
+      if (!criteriaByMilestoneId.has(milestoneId)) criteriaByMilestoneId.set(milestoneId, []);
+      const text = this.asText(item && item.milestoneCriteriaTextDP);
+      if (text) criteriaByMilestoneId.get(milestoneId).push(text);
+    });
+
+    const summaryByIdentity = new Map();
+    summaries.forEach((item) => {
+      const identityKey = this.buildMilestoneTaskIdentityKey({
+        milestoneId: '',
+        taskName: item && item.milestoneTaskSummaryTextDP,
+        dueDate: item && item.milestoneTaskSummaryDueDateDP
+      });
+      const list = summaryByIdentity.get(identityKey) || [];
+      list.push(item);
+      summaryByIdentity.set(identityKey, list);
+    });
+
+    return {
+      items: milestones.map((milestone, milestoneIndex) => {
+        const milestoneId = this.asText(milestone && milestone.milestoneIdDP) || `milestone-${milestoneIndex + 1}`;
+        const tasks = milestoneTasks
+          .filter((task) => this.asText(task && task.milestoneTaskMilestoneIdDP) === milestoneId)
+          .map((task) => {
+            const identityKey = this.buildMilestoneTaskIdentityKey({
+              milestoneId: '',
+              taskName: task && task.milestoneTaskTextDP,
+              dueDate: task && task.milestoneTaskDueDateDP
+            });
+            const summary = (summaryByIdentity.get(identityKey) || []).find((item) => {
+              return this.asText(item && item.milestoneTaskSummaryMarcoDP) === this.asText(milestone && milestone.milestoneNameDP);
+            }) || {};
+            const taskName = this.asText(task && task.milestoneTaskTextDP);
+            const phaseName = this.asText(summary && summary.milestoneTaskSummaryPhaseDP) || phaseNameByTask.get(this.buildMilestoneTaskIdentityKey({
+              milestoneId: '',
+              taskName: taskName,
+              dueDate: ''
+            })) || '';
+
+            return {
+              taskId: this.asText(task && task.milestoneTaskIdDP) || this.asText(summary && summary.milestoneTaskSummaryIdDP),
+              taskKey: phaseName && taskName ? `${phaseName}:::${taskName}` : '',
+              phaseName: phaseName,
+              task: taskName,
+              taskLabel: taskName,
+              dueDate: this.asText(task && task.milestoneTaskDueDateDP),
+              process: this.asText(task && task.milestoneTaskProcessDP) || this.asText(summary && summary.milestoneTaskSummaryProcessDP),
+              documentId: this.asText(task && task.milestoneTaskDocIdDP) || this.asText(summary && summary.milestoneTaskSummaryDocIdDP),
+              status: this.asText(task && task.milestoneTaskStatusDP) || this.asText(summary && summary.milestoneTaskSummaryStatusDP),
+              started: this.asText(task && task.milestoneTaskStartedDP) || this.asText(summary && summary.milestoneTaskSummaryStartedDP)
+            };
+          });
+
+        return {
+          id: milestoneId,
+          order: milestoneIndex + 1,
+          name: this.asText(milestone && milestone.milestoneNameDP),
+          period: this.joinMilestonePeriod(
+            this.asText(milestone && milestone.milestoneStartDateDP),
+            this.asText(milestone && milestone.milestoneEndDateDP)
+          ),
+          startDate: this.asText(milestone && milestone.milestoneStartDateDP),
+          endDate: this.asText(milestone && milestone.milestoneEndDateDP),
+          criteria: criteriaByMilestoneId.get(milestoneId) || [],
+          tasks: tasks
+        };
+      })
+    };
+  },
+
+  buildStoredRisksPayload: function (riskRows, existingRisks) {
+    if (!Array.isArray(riskRows) || !riskRows.length) {
+      return existingRisks && typeof existingRisks === 'object' ? existingRisks : { items: [] };
+    }
+    const items = Array.isArray(riskRows) ? riskRows.map((risk, index) => ({
+      id: this.asText(risk && risk.riskIdDP) || `risk-${index + 1}`,
+      title: this.asText(risk && risk.riskDescriptionDP),
+      description: this.asText(risk && risk.riskDescriptionDP),
+      probability: this.asText(risk && risk.riskProbabilityDP),
+      impact: this.asText(risk && risk.riskImpactDP),
+      mitigation: this.asText(risk && risk.riskMitigationDP),
+      planB: this.asText(risk && risk.riskPlanBDP),
+      fallback: this.asText(risk && risk.riskPlanBDP),
+      level: this.asText(risk && risk.riskImpactDP)
+    })).filter((risk) => risk.title || risk.mitigation || risk.planB) : [];
+    return { items };
+  },
+
+  buildStoredDependenciesPayload: function (rows, existingDependencies) {
+    if (!Array.isArray(rows) || !rows.length) {
+      return existingDependencies && typeof existingDependencies === 'object' ? existingDependencies : { items: [] };
+    }
+    const items = Array.isArray(rows) ? rows.map((item, index) => ({
+      id: this.asText(item && item.externalDependencyIdDP) || `dependency-${index + 1}`,
+      title: this.asText(item && item.externalDependencyDescriDP),
+      description: this.asText(item && item.externalDependencyDescriDP),
+      status: this.asText(item && item.externalDependencyStatusDP),
+      owner: this.asText(item && item.externalDependencyResponDP),
+      responsible: this.asText(item && item.externalDependencyResponDP),
+      mitigation: this.asText(item && item.externalDependencyMitiDP),
+      fallback: this.asText(item && item.externalDependencyPlanBDP),
+      planB: this.asText(item && item.externalDependencyPlanBDP)
+    })).filter((item) => item.title || item.mitigation || item.fallback) : [];
+    return { items };
+  },
+
+  buildStoredCommunicationPayload: function (rows, existingCommunication) {
+    if (!Array.isArray(rows) || !rows.length) {
+      return existingCommunication && typeof existingCommunication === 'object' ? existingCommunication : { items: [] };
+    }
+    const items = Array.isArray(rows) ? rows.map((item) => ({
+      audience: this.normalizeStakeholderField(item && item.commAudienceDP),
+      channel: this.asText(item && item.commChannelDP),
+      frequency: this.asText(item && item.commFrequencyDP)
+    })).filter((item) => item.audience.length || item.channel || item.frequency) : [];
+    return { items };
+  },
+
+  buildStoredAllocationPayload: function (rows, existingAllocation) {
+    if (!Array.isArray(rows) || !rows.length) {
+      return existingAllocation && typeof existingAllocation === 'object' ? existingAllocation : { items: [] };
+    }
+    const items = Array.isArray(rows) ? rows.map((item) => ({
+      member: this.asText(item && item.allocMemberDP),
+      profile: this.asText(item && item.allocProfileDP),
+      dedication: this.parseNumber(item && item.allocDedicationDP)
+    })).filter((item) => item.member || item.profile || item.dedication) : [];
+    return { items };
+  },
+
+  buildStoredRaciPayload: function (raciJson, existingRaci) {
+    const parsed = raciJson && typeof raciJson === 'object' ? raciJson : {};
+    if (!Array.isArray(parsed.rows) || !parsed.rows.length) {
+      return existingRaci && typeof existingRaci === 'object' ? existingRaci : { rows: [], removedStakeholdersByPhase: {} };
+    }
+    const rows = Array.isArray(parsed.rows) ? parsed.rows.map((item) => ({
+      phase: this.asText(item && item.phase),
+      r: this.normalizeStakeholderField(item && item.r),
+      a: this.normalizeStakeholderField(item && item.a),
+      c: this.normalizeStakeholderField(item && item.c),
+      i: this.normalizeStakeholderField(item && item.i)
+    })) : [];
+
+    return {
+      rows: rows,
+      removedStakeholdersByPhase: parsed.removedStakeholdersByPhase || {}
+    };
+  },
+
+  joinMilestonePeriod: function (startDate, endDate) {
+    const start = this.asText(startDate);
+    const end = this.asText(endDate);
+    if (!start) return '';
+    return end && end !== start ? `${start} - ${end}` : start;
   },
 
   applyPlanningPayload: function (payload) {
@@ -739,6 +1109,7 @@ var projectPlanningController = {
       const phaseEls = document.querySelectorAll('#wbs-container > .wbs-item');
       const phaseEl = phaseEls && phaseEls.length ? phaseEls[phaseEls.length - 1] : null;
       if (!phaseEl) return;
+      phaseEl.dataset.phaseId = this.asText(phase && phase.id);
 
       const panel = phaseEl.querySelector('.wbs-panel-content');
       const nameInput = phaseEl.querySelector('.wbs-phase-name-input');
@@ -772,11 +1143,12 @@ var projectPlanningController = {
       tasks.forEach((task) => {
         const btn = panel && panel.querySelector('button[onclick="addSubtask(this)"]');
         if (!btn) return;
-        this.addSubtask(btn);
+        this.addSubtask(btn, task);
 
         const taskEls = phaseEl.querySelectorAll('.subtask-container .wbs-subtask');
         const taskEl = taskEls && taskEls.length ? taskEls[taskEls.length - 1] : null;
         if (!taskEl) return;
+        taskEl.dataset.taskId = this.asText(task && task.id);
 
         const taskNameInput = taskEl.querySelector('.wbs-task-name-input');
         if (taskNameInput) taskNameInput.value = this.asText(task && task.name);
@@ -814,6 +1186,7 @@ var projectPlanningController = {
       const milestoneEls = document.querySelectorAll('#milestones-container > .milestone-card');
       const milestoneEl = milestoneEls && milestoneEls.length ? milestoneEls[milestoneEls.length - 1] : null;
       if (!milestoneEl) return;
+      milestoneEl.dataset.milestoneId = this.asText(milestone && milestone.id);
 
       const nameInput = milestoneEl.querySelector('.milestone-phase-input');
       const periodInput = milestoneEl.querySelector('.milestone-period-input');
@@ -850,6 +1223,8 @@ var projectPlanningController = {
             const btn = milestoneEl.querySelector('button[onclick="addMilestoneTask(this)"]');
             if (!btn) return;
             this.addMilestoneTask(btn, {
+              taskId: this.asText(t && (t.taskId || t.id || t.milestoneTaskIdDP)),
+              sourceTaskId: this.asText(t && (t.sourceTaskId || t.wbsTaskId)) || this.findWbsTaskIdByIdentity(this.asText(t && t.phaseName), this.asText(t && (t.task || t.taskLabel))),
               taskKey: this.asText(t && t.taskKey),
               phaseName: this.asText(t && t.phaseName),
               task: this.asText(t && (t.task || t.taskLabel)),
@@ -861,8 +1236,14 @@ var projectPlanningController = {
             const dateInput = lastRow.querySelector('input[type="date"]');
             const taskKey = this.asText(t && (t.taskKey || ((t.phaseName && t.task) ? (t.phaseName + ':::' + t.task) : '')));
             if (taskKey) lastRow.dataset.taskKey = taskKey;
-            if (taskInput) taskInput.value = this.asText(t && (t.task || t.taskLabel));
-            if (dateInput) dateInput.value = this.asText(t && t.dueDate);
+        if (taskInput) taskInput.value = this.asText(t && (t.task || t.taskLabel));
+        if (dateInput) dateInput.value = this.asText(t && t.dueDate);
+            lastRow.dataset.taskId = this.asText(t && (t.taskId || t.id || t.milestoneTaskIdDP));
+            lastRow.dataset.sourceTaskId = this.asText(t && (t.sourceTaskId || t.wbsTaskId));
+            lastRow.dataset.taskProcess = this.asText(t && (t.process || t.taskProcess || t.parentProcess));
+            lastRow.dataset.taskDocumentId = this.asText(t && (t.documentId || t.docId || t.taskDocumentId));
+            lastRow.dataset.taskStatus = this.asText(t && t.status);
+            lastRow.dataset.taskStarted = this.asText(t && t.started);
           });
         }
       }
@@ -870,6 +1251,8 @@ var projectPlanningController = {
       this.initializeMilestoneDatePickers(milestoneEl);
       this.refreshMilestoneTaskSelectOptions();
     });
+
+    this.applyExecutionCorrectionLocks();
 
     // Risks
     const risks = finalPayload.risks && Array.isArray(finalPayload.risks.items) ? finalPayload.risks.items : [];
@@ -932,10 +1315,110 @@ var projectPlanningController = {
 
     // re-sync + render
     this.initAllTagFilters(document);
+    this.refreshAllResponsibleTagFilters(document);
+    window.setTimeout(() => this.refreshAllResponsibleTagFilters(document), 50);
     this.syncTeamAllocationInternal();
     this.refreshMilestoneConfiguration(); // Isso engatilha o syncRaciWithMilestones
     this.renderRaciAndResources();
     this.updateDocumentsPlanSummary();
+    this.applyExecutionCorrectionLocks();
+  },
+
+  prepareCorrectionLocks: function (payload, row) {
+    this._state.lockedTaskKeys = new Set();
+    this._state.lockedTaskIds = new Set();
+    this._state.lockedMilestoneIds = new Set();
+    if (!this._state.isExecutionCorrection) return;
+
+    const lockedIds = new Set();
+    const lockedKeys = new Set();
+    const tableRows = this.parseJson(row && row.tblMilestoneTasksDP);
+    if (Array.isArray(tableRows)) {
+      tableRows.forEach((taskRow) => {
+        const status = this.normalizeTaskExecutionStatus(taskRow && taskRow.milestoneTaskStatusDP);
+        if (status === 'concluido' || status === 'cancelado') {
+          const taskId = this.asText(taskRow.milestoneTaskIdDP);
+          if (taskId) {
+            lockedIds.add(taskId);
+            this._state.lockedTaskIds.add(taskId);
+          }
+          lockedKeys.add(this.buildMilestoneTaskIdentityKey({
+            milestoneId: taskRow.milestoneTaskMilestoneIdDP,
+            taskName: taskRow.milestoneTaskTextDP,
+            dueDate: taskRow.milestoneTaskDueDateDP
+          }));
+        }
+      });
+    }
+
+    const summaryRows = this.parseJson(row && row.tblMilestoneTasksSummaryDP);
+    if (Array.isArray(summaryRows)) {
+      summaryRows.forEach((summaryRow) => {
+        const status = this.normalizeTaskExecutionStatus(summaryRow && summaryRow.milestoneTaskSummaryStatusDP);
+        if (status === 'concluido' || status === 'cancelado') {
+          const taskId = this.asText(summaryRow.milestoneTaskSummaryIdDP);
+          if (taskId) {
+            lockedIds.add(taskId);
+            this._state.lockedTaskIds.add(taskId);
+          }
+        }
+      });
+    }
+
+    const milestones = payload && payload.milestones && Array.isArray(payload.milestones.items) ? payload.milestones.items : [];
+    milestones.forEach((milestone) => {
+      (Array.isArray(milestone.tasks) ? milestone.tasks : []).forEach((task) => {
+        const status = this.normalizeTaskExecutionStatus(task.status);
+        const taskId = this.asText(task.taskId || task.id || task.milestoneTaskIdDP);
+        const identityKey = this.buildMilestoneTaskIdentityKey({
+          milestoneId: milestone && milestone.id,
+          taskName: task.task || task.taskLabel,
+          dueDate: task.dueDate
+        });
+        if ((taskId && lockedIds.has(taskId)) || (identityKey && lockedKeys.has(identityKey)) || status === 'concluido' || status === 'cancelado') {
+          const taskKey = this.asText(task.taskKey || ((task.phaseName && (task.task || task.taskLabel)) ? `${task.phaseName}:::${task.task || task.taskLabel}` : ''));
+          if (taskKey) this._state.lockedTaskKeys.add(taskKey);
+          if (taskId) this._state.lockedTaskIds.add(taskId);
+          task.status = status || 'concluido';
+        }
+      });
+    });
+  },
+
+  applyExecutionCorrectionLocks: function () {
+    if (!this._state.isExecutionCorrection) return;
+    const lockedTaskKeys = this._state.lockedTaskKeys || new Set();
+    const lockedTaskIds = this._state.lockedTaskIds || new Set();
+
+    document.querySelectorAll('#wbs-container > .wbs-item').forEach((phaseEl) => {
+      phaseEl.querySelectorAll('.subtask-container > .wbs-subtask').forEach((taskEl) => {
+        const phaseName = this.asText(phaseEl.querySelector('.wbs-phase-name-input')?.value);
+        const taskName = this.asText(taskEl.querySelector('.wbs-task-name-input')?.value);
+        const taskKey = `${phaseName}:::${taskName}`;
+        const taskId = this.asText(taskEl.dataset.taskId);
+        if (!lockedTaskIds.has(taskId) && !lockedTaskKeys.has(taskKey)) return;
+        taskEl.dataset.lockedExecution = 'true';
+        taskEl.classList.add('opacity-75');
+        taskEl.querySelectorAll('input, textarea, button').forEach((el) => {
+          el.disabled = true;
+          el.classList.add('cursor-not-allowed');
+        });
+      });
+    });
+
+    document.querySelectorAll('#milestones-container > .milestone-card').forEach((milestoneEl, index) => {
+      milestoneEl.querySelectorAll('.milestone-task-row').forEach((row) => {
+        const taskId = this.asText(row.dataset.taskId);
+        const taskKey = this.asText(row.dataset.taskKey);
+        if (!lockedTaskIds.has(taskId) && !lockedTaskKeys.has(taskKey)) return;
+        row.dataset.lockedExecution = 'true';
+        row.classList.add('opacity-75');
+        row.querySelectorAll('input, button').forEach((el) => {
+          el.disabled = true;
+          el.classList.add('cursor-not-allowed');
+        });
+      });
+    });
   },
 
   setConcludeModalText: function (projectCode, title) {
@@ -1015,6 +1498,9 @@ var projectPlanningController = {
 
   onWbsChanged: function () {
     this.syncTeamAllocationInternal();
+    this.pruneMilestoneTasksWithoutWbsSource();
+    this.refreshMilestoneTaskSelectOptions();
+    this.updateMilestoneTimeline();
 
     const step4 = document.getElementById('step-4');
     const isStep4Visible = step4 && !step4.classList.contains('hidden');
@@ -1023,6 +1509,18 @@ var projectPlanningController = {
     }
 
     this.updateDocumentsPlanSummary();
+  },
+
+  pruneMilestoneTasksWithoutWbsSource: function () {
+    const catalog = this.getMilestoneCatalog().tasks || [];
+    const validTaskIds = new Set(catalog.map((task) => this.asText(task && task.id)).filter(Boolean));
+    document.querySelectorAll('.milestone-task-row').forEach((row) => {
+      const sourceTaskId = this.asText(row.dataset.sourceTaskId);
+      if (!sourceTaskId || validTaskIds.has(sourceTaskId)) return;
+      this.queueCancelledMilestoneProcess(row);
+      row.remove();
+    });
+    this.updateMilestoneTaskTitles();
   },
 
   parseMilestonePeriod: function (periodText) {
@@ -1097,8 +1595,10 @@ var projectPlanningController = {
 
       phaseItem.querySelectorAll('.subtask-container > .wbs-subtask').forEach((subtask, taskIndex) => {
         const taskName = this.asText(subtask.querySelector('.wbs-task-name-input')?.value) || `Tarefa ${taskIndex + 1}`;
+        const taskId = this.asText(subtask.dataset.taskId);
         const key = `${phaseName}:::${taskName}`;
         tasks.push({
+          id: taskId,
           key,
           phaseName,
           taskName,
@@ -1110,14 +1610,33 @@ var projectPlanningController = {
     return { phases, tasks };
   },
 
+  findWbsTaskIdByIdentity: function (phaseName, taskName) {
+    const catalog = this.getMilestoneCatalog().tasks;
+    const normalizedPhase = this.normalizeText(phaseName);
+    const normalizedTask = this.normalizeText(taskName);
+    const match = catalog.find((task) => {
+      return this.normalizeText(task.phaseName) === normalizedPhase
+        && this.normalizeText(task.taskName) === normalizedTask;
+    });
+    return this.asText(match && match.id);
+  },
+
   getMilestoneTaskAssignments: function () {
     const assignmentCount = new Map();
     document.querySelectorAll('.milestone-task-row').forEach((row) => {
-      const taskKey = this.asText(row.dataset.taskKey);
-      if (!taskKey) return;
-      assignmentCount.set(taskKey, (assignmentCount.get(taskKey) || 0) + 1);
+      const assignmentKey = this.asText(row.dataset.sourceTaskId) || this.asText(row.dataset.taskKey);
+      if (!assignmentKey) return;
+      assignmentCount.set(assignmentKey, (assignmentCount.get(assignmentKey) || 0) + 1);
     });
     return assignmentCount;
+  },
+
+  clearMilestoneTaskMetadata: function (row) {
+    if (!row) return;
+    row.dataset.taskProcess = '';
+    row.dataset.taskDocumentId = '';
+    row.dataset.taskStatus = '';
+    row.dataset.taskStarted = '';
   },
 
   getMilestoneTaskRowHTML: function (rowData = {}) {
@@ -1189,11 +1708,14 @@ var projectPlanningController = {
       }, 120);
     });
 
-    if (clearButton) {
-      clearButton.addEventListener('click', (event) => {
-        event.preventDefault();
-        taskInput.value = '';
-        taskRow.dataset.taskKey = '';
+      if (clearButton) {
+        clearButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          this.queueCancelledMilestoneProcess(taskRow);
+          taskInput.value = '';
+          taskRow.dataset.sourceTaskId = '';
+          taskRow.dataset.taskKey = '';
+        this.clearMilestoneTaskMetadata(taskRow);
         taskRow.dataset.dropdownOpen = 'false';
         this.refreshMilestoneTaskSelectOptions();
         this.updateMilestoneTimeline();
@@ -1232,6 +1754,7 @@ var projectPlanningController = {
       const phaseInfo = row.querySelector('.milestone-task-phase');
       if (!taskInput || !dropdown || !phaseInfo) return;
 
+      const currentTaskId = this.asText(row.dataset.sourceTaskId);
       const currentValue = this.asText(row.dataset.taskKey);
       const searchText = this.asText(taskInput.value);
       const searchLower = searchText.toLowerCase();
@@ -1242,33 +1765,71 @@ var projectPlanningController = {
       });
 
       const availableTasks = sortedTasks.filter((task) => {
-        const count = assignments.get(task.key) || 0;
-        return count === 0 || task.key === currentValue;
+        const taskAssignmentKey = this.asText(task.id) || task.key;
+        const count = assignments.get(taskAssignmentKey) || 0;
+        const isLocked = this._state.isExecutionCorrection
+          && ((this._state.lockedTaskIds && this._state.lockedTaskIds.has(this.asText(task.id)))
+            || (this._state.lockedTaskKeys && this._state.lockedTaskKeys.has(task.key)));
+        const isCurrentTask = (currentTaskId && this.asText(task.id) === currentTaskId) || task.key === currentValue;
+        return (!isLocked && count === 0) || isCurrentTask;
       });
 
       const availableByLabel = new Map(availableTasks.map((task) => [task.label.toLowerCase(), task]));
       const allByLabel = new Map(sortedTasks.map((task) => [task.label.toLowerCase(), task]));
-      const selectedTask = sortedTasks.find((task) => task.key === currentValue);
+      const selectedTask = sortedTasks.find((task) => {
+        return (currentTaskId && this.asText(task.id) === currentTaskId) || task.key === currentValue;
+      });
       const typedTask = searchText ? availableByLabel.get(searchLower) : null;
       const unavailableTypedTask = searchText ? allByLabel.get(searchLower) : null;
 
       if (typedTask) {
+        const previousTaskId = this.asText(row.dataset.sourceTaskId);
+        const nextTaskId = this.asText(typedTask.id);
+        if (previousTaskId && nextTaskId && previousTaskId !== nextTaskId) {
+          this.queueCancelledMilestoneProcess(row);
+          this.clearMilestoneTaskMetadata(row);
+        }
+        row.dataset.sourceTaskId = nextTaskId;
         row.dataset.taskKey = typedTask.key;
       } else if (!searchText && selectedTask) {
+        row.dataset.sourceTaskId = this.asText(selectedTask.id);
         row.dataset.taskKey = selectedTask.key;
       } else if (searchText && unavailableTypedTask && unavailableTypedTask.key !== currentValue) {
+        const lockedTaskIds = this._state.lockedTaskIds || new Set();
+        if (lockedTaskIds.has(this.asText(unavailableTypedTask.id)) || (this._state.lockedTaskKeys && this._state.lockedTaskKeys.has(unavailableTypedTask.key))) {
+          this.showToast('Esta tarefa nao pode ser usada porque ja foi concluida ou cancelada.', 'warning');
+        } else {
+          this.showToast('Esta tarefa ja esta vinculada a outro marco.', 'warning');
+        }
+        row.dataset.sourceTaskId = '';
         row.dataset.taskKey = '';
         taskInput.value = '';
         phaseInfo.classList.add('hidden');
         phaseInfo.textContent = '';
-        this.showToast('Esta tarefa já está vinculada a outro marco.', 'warning');
+        this.clearMilestoneTaskMetadata(row);
         return;
       } else if (!searchText) {
+        row.dataset.sourceTaskId = '';
         row.dataset.taskKey = '';
+        this.clearMilestoneTaskMetadata(row);
       }
 
+      const activeTaskId = this.asText(row.dataset.sourceTaskId);
       const activeTaskKey = this.asText(row.dataset.taskKey);
-      const activeTask = sortedTasks.find((task) => task.key === activeTaskKey);
+      const activeTask = sortedTasks.find((task) => {
+        return (activeTaskId && this.asText(task.id) === activeTaskId) || task.key === activeTaskKey;
+      });
+      if (activeTask) {
+        row.dataset.sourceTaskId = this.asText(activeTask.id);
+        row.dataset.taskKey = activeTask.key;
+      } else if (currentTaskId || currentValue) {
+        row.dataset.sourceTaskId = '';
+        row.dataset.taskKey = '';
+        taskInput.value = '';
+        phaseInfo.classList.add('hidden');
+        phaseInfo.textContent = '';
+        this.clearMilestoneTaskMetadata(row);
+      }
       const isFocused = document.activeElement === taskInput;
       if (activeTask && (!isFocused || typedTask)) {
         taskInput.value = activeTask.taskName;
@@ -1315,7 +1876,7 @@ var projectPlanningController = {
         <div class="py-1">
           <div class="px-3 py-1 text-sm font-bold text-black bg-gray-50 border-b border-gray-100">${this.escapeHtml(phaseName)}</div>
           ${phaseTasks.map((task) => `
-            <button type="button" class="milestone-task-option w-full text-left px-5 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" data-task-key="${this.escapeHtml(task.key)}" data-task-label="${this.escapeHtml(task.taskName)}">
+            <button type="button" class="milestone-task-option w-full text-left px-5 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer" data-task-id="${this.escapeHtml(task.id)}" data-task-key="${this.escapeHtml(task.key)}" data-task-label="${this.escapeHtml(task.taskName)}">
               ${this.escapeHtml(task.taskName)}
             </button>
           `).join('')}
@@ -1326,6 +1887,13 @@ var projectPlanningController = {
       dropdown.querySelectorAll('.milestone-task-option').forEach((option) => {
         option.addEventListener('mousedown', (event) => event.preventDefault());
         option.addEventListener('click', () => {
+          const previousTaskId = this.asText(row.dataset.sourceTaskId);
+          const nextTaskId = this.asText(option.getAttribute('data-task-id'));
+          if (previousTaskId && nextTaskId && previousTaskId !== nextTaskId) {
+            this.queueCancelledMilestoneProcess(row);
+            this.clearMilestoneTaskMetadata(row);
+          }
+          row.dataset.sourceTaskId = nextTaskId;
           row.dataset.taskKey = this.asText(option.getAttribute('data-task-key'));
           taskInput.value = this.asText(option.getAttribute('data-task-label'));
           row.dataset.dropdownOpen = 'false';
@@ -1362,10 +1930,16 @@ var projectPlanningController = {
         const taskDate = this.asText(row.querySelector('input[type="date"]')?.value);
         const [taskPhase = '', ...taskNameParts] = taskKey.split(':::');
         return {
+          taskId: this.asText(row.dataset.sourceTaskId) || this.asText(row.dataset.taskId),
+          sourceTaskId: this.asText(row.dataset.sourceTaskId),
           taskKey,
           phaseName: taskPhase,
           task: taskNameParts.join(':::') || this.asText(taskInput?.value),
-          dueDate: taskDate
+          dueDate: taskDate,
+          process: this.asText(row.dataset.taskProcess),
+          documentId: this.asText(row.dataset.taskDocumentId),
+          status: this.asText(row.dataset.taskStatus),
+          started: this.asText(row.dataset.taskStarted)
         };
       }).filter((task) => task.task || task.dueDate);
 
@@ -1399,14 +1973,13 @@ var projectPlanningController = {
   },
 
   refreshMilestoneConfiguration: function () {
+
     this.initializeMilestoneDatePickers(document);
     this.initMilestoneSortables();
     this.updateMilestoneTaskTitles();
     document.querySelectorAll('.milestone-task-row').forEach((row) => this.bindMilestoneTaskRowEvents(row));
     this.refreshMilestoneTaskSelectOptions();
     this.updateMilestoneTimeline();
-
-    // NOVO: Sincroniza a RACI com os Marcos e re-renderiza
     this.syncRaciWithMilestones();
     if (this._state.currentStep === 4) {
       this.renderRaciMatrixTable();
@@ -1665,6 +2238,7 @@ var projectPlanningController = {
 
     const phase = document.createElement('div');
     phase.className = 'wbs-item border border-gray-200 rounded-lg bg-white overflow-hidden shadow-sm';
+    phase.dataset.phaseId = '';
 
     const nextNumber = (container.querySelectorAll('.wbs-item').length || 0) + 1;
 
@@ -1763,6 +2337,7 @@ var projectPlanningController = {
   createSubtaskElement: function (taskData, subtaskIndex) {
     const subtask = document.createElement('div');
     subtask.className = 'wbs-subtask border border-gray-200 rounded-lg bg-gray-50 p-4 ml-4';
+    subtask.dataset.taskId = this.ensurePersistentTaskId(this.asText(taskData && (taskData.id || taskData.taskId || taskData.wbsTaskIdDP)));
 
     const safeName = this.escapeHtml(taskData && taskData.name ? taskData.name : `Tarefa ${subtaskIndex}`);
 
@@ -1809,7 +2384,7 @@ var projectPlanningController = {
     return subtask;
   },
 
-  addSubtask: function (buttonElement) {
+  addSubtask: function (buttonElement, taskData = {}) {
     const phaseItem = buttonElement.closest('.wbs-item');
     if (!phaseItem) return;
 
@@ -1817,7 +2392,7 @@ var projectPlanningController = {
     if (!container) return;
 
     const subtaskIndex = container.children.length + 1;
-    const subtask = this.createSubtaskElement({}, subtaskIndex);
+    const subtask = this.createSubtaskElement(taskData, subtaskIndex);
     container.appendChild(subtask);
 
     this.initAllTagFilters(subtask);
@@ -2004,6 +2579,12 @@ var projectPlanningController = {
     } else if (taskData.taskKey) {
       taskRow.dataset.taskKey = taskData.taskKey;
     }
+    taskRow.dataset.taskId = this.asText(taskData.taskId || taskData.id || taskData.milestoneTaskIdDP);
+    taskRow.dataset.sourceTaskId = this.asText(taskData.sourceTaskId || taskData.wbsTaskId || taskData.sourceId);
+    taskRow.dataset.taskProcess = this.asText(taskData.process || taskData.taskProcess || taskData.parentProcess);
+    taskRow.dataset.taskDocumentId = this.asText(taskData.documentId || taskData.docId || taskData.taskDocumentId);
+    taskRow.dataset.taskStatus = this.asText(taskData.status);
+    taskRow.dataset.taskStarted = this.asText(taskData.started);
 
     list.appendChild(taskRow);
     this.bindMilestoneTaskRowEvents(taskRow);
@@ -2018,16 +2599,7 @@ var projectPlanningController = {
     if (!list) return;
 
     this.openDeleteModal('Tem certeza que deseja remover esta tarefa do marco?', () => {
-      if (list.children.length === 1) {
-        const taskInput = row.querySelector('.milestone-task-search');
-        const dateInput = row.querySelector('input[type="date"]');
-        if (taskInput) taskInput.value = '';
-        row.dataset.taskKey = '';
-        if (dateInput) dateInput.value = '';
-        this.refreshMilestoneConfiguration();
-        return;
-      }
-
+      this.queueCancelledMilestoneProcess(row);
       row.remove();
       this.refreshMilestoneConfiguration();
     });
@@ -2786,41 +3358,171 @@ var projectPlanningController = {
   },
 
   validatePlanningForConclude: function () {
+
     const issues = [];
     const payload = this.buildPlanningPayload();
     const phases = payload.wbs && Array.isArray(payload.wbs.phases) ? payload.wbs.phases : [];
+    const milestones = payload.milestones && Array.isArray(payload.milestones.items) ? payload.milestones.items : [];
+    const communicationItems = payload.communicationPlan && Array.isArray(payload.communicationPlan.items) ? payload.communicationPlan.items : [];
 
     if (!phases.length) {
       issues.push({ step: 1, message: 'Inclua ao menos uma fase na EAP/WBS.' });
       return issues;
     }
 
+    const allTasks = [];
+
     for (let i = 0; i < phases.length; i++) {
       const phase = phases[i];
       const phaseLabel = this.asText(phase && phase.name) || `Fase ${i + 1}`;
+      const phaseTasks = Array.isArray(phase && phase.tasks) ? phase.tasks : [];
 
       if (!this.asText(phase && phase.name)) {
-        issues.push({ step: 1, message: `Informe a descrição da fase ${i + 1}.` });
+        issues.push({ step: 1, message: `Informe a descricao da fase ${i + 1}.` });
         break;
       }
-
       if (!this.asText(phase && phase.responsible)) {
-        issues.push({ step: 1, message: `Informe o responsável da fase: ${phaseLabel}.` });
+        issues.push({ step: 1, message: `Informe o responsavel da fase: ${phaseLabel}.` });
         break;
       }
-
       if (!Number.isFinite(phase && phase.effortHours) || Number(phase.effortHours) <= 0) {
-        issues.push({ step: 1, message: `Informe o esforço (h) da fase: ${phaseLabel}.` });
+        issues.push({ step: 1, message: `Informe o esforco (h) da fase: ${phaseLabel}.` });
+        break;
+      }
+      if (!Number.isFinite(phase && phase.durationDays) || Number(phase.durationDays) <= 0) {
+        issues.push({ step: 1, message: `Informe a duracao (dias) da fase: ${phaseLabel}.` });
+        break;
+      }
+      if (!phaseTasks.length) {
+        issues.push({ step: 1, message: `Inclua ao menos uma tarefa na fase: ${phaseLabel}.` });
         break;
       }
 
-      if (!Number.isFinite(phase && phase.durationDays) || Number(phase.durationDays) <= 0) {
-        issues.push({ step: 1, message: `Informe a duração (dias) da fase: ${phaseLabel}.` });
+      for (let t = 0; t < phaseTasks.length; t++) {
+        const task = phaseTasks[t];
+        const taskLabel = this.asText(task && task.name) || `Tarefa ${t + 1}`;
+        if (!this.asText(task && task.name)) {
+          issues.push({ step: 1, message: `Informe a descricao da tarefa ${t + 1} da fase: ${phaseLabel}.` });
+          break;
+        }
+        if (!this.asText(task && task.responsible)) {
+          issues.push({ step: 1, message: `Informe o responsavel da tarefa: ${taskLabel} na fase ${phaseLabel}.` });
+          break;
+        }
+        if (!Number.isFinite(task && task.effortHours) || Number(task.effortHours) <= 0) {
+          issues.push({ step: 1, message: `Informe o esforco (h) da tarefa: ${taskLabel}.` });
+          break;
+        }
+        if (!Number.isFinite(task && task.durationDays) || Number(task.durationDays) <= 0) {
+          issues.push({ step: 1, message: `Informe a duracao (dias) da tarefa: ${taskLabel}.` });
+          break;
+        }
+
+        allTasks.push({
+          id: this.asText(task && task.id),
+          phaseName: this.asText(phase && phase.name),
+          taskName: this.asText(task && task.name)
+        });
+      }
+
+      if (issues.length) break;
+    }
+
+    if (issues.length) return issues;
+
+    if (!milestones.length) {
+      issues.push({ step: 2, message: 'Inclua ao menos um marco no cronograma.' });
+      return issues;
+    }
+
+    const milestoneTaskIds = new Set();
+    const milestoneTaskKeys = new Set();
+
+    for (let i = 0; i < milestones.length; i++) {
+      const milestone = milestones[i];
+      const milestoneLabel = this.asText(milestone && milestone.name) || `Marco ${i + 1}`;
+      const milestoneTasks = Array.isArray(milestone && milestone.tasks) ? milestone.tasks : [];
+
+      if (!this.asText(milestone && milestone.name)) {
+        issues.push({ step: 2, message: `Informe o nome do marco ${i + 1}.` });
+        break;
+      }
+      if (!this.asText(milestone && milestone.startDate) || !this.asText(milestone && milestone.endDate)) {
+        issues.push({ step: 2, message: `Preencha o periodo completo do marco: ${milestoneLabel}.` });
+        break;
+      }
+      if (!milestoneTasks.length) {
+        issues.push({ step: 2, message: `Inclua ao menos uma tarefa no marco: ${milestoneLabel}.` });
+        break;
+      }
+
+      for (let t = 0; t < milestoneTasks.length; t++) {
+        const task = milestoneTasks[t];
+        const taskLabel = this.asText(task && (task.task || task.taskLabel)) || `Tarefa ${t + 1}`;
+        const taskId = this.asText(task && (task.sourceTaskId || task.taskId || task.id));
+        const phaseName = this.asText(task && task.phaseName);
+        const taskName = this.asText(task && (task.task || task.taskLabel));
+
+        if (!taskId || !taskName) {
+          issues.push({ step: 2, message: `Selecione uma tarefa valida no marco: ${milestoneLabel}.` });
+          break;
+        }
+        if (!this.asText(task && task.dueDate)) {
+          issues.push({ step: 2, message: `Preencha a data da tarefa ${taskLabel} no marco ${milestoneLabel}.` });
+          break;
+        }
+
+        milestoneTaskIds.add(taskId);
+        if (phaseName && taskName) {
+          milestoneTaskKeys.add(`${phaseName}:::${taskName}`);
+        }
+      }
+
+      if (issues.length) break;
+    }
+
+    if (issues.length) return issues;
+
+    for (let i = 0; i < allTasks.length; i++) {
+      const key = `${allTasks[i].phaseName}:::${allTasks[i].taskName}`;
+      if (!milestoneTaskIds.has(allTasks[i].id) && !milestoneTaskKeys.has(key)) {
+        issues.push({ step: 2, message: `A tarefa ${allTasks[i].taskName} da fase ${allTasks[i].phaseName} precisa estar vinculada a pelo menos um marco.` });
         break;
       }
     }
 
+    if (issues.length) return issues;
+
+    if (!communicationItems.length) {
+      issues.push({ step: 4, message: 'Inclua ao menos uma linha no Plano de Comunicacao.' });
+      return issues;
+    }
+
+    for (let i = 0; i < communicationItems.length; i++) {
+      const item = communicationItems[i] || {};
+      const audience = this.normalizeStakeholderField(item.audience);
+      if (!audience.length) {
+        issues.push({ step: 4, message: `Informe o publico da linha ${i + 1} no Plano de Comunicacao.` });
+        break;
+      }
+      if (!this.asText(item.channel)) {
+        issues.push({ step: 4, message: `Informe o canal da linha ${i + 1} no Plano de Comunicacao.` });
+        break;
+      }
+      if (!this.asText(item.frequency)) {
+        issues.push({ step: 4, message: `Informe a frequencia da linha ${i + 1} no Plano de Comunicacao.` });
+        break;
+      }
+    }
+
+    if (issues.length) return issues;
+
     this.syncRaciWithMilestones();
+
+    if (!this._raciMatrixData.length) {
+      issues.push({ step: 4, message: 'Preencha a matriz RACI para os marcos do cronograma.' });
+      return issues;
+    }
 
     for (let i = 0; i < this._raciMatrixData.length; i++) {
       const row = this._raciMatrixData[i];
@@ -2832,7 +3534,6 @@ var projectPlanningController = {
         issues.push({ step: 4, message: `Defina ao menos um "R" na matriz RACI para o Marco: ${phaseName}.` });
         break;
       }
-
       if (!a.length) {
         issues.push({ step: 4, message: `Defina ao menos um "A" na matriz RACI para o Marco: ${phaseName}.` });
         break;
@@ -3003,6 +3704,7 @@ var projectPlanningController = {
 
       phaseElements.forEach((phaseEl, index) => {
         const phasePanel = phaseEl.querySelector('.wbs-panel-content');
+        const phaseId = this.asText(phaseEl.dataset.phaseId) || `phase-${index + 1}`;
         const phaseName = this.asText(phaseEl.querySelector('.wbs-phase-name-input')?.value);
         const phaseResponsible = this.asText(phasePanel?.querySelector('.responsible-input')?.value);
         const phaseEffortHours = this.parseNumber(phasePanel?.querySelector('.wbs-phase-effort')?.value);
@@ -3020,6 +3722,8 @@ var projectPlanningController = {
 
         const tasks = [];
         phaseEl.querySelectorAll('.subtask-container .wbs-subtask').forEach((taskEl, taskIndex) => {
+          const taskId = this.ensurePersistentTaskId(this.asText(taskEl.dataset.taskId));
+          taskEl.dataset.taskId = taskId;
           const taskName = this.asText(taskEl.querySelector('.wbs-task-name-input')?.value);
           const taskResponsible = this.asText(taskEl.querySelector('.responsible-input')?.value);
           const taskEffortHours = this.parseNumber(taskEl.querySelector('.task-effort')?.value);
@@ -3032,7 +3736,7 @@ var projectPlanningController = {
           });
 
           tasks.push({
-            id: `task-${index + 1}-${taskIndex + 1}`,
+            id: taskId,
             order: taskIndex + 1,
             name: taskName,
             responsible: taskResponsible,
@@ -3043,7 +3747,7 @@ var projectPlanningController = {
         });
 
         payload.wbs.phases.push({
-          id: `phase-${index + 1}`,
+          id: phaseId,
           order: index + 1,
           name: phaseName,
           responsible: phaseResponsible,
@@ -3064,6 +3768,7 @@ var projectPlanningController = {
     if (milestonesContainer) {
       const milestoneEls = Array.from(milestonesContainer.querySelectorAll(':scope > .milestone-card'));
       milestoneEls.forEach((milestoneEl, index) => {
+        const milestoneId = this.asText(milestoneEl.dataset.milestoneId) || `milestone-${index + 1}`;
         const name = this.asText(milestoneEl.querySelector('.milestone-phase-input')?.value);
         const period = this.asText(milestoneEl.querySelector('.milestone-period-input')?.value);
 
@@ -3084,17 +3789,23 @@ var projectPlanningController = {
           const taskName = taskNameParts.join(':::') || taskLabel;
           if (taskKey || taskName || dueDate) {
             tasks.push({
+              taskId: this.asText(row.dataset.sourceTaskId) || this.asText(row.dataset.taskId),
+              sourceTaskId: this.asText(row.dataset.sourceTaskId),
               taskKey,
               phaseName,
               task: taskName,
               taskLabel,
-              dueDate
+              dueDate,
+              process: this.asText(row.dataset.taskProcess),
+              documentId: this.asText(row.dataset.taskDocumentId),
+              status: this.asText(row.dataset.taskStatus),
+              started: this.asText(row.dataset.taskStarted)
             });
           }
         });
 
         payload.milestones.items.push({
-          id: `milestone-${index + 1}`,
+          id: milestoneId,
           order: index + 1,
           name,
           period,
@@ -3193,11 +3904,20 @@ var projectPlanningController = {
 
   collectPlanningTaskFields: function () {
     const payload = this.buildPlanningPayload();
+    const milestoneTaskState = this.ensureMilestoneTaskMetadata(payload);
     const fields = [];
 
     // 1. JSON completos para carregar na widget facilmente
     fields.push({ name: 'projectPlanningJsonDP', value: JSON.stringify(payload) });
     fields.push({ name: 'raciJsonDP', value: JSON.stringify(payload.raci || {}) });
+    fields.push({ name: 'documentsJsonDP', value: JSON.stringify((this._state.attachments || []).filter((att) => !att.file).map((att) => ({
+      documentId: this.asText(att.documentId || att.id),
+      fileName: this.asText(att.fileName || (att.file && att.file.name)),
+      version: this.asText(att.version),
+      createdAt: this.asText(att.createdAt),
+      fileSize: this.asText(att.fileSize || (att.file && att.file.size))
+    }))) });
+    fields.push({ name: 'milestoneTaskCancelProcDP', value: JSON.stringify(this._state.cancelledMilestoneProcesses || []) });
 
     // 2. Checklist (Campos booleanos)
     fields.push({ name: 'chkEapWbsDP', value: String(payload.checklist.eapWbs) });
@@ -3256,21 +3976,36 @@ var projectPlanningController = {
 
       const mTasks = Array.isArray(m.tasks) ? m.tasks : [];
       mTasks.forEach(t => {
+        const taskId = this.asText(t.taskId);
+
+        fields.push({ name: `milestoneTaskIdDP___${mTaskIdx}`, value: taskId });
         fields.push({ name: `milestoneTaskMilestoneIdDP___${mTaskIdx}`, value: this.asText(m.id) });
         fields.push({ name: `milestoneTaskTextDP___${mTaskIdx}`, value: this.asText(t.task || t.taskLabel) });
         fields.push({ name: `milestoneTaskDueDateDP___${mTaskIdx}`, value: this.asText(t.dueDate) });
+        fields.push({ name: `milestoneTaskProcessDP___${mTaskIdx}`, value: this.asText(t.process) });
+        fields.push({ name: `milestoneTaskDocIdDP___${mTaskIdx}`, value: this.asText(t.documentId) });
+        fields.push({ name: `milestoneTaskStatusDP___${mTaskIdx}`, value: this.asText(t.status) });
+        fields.push({ name: `milestoneTaskStartedDP___${mTaskIdx}`, value: this.asText(t.started) || 'false' });
 
         // Snapshot consolidado: 1 linha por tarefa de marco com fase + marco de destino.
+        fields.push({ name: `milestoneTaskSummaryIdDP___${mTaskSummaryIdx}`, value: taskId });
         fields.push({ name: `milestoneTaskSummaryTextDP___${mTaskSummaryIdx}`, value: this.asText(t.task || t.taskLabel) });
         fields.push({ name: `milestoneTaskSummaryDueDateDP___${mTaskSummaryIdx}`, value: this.asText(t.dueDate) });
         fields.push({ name: `milestoneTaskSummaryPhaseDP___${mTaskSummaryIdx}`, value: this.asText(t.phaseName) });
         fields.push({ name: `milestoneTaskSummaryMarcoDP___${mTaskSummaryIdx}`, value: this.asText(m.name) });
+        fields.push({ name: `milestoneTaskSummaryProcessDP___${mTaskSummaryIdx}`, value: this.asText(t.process) });
+        fields.push({ name: `milestoneTaskSummaryDocIdDP___${mTaskSummaryIdx}`, value: this.asText(t.documentId) });
+        fields.push({ name: `milestoneTaskSummaryEstProcDP___${mTaskSummaryIdx}`, value: this.asText(t.estadoProcesso) });
+        fields.push({ name: `milestoneTaskSummaryStatusDP___${mTaskSummaryIdx}`, value: this.asText(t.status) });
+        fields.push({ name: `milestoneTaskSummaryStartedDP___${mTaskSummaryIdx}`, value: this.asText(t.started) || 'false' });
 
         mTaskIdx++;
         mTaskSummaryIdx++;
       });
       milestoneIdx++;
     });
+
+    fields.push({ name: 'milestoneTaskSeqCtrlDP', value: String(Math.max(milestoneTaskState.maxId, this._state.wbsTaskSeqRuntime || 0)) });
 
     // 5. Matriz de Riscos
     let riskIdx = 1;
@@ -3321,6 +4056,203 @@ var projectPlanningController = {
 
     return fields;
   },
+
+  getExistingMilestoneTaskSummaryState: function () {
+    const state = {
+      byKey: {},
+      maxId: 0
+    };
+
+    const controlValue = parseInt(this.asText($('input[name="milestoneTaskSeqCtrlDP"]').val()), 10);
+    if (!isNaN(controlValue) && controlValue > state.maxId) {
+      state.maxId = controlValue;
+    }
+
+    $('input[name^="milestoneTaskSummaryIdDP___"]').each((_, input) => {
+      const name = this.asText(input && input.name);
+      const match = name.match(/___(\d+)$/);
+      if (!match) return;
+
+      const rowIndex = match[1];
+      const summaryId = parseInt(this.asText($(input).val()), 10);
+      if (!isNaN(summaryId) && summaryId > state.maxId) {
+        state.maxId = summaryId;
+      }
+
+      const identityKey = this.buildMilestoneTaskSummaryIdentityKey({
+        phaseName: $(`input[name="milestoneTaskSummaryPhaseDP___${rowIndex}"]`).val(),
+        milestoneName: $(`input[name="milestoneTaskSummaryMarcoDP___${rowIndex}"]`).val(),
+        taskName: $(`input[name="milestoneTaskSummaryTextDP___${rowIndex}"]`).val(),
+        dueDate: $(`input[name="milestoneTaskSummaryDueDateDP___${rowIndex}"]`).val()
+      });
+      if (!identityKey) return;
+
+      state.byKey[identityKey] = {
+        id: isNaN(summaryId) ? '' : summaryId,
+        process: this.asText($(`input[name="milestoneTaskSummaryProcessDP___${rowIndex}"]`).val()),
+        estadoProcesso: this.asText($(`input[name="milestoneTaskSummaryEstProcDP___${rowIndex}"]`).val()),
+        started: this.asText($(`input[name="milestoneTaskSummaryStartedDP___${rowIndex}"]`).val())
+      };
+    });
+
+    return state;
+  },
+
+  ensureMilestoneTaskMetadata: function (payload) {
+    const state = this.getExistingMilestoneTaskState(payload);
+    let nextId = state.maxId;
+    const milestones = payload && payload.milestones && Array.isArray(payload.milestones.items)
+      ? payload.milestones.items
+      : [];
+
+    milestones.forEach((milestone) => {
+      const tasks = Array.isArray(milestone.tasks) ? milestone.tasks : [];
+      tasks.forEach((task) => {
+        const key = this.buildMilestoneTaskIdentityKey({
+          milestoneId: milestone.id,
+          taskName: task.task || task.taskLabel,
+          dueDate: task.dueDate
+        });
+        const sourceTaskId = this.asText(task.sourceTaskId || task.wbsTaskId);
+        const currentId = this.asText(task.taskId || task.id || task.milestoneTaskIdDP || sourceTaskId);
+        const existing = (currentId && state.byId[currentId]) || state.byKey[key] || null;
+        const taskId = currentId || (existing && existing.id) || String(++nextId);
+
+        task.taskId = taskId;
+        task.sourceTaskId = sourceTaskId || taskId;
+        task.process = this.asText(task.process || task.taskProcess || task.parentProcess || (existing && existing.process));
+        task.documentId = this.asText(task.documentId || task.docId || task.taskDocumentId || (existing && existing.documentId));
+        task.status = this.normalizeTaskExecutionStatus(task.status || (existing && existing.status));
+        task.started = this.asText(task.started || (existing && existing.started)) || 'false';
+      });
+    });
+
+    state.maxId = Math.max(state.maxId, nextId);
+    return state;
+  },
+
+  getExistingMilestoneTaskState: function (payload) {
+    const state = {
+      byId: {},
+      byKey: {},
+      maxId: 0
+    };
+
+    const controlValue = parseInt(this.asText($('input[name="milestoneTaskSeqCtrlDP"]').val()), 10);
+    if (!isNaN(controlValue) && controlValue > state.maxId) state.maxId = controlValue;
+
+    const remember = (item) => {
+      const id = this.asText(item && (item.id || item.taskId || item.milestoneTaskIdDP));
+      const numericId = parseInt(id, 10);
+      if (!isNaN(numericId) && numericId > state.maxId) state.maxId = numericId;
+
+      const normalized = {
+        id,
+        process: this.asText(item && (item.process || item.taskProcess || item.parentProcess || item.milestoneTaskProcessDP)),
+        documentId: this.asText(item && (item.documentId || item.docId || item.taskDocumentId || item.milestoneTaskDocIdDP)),
+        status: this.normalizeTaskExecutionStatus(item && (item.status || item.milestoneTaskStatusDP)),
+        started: this.asText(item && (item.started || item.milestoneTaskStartedDP))
+      };
+
+      const key = this.buildMilestoneTaskIdentityKey(item || {});
+      if (id) state.byId[id] = normalized;
+      if (key) state.byKey[key] = normalized;
+    };
+
+    $('input[name^="milestoneTaskIdDP___"]').each((_, input) => {
+      const match = this.asText(input && input.name).match(/___(\d+)$/);
+      if (!match) return;
+      const idx = match[1];
+      remember({
+        id: $(input).val(),
+        milestoneId: $(`input[name="milestoneTaskMilestoneIdDP___${idx}"]`).val(),
+        taskName: $(`input[name="milestoneTaskTextDP___${idx}"]`).val(),
+        dueDate: $(`input[name="milestoneTaskDueDateDP___${idx}"]`).val(),
+        process: $(`input[name="milestoneTaskProcessDP___${idx}"]`).val(),
+        documentId: $(`input[name="milestoneTaskDocIdDP___${idx}"]`).val(),
+        status: $(`input[name="milestoneTaskStatusDP___${idx}"]`).val(),
+        started: $(`input[name="milestoneTaskStartedDP___${idx}"]`).val()
+      });
+    });
+
+    const milestones = payload && payload.milestones && Array.isArray(payload.milestones.items)
+      ? payload.milestones.items
+      : [];
+    milestones.forEach((milestone) => {
+      (Array.isArray(milestone.tasks) ? milestone.tasks : []).forEach((task) => {
+        remember({
+          id: task.taskId || task.id || task.milestoneTaskIdDP,
+          milestoneId: milestone.id,
+          taskName: task.task || task.taskLabel,
+          dueDate: task.dueDate,
+          process: task.process || task.taskProcess || task.parentProcess,
+          documentId: task.documentId || task.docId || task.taskDocumentId,
+          status: task.status,
+          started: task.started
+        });
+      });
+    });
+
+    return state;
+  },
+
+  buildMilestoneTaskIdentityKey: function (task) {
+    const milestoneId = this.asText(task && (task.milestoneId || task.milestoneTaskMilestoneIdDP));
+    const taskName = this.asText(task && (task.taskName || task.task || task.taskLabel || task.milestoneTaskTextDP));
+    const dueDate = this.asText(task && (task.dueDate || task.milestoneTaskDueDateDP));
+    if (!milestoneId && !taskName && !dueDate) return '';
+    return [
+      this.normalizeText(milestoneId),
+      this.normalizeText(taskName),
+      this.normalizeText(dueDate)
+    ].join('||');
+  },
+
+  buildMilestoneTaskSummaryIdentityKey: function (task) {
+    const taskName = this.asText(task && (task.taskName || task.task || task.taskLabel));
+    const phaseName = this.asText(task && task.phaseName);
+    const milestoneName = this.asText(task && task.milestoneName);
+    const dueDate = this.asText(task && task.dueDate);
+    if (!taskName && !phaseName && !milestoneName && !dueDate) return '';
+    return [
+      this.normalizeText(phaseName),
+      this.normalizeText(milestoneName),
+      this.normalizeText(taskName),
+      this.normalizeText(dueDate)
+    ].join('||');
+  },
+  normalizeText: function (value) {
+    return this.asText(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .trim();
+  },
+
+  normalizeBoolean: function (value) {
+    const normalized = this.normalizeText(value);
+    return normalized === 'true' || normalized === '1' || normalized === 'sim' || normalized === 'yes';
+  },
+
+  normalizeTaskExecutionStatus: function (status) {
+    const normalized = this.normalizeText(status);
+    if (!normalized) return '';
+    if (normalized.indexOf('conclu') !== -1 || normalized === '2') return 'concluido';
+    if (normalized.indexOf('cancel') !== -1 || normalized === '1') return 'cancelado';
+    if (normalized.indexOf('andamento') !== -1 || normalized.indexOf('execucao') !== -1 || normalized === '0') return 'em_andamento';
+    return '';
+  },
+
+  parseJson: function (value) {
+    const raw = this.asText(value);
+    if (!raw || raw === 'null') return null;
+    try {
+      return JSON.parse(raw);
+    } catch (error) {
+      return null;
+    }
+  },
+
   showTimeline: function () {
     this.showToast('Abrindo histórico do projeto...', 'info');
   },
@@ -3427,6 +4359,32 @@ var projectPlanningController = {
     return `${mb.toFixed(1)} MB`;
   },
 
+  loadStoredAttachments: function (rawValue) {
+    const items = this.parseJson(rawValue);
+    this._state.attachments = Array.isArray(items) ? items.map((att, index) => ({
+      id: this.asText(att && att.documentId) || `stored:${index + 1}`,
+      documentId: this.asText(att && att.documentId),
+      fileName: this.asText(att && att.fileName),
+      version: this.asText(att && att.version),
+      createdAt: this.asText(att && att.createdAt),
+      fileSize: this.asText(att && att.fileSize)
+    })).filter((att) => att.documentId || att.fileName) : [];
+    this.renderAttachmentsList();
+  },
+
+  queueCancelledMilestoneProcess: function (row) {
+    if (!this._state.isExecutionCorrection || !row) return;
+    const processId = this.asText(row.dataset.taskProcess);
+    const started = this.asText(row.dataset.taskStarted).toLowerCase() === 'true';
+    if (!processId || !started) return;
+    if (!Array.isArray(this._state.cancelledMilestoneProcesses)) {
+      this._state.cancelledMilestoneProcesses = [];
+    }
+    if (this._state.cancelledMilestoneProcesses.indexOf(processId) === -1) {
+      this._state.cancelledMilestoneProcesses.push(processId);
+    }
+  },
+
   getAttachmentIconClass: function (fileName) {
     const ext = String(fileName || '').split('.').pop().toLowerCase();
     if (ext === 'pdf') return 'fa-file-pdf text-red-500';
@@ -3471,6 +4429,10 @@ var projectPlanningController = {
 
   readFileAsBase64: function (file) {
     return new Promise((resolve, reject) => {
+      if (!(file instanceof Blob)) {
+        reject(new Error('Arquivo invalido para leitura de anexo'));
+        return;
+      }
       const reader = new FileReader();
       reader.onload = (event) => {
         const raw = String(event.target.result || '');
@@ -3486,7 +4448,10 @@ var projectPlanningController = {
     const items = this._state.attachments || [];
     if (!items.length) return [];
 
-    const payload = await Promise.all(items.map(async (att) => {
+    const newFiles = items.filter((att) => att && att.file instanceof Blob);
+    if (!newFiles.length) return [];
+
+    const payload = await Promise.all(newFiles.map(async (att) => {
       const content = await this.readFileAsBase64(att.file);
       return {
         fileName: this.asText(att.file.name),
@@ -3498,3 +4463,4 @@ var projectPlanningController = {
   }
 
 };
+

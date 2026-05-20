@@ -1,4 +1,4 @@
-﻿<style>
+<style>
     :root {
         --bevap-navy: #3D567E;
         --bevap-green: #1C8C5D;
@@ -39,10 +39,14 @@
     }
 </style>
 
-<main class="pt-32 pb-24">
+<main class="pt-32 pb-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div class="space-y-6 lg:col-span-2">
+                <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-gray-700">
+                    O projeto foi encerrado com sucesso após a conclusão da execução, aprovação do solicitante e validação técnica da TI. Toda a documentação, evidências e registros operacionais permaneceram consolidados nesta visão final.
+                </div>
+
                 <section class="rounded-lg bg-white shadow-md">
                     <div class="border-b border-gray-200">
                         <div class="relative">
@@ -58,6 +62,12 @@
                                 </button>
                                 <button type="button" id="tab-execution-raci" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                                     <i class="fa-solid fa-users mr-2"></i>RACI
+                                </button>
+                                <button type="button" id="tab-execution-requester" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-user-check mr-2"></i>Validação do Solicitante
+                                </button>
+                                <button type="button" id="tab-execution-ti" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-shield-halved mr-2"></i>Validação do TI
                                 </button>
                             </div>
                             <button id="execution-tabs-left-arrow" type="button" class="pointer-events-none absolute left-0 top-0 bottom-0 flex w-24 items-center justify-start rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent pl-2 text-bevap-navy opacity-0 transition-opacity duration-300">
@@ -91,14 +101,14 @@
 
                     <div id="tab-content-execution-risks" class="hidden p-6">
                         <div class="rounded-lg border border-red-200 bg-red-50 p-4">
-                            <p class="text-sm leading-6 text-gray-700">Consolide os riscos do projeto com severidade, probabilidade, impacto, mitigação e plano de contingência para apoiar a execução e o acompanhamento dos marcos.</p>
+                            <p class="text-sm leading-6 text-gray-700">Consulte os riscos consolidados do projeto com severidade, probabilidade, impacto, mitigação e contingência definidos no encerramento.</p>
                         </div>
                         <div id="execution-risks-list" class="mt-6 space-y-4"></div>
                     </div>
 
                     <div id="tab-content-execution-raci" class="hidden p-6">
                         <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4">
-                            <p class="text-sm leading-6 text-gray-700">A matriz RACI apresenta os papéis por marco do projeto, deixando claro quem executa, aprova, precisa ser consultado e quem deve ser informado ao longo da execução.</p>
+                            <p class="text-sm leading-6 text-gray-700">A matriz RACI final mantém a visão de responsabilidades por marco e o plano de comunicação utilizado ao longo do projeto.</p>
                         </div>
                         <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 bg-white">
                             <table class="min-w-full divide-y divide-gray-200 text-sm">
@@ -133,6 +143,36 @@
                             </div>
                         </div>
                     </div>
+
+                    <div id="tab-content-execution-requester" class="hidden p-6">
+                        <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-700 shrink-0">
+                                    <i class="fa-solid fa-user-check text-base"></i>
+                                </span>
+                                <div>
+                                    <h4 class="text-sm font-montserrat font-semibold text-gray-900">Validação do Solicitante</h4>
+                                    <p class="text-xs text-gray-500">Histórico consolidado da análise do solicitante até a aprovação final desta etapa.</p>
+                                </div>
+                            </div>
+                            <div id="requester-history-list" class="mt-4 space-y-3"></div>
+                        </div>
+                    </div>
+
+                    <div id="tab-content-execution-ti" class="hidden p-6">
+                        <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 shrink-0">
+                                    <i class="fa-solid fa-shield-halved text-base"></i>
+                                </span>
+                                <div>
+                                    <h4 class="text-sm font-montserrat font-semibold text-gray-900">Validação do TI</h4>
+                                    <p class="text-xs text-gray-500">Histórico consolidado da validação técnica até o encerramento do projeto.</p>
+                                </div>
+                            </div>
+                            <div id="ti-history-list" class="mt-4 space-y-3"></div>
+                        </div>
+                    </div>
                 </section>
             </div>
 
@@ -150,7 +190,7 @@
                             <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Patrocinador</span><span id="project-sponsor" class="font-medium text-gray-900">-</span></div>
                             <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Previsão Final</span><span id="project-deadline" class="font-medium text-gray-900">-</span></div>
                             <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span id="project-requester" class="font-medium text-gray-900">-</span></div>
-                            <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span id="project-state-badge" class="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800"><i class="fa-solid fa-clock mr-1"></i><span id="project-state">Execução em andamento</span></span></div>
+                            <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span id="project-state-badge" class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-800"><i class="fa-solid fa-circle-check mr-1"></i><span id="project-state">Execução de Projeto Finalizada</span></span></div>
                         </div>
                         <div class="mt-4 space-y-2 border-t pt-4">
                             <a href="#" class="flex w-full items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy transition-colors hover:bg-gray-50">
@@ -174,47 +214,6 @@
         </div>
     </div>
 </main>
-
-<footer class="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white shadow-lg">
-    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <button type="button" data-action="save-draft" class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50">
-                <i class="fa-solid fa-save mr-2"></i>Salvar Rascunho
-            </button>
-            <div class="flex flex-wrap items-center gap-2">
-                <button type="button" data-action="return-planning" class="inline-flex items-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
-                    <i class="fa-solid fa-rotate-left mr-2"></i>Realizar Novo Planejamento
-                </button>
-                <button type="button" data-action="conclude-execution" class="inline-flex items-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
-                    <i class="fa-solid fa-paper-plane mr-2"></i>Concluir Execução
-                </button>
-            </div>
-        </div>
-    </div>
-</footer>
-
-<div id="return-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Realizar Novo Planejamento</h3>
-        <p class="mb-4 text-sm text-gray-600">Descreva os pontos que exigem um novo planejamento antes de retornar o projeto para essa etapa.</p>
-        <textarea id="return-reason" rows="4" placeholder="Motivo do novo planejamento..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-green-500"></textarea>
-        <div class="flex justify-end space-x-3">
-            <button type="button" data-action="close-return-modal" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
-            <button type="button" data-action="confirm-return-modal" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm text-white transition-all hover:bg-yellow-600">Devolver</button>
-        </div>
-    </div>
-</div>
-
-<div id="conclude-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-        <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Concluir Execução</h3>
-        <p class="mb-5 text-sm text-gray-600">Deseja concluir a execução do projeto e enviar para a próxima etapa?</p>
-        <div class="flex justify-end space-x-3">
-            <button type="button" data-action="close-conclude-modal" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
-            <button type="button" data-action="confirm-conclude-modal" class="rounded-lg bg-bevap-green px-4 py-2 text-sm text-white transition-all hover:bg-green-700">Confirmar</button>
-        </div>
-    </div>
-</div>
 
 <div id="toast" class="hidden fixed top-24 right-4 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
     <div class="flex items-start gap-3">

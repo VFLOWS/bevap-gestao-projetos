@@ -171,6 +171,24 @@ const router = {
           breadcrumb: ['Desenvolvimento', 'Execução do Projeto'],
           handler: () => projectExecutionController.load(params)
         },
+        projectRequesterValidation: {
+          controller: projectRequesterValidationController,
+          title: 'Desenvolvimento - Validacao do Solicitante',
+          breadcrumb: ['Desenvolvimento', 'Validacao do Solicitante'],
+          handler: () => projectRequesterValidationController.load(params)
+        },
+        projectTiValidation: {
+          controller: projectTiValidationController,
+          title: 'Desenvolvimento - Validacao TI',
+          breadcrumb: ['Desenvolvimento', 'Validacao TI'],
+          handler: () => projectTiValidationController.load(params)
+        },
+        projectFinal: {
+          controller: projectFinalController,
+          title: 'Desenvolvimento - Execucao de Projeto Finalizada',
+          breadcrumb: ['Desenvolvimento', 'Execucao de Projeto Finalizada'],
+          handler: () => projectFinalController.load(params)
+        },
       };
 
       const route = routes[page];

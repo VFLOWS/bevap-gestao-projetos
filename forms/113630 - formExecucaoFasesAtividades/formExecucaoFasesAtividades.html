@@ -828,20 +828,31 @@
 			</table>
 
 			<label>Milestone Tasks</label>
+			<input type="text" name="milestoneTaskProcCtrlDP" class="form-control" value="0">
 			<table class="table table-bordered" id="tblMilestoneTasksDP" tablename="tblMilestoneTasksDP"
 				noaddbutton="true" nodeletebutton="true">
 				<thead>
 					<tr>
+						<th>Task Seq Id</th>
 						<th>Milestone Id</th>
 						<th>Task</th>
 						<th>Due Date</th>
+						<th>process</th>
+						<th>documentId</th>
+						<th>status</th>
+						<th>Started</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
+						<td><input type="text" name="milestoneTaskIdDP" class="form-control"></td>
 						<td><input type="text" name="milestoneTaskMilestoneIdDP" class="form-control"></td>
 						<td><input type="text" name="milestoneTaskTextDP" class="form-control"></td>
 						<td><input type="text" name="milestoneTaskDueDateDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskProcessDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskDocIdDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskStatusDP" class="form-control"></td>
+						<td><input type="text" name="milestoneTaskStartedDP" class="form-control"></td>
 					</tr>
 				</tbody>
 			</table>
@@ -959,12 +970,18 @@
 	<input type="hidden" name="dataInicioPlanejadaGLPI" id="dataInicioPlanejadaGLPI"/>
 	<input type="hidden" name="dataFimPlanejadaGLPI" id="dataFimPlanejadaGLPI"/>
 	
+	<input type="hidden" name="milestoneTaskSummaryIdDP" id="milestoneTaskSummaryIdDP"/>
 	<input type="hidden" name="milestoneTaskSummaryTextDP" id="milestoneTaskSummaryTextDP"/>
 	<input type="hidden" name="milestoneTaskSummaryDueDateDP" id="milestoneTaskSummaryDueDateDP"/>
 	<input type="hidden" name="milestoneTaskSummaryPhaseDP" id="milestoneTaskSummaryPhaseDP"/>
 	<input type="hidden" name="milestoneTaskSummaryMarcoDP" id="milestoneTaskSummaryMarcoDP"/>
 	<input type="hidden" name="milestoneTaskSummaryProcessDP" id="milestoneTaskSummaryProcessDP"/>
+	<input type="hidden" name="milestoneTaskSummaryDocIdDP" id="milestoneTaskSummaryDocIdDP"/>
+	<input type="hidden" name="milestoneTaskSummaryEstProcDP" id="milestoneTaskSummaryEstProcDP"/>
+	<input type="hidden" name="milestoneTaskSummaryStatusDP" id="milestoneTaskSummaryStatusDP"/>
 	<input type="hidden" name="milestoneTaskSummaryStartedDP" id="milestoneTaskSummaryStartedDP"/>
+	<input type="hidden" name="milestoneTaskCancelProcDP" id="milestoneTaskCancelProcDP" value="[]"/>
+	<input type="hidden" name="milestoneTaskSyncSnapDP" id="milestoneTaskSyncSnapDP" value="[]"/>
 
 	<hr>
 	<label><strong>EXECUCAO DA ATIVIDADE - EF</strong></label>

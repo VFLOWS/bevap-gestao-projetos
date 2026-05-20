@@ -32,6 +32,9 @@ application.resource.js.15=/resources/js/services/modal-loading.service.js
 application.resource.js.16=/resources/js/components/solicitacao-projetos/ps-technical-triage-history.component.js
 application.resource.js.17=/resources/js/components/solicitacao-projetos/ps-approval-ti-triage-history.component.js
 application.resource.js.18=/resources/js/controllers/solicitacao-projetos/ps-committeeApprovalController.js
+application.resource.js.19=/resources/js/controllers/desenvolvimento-projetos/projectExecutionController.js
+application.resource.js.20=/resources/js/controllers/desenvolvimento-projetos/projectValidationControllers.js
+application.resource.js.21=/resources/js/controllers/desenvolvimento-projetos/projectFinalController.js
 application.resource.css.2=/resources/css/wdGestaoProjetos.css
 hash=4a16315e9e66fa7d797b3f6b1fb365b69f9a4ce2
 

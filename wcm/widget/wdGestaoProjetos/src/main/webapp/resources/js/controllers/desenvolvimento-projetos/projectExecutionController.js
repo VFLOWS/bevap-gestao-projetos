@@ -1,9 +1,10 @@
-var projectExecutionController = {
+﻿var projectExecutionController = {
   _eventNamespace: '.projectExecution',
-  _returnToPlanningState: '14',
+  _returnToPlanningState: '20',
   _concludeExecutionState: '20',
   _executionDecisionField: 'decisaoExecucaoProjetoDP',
   _executionJustificationField: 'justificativaExecucaoProjetoDP',
+  _executionCorrectionField: 'execFasesAtividadesCorrecao',
   _headerBackup: null,
   _collapsedPhases: {},
   _collapsedMilestones: {},
@@ -16,6 +17,8 @@ var projectExecutionController = {
     activeTab: 'phases',
     projectSummary: {},
     projectDeadline: '',
+    milestoneTaskSummaryRows: [],
+    milestoneTaskRowIndexById: {},
     phases: [],
     milestones: [],
     risks: [],
@@ -43,7 +46,7 @@ var projectExecutionController = {
       this.updateTabArrows();
     } catch (error) {
       console.error('Project execution template load error:', error);
-      $('#page-container').html('<div class="p-6 text-red-600">Falha ao carregar a tela de execução do projeto.</div>');
+      $('#page-container').html('<div class="p-6 text-red-600">Falha ao carregar a tela de execu\u00e7\u00e3o do projeto.</div>');
     }
   },
 
@@ -125,14 +128,14 @@ var projectExecutionController = {
       };
     }
 
-    if (titleEl.length) titleEl.text('Desenvolvimento - Execução do Projeto');
+    if (titleEl.length) titleEl.text('Desenvolvimento - Execu\u00e7\u00e3o do Projeto');
     if (breadcrumbEl.length) {
       breadcrumbEl.html([
-        '<a href="#dashboard" class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-house text-xs"></i><span>Início</span></a>',
+        '<a href="#dashboard" class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-house text-xs"></i><span>In\u00edcio</span></a>',
         '<span class="text-gray-400">/</span>',
-        '<span class="text-gray-300">Portfólio</span>',
+        '<span class="text-gray-300">Portf\u00f3lio</span>',
         '<span class="text-gray-400">/</span>',
-        '<span class="text-bevap-gold font-medium">Execução do Projeto</span>'
+        '<span class="text-bevap-gold font-medium">Execu\u00e7\u00e3o do Projeto</span>'
       ].join(''));
     }
   },
@@ -151,6 +154,8 @@ var projectExecutionController = {
   resetState: function () {
     this._state.projectSummary = {};
     this._state.projectDeadline = '';
+    this._state.milestoneTaskSummaryRows = [];
+    this._state.milestoneTaskRowIndexById = {};
     this._state.phases = [];
     this._state.milestones = [];
     this._state.risks = [];
@@ -165,18 +170,31 @@ var projectExecutionController = {
     this.resetState();
 
     try {
+      console.warn('[ExecucaoProjeto] loadProjectData iniciado', {
+        documentId: this._state.documentId,
+        datasetId: this._state.datasetId
+      });
       var rows = await fluigService.getDatasetRows(this._state.datasetId, {
         filters: { documentid: this._state.documentId }
       });
       var row = rows && rows.length ? rows[0] : null;
+      console.warn('[ExecucaoProjeto] loadProjectData retorno principal', {
+        totalRows: Array.isArray(rows) ? rows.length : 0,
+        hasRow: !!row
+      });
       if (!row) {
         this.showToast('Nenhum dado encontrado para este projeto.', 'warning');
         return;
       }
       this.processData(row);
+      console.warn('[ExecucaoProjeto] processData concluido', {
+        milestoneTaskSummaryRows: Array.isArray(this._state.milestoneTaskSummaryRows) ? this._state.milestoneTaskSummaryRows.length : 0,
+        milestones: Array.isArray(this._state.milestones) ? this._state.milestones.length : 0
+      });
+      await this.syncMilestoneTaskStatuses();
     } catch (error) {
       console.error('loadProjectData error:', error);
-      this.showToast('Erro ao carregar dados de execução.', 'error');
+      this.showToast('Erro ao carregar dados de execu\u00e7\u00e3o.', 'error');
     }
   },
 
@@ -200,13 +218,10 @@ var projectExecutionController = {
     var risks = Array.isArray(payload.risks && payload.risks.items) ? payload.risks.items.slice() : [];
     var raciRows = Array.isArray(payload.raci && payload.raci.rows) ? payload.raci.rows.slice() : [];
     var communicationRows = Array.isArray(payload.communicationPlan && payload.communicationPlan.items) ? payload.communicationPlan.items.slice() : [];
-    var doneStatusMap = this.buildTaskStatusMap(this.extractIndexedRows(row, [
-      'milestoneTaskSummaryTextDP',
-      'milestoneTaskSummaryDueDateDP',
-      'milestoneTaskSummaryPhaseDP',
-      'milestoneTaskSummaryMarcoDP',
-      'milestoneTaskSummaryStartedDP'
-    ]));
+    var summaryRows = this.extractMilestoneTaskSummaryRows(row);
+    var doneStatusMap = this.buildTaskStatusMap(summaryRows);
+    this._state.milestoneTaskSummaryRows = summaryRows.slice();
+    this._state.milestoneTaskRowIndexById = this.extractMilestoneTaskRowIndexById(row);
 
     phases.sort(function (a, b) {
       return (parseInt(a && a.order, 10) || 0) - (parseInt(b && b.order, 10) || 0);
@@ -243,9 +258,7 @@ var projectExecutionController = {
     var criteriaRows = this.extractIndexedRows(row, [
       'milestoneCriteriaMilestoneIdDP', 'milestoneCriteriaTextDP'
     ]);
-    var summaryRows = this.extractIndexedRows(row, [
-      'milestoneTaskSummaryTextDP', 'milestoneTaskSummaryDueDateDP', 'milestoneTaskSummaryPhaseDP', 'milestoneTaskSummaryMarcoDP', 'milestoneTaskSummaryStartedDP'
-    ]);
+    var summaryRows = this.extractMilestoneTaskSummaryRows(row);
     var riskRows = this.extractIndexedRows(row, [
       'riskIdDP', 'riskDescriptionDP', 'riskProbabilityDP', 'riskImpactDP', 'riskMitigationDP', 'riskPlanBDP'
     ]);
@@ -262,6 +275,8 @@ var projectExecutionController = {
 
     var criteriaByMilestone = this.groupCriteriaByMilestoneName(milestoneRows, criteriaRows);
     var doneStatusMap = this.buildTaskStatusMap(summaryRows);
+    this._state.milestoneTaskSummaryRows = summaryRows.slice();
+    this._state.milestoneTaskRowIndexById = this.extractMilestoneTaskRowIndexById(row);
 
     phaseRows.sort(function (a, b) {
       return (parseInt(a.wbsPhaseOrderDP, 10) || 0) - (parseInt(b.wbsPhaseOrderDP, 10) || 0);
@@ -278,24 +293,34 @@ var projectExecutionController = {
       }).map(function (taskRow, taskIndex) {
         var taskName = self.asText(taskRow.milestoneTaskSummaryTextDP) || ('Tarefa ' + (taskIndex + 1));
         var key = self.buildTaskStatusKey(taskRow.milestoneTaskSummaryPhaseDP, name, taskName, taskRow.milestoneTaskSummaryDueDateDP);
+        var summaryId = self.asText(taskRow.milestoneTaskSummaryIdDP);
+        var taskExecution = doneStatusMap['summaryId::' + summaryId] || doneStatusMap[key] || {};
         return {
+          summaryId: summaryId,
           taskName: taskName,
           phaseName: self.asText(taskRow.milestoneTaskSummaryPhaseDP),
           responsible: self.resolveTaskResponsible(self.asText(taskRow.milestoneTaskSummaryPhaseDP), taskName),
           date: self.formatDisplayDate(taskRow.milestoneTaskSummaryDueDateDP),
-          status: doneStatusMap[key] ? 'concluido' : self.getMockTaskExecutionStatus(taskIndex)
+          process: self.firstDefinedValue([taskRow.milestoneTaskSummaryProcessDP, taskExecution.process]),
+          documentId: self.firstDefinedValue([taskRow.milestoneTaskSummaryDocIdDP, taskExecution.documentId]),
+          estadoProcesso: self.firstDefinedValue([taskRow.milestoneTaskSummaryEstProcDP, taskExecution.estadoProcesso]),
+          summaryRowIndex: self.asText(taskRow.__rowIndex || taskExecution.rowIndex),
+          status: self.normalizeTaskExecutionStatus(taskRow.milestoneTaskSummaryStatusDP || taskExecution.status || self.getMockTaskExecutionStatus(taskIndex))
         };
       });
 
-      return {
+      var normalizedMilestone = {
         id: self.asText(milestoneRow.milestoneIdDP) || ('milestone-' + (index + 1)),
         name: name,
+        startDate: self.asText(milestoneRow.milestoneStartDateDP),
+        endDate: self.asText(milestoneRow.milestoneEndDateDP),
         period: self.joinDateRange(milestoneRow.milestoneStartDateDP, milestoneRow.milestoneEndDateDP),
         owner: self.resolveMilestoneOwner(tasks),
-        status: self.resolveMilestoneStatus(tasks),
         criteria: criteriaByMilestone[name] || [],
         tasks: tasks
       };
+      normalizedMilestone.status = self.resolveMilestoneStatus(tasks, normalizedMilestone);
+      return normalizedMilestone;
     });
 
     this._state.risks = riskRows.map(function (riskRow, index) {
@@ -341,7 +366,7 @@ var projectExecutionController = {
       responsible: this.asText(phase.responsible) || 'Não definido',
       effortHours: this.asText(phase.effortHours),
       durationDays: this.asText(phase.durationDays),
-      notes: this.asText(phase.notes) || 'Levantamento de requisitos, consolidação documental e preparação da base funcional para a execução.',
+      notes: this.asText(phase.notes) || 'Levantamento de requisitos, consolida\u00e7\u00e3o documental e prepara\u00e7\u00e3o da base funcional para a execu\u00e7\u00e3o.',
       dependencies: this.collectPhaseDependencies(phase, tasks, milestones, phaseName),
       tasks: tasks
     };
@@ -368,7 +393,7 @@ var projectExecutionController = {
       responsible: this.asText(phaseRow.wbsPhaseResponsibleDP) || 'Não definido',
       effortHours: this.asText(phaseRow.wbsPhaseEffortHoursDP),
       durationDays: this.asText(phaseRow.wbsPhaseDurationDaysDP),
-      notes: this.asText(phaseRow.wbsPhaseNotesDP) || 'Levantamento de requisitos, consolidação documental e preparação da base funcional para a execução.',
+      notes: this.asText(phaseRow.wbsPhaseNotesDP) || 'Levantamento de requisitos, consolida\u00e7\u00e3o documental e prepara\u00e7\u00e3o da base funcional para a execu\u00e7\u00e3o.',
       dependencies: [],
       tasks: tasks
     };
@@ -379,24 +404,34 @@ var projectExecutionController = {
     var tasks = Array.isArray(milestone && milestone.tasks) ? milestone.tasks.map(function (task, taskIndex) {
       var taskName = self.firstDefinedValue([task.taskName, task.task, task.taskLabel, task.name]) || ('Tarefa ' + (taskIndex + 1));
       var statusKey = self.buildTaskStatusKey(task.phaseName, milestone.name, taskName, task.dueDate);
+      var summaryId = self.asText(task.summaryId || task.milestoneTaskSummaryIdDP || task.taskSummaryId);
+      var taskExecution = doneStatusMap['summaryId::' + summaryId] || doneStatusMap[statusKey] || {};
       return {
+        summaryId: summaryId,
         taskName: taskName,
         phaseName: self.asText(task.phaseName),
         responsible: self.asText(task.responsible) || self.resolveTaskResponsible(self.asText(task.phaseName), taskName),
         date: self.formatDisplayDate(task.dueDate),
-        status: self.firstDefinedValue([task.status, doneStatusMap[statusKey] ? 'concluido' : '']) || self.getMockTaskExecutionStatus(taskIndex)
+        process: self.firstDefinedValue([task.process, task.taskProcess, task.parentProcess, taskExecution.process]),
+        documentId: self.firstDefinedValue([task.documentId, task.docId, task.taskDocumentId, taskExecution.documentId]),
+        estadoProcesso: self.firstDefinedValue([task.estadoProcesso, taskExecution.estadoProcesso]),
+        summaryRowIndex: self.asText(task.summaryRowIndex || taskExecution.rowIndex),
+        status: self.normalizeTaskExecutionStatus(self.firstDefinedValue([taskExecution.status, task.status]) || self.getMockTaskExecutionStatus(taskIndex))
       };
     }) : [];
 
-    return {
+    var normalizedMilestone = {
       id: this.asText(milestone && milestone.id) || ('milestone-' + (index + 1)),
       name: this.asText(milestone && milestone.name) || ('Marco ' + (index + 1)),
+      startDate: this.asText(milestone && milestone.startDate),
+      endDate: this.asText(milestone && milestone.endDate),
       period: this.firstDefinedValue([milestone && milestone.period, this.joinDateRange(milestone && milestone.startDate, milestone && milestone.endDate)]),
       owner: this.firstDefinedValue([milestone && milestone.owner, milestone && milestone.responsible, this.resolveMilestoneOwner(tasks)]) || 'Não definido',
-      status: this.firstDefinedValue([milestone && milestone.status, this.resolveMilestoneStatus(tasks)]) || 'planejado',
       criteria: Array.isArray(milestone && milestone.criteria) ? milestone.criteria : [],
       tasks: tasks
     };
+    normalizedMilestone.status = this.resolveMilestoneStatus(tasks, normalizedMilestone);
+    return normalizedMilestone;
   },
 
   normalizeRisk: function (risk, index) {
@@ -486,7 +521,7 @@ var projectExecutionController = {
 
     $('#execution-communication-body').html(communicationRows.length ? communicationRows.map(function (row) {
       return '<tr><td class="px-4 py-3 text-gray-700">' + self.escapeHtml(row.audience || '-') + '</td><td class="px-4 py-3 text-gray-700">' + self.escapeHtml(row.channel || '-') + '</td><td class="px-4 py-3 text-gray-700">' + self.escapeHtml(row.frequency || '-') + '</td></tr>';
-    }).join('') : '<tr><td colspan="3" class="px-4 py-4 text-sm text-gray-500">Nenhum item de comunicação cadastrado.</td></tr>');
+    }).join('') : '<tr><td colspan="3" class="px-4 py-4 text-sm text-gray-500">Nenhum item de comunica\u00e7\u00e3o cadastrado.</td></tr>');
   },
 
   getPhaseCardHtml: function (phase) {
@@ -507,7 +542,7 @@ var projectExecutionController = {
       '  <div class="mt-4 flex flex-wrap items-center justify-between gap-3">',
       '    <div class="flex flex-wrap gap-2 text-[13px]">',
       '      <span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user-tie mr-1" style="color: #dbeafe;"></i>Responsável: ' + this.escapeHtml(phase.responsible) + '</span>',
-      '      <span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-days mr-1 text-red-100"></i>Duração: ' + this.escapeHtml(durationLabel) + '</span>',
+      '      <span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-days mr-1 text-red-100"></i>Dura\u00e7\u00e3o: ' + this.escapeHtml(durationLabel) + '</span>',
       '      <span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #16a34a; border-color: #16a34a;"><i class="fa-regular fa-clock mr-1 text-green-200"></i>Esforço Total: ' + this.escapeHtml(effortLabel) + '</span>',
       '    </div>',
       '    <button type="button" data-phase-toggle="' + this.escapeHtml(phase.key) + '" class="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"><i class="fa-solid ' + (isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up') + ' mr-2 text-gray-400"></i>' + (isCollapsed ? 'Expandir' : 'Recolher') + '</button>',
@@ -524,7 +559,7 @@ var projectExecutionController = {
       '    </div>',
       '    <div class="mt-4 rounded-xl border border-gray-200 bg-slate-50 p-4">',
       '      <div class="mb-3 flex items-center justify-between gap-3">',
-      '        <div><h4 class="text-sm font-montserrat font-semibold text-gray-900">Tarefas da Fase</h4><p class="text-xs text-gray-500">Relação de tarefas planejadas com esforço e duração.</p></div>',
+      '        <div><h4 class="text-sm font-montserrat font-semibold text-gray-900">Tarefas da Fase</h4><p class="text-xs text-gray-500">Rela\u00e7\u00e3o de tarefas planejadas com esfor\u00e7o e dura\u00e7\u00e3o.</p></div>',
       '        <span class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600">' + phase.tasks.length + ' tarefas</span>',
       '      </div>',
       '      <div class="space-y-3">',
@@ -640,7 +675,7 @@ var projectExecutionController = {
       '    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ' + badge + '">' + this.escapeHtml(risk.severity) + '</span>',
       '  </div>',
       '  <div class="mt-3 text-sm text-gray-600"><span class="font-medium text-gray-700">Responsável:</span> ' + this.escapeHtml(risk.owner) + '</div>',
-      '  <div class="mt-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700"><strong>Mitigação:</strong> ' + this.escapeHtml(risk.mitigation) + '</div>',
+      '  <div class="mt-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700"><strong>Mitiga\u00e7\u00e3o:</strong> ' + this.escapeHtml(risk.mitigation) + '</div>',
       '  <div class="mt-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700"><strong>Plano B:</strong> ' + this.escapeHtml(risk.fallback) + '</div>',
       '</div>'
     ].join('');
@@ -659,10 +694,10 @@ var projectExecutionController = {
 
   renderMacroProgress: function () {
     $('#macro-progress-list').html([
-      '<div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>SolicitaÃ§Ã£o aprovada</span></div>',
-      '<div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>AnÃ¡lise TI concluÃ­da</span></div>',
-      '<div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Planejamento do projeto concluÃ­do</span></div>',
-      '<div class="flex items-center text-bevap-gold"><i class="fa-solid fa-clock mr-2"></i><span>ExecuÃ§Ã£o do projeto em andamento</span></div>'
+      '<div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Solicitação aprovada</span></div>',
+      '<div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Análise TI concluída</span></div>',
+      '<div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Planejamento do projeto concluído</span></div>',
+      '<div class="flex items-center text-bevap-gold"><i class="fa-solid fa-clock mr-2"></i><span>Execução do projeto em andamento</span></div>'
     ].join(''));
     return;
 
@@ -692,7 +727,7 @@ var projectExecutionController = {
       area: this.firstDefinedValue([this.getValIgnoreCase(row, 'areaUnidadeNS'), this.getValIgnoreCase(row, 'areaUnidade')]),
       sponsor: this.firstDefinedValue([this.getValIgnoreCase(row, 'patrocinadorNS'), this.getValIgnoreCase(row, 'patrocinador')]),
       requester: this.firstDefinedValue([this.getValIgnoreCase(row, 'solicitanteNomeNS'), this.getValIgnoreCase(row, 'solicitanteNome')]),
-      state: this.firstDefinedValue([this.getValIgnoreCase(row, 'estadoProcesso'), this.getValIgnoreCase(row, 'estado')]) || 'Execução em andamento'
+      state: this.firstDefinedValue([this.getValIgnoreCase(row, 'estadoProcesso'), this.getValIgnoreCase(row, 'estado')]) || 'Execu\u00e7\u00e3o em andamento'
     };
   },
 
@@ -705,6 +740,297 @@ var projectExecutionController = {
       lastDate = parts.length > 1 ? parts[1] : period;
     });
     return lastDate || '';
+  },
+
+  syncMilestoneTaskStatuses: async function () {
+    var summaryRows = Array.isArray(this._state.milestoneTaskSummaryRows) ? this._state.milestoneTaskSummaryRows : [];
+    console.warn('[ExecucaoProjeto] syncMilestoneTaskStatuses inicio', {
+      summaryRowsCount: summaryRows.length
+    });
+    if (!summaryRows.length) {
+      console.warn('[ExecucaoProjeto] syncMilestoneTaskStatuses sem summary rows');
+      return;
+    }
+
+    var self = this;
+    var processIds = summaryRows.map(function (row) {
+      return self.asText(row.milestoneTaskSummaryProcessDP);
+    }).filter(Boolean).filter(function (value, index, array) {
+      return array.indexOf(value) === index;
+    });
+    console.log('[ExecucaoProjeto] Summary rows para sincronizacao', summaryRows.map(function (row) {
+      return {
+        summaryId: self.asText(row.milestoneTaskSummaryIdDP),
+        rowIndex: self.asText(row.__rowIndex),
+        marco: self.asText(row.milestoneTaskSummaryMarcoDP),
+        fase: self.asText(row.milestoneTaskSummaryPhaseDP),
+        tarefa: self.asText(row.milestoneTaskSummaryTextDP),
+        dueDate: self.asText(row.milestoneTaskSummaryDueDateDP),
+        process: self.asText(row.milestoneTaskSummaryProcessDP)
+      };
+    }));
+    console.warn('[ExecucaoProjeto] Process IDs identificados para consulta', processIds);
+    if (!processIds.length) {
+      console.warn('[ExecucaoProjeto] syncMilestoneTaskStatuses sem processIds validos', summaryRows);
+      return;
+    }
+
+    var executionMap = {};
+    await Promise.all(processIds.map(async function (processId) {
+      try {
+        console.log('[ExecucaoProjeto] Consultando dsGetExecucaoAtividade', {
+          processId: processId,
+          dataset: 'dsGetExecucaoAtividade',
+          filters: { 'PWS.NUM_PROCES': processId }
+        });
+        var rows = await fluigService.getDatasetRows('dsGetExecucaoAtividade', {
+          fields: ['documentid', 'NUM_PROCES', 'estadoProcesso', 'STATUS'],
+          filters: { 'PWS.NUM_PROCES': processId }
+        });
+        var selectedRow = self.selectExecutionDatasetRow(rows, processId);
+        console.log('[ExecucaoProjeto] Retorno dsGetExecucaoAtividade', {
+          processId: processId,
+          totalRows: Array.isArray(rows) ? rows.length : 0,
+          rows: rows,
+          selectedRow: selectedRow
+        });
+        executionMap[processId] = selectedRow;
+      } catch (error) {
+        console.warn('syncMilestoneTaskStatuses query error:', processId, error);
+        executionMap[processId] = null;
+      }
+    }));
+
+    var fieldsToPersist = [];
+    summaryRows.forEach(function (row) {
+      var processId = self.asText(row.milestoneTaskSummaryProcessDP);
+      var statusRow = processId ? executionMap[processId] : null;
+      if (!statusRow) {
+        console.warn('[ExecucaoProjeto] Nenhum retorno para task do marco', {
+          summaryId: self.asText(row.milestoneTaskSummaryIdDP),
+          processId: processId,
+          marco: self.asText(row.milestoneTaskSummaryMarcoDP),
+          fase: self.asText(row.milestoneTaskSummaryPhaseDP),
+          tarefa: self.asText(row.milestoneTaskSummaryTextDP),
+          dueDate: self.asText(row.milestoneTaskSummaryDueDateDP)
+        });
+        return;
+      }
+
+      var statusLabel = self.mapDatasetTaskStatus(statusRow.STATUS);
+      var estadoProcesso = self.asText(statusRow.estadoProcesso);
+      var documentId = self.asText(statusRow.documentid);
+      var statusBool = statusLabel ? 'true' : 'false';
+      var taskKey = self.buildTaskStatusKey(
+        row.milestoneTaskSummaryPhaseDP,
+        row.milestoneTaskSummaryMarcoDP,
+        row.milestoneTaskSummaryTextDP,
+        row.milestoneTaskSummaryDueDateDP
+      );
+
+      console.log('[ExecucaoProjeto] Task status sincronizado', {
+        summaryId: self.asText(row.milestoneTaskSummaryIdDP),
+        processId: processId,
+        taskKey: taskKey,
+        marco: self.asText(row.milestoneTaskSummaryMarcoDP),
+        fase: self.asText(row.milestoneTaskSummaryPhaseDP),
+        tarefa: self.asText(row.milestoneTaskSummaryTextDP),
+        dueDate: self.asText(row.milestoneTaskSummaryDueDateDP),
+        datasetStatus: statusRow.STATUS,
+        mappedStatus: statusLabel,
+        documentId: documentId,
+        estadoProcesso: estadoProcesso
+      });
+
+      if (!statusLabel) {
+        console.warn('[ExecucaoProjeto] STATUS do dataset nao foi mapeado', {
+          summaryId: self.asText(row.milestoneTaskSummaryIdDP),
+          processId: processId,
+          rawStatus: statusRow.STATUS,
+          estadoProcesso: estadoProcesso,
+          row: statusRow
+        });
+        return;
+      }
+
+      self.applyTaskExecutionSnapshot(taskKey, {
+        process: processId,
+        status: statusLabel,
+        estadoProcesso: estadoProcesso,
+        documentId: documentId,
+        summaryId: self.asText(row.milestoneTaskSummaryIdDP),
+        rowIndex: self.asText(row.__rowIndex)
+      });
+
+      if (self.asText(row.milestoneTaskSummaryStartedDP) !== statusBool) {
+        fieldsToPersist.push({ name: 'milestoneTaskSummaryStartedDP___' + row.__rowIndex, value: statusBool });
+      }
+      if (self.asText(row.milestoneTaskSummaryDocIdDP) !== documentId) {
+        fieldsToPersist.push({ name: 'milestoneTaskSummaryDocIdDP___' + row.__rowIndex, value: documentId });
+      }
+      if (self.asText(row.milestoneTaskSummaryEstProcDP) !== estadoProcesso) {
+        fieldsToPersist.push({ name: 'milestoneTaskSummaryEstProcDP___' + row.__rowIndex, value: estadoProcesso });
+      }
+      if (self.asText(row.milestoneTaskSummaryStatusDP) !== statusLabel) {
+        fieldsToPersist.push({ name: 'milestoneTaskSummaryStatusDP___' + row.__rowIndex, value: statusLabel });
+      }
+      var taskRowIndex = self._state.milestoneTaskRowIndexById[self.asText(row.milestoneTaskSummaryIdDP)] || row.__rowIndex;
+      fieldsToPersist.push({ name: 'milestoneTaskProcessDP___' + taskRowIndex, value: processId });
+      fieldsToPersist.push({ name: 'milestoneTaskDocIdDP___' + taskRowIndex, value: documentId });
+      fieldsToPersist.push({ name: 'milestoneTaskStatusDP___' + taskRowIndex, value: statusLabel });
+      fieldsToPersist.push({ name: 'milestoneTaskStartedDP___' + taskRowIndex, value: statusBool });
+    });
+
+    (this._state.milestones || []).forEach(function (milestone) {
+      milestone.status = self.resolveMilestoneStatus(milestone.tasks, milestone);
+      console.log('[ExecucaoProjeto] Status final do marco', {
+        milestone: milestone.name,
+        period: milestone.period,
+        startDate: milestone.startDate,
+        endDate: milestone.endDate,
+        isTodayWithinPeriod: self.isTodayWithinMilestonePeriod(milestone),
+        tasks: (milestone.tasks || []).map(function (task) {
+          return {
+        taskName: task.taskName,
+        process: task.process,
+            documentId: task.documentId,
+        status: task.status,
+        estadoProcesso: task.estadoProcesso
+          };
+        }),
+        resolvedStatus: milestone.status
+      });
+    });
+
+    if (fieldsToPersist.length) {
+      try {
+        await fluigService.saveDraft({
+          mode: 'updateCardDraft',
+          documentId: this._state.documentId,
+          taskFields: fieldsToPersist
+        });
+      } catch (error) {
+        console.warn('syncMilestoneTaskStatuses persist error:', error);
+      }
+    }
+  },
+
+  applyTaskExecutionSnapshot: function (taskKey, snapshot) {
+    var milestones = this._state.milestones || [];
+    for (var i = 0; i < milestones.length; i++) {
+      var milestone = milestones[i];
+      for (var j = 0; j < milestone.tasks.length; j++) {
+        var task = milestone.tasks[j];
+        var matchesSummaryId = this.asText(snapshot && snapshot.summaryId) && this.asText(task.summaryId) === this.asText(snapshot && snapshot.summaryId);
+        var currentKey = this.buildTaskStatusKey(task.phaseName, milestone.name, task.taskName, this.toIsoDate(task.date));
+        if (!matchesSummaryId && currentKey !== taskKey) continue;
+        task.summaryId = this.firstDefinedValue([snapshot && snapshot.summaryId, task.summaryId]);
+        task.process = this.firstDefinedValue([snapshot && snapshot.process, task.process]);
+        task.documentId = this.firstDefinedValue([snapshot && snapshot.documentId, task.documentId]);
+        task.estadoProcesso = this.firstDefinedValue([snapshot && snapshot.estadoProcesso, task.estadoProcesso]);
+        task.summaryRowIndex = this.firstDefinedValue([snapshot && snapshot.rowIndex, task.summaryRowIndex]);
+        task.status = this.normalizeTaskExecutionStatus(this.firstDefinedValue([snapshot && snapshot.status, task.status]));
+      }
+    }
+  },
+
+  mapDatasetTaskStatus: function (status) {
+    var numericStatus = parseInt(status, 10);
+    if (numericStatus === 2) return 'concluido';
+    if (numericStatus === 1) return 'cancelado';
+    if (numericStatus === 0) return 'em_andamento';
+    return '';
+  },
+
+  selectExecutionDatasetRow: function (rows, processId) {
+    var self = this;
+    var list = Array.isArray(rows) ? rows : [];
+    var normalizedProcessId = this.asText(processId);
+    if (!list.length) return null;
+
+    var exactMatches = list.filter(function (row) {
+      return self.asText(row && row.NUM_PROCES) === normalizedProcessId;
+    });
+    var mappableMatches = exactMatches.filter(function (row) {
+      return !!self.mapDatasetTaskStatus(row && row.STATUS);
+    });
+
+    console.log('[ExecucaoProjeto] Analise das linhas do dataset', {
+      processId: normalizedProcessId,
+      totalRows: list.length,
+      exactMatches: exactMatches.map(function (row) {
+        return {
+          NUM_PROCES: self.asText(row && row.NUM_PROCES),
+          STATUS: self.asText(row && row.STATUS),
+          estadoProcesso: self.asText(row && row.estadoProcesso),
+          documentid: self.asText(row && row.documentid)
+        };
+      }),
+      mappableMatches: mappableMatches.map(function (row) {
+        return {
+          NUM_PROCES: self.asText(row && row.NUM_PROCES),
+          STATUS: self.asText(row && row.STATUS),
+          estadoProcesso: self.asText(row && row.estadoProcesso),
+          documentid: self.asText(row && row.documentid)
+        };
+      })
+    });
+
+    if (mappableMatches.length) return mappableMatches[0];
+    if (exactMatches.length) return exactMatches[0];
+    return list[0];
+  },
+
+  normalizeTaskExecutionStatus: function (status) {
+    var normalized = this.normalizeText(status);
+    if (!normalized) return '';
+    if (normalized.indexOf('conclu') !== -1 || normalized === '2') return 'concluido';
+    if (normalized.indexOf('cancel') !== -1 || normalized === '1') return 'cancelado';
+    if (
+      normalized.indexOf('andamento') !== -1 ||
+      normalized.indexOf('execucao') !== -1 ||
+      normalized.indexOf('validacao_ti') !== -1 ||
+      normalized.indexOf('validacao ti') !== -1 ||
+      normalized.indexOf('validacao_solicitante') !== -1 ||
+      normalized.indexOf('solicitante') !== -1 ||
+      normalized === '0'
+    ) return 'em_andamento';
+    return '';
+  },
+
+  isTodayWithinMilestonePeriod: function (milestone) {
+    var start = this.parseDateValue(milestone && milestone.startDate);
+    var end = this.parseDateValue(milestone && milestone.endDate);
+    if (!start || !end) return false;
+
+    var today = new Date();
+    var normalizedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    return normalizedToday.getTime() >= start.getTime() && normalizedToday.getTime() <= end.getTime();
+  },
+
+  parseDateValue: function (value) {
+    var text = this.asText(value);
+    if (!text) return null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+      var partsIso = text.split('-');
+      return new Date(Number(partsIso[0]), Number(partsIso[1]) - 1, Number(partsIso[2]));
+    }
+    if (/^\d{2}\/\d{2}\/\d{4}$/.test(text)) {
+      var partsBr = text.split('/');
+      return new Date(Number(partsBr[2]), Number(partsBr[1]) - 1, Number(partsBr[0]));
+    }
+    var parsed = new Date(text);
+    if (isNaN(parsed.getTime())) return null;
+    return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+  },
+
+  toIsoDate: function (value) {
+    var date = this.parseDateValue(value);
+    if (!date) return this.asText(value);
+    var year = String(date.getFullYear());
+    var month = String(date.getMonth() + 1).padStart(2, '0');
+    var day = String(date.getDate()).padStart(2, '0');
+    return year + '-' + month + '-' + day;
   },
 
   collectPhaseDependencies: function (phase, tasks, milestones, phaseName) {
@@ -743,35 +1069,72 @@ var projectExecutionController = {
     return tasks && tasks.length ? this.asText(tasks[0].responsible) || 'Não definido' : 'Não definido';
   },
 
-  resolveMilestoneStatus: function (tasks) {
+  resolveMilestoneStatus: function (tasks, milestone) {
     if (!tasks.length) return 'planejado';
-    var doneCount = tasks.filter(function (task) { return task.status === 'concluido'; }).length;
-    if (doneCount === tasks.length) return 'concluido';
-    if (doneCount > 0) return 'em_andamento';
-    return 'planejado';
+
+    var isTodayWithinPeriod = this.isTodayWithinMilestonePeriod(milestone);
+    var startDate = this.parseDateValue(milestone && milestone.startDate);
+    var today = new Date();
+    var normalizedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    if (startDate && startDate.getTime() > normalizedToday.getTime()) return 'planejado';
+
+    var normalizedStatuses = (tasks || []).map(function (task) {
+      return projectExecutionController.normalizeText(task && task.status);
+    });
+    var allCancelled = normalizedStatuses.length > 0 && normalizedStatuses.every(function (status) {
+      return status.indexOf('cancel') !== -1;
+    });
+    var allDone = normalizedStatuses.length > 0 && normalizedStatuses.every(function (status) {
+      return status.indexOf('conclu') !== -1;
+    });
+    if (allCancelled) return 'cancelado';
+    if (allDone) return 'concluido';
+
+    var hasInProgress = normalizedStatuses.some(function (status) {
+      return status.indexOf('andamento') !== -1 || status.indexOf('execucao') !== -1;
+    });
+    if (hasInProgress) return 'em_andamento';
+
+    if (!isTodayWithinPeriod) return 'planejado';
+
+    var hasFinishedActivity = normalizedStatuses.some(function (status) {
+      return status.indexOf('conclu') !== -1 || status.indexOf('cancel') !== -1;
+    });
+    var resolvedStatus = 'em_andamento';
+    console.log('[ExecucaoProjeto] resolveMilestoneStatus', {
+      milestone: milestone && milestone.name,
+      period: milestone && milestone.period,
+      startDate: milestone && milestone.startDate,
+      endDate: milestone && milestone.endDate,
+      normalizedStatuses: normalizedStatuses,
+      allCancelled: allCancelled,
+      allDone: allDone,
+      hasInProgress: hasInProgress,
+      isTodayWithinPeriod: isTodayWithinPeriod,
+      hasFinishedActivity: hasFinishedActivity,
+      resolvedStatus: resolvedStatus
+    });
+    return resolvedStatus;
   },
 
   getMockTaskExecutionStatus: function (index) {
-    if (index === 0) return 'em_execucao';
-    if (index === 1) return 'validacao_ti';
-    if (index === 2) return 'validacao_solicitante';
-    return 'aguardando_execucao';
+    return '';
   },
 
   getMilestoneStatusMeta: function (status) {
     var normalized = this.normalizeText(status);
+    if (normalized.indexOf('cancel') !== -1) return { label: 'Cancelado', badge: 'border-red-200 bg-red-50 text-red-700', icon: 'fa-solid fa-ban text-red-600' };
     if (normalized.indexOf('conclu') !== -1) return { label: 'Concluído', badge: 'border-green-200 bg-green-50 text-green-700', icon: 'fa-solid fa-circle-check text-green-600' };
     if (normalized.indexOf('andamento') !== -1 || normalized.indexOf('execucao') !== -1) return { label: 'Em andamento', badge: 'border-yellow-200 bg-yellow-50 text-yellow-700', icon: 'fa-solid fa-hourglass-half text-yellow-600' };
     return { label: 'Planejado', badge: 'border-gray-200 bg-gray-50 text-gray-700', icon: 'fa-regular fa-circle text-gray-500' };
   },
 
   getTaskExecutionStatusMeta: function (status) {
-    var normalized = this.normalizeText(status);
-    if (normalized.indexOf('conclu') !== -1) return { label: 'Concluído', badge: 'border-green-200 bg-green-50 text-green-700', icon: 'fa-solid fa-circle-check text-green-600' };
-    if (normalized.indexOf('validacao_ti') !== -1 || normalized.indexOf('validacao ti') !== -1) return { label: 'Validação do TI', badge: 'border-indigo-200 bg-indigo-50 text-indigo-700', icon: 'fa-solid fa-shield-halved text-indigo-600' };
-    if (normalized.indexOf('validacao_solicitante') !== -1 || normalized.indexOf('solicitante') !== -1) return { label: 'Validação do Solicitante', badge: 'border-yellow-200 bg-yellow-50 text-yellow-700', icon: 'fa-solid fa-user-check text-yellow-600' };
-    if (normalized.indexOf('execucao') !== -1) return { label: 'Em Execução', badge: 'border-blue-200 bg-blue-50 text-blue-700', icon: 'fa-solid fa-play text-blue-600' };
-    return { label: 'Aguardando Execução', badge: 'border-gray-200 bg-gray-50 text-gray-700', icon: 'fa-regular fa-clock text-gray-500' };
+    var normalized = this.normalizeTaskExecutionStatus(status);
+    if (normalized === 'concluido') return { label: 'Concluído', badge: 'border-green-200 bg-green-50 text-green-700', icon: 'fa-solid fa-circle-check text-green-600' };
+    if (normalized === 'cancelado') return { label: 'Cancelado', badge: 'border-red-200 bg-red-50 text-red-700', icon: 'fa-solid fa-ban text-red-600' };
+    if (normalized === 'em_andamento') return { label: 'Em andamento', badge: 'border-blue-200 bg-blue-50 text-blue-700', icon: 'fa-solid fa-play text-blue-600' };
+    return { label: 'Planejado', badge: 'border-gray-200 bg-gray-50 text-gray-700', icon: 'fa-regular fa-clock text-gray-500' };
   },
 
   toggleTab: function (tabName) {
@@ -944,9 +1307,11 @@ var projectExecutionController = {
   },
 
   collectExecutionTaskFields: function (decisionValue, justificationValue) {
+    var decision = this.asText(decisionValue);
     return [
-      { name: this._executionDecisionField, value: this.asText(decisionValue) },
-      { name: this._executionJustificationField, value: this.asText(justificationValue) }
+      { name: this._executionDecisionField, value: decision },
+      { name: this._executionJustificationField, value: this.asText(justificationValue) },
+      { name: this._executionCorrectionField, value: decision === 'correcao' ? 'true' : 'false' }
     ];
   },
 
@@ -992,14 +1357,100 @@ var projectExecutionController = {
         row.milestoneTaskSummaryTextDP,
         row.milestoneTaskSummaryDueDateDP
       );
+      var summaryId = self.asText(row.milestoneTaskSummaryIdDP);
       var started = self.normalizeText(row.milestoneTaskSummaryStartedDP);
-      map[key] = started === 'true' || started === '1' || started === 'sim' || started === 'yes';
+      var snapshot = {
+        rowIndex: self.asText(row.__rowIndex),
+        summaryId: summaryId,
+        process: self.asText(row.milestoneTaskSummaryProcessDP),
+        documentId: self.asText(row.milestoneTaskSummaryDocIdDP),
+        estadoProcesso: self.asText(row.milestoneTaskSummaryEstProcDP),
+        started: started === 'true' || started === '1' || started === 'sim' || started === 'yes',
+        status: self.normalizeTaskExecutionStatus(row.milestoneTaskSummaryStatusDP)
+      };
+      map[key] = snapshot;
+      if (summaryId) {
+        map['summaryId::' + summaryId] = snapshot;
+      }
     });
     return map;
   },
 
+  extractMilestoneTaskSummaryRows: function (row) {
+    var indexedRows = this.extractIndexedRows(row, [
+      'milestoneTaskSummaryIdDP',
+      'milestoneTaskSummaryTextDP',
+      'milestoneTaskSummaryDueDateDP',
+      'milestoneTaskSummaryPhaseDP',
+      'milestoneTaskSummaryMarcoDP',
+      'milestoneTaskSummaryProcessDP',
+      'milestoneTaskSummaryDocIdDP',
+      'milestoneTaskSummaryEstProcDP',
+      'milestoneTaskSummaryStatusDP',
+      'milestoneTaskSummaryStartedDP'
+    ]);
+    if (indexedRows.length) {
+      console.warn('[ExecucaoProjeto] Milestone summary carregada por campos indexados', {
+        count: indexedRows.length
+      });
+      return indexedRows;
+    }
+
+    var tableRows = this.parseJson(this.getValIgnoreCase(row, 'tblMilestoneTasksSummaryDP'));
+    if (!Array.isArray(tableRows) || !tableRows.length) {
+      console.warn('[ExecucaoProjeto] Milestone summary nao encontrada nem em campos indexados nem em tblMilestoneTasksSummaryDP');
+      return [];
+    }
+
+    var normalizedRows = tableRows.map(function (item, index) {
+      return {
+        __rowIndex: String(index + 1),
+        milestoneTaskSummaryIdDP: item.milestoneTaskSummaryIdDP,
+        milestoneTaskSummaryTextDP: item.milestoneTaskSummaryTextDP,
+        milestoneTaskSummaryDueDateDP: item.milestoneTaskSummaryDueDateDP,
+        milestoneTaskSummaryPhaseDP: item.milestoneTaskSummaryPhaseDP,
+        milestoneTaskSummaryMarcoDP: item.milestoneTaskSummaryMarcoDP,
+        milestoneTaskSummaryProcessDP: item.milestoneTaskSummaryProcessDP,
+        milestoneTaskSummaryDocIdDP: item.milestoneTaskSummaryDocIdDP,
+        milestoneTaskSummaryEstProcDP: item.milestoneTaskSummaryEstProcDP,
+        milestoneTaskSummaryStatusDP: item.milestoneTaskSummaryStatusDP,
+        milestoneTaskSummaryStartedDP: item.milestoneTaskSummaryStartedDP
+      };
+    });
+
+    console.warn('[ExecucaoProjeto] Milestone summary carregada por tblMilestoneTasksSummaryDP', {
+      count: normalizedRows.length,
+      rows: normalizedRows
+    });
+    return normalizedRows;
+  },
+
+  extractMilestoneTaskRowIndexById: function (row) {
+    var map = {};
+    var indexedRows = this.extractIndexedRows(row, ['milestoneTaskIdDP']);
+    if (indexedRows.length) {
+      indexedRows.forEach(function (item) {
+        if (item.milestoneTaskIdDP) map[String(item.milestoneTaskIdDP)] = String(item.__rowIndex);
+      });
+      return map;
+    }
+
+    var tableRows = this.parseJson(this.getValIgnoreCase(row, 'tblMilestoneTasksDP'));
+    if (Array.isArray(tableRows)) {
+      tableRows.forEach(function (item, index) {
+        if (item && item.milestoneTaskIdDP) map[String(item.milestoneTaskIdDP)] = String(index + 1);
+      });
+    }
+    return map;
+  },
+
   buildTaskStatusKey: function (phaseName, milestoneName, taskName, dueDate) {
-    return [this.normalizeText(phaseName), this.normalizeText(milestoneName), this.normalizeText(taskName), this.normalizeText(dueDate)].join('||');
+    return [
+      this.normalizeText(phaseName),
+      this.normalizeText(milestoneName),
+      this.normalizeText(taskName),
+      this.normalizeText(this.toIsoDate(dueDate))
+    ].join('||');
   },
 
   extractIndexedRows: function (row, fieldNames) {
@@ -1021,6 +1472,7 @@ var projectExecutionController = {
     return Object.keys(grouped).sort(function (a, b) {
       return parseInt(a, 10) - parseInt(b, 10);
     }).map(function (index) {
+      grouped[index].__rowIndex = index;
       return grouped[index];
     });
   },
@@ -1115,7 +1567,7 @@ var projectExecutionController = {
       var iconClass = type === 'error' ? 'fa-solid fa-circle-xmark text-red-600' : type === 'success' ? 'fa-solid fa-circle-check text-emerald-600' : 'fa-solid fa-circle-info text-blue-600';
       var borderClass = type === 'error' ? 'border-red-500' : type === 'success' ? 'border-emerald-500' : 'border-blue-500';
       $('#toast-icon').attr('class', iconClass + ' text-xl');
-      $('#toast-title').text(type === 'error' ? 'Atenção' : 'Informação');
+      $('#toast-title').text(type === 'error' ? 'Aten\u00e7\u00e3o' : 'Informa\u00e7\u00e3o');
       $('#toast-message').text(message);
       toast.attr('class', 'fixed top-24 right-4 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl ' + borderClass);
       window.clearTimeout(window.__projectExecutionToastTimeout);

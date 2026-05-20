@@ -358,6 +358,38 @@ var fluigService = {
         return isNaN(parsed) ? null : parsed;
     },
 
+    resolveProjectProcessActivity: function (processType, estadoProcesso, statusValue) {
+        var activity = this.parseProjectProcessActivity(estadoProcesso);
+        var normalizedType = this.detectProjectProcessType(processType);
+        var statusText = this.asTrimmedString(statusValue);
+
+        if (activity === null && normalizedType === 'desenvolvimento' && statusText === '2') {
+            return 38;
+        }
+
+        return activity;
+    },
+
+    ensureProjectProcessFields: function (processType, fields) {
+        if (!Array.isArray(fields) || !fields.length) {
+            return fields;
+        }
+
+        var normalizedType = this.detectProjectProcessType(processType);
+        if (normalizedType !== 'desenvolvimento') {
+            return fields;
+        }
+
+        var finalFields = fields.slice();
+        ['documentid', 'estadoProcesso', 'STATUS'].forEach(function (fieldName) {
+            if (finalFields.indexOf(fieldName) === -1) {
+                finalFields.push(fieldName);
+            }
+        });
+
+        return finalFields;
+    },
+
     buildProjectProcessContext: function (processType, row, extras) {
         var definition = this.getProjectProcessDefinition(processType);
         var finalRow = row && typeof row === 'object' ? row : {};
@@ -365,9 +397,12 @@ var fluigService = {
         var rawState = finalExtras.estadoProcesso !== undefined
             ? finalExtras.estadoProcesso
             : finalRow.estadoProcesso;
+        var rawStatus = finalExtras.STATUS !== undefined
+            ? finalExtras.STATUS
+            : (finalExtras.status !== undefined ? finalExtras.status : (finalRow.STATUS !== undefined ? finalRow.STATUS : finalRow.status));
         var activity = finalExtras.activity !== undefined
             ? finalExtras.activity
-            : this.parseProjectProcessActivity(rawState);
+            : this.resolveProjectProcessActivity(processType, rawState, rawStatus);
 
         return Object.assign({}, finalRow, finalExtras, {
             processType: definition ? definition.type : this.detectProjectProcessType(processType),
@@ -404,6 +439,11 @@ var fluigService = {
                     route: 'dpGlpiErrorTreatment',
                     label: 'Tratar Erro GLPI'
                 },
+                52: {
+                    enabled: true,
+                    route: 'dpGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
                 47: {
                  enabled: true,
                  route: 'dpStartExecErrorTreatment',
@@ -414,6 +454,21 @@ var fluigService = {
                  enabled: true,
                  route: 'projectExecution', // Aponta para a chave criada no router
                  label: 'Executar Projeto'
+                 },
+                 23: {
+                 enabled: true,
+                 route: 'projectRequesterValidation',
+                 label: 'Validar Projeto'
+                 },
+                 32: {
+                 enabled: true,
+                 route: 'projectTiValidation',
+                 label: 'Validar Projeto TI'
+                 },
+                 38: {
+                 enabled: true,
+                 route: 'projectFinal',
+                 label: 'Visualizar Encerramento'
                  }
             };
         }
@@ -496,7 +551,13 @@ var fluigService = {
                 4: 'Planejamento do Projeto',
                 14: 'Aguardando Planejamento do Projeto',
                 18: 'Execução do Projeto',
+                23: 'Validacao do Solicitante',
+                25: 'Aguardando Encaminhamento da Validacao do Solicitante',
+                32: 'Validacao TI',
+                34: 'Aguardando Encaminhamento da Validacao TI',
+                38: 'Execucao de Projeto Finalizada',
                 46: 'Erro de Integracao GLPI',
+                52: 'Erro de Integracao GLPI',
                 72: 'Finalizado'
             };
         }
@@ -600,7 +661,12 @@ var fluigService = {
                 return;
             }
 
-            self.getDatasetRows(definition.datasetId, options || {})
+            var finalOptions = options && typeof options === 'object'
+                ? Object.assign({}, options)
+                : {};
+            finalOptions.fields = self.ensureProjectProcessFields(definition.type, finalOptions.fields);
+
+            self.getDatasetRows(definition.datasetId, finalOptions)
                 .then(function (rows) {
                     resolve((rows || []).map(function (row) {
                         return self.buildProjectProcessContext(definition.type, row);
