@@ -959,7 +959,76 @@
 
 	<input type="hidden" name="decisaoExecucaoAtividade" id="decisaoExecucaoAtividade"/>
 	<input type="hidden" name="validacaoSolicitante" id="validacaoSolicitante"/>
+	<input type="hidden" name="validacaoSolicitanteComentario" id="validacaoSolicitanteComentario"/>
+	<input type="hidden" name="validacaoSolicitanteDescricao" id="validacaoSolicitanteDescricao"/>
+	<input type="hidden" name="validacaoSolicitanteCategoria" id="validacaoSolicitanteCategoria"/>
+	<input type="hidden" name="validacaoSolicitanteChecklist" id="validacaoSolicitanteChecklist"/>
+	<input type="hidden" name="validacaoSolicitanteLiConcordo" id="validacaoSolicitanteLiConcordo" value="false"/>
+	<input type="hidden" name="validacaoSolicitanteHistJson" id="validacaoSolicitanteHistJson" value="[]"/>
+
+	<label>Historico Validacao Solicitante EF</label>
+	<table class="table table-bordered" id="tblRequesterValidationHistoryEF" tablename="tblRequesterValidationHistoryEF" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Decisao</th>
+				<th>Comentario</th>
+				<th>Descricao</th>
+				<th>Categoria</th>
+				<th>Usuario Id</th>
+				<th>Usuario Nome</th>
+				<th>Criado Em</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="requesterValidationIdEF" class="form-control"></td>
+				<td><input type="text" name="requesterValidationDecisionEF" class="form-control"></td>
+				<td><input type="text" name="requesterValidationCommentEF" class="form-control"></td>
+				<td><input type="text" name="requesterValidationDescriptionEF" class="form-control"></td>
+				<td><input type="text" name="requesterValidationCategoryEF" class="form-control"></td>
+				<td><input type="text" name="requesterValidationUserIdEF" class="form-control"></td>
+				<td><input type="text" name="requesterValidationUserNameEF" class="form-control"></td>
+				<td><input type="text" name="requesterValidationCreatedAtEF" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
 	<input type="hidden" name="decisaoTiValidacaoAtividade" id="decisaoTiValidacaoAtividade"/>
+	<input type="hidden" name="validacaoTiComentarioAtividade" id="validacaoTiComentarioAtividade"/>
+	<input type="hidden" name="validacaoTiDescricaoAtividade" id="validacaoTiDescricaoAtividade"/>
+	<input type="hidden" name="validacaoTiCategoriaAtividade" id="validacaoTiCategoriaAtividade"/>
+	<input type="hidden" name="validacaoTiChecklistAtividade" id="validacaoTiChecklistAtividade"/>
+	<input type="hidden" name="validacaoTiLiConcordoAtividade" id="validacaoTiLiConcordoAtividade" value="false"/>
+
+	<label>Historico Validacao TI EF</label>
+	<table class="table table-bordered" id="tblTiValidationHistoryEF" tablename="tblTiValidationHistoryEF" noaddbutton="true" nodeletebutton="true">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>Decisao</th>
+				<th>Comentario</th>
+				<th>Descricao</th>
+				<th>Categoria</th>
+				<th>Usuario Id</th>
+				<th>Usuario Nome</th>
+				<th>Criado Em</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td><input type="text" name="tiValidationIdEF" class="form-control"></td>
+				<td><input type="text" name="tiValidationDecisionEF" class="form-control"></td>
+				<td><input type="text" name="tiValidationCommentEF" class="form-control"></td>
+				<td><input type="text" name="tiValidationDescriptionEF" class="form-control"></td>
+				<td><input type="text" name="tiValidationCategoryEF" class="form-control"></td>
+				<td><input type="text" name="tiValidationUserIdEF" class="form-control"></td>
+				<td><input type="text" name="tiValidationUserNameEF" class="form-control"></td>
+				<td><input type="text" name="tiValidationCreatedAtEF" class="form-control"></td>
+			</tr>
+		</tbody>
+	</table>
+
 	<input type="hidden" name="idGLPIAtividade" id="idGLPIAtividade"/>
 	<input type="hidden" name="statusIntegracaoGLPIAtividade" id="statusIntegracaoGLPIAtividade"/>
 	<input type="hidden" name="mensagemErroGLPIAtividade" id="mensagemErroGLPIAtividade"/>

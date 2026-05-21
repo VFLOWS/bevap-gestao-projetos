@@ -158,6 +158,18 @@ const router = {
           breadcrumb: ['Execucao de Fases', 'Execucao da Atividade'],
           handler: () => executionActivityController.load(params)
         },
+        executionActivityRequesterValidation: {
+          controller: executionActivityRequesterValidationController,
+          title: 'Solicitante - Validacao da Atividade',
+          breadcrumb: ['Execucao de Fases', 'Validacao do Solicitante'],
+          handler: () => executionActivityRequesterValidationController.load(params)
+        },
+        executionActivityTiValidation: {
+          controller: executionActivityTiValidationController,
+          title: 'TI - Validacao da Atividade',
+          breadcrumb: ['Execucao de Fases', 'Validacao TI'],
+          handler: () => executionActivityTiValidationController.load(params)
+        },
         requesterProposalApproval: {
           controller: requesterProposalApprovalController,
           title: 'Solicitante - Aprovar Proposta Comercial',

@@ -50,10 +50,12 @@ application.resource.js.33=/resources/js/controllers/desenvolvimento-projetos/dp
 application.resource.js.34=/resources/js/controllers/desenvolvimento-projetos/dp-startExecErrorTreatmentController.js
 application.resource.js.35=/resources/js/controllers/execucao-fases/executionActivityWaitingController.js
 application.resource.js.36=/resources/js/controllers/execucao-fases/executionActivityController.js
+application.resource.js.37=/resources/js/controllers/execucao-fases/executionActivityRequesterValidationController.js
+application.resource.js.38=/resources/js/controllers/execucao-fases/executionActivityTiValidationController.js
 
-application.resource.js.37=/resources/js/controllers/desenvolvimento-projetos/projectExecutionController.js
-application.resource.js.38=/resources/js/controllers/desenvolvimento-projetos/projectValidationControllers.js
-application.resource.js.39=/resources/js/controllers/desenvolvimento-projetos/projectFinalController.js
+application.resource.js.39=/resources/js/controllers/desenvolvimento-projetos/projectExecutionController.js
+application.resource.js.40=/resources/js/controllers/desenvolvimento-projetos/projectValidationControllers.js
+application.resource.js.41=/resources/js/controllers/desenvolvimento-projetos/projectFinalController.js
 
 application.resource.images.32=/resources/images/logoBevap.png
 application.resource.css.2=/resources/css/wdGestaoProjetos.css

@@ -627,7 +627,9 @@ const executionActivityController = {
       this.setLoading(true, 'Enviando para validacao...');
       await this.waitForUiTick();
 
-      const taskFields = this.collectExecutionTaskFields(this._state.entries);
+      const taskFields = this.collectExecutionTaskFields(this._state.entries, {
+        decision: 'concluido'
+      });
       const attachments = await this.collectAttachmentsPayload();
 
       await fluigService.saveAndSendTask({
@@ -653,9 +655,13 @@ const executionActivityController = {
     }
   },
 
-  collectExecutionTaskFields(entries) {
+  collectExecutionTaskFields(entries, options = {}) {
     const fields = [];
     const indexedEntries = this.assignRowIndexes(entries);
+
+    if (this.asText(options.decision)) {
+      fields.push({ name: 'decisaoExecucaoAtividade', value: this.asText(options.decision) });
+    }
 
     indexedEntries.forEach((entry) => {
       const idx = entry.rowIndex;
