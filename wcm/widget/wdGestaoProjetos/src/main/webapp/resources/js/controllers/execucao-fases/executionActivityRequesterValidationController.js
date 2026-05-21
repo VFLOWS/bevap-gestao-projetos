@@ -73,27 +73,28 @@ const executionActivityRequesterValidationController = {
     $(document).on(`click${ns}`, '[data-action="close-requester-modal"]', () => this.closeModal());
     $(document).on(`click${ns}`, '[data-action="confirm-approve-requester"]', () => this.submitDecision({
       decision: 'validado',
-      successMessage: 'Atividade validada e enviada para a validacao tecnica.',
+      requireAgreement: true,
+      successMessage: 'Atividade validada e enviada para a validação técnica.',
       comments: 'Atividade validada pelo solicitante via Widget'
     }));
     $(document).on(`click${ns}`, '[data-action="confirm-return-corrections"]', () => this.submitDecision({
       decision: 'correcao',
       descriptionSelector: '#return-reason',
-      successMessage: 'Atividade devolvida para correcao.',
-      comments: 'Atividade devolvida para correcao pelo solicitante via Widget'
+      successMessage: 'Atividade devolvida para correção.',
+      comments: 'Atividade devolvida para correção pelo solicitante via Widget'
     }));
     $(document).on(`click${ns}`, '[data-action="confirm-stop-flow"]', () => this.submitDecision({
       decision: 'nao_continuidade',
       descriptionSelector: '#discontinue-reason',
       categorySelector: '#discontinue-category',
-      successMessage: 'Nao continuidade registrada.',
-      comments: 'Nao continuidade da atividade registrada pelo solicitante via Widget'
+      successMessage: 'Não continuidade registrada.',
+      comments: 'Não continuidade da atividade registrada pelo solicitante via Widget'
     }));
   },
 
   async loadCard() {
     try {
-      this.setLoading(true, 'Carregando validacao do solicitante...');
+      this.setLoading(true, 'Carregando validação do solicitante...');
       await this.resolveContextIds();
 
       const rows = await fluigService.getDatasetRows(this._datasetId, {
@@ -105,7 +106,7 @@ const executionActivityRequesterValidationController = {
       });
       const card = Array.isArray(rows) ? rows[0] : rows;
       if (!card) {
-        this.renderError('Card nao encontrado para a atividade informada.');
+        this.renderError('Card não encontrado para a atividade informada.');
         return;
       }
 
@@ -115,8 +116,8 @@ const executionActivityRequesterValidationController = {
       this._state.requesterHistory = this.parseRequesterValidationHistory(card);
       this.render();
     } catch (error) {
-      console.error('Erro ao carregar validacao do solicitante:', error);
-      this.renderError(error && error.message ? error.message : 'Nao foi possivel carregar a validacao.');
+      console.error('Erro ao carregar validação do solicitante:', error);
+      this.renderError(error && error.message ? error.message : 'Não foi possível carregar a validação.');
     } finally {
       this.setLoading(false);
     }
@@ -205,10 +206,10 @@ const executionActivityRequesterValidationController = {
       state.processInstanceId = this.normalizeId(await fluigService.resolveProcessInstanceIdByDocumentId(state.documentId));
     }
     if (!state.documentId) {
-      throw new Error('Nao foi possivel localizar o documentId do card da atividade.');
+      throw new Error('Não foi possível localizar o documentId do card da atividade.');
     }
     if (!state.processInstanceId) {
-      throw new Error('Nao foi possivel localizar o processInstanceId da atividade.');
+      throw new Error('Não foi possível localizar o processInstanceId da atividade.');
     }
   },
 
@@ -251,7 +252,7 @@ const executionActivityRequesterValidationController = {
   render() {
     const card = this._state.card || {};
     this.setText('#ef-req-activity-name', card.activity || 'Atividade sem nome informado');
-    this.setText('#ef-req-responsible', card.activityResponsible || 'Nao informado');
+    this.setText('#ef-req-responsible', card.activityResponsible || 'Não informado');
     this.setText('#ef-req-due-date', this.formatDate(card.dueDate) || '-');
     this.setText('#ef-req-phase-name', card.phase || '-');
     this.setText('#ef-req-phase-responsible', card.phaseResponsible || '-');
@@ -267,7 +268,7 @@ const executionActivityRequesterValidationController = {
     this.setText('#ef-req-project-priority', card.projectPriority || '-');
     this.setText('#ef-req-project-requester', card.requesterName || '-');
     this.setText('#ef-req-project-responsible', card.activityResponsible || card.phaseResponsible || '-');
-    $('#requester-feedback-text').val(card.requesterComment || '');
+    $('#requester-feedback-text').val('');
     $('#requester-agreement-checkbox').prop('checked', !!card.requesterAgreement);
 
     $('#ef-req-responsible-badge').toggleClass('hidden', !this.asText(card.activityResponsible));
@@ -312,7 +313,7 @@ const executionActivityRequesterValidationController = {
     const list = $('#requester-entry-history');
     const activeEntries = this.getActiveEntries(this._state.entries);
     if (!activeEntries.length) {
-      list.html('<div class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-500">Nenhum lancamento registrado.</div>');
+      list.html('<div class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-500">Nenhum lançamento registrado.</div>');
       return;
     }
     list.html(activeEntries.map((entry) => this.getEntryMarkup(entry)).join(''));
@@ -327,7 +328,7 @@ const executionActivityRequesterValidationController = {
           <div class="flex items-center gap-3">
             <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">${this.escapeHtml(initials)}</span>
             <div>
-              <div class="font-semibold leading-5 text-bevap-navy">${this.escapeHtml(entry.authorName || 'Usuario')}</div>
+              <div class="font-semibold leading-5 text-bevap-navy">${this.escapeHtml(entry.authorName || 'Usuário')}</div>
               <div class="mt-1 text-xs text-gray-500">${this.escapeHtml(this.formatDate(entry.date))} ${this.escapeHtml(entry.start)} - ${this.escapeHtml(entry.end)}</div>
             </div>
           </div>
@@ -336,7 +337,7 @@ const executionActivityRequesterValidationController = {
             <span class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">${this.escapeHtml(this.formatDateTime(entry.updatedAt || entry.createdAt) || '-')}</span>
           </div>
         </div>
-        <p class="mt-2 text-sm text-gray-700">${this.escapeHtml(entry.comment || 'Sem comentario.')}</p>
+        <p class="mt-2 text-sm text-gray-700">${this.escapeHtml(entry.comment || 'Sem comentário.')}</p>
       </div>
     `;
   },
@@ -399,7 +400,7 @@ const executionActivityRequesterValidationController = {
 
   getHistoryMarkup(entry) {
     const decision = this.asText(entry && entry.decision);
-    const label = decision === 'validado' ? 'Validado' : decision === 'correcao' ? 'Devolvido para correcao' : decision === 'nao_continuidade' ? 'Nao continuidade' : 'Registro';
+    const label = decision === 'validado' ? 'Validado' : decision === 'correcao' ? 'Devolvido para correção' : decision === 'nao_continuidade' ? 'Não continuidade' : 'Registro';
     const badge = decision === 'validado'
       ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
       : decision === 'correcao'
@@ -409,12 +410,12 @@ const executionActivityRequesterValidationController = {
       <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <div class="font-semibold text-bevap-navy">${this.escapeHtml(entry.userName || 'Usuario')}</div>
+            <div class="font-semibold text-bevap-navy">${this.escapeHtml(entry.userName || 'Usuário')}</div>
             <div class="mt-1 text-xs text-gray-500">${this.escapeHtml(this.formatDateTime(entry.createdAt) || '-')}</div>
           </div>
           <span class="inline-flex w-fit items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${badge}">${this.escapeHtml(label)}</span>
         </div>
-        <p class="mt-2 text-sm text-gray-700">${this.escapeHtml(entry.comment || entry.description || 'Sem observacoes.')}</p>
+        <p class="mt-2 text-sm text-gray-700">${this.escapeHtml(entry.comment || entry.description || 'Sem observações.')}</p>
       </div>
     `;
   },
@@ -465,7 +466,7 @@ const executionActivityRequesterValidationController = {
   openApproveModal() {
     this.openConfirmModal({
       title: 'Validar Atividade',
-      body: 'Confirma o envio da atividade para a validacao tecnica da TI?',
+      body: 'Confirma o envio da atividade para a validação técnica da TI?',
       confirmAction: 'confirm-approve-requester',
       confirmLabel: 'Confirmar',
       confirmClass: 'bg-bevap-green hover:bg-green-700'
@@ -476,9 +477,9 @@ const executionActivityRequesterValidationController = {
     $('#modal-root').html(`
       <div id="requester-modal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/50 p-4">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-          <h3 class="text-xl font-bold text-bevap-navy">Devolver para Correcao</h3>
-          <p class="mt-3 text-sm text-gray-600">Descreva os pontos que precisam ser corrigidos antes de uma nova validacao.</p>
-          <textarea id="return-reason" rows="4" placeholder="Motivo da devolucao..." class="mt-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+          <h3 class="text-xl font-bold text-bevap-navy">Devolver para Correção</h3>
+          <p class="mt-3 text-sm text-gray-600">Descreva os pontos que precisam ser corrigidos antes de uma nova validação.</p>
+          <textarea id="return-reason" rows="4" placeholder="Motivo da devolução..." class="mt-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
           <div class="mt-6 flex justify-end gap-3">
             <button type="button" data-action="close-requester-modal" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">Cancelar</button>
             <button type="button" data-action="confirm-return-corrections" class="rounded-lg bg-yellow-500 px-4 py-2 font-medium text-white hover:bg-yellow-600">Devolver</button>
@@ -492,17 +493,17 @@ const executionActivityRequesterValidationController = {
     $('#modal-root').html(`
       <div id="requester-modal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/50 p-4">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-          <h3 class="text-xl font-bold text-bevap-navy">Nao Continuidade da Atividade</h3>
+          <h3 class="text-xl font-bold text-bevap-navy">Não Continuidade da Atividade</h3>
           <p class="mt-3 text-sm text-gray-600">Informe categoria e justificativa para encerrar a atividade.</p>
           <select id="discontinue-category" class="mt-4 w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-red-500">
             <option value="">Selecione a categoria</option>
             <option value="escopo">Escopo</option>
             <option value="prioridade">Prioridade</option>
-            <option value="recurso">Recurso indisponivel</option>
-            <option value="tecnica">Inviabilidade tecnica</option>
+            <option value="recurso">Recurso indisponível</option>
+            <option value="tecnica">Inviabilidade técnica</option>
             <option value="outros">Outros</option>
           </select>
-          <textarea id="discontinue-reason" rows="4" placeholder="Descricao detalhada..." class="mt-3 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-red-500"></textarea>
+          <textarea id="discontinue-reason" rows="4" placeholder="Descrição detalhada..." class="mt-3 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-red-500"></textarea>
           <div class="mt-6 flex justify-end gap-3">
             <button type="button" data-action="close-requester-modal" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">Cancelar</button>
             <button type="button" data-action="confirm-stop-flow" class="rounded-lg bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700">Confirmar</button>
@@ -539,11 +540,12 @@ const executionActivityRequesterValidationController = {
       description: this.asText($(config.descriptionSelector || '').val()),
       category: this.asText($(config.categorySelector || '').val()),
       requireDescription: !!config.descriptionSelector,
-      requireCategory: !!config.categorySelector
+      requireCategory: !!config.categorySelector,
+      requireAgreement: !!config.requireAgreement
     });
     if (!validation.valid) {
-      this.showToast('Validacao pendente', validation.message, 'error');
-      if (!validation.agreementOk) this.toggleTab('checklist');
+      this.showToast('Validação pendente', validation.message, 'error');
+      if (config.requireAgreement && !validation.agreementOk) this.toggleTab('checklist');
       return;
     }
 
@@ -571,13 +573,13 @@ const executionActivityRequesterValidationController = {
       }, taskFields);
 
       this.closeModal();
-      this.showToast('Sucesso', this.asText(config.successMessage) || 'Movimentacao realizada.', 'success');
+      this.showToast('Sucesso', this.asText(config.successMessage) || 'Movimentação realizada.', 'success');
       setTimeout(() => {
         window.location.hash = '#dashboard';
       }, 900);
     } catch (error) {
-      console.error('Erro ao movimentar validacao do solicitante:', error);
-      this.showToast('Erro ao movimentar', error && error.message ? error.message : 'Nao foi possivel movimentar a atividade.', 'error');
+      console.error('Erro ao movimentar validação do solicitante:', error);
+      this.showToast('Erro ao movimentar', error && error.message ? error.message : 'Não foi possível movimentar a atividade.', 'error');
     } finally {
       this._state.isSubmitting = false;
       this.setActionButtonsState(false);
@@ -589,8 +591,8 @@ const executionActivityRequesterValidationController = {
     const agreementOk = !!(input && input.agreement);
     const description = this.asText(input && input.description);
     const category = this.asText(input && input.category);
-    if (!agreementOk) {
-      return { valid: false, agreementOk: false, message: 'Marque a confirmacao do solicitante antes de continuar.', description, category };
+    if (input && input.requireAgreement && !agreementOk) {
+      return { valid: false, agreementOk: false, message: 'Marque a confirmação do solicitante antes de continuar.', description, category };
     }
     if (input && input.requireCategory && !category) {
       return { valid: false, agreementOk: true, message: 'Selecione a categoria.', description, category };
@@ -1102,7 +1104,7 @@ const executionActivityRequesterValidationController = {
 
   getCurrentUserName() {
     if (typeof WCMAPI !== 'undefined' && WCMAPI.getUser) return this.asText(WCMAPI.getUser());
-    return 'Usuario';
+    return 'Usuário';
   },
 
   updateTabArrows() {

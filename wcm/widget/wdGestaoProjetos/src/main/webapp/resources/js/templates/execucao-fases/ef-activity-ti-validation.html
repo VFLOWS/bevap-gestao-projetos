@@ -16,7 +16,7 @@
     <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
       <div class="space-y-6 lg:col-span-2">
         <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4">
-          <p class="text-sm leading-6 text-gray-700">Realize a validacao tecnica da atividade executada, conferindo a entrega, os anexos, as evidencias e os registros recebidos do solicitante antes de decidir pela devolucao para correcoes ou pela nao continuidade.</p>
+          <p class="text-sm leading-6 text-gray-700">Realize a validação técnica da atividade executada, conferindo a entrega, os anexos, as evidências e os registros recebidos do solicitante antes de decidir pela devolução para correções ou pela não continuidade.</p>
         </div>
 
         <section class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm">
@@ -33,14 +33,14 @@
                   </div>
                 </div>
                 <div id="ef-ti-effort-badge" class="hidden shrink-0 rounded-xl border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-bold text-blue-800">
-                  Esforco: <span id="ef-ti-estimated-effort">-</span>
+                  Esforço: <span id="ef-ti-estimated-effort">-</span>
                 </div>
               </div>
 
               <div class="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 text-[13px] text-gray-600">
                 <span id="ef-ti-responsible-badge" class="hidden shrink-0 whitespace-nowrap rounded-full bg-blue-700 px-3 py-1.5 font-bold text-white">
                   <i class="fa-solid fa-user mr-1 text-blue-100" aria-hidden="true"></i>
-                  Responsavel: <span id="ef-ti-responsible">-</span>
+                  Responsável: <span id="ef-ti-responsible">-</span>
                 </span>
                 <span class="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-red-600 px-3 py-1.5 font-bold text-white">
                   <i class="fa-solid fa-calendar-alt mr-1 text-red-100" aria-hidden="true"></i>
@@ -54,7 +54,7 @@
                     <i class="fa-solid fa-flag-checkered text-xs" aria-hidden="true"></i>
                   </span>
                   <span class="font-medium">Marco: <span id="ef-ti-milestone-name">-</span></span>
-                  <span id="ef-ti-milestone-period-row" class="hidden font-medium text-gray-700">Periodo do Marco: <span id="ef-ti-milestone-period">-</span></span>
+                  <span id="ef-ti-milestone-period-row" class="hidden font-medium text-gray-700">Período do Marco: <span id="ef-ti-milestone-period">-</span></span>
                 </div>
                 <div class="mt-3 flex items-center justify-between gap-4 rounded-xl bg-emerald-300 px-3 py-2">
                   <div class="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
@@ -66,17 +66,17 @@
                       <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-gray-700">
                         <i class="fa-solid fa-user text-xs" aria-hidden="true"></i>
                       </span>
-                      <span class="font-medium">Responsavel da Fase: <span id="ef-ti-phase-responsible">-</span></span>
+                      <span class="font-medium">Responsável da Fase: <span id="ef-ti-phase-responsible">-</span></span>
                     </span>
                   </div>
-                  <span id="ef-ti-phase-effort-row" class="hidden shrink-0 text-sm font-medium text-gray-700">Esforco: <span id="ef-ti-phase-effort">-</span></span>
+                  <span id="ef-ti-phase-effort-row" class="hidden shrink-0 text-sm font-medium text-gray-700">Esforço: <span id="ef-ti-phase-effort">-</span></span>
                 </div>
                 <div id="ef-ti-dependencies-block" class="hidden mt-3 rounded-xl border border-yellow-300 bg-yellow-100 px-3 py-3 text-gray-700">
                   <div class="flex items-center gap-3">
                     <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-yellow-400 text-gray-700">
                       <i class="fa-solid fa-link text-xs" aria-hidden="true"></i>
                     </span>
-                    <span class="font-medium">Dependencia da Atividade</span>
+                    <span class="font-medium">Dependência da Atividade</span>
                   </div>
                   <div id="ef-ti-dependencies-list" class="mt-3 space-y-2 pl-10"></div>
                 </div>
@@ -90,13 +90,13 @@
             <div class="relative">
               <div id="ti-panel-tabs-scroll" class="flex overflow-x-auto scroll-smooth pl-14 pr-14 md:pl-0 md:pr-2">
                 <button type="button" id="tab-ti-detail" class="whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
-                  <i class="fa-solid fa-clipboard-check mr-2" aria-hidden="true"></i>Execucao da Atividade
+                  <i class="fa-solid fa-clipboard-check mr-2" aria-hidden="true"></i>Execução da Atividade
                 </button>
                 <button type="button" id="tab-ti-requester" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
-                  <i class="fa-solid fa-user-check mr-2" aria-hidden="true"></i>Validacao do Solicitante
+                  <i class="fa-solid fa-user-check mr-2" aria-hidden="true"></i>Validação do Solicitante
                 </button>
                 <button type="button" id="tab-ti-history" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
-                  <i class="fa-solid fa-clock-rotate-left mr-2" aria-hidden="true"></i>Historico TI
+                  <i class="fa-solid fa-clock-rotate-left mr-2" aria-hidden="true"></i>Histórico TI
                 </button>
                 <button type="button" id="tab-ti-checklist" class="relative whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                   <span id="ti-checklist-notice" class="absolute right-2 top-2 flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-white ring-2 ring-white">
@@ -125,21 +125,21 @@
                     <i class="fa-regular fa-clock text-base" aria-hidden="true"></i>
                   </span>
                   <div>
-                    <h3 class="text-sm font-semibold text-gray-900">Historico de Lancamentos</h3>
-                    <p class="text-xs text-gray-500">Consulte os registros de tempo e comentarios realizados durante a execucao da atividade.</p>
+                    <h3 class="text-sm font-semibold text-gray-900">Histórico de Lançamentos</h3>
+                    <p class="text-xs text-gray-500">Consulte os registros de tempo e comentários realizados durante a execução da atividade.</p>
                   </div>
                 </div>
 
                 <div class="mt-4 rounded-lg border border-blue-100 bg-gradient-to-r from-slate-50 via-blue-50 to-slate-50 px-4 py-3">
                   <div class="flex flex-wrap items-center justify-between gap-2 text-sm">
                     <span id="ef-ti-estimated-summary" class="hidden rounded-full border border-blue-500 bg-blue-500 px-3 py-1.5 text-white">
-                      Esforco Estimado: <strong id="ef-ti-estimated-hours">-</strong>
+                      Esforço Estimado: <strong id="ef-ti-estimated-hours">-</strong>
                     </span>
                     <span class="rounded-full border border-violet-500 bg-violet-500 px-3 py-1.5 text-white">
-                      Esforco Utilizado: <strong id="ef-ti-used-hours">0h</strong>
+                      Esforço Utilizado: <strong id="ef-ti-used-hours">0h</strong>
                     </span>
                     <span id="ef-ti-remaining-summary" class="hidden rounded-full border border-emerald-500 bg-emerald-500 px-3 py-1.5 text-white">
-                      Esforco Restante: <strong id="ef-ti-remaining-hours">-</strong>
+                      Esforço Restante: <strong id="ef-ti-remaining-hours">-</strong>
                     </span>
                   </div>
                 </div>
@@ -153,8 +153,8 @@
                     <i class="fa-solid fa-paperclip text-base" aria-hidden="true"></i>
                   </span>
                   <div>
-                    <h3 class="text-sm font-semibold text-gray-900">Anexos e Evidencias</h3>
-                    <p class="text-xs text-gray-500">Consulte os documentos encaminhados na execucao da atividade.</p>
+                    <h3 class="text-sm font-semibold text-gray-900">Anexos e Evidências</h3>
+                    <p class="text-xs text-gray-500">Consulte os documentos encaminhados na execução da atividade.</p>
                   </div>
                 </div>
                 <div id="ti-files-list" class="mt-4 space-y-2"></div>
@@ -169,8 +169,8 @@
                   <i class="fa-solid fa-user-check text-base" aria-hidden="true"></i>
                 </span>
                 <div>
-                  <h3 class="text-sm font-semibold text-gray-900">Validacao do Solicitante</h3>
-                  <p class="text-xs text-gray-500">Historico das interacoes do solicitante durante a validacao da atividade.</p>
+                  <h3 class="text-sm font-semibold text-gray-900">Validação do Solicitante</h3>
+                  <p class="text-xs text-gray-500">Histórico das interações do solicitante durante a validação da atividade.</p>
                 </div>
               </div>
               <div id="ti-requester-validation-history" class="mt-4 space-y-3"></div>
@@ -184,8 +184,8 @@
                   <i class="fa-solid fa-shield-halved text-base" aria-hidden="true"></i>
                 </span>
                 <div>
-                  <h3 class="text-sm font-semibold text-gray-900">Historico de Pareceres da TI</h3>
-                  <p class="text-xs text-gray-500">Registros anteriores desta etapa tecnica para a atividade.</p>
+                  <h3 class="text-sm font-semibold text-gray-900">Histórico de Pareceres da TI</h3>
+                  <p class="text-xs text-gray-500">Registros anteriores desta etapa técnica para a atividade.</p>
                 </div>
               </div>
               <div id="ti-validation-history" class="mt-4 space-y-3"></div>
@@ -194,34 +194,34 @@
 
           <div id="tab-content-ti-checklist" class="hidden p-6 pt-2">
             <div class="p-4">
-              <h3 class="mb-4 text-lg font-semibold text-bevap-navy">Itens de Verificacao</h3>
+              <h3 class="mb-4 text-lg font-semibold text-bevap-navy">Itens de Verificação</h3>
               <div class="space-y-3">
                 <label class="flex items-start">
                   <input type="checkbox" class="ti-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
                   <span class="ml-3 text-sm text-gray-700">
-                    <span class="font-medium">Validacao do solicitante foi conferida</span>
-                    <p class="mt-1 text-xs text-gray-500">Confirma se a analise do solicitante foi revisada antes do parecer tecnico.</p>
+                    <span class="font-medium">Validação do solicitante foi conferida</span>
+                    <p class="mt-1 text-xs text-gray-500">Confirma se a análise do solicitante foi revisada antes do parecer técnico.</p>
                   </span>
                 </label>
                 <label class="flex items-start">
                   <input type="checkbox" class="ti-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
                   <span class="ml-3 text-sm text-gray-700">
-                    <span class="font-medium">Anexos e evidencias suportam a validacao tecnica</span>
-                    <p class="mt-1 text-xs text-gray-500">Verifica se os arquivos enviados sustentam tecnicamente a conclusao da atividade.</p>
+                    <span class="font-medium">Anexos e evidências suportam a validação técnica</span>
+                    <p class="mt-1 text-xs text-gray-500">Verifica se os arquivos enviados sustentam tecnicamente a conclusão da atividade.</p>
                   </span>
                 </label>
                 <label class="flex items-start">
                   <input type="checkbox" class="ti-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
                   <span class="ml-3 text-sm text-gray-700">
-                    <span class="font-medium">Registro da execucao esta consistente</span>
-                    <p class="mt-1 text-xs text-gray-500">Confirma coerencia entre tempo apontado, comentarios e resultado tecnico apresentado.</p>
+                    <span class="font-medium">Registro da execução está consistente</span>
+                    <p class="mt-1 text-xs text-gray-500">Confirma coerência entre tempo apontado, comentários e resultado técnico apresentado.</p>
                   </span>
                 </label>
                 <label class="flex items-start">
                   <input type="checkbox" class="ti-checklist-item mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
                   <span class="ml-3 text-sm text-gray-700">
-                    <span class="font-medium">Decisao tecnica esta pronta para registro</span>
-                    <p class="mt-1 text-xs text-gray-500">Indica que a analise tecnica esta concluida e apta para registro.</p>
+                    <span class="font-medium">Decisão técnica está pronta para registro</span>
+                    <p class="mt-1 text-xs text-gray-500">Indica que a análise técnica está concluída e apta para registro.</p>
                   </span>
                 </label>
               </div>
@@ -242,18 +242,18 @@
         <section class="rounded-lg bg-white p-6 shadow-md">
           <h3 class="mb-6 flex items-center text-xl font-bold text-bevap-navy">
             <i class="fa-solid fa-comments mr-3 text-bevap-gold" aria-hidden="true"></i>
-            Comentario da TI
+            Comentário da TI
           </h3>
 
           <div class="mb-6">
-            <label for="ti-feedback-text" class="mb-2 block text-sm font-medium text-gray-700">Observacoes / Parecer Tecnico</label>
-            <textarea id="ti-feedback-text" rows="4" placeholder="Adicione comentarios tecnicos, observacoes da analise ou orientacao para devolucao..." class="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+            <label for="ti-feedback-text" class="mb-2 block text-sm font-medium text-gray-700">Observações / Parecer Técnico</label>
+            <textarea id="ti-feedback-text" rows="4" placeholder="Adicione comentários técnicos, observações da análise ou orientação para devolução..." class="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
           </div>
 
           <div class="mb-2">
             <label class="flex items-start">
               <input type="checkbox" id="ti-agreement-checkbox" class="mr-3 mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
-              <span class="text-sm text-gray-700">Li e confirmo que a avaliacao tecnica da atividade foi concluida e esta pronta para registro <span class="text-red-500">*</span></span>
+              <span class="text-sm text-gray-700">Li e confirmo que a avaliação técnica da atividade foi concluída e está pronta para aprovação <span class="text-red-500">*</span></span>
             </label>
           </div>
         </section>
@@ -266,12 +266,12 @@
               <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold" aria-hidden="true"></i>Resumo do Projeto
             </h3>
             <div class="space-y-3 text-sm">
-              <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Codigo</span><span id="ef-ti-project-code" class="font-mono font-semibold text-bevap-navy">-</span></div>
-              <div class="border-b pb-2"><span class="text-gray-600">Titulo</span><p id="ef-ti-project-title" class="mt-1 font-medium text-gray-900">-</p></div>
-              <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Area</span><span id="ef-ti-project-area" class="font-medium text-gray-900">-</span></div>
+              <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Código</span><span id="ef-ti-project-code" class="font-mono font-semibold text-bevap-navy">-</span></div>
+              <div class="border-b pb-2"><span class="text-gray-600">Título</span><p id="ef-ti-project-title" class="mt-1 font-medium text-gray-900">-</p></div>
+              <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Área</span><span id="ef-ti-project-area" class="font-medium text-gray-900">-</span></div>
               <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span id="ef-ti-project-requester" class="font-medium text-gray-900">-</span></div>
-              <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Responsavel</span><span id="ef-ti-project-responsible" class="font-medium text-gray-900">-</span></div>
-              <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-800"><i class="fa-solid fa-shield-halved mr-1" aria-hidden="true"></i>Validacao TI</span></div>
+              <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Responsável</span><span id="ef-ti-project-responsible" class="font-medium text-gray-900">-</span></div>
+              <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-indigo-100 px-2 py-1 text-xs font-medium text-indigo-800"><i class="fa-solid fa-shield-halved mr-1" aria-hidden="true"></i>Validação TI</span></div>
             </div>
             <div class="mt-4 space-y-2 border-t pt-4">
               <button type="button" disabled class="flex w-full cursor-not-allowed items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy opacity-60">
@@ -288,10 +288,10 @@
               <i class="fa-solid fa-list-check mr-2 text-bevap-green" aria-hidden="true"></i>Progresso
             </h3>
             <div class="space-y-2 text-sm">
-              <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2" aria-hidden="true"></i><span>Planejamento do projeto concluido</span></div>
-              <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2" aria-hidden="true"></i><span>Execucao da atividade concluida</span></div>
-              <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2" aria-hidden="true"></i><span>Validacao do solicitante concluida</span></div>
-              <div class="flex items-center text-indigo-600"><i class="fa-solid fa-shield-halved mr-2" aria-hidden="true"></i><span>Validacao TI em andamento</span></div>
+              <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2" aria-hidden="true"></i><span>Planejamento do projeto concluído</span></div>
+              <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2" aria-hidden="true"></i><span>Execução da atividade concluída</span></div>
+              <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2" aria-hidden="true"></i><span>Validação do solicitante concluída</span></div>
+              <div class="flex items-center text-indigo-600"><i class="fa-solid fa-shield-halved mr-2" aria-hidden="true"></i><span>Validação TI em andamento</span></div>
             </div>
           </div>
         </div>
@@ -303,13 +303,13 @@
     <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
       <div class="flex flex-col justify-end gap-3 sm:flex-row">
         <button type="button" data-action="stop-flow" class="inline-flex items-center justify-center rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-700">
-          <i class="fa-solid fa-ban mr-2" aria-hidden="true"></i>Nao Continuidade
+          <i class="fa-solid fa-ban mr-2" aria-hidden="true"></i>Não Continuidade
         </button>
         <button type="button" data-action="return-corrections" class="inline-flex items-center justify-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-yellow-600">
-          <i class="fa-solid fa-rotate-left mr-2" aria-hidden="true"></i>Devolver para Correcao
+          <i class="fa-solid fa-rotate-left mr-2" aria-hidden="true"></i>Devolver para Correção
         </button>
         <button type="button" data-action="approve-ti" class="inline-flex items-center justify-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md hover:bg-green-700">
-          <i class="fa-solid fa-check mr-2" aria-hidden="true"></i>Confirmar Validacao
+          <i class="fa-solid fa-check mr-2" aria-hidden="true"></i>Confirmar Validação
         </button>
       </div>
     </div>

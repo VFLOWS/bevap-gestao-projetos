@@ -79,27 +79,27 @@ const executionActivityTiValidationController = {
       decision: 'validado',
       requireChecklist: true,
       requireAgreement: true,
-      successMessage: 'Validacao tecnica registrada.',
+      successMessage: 'Validação técnica registrada.',
       comments: 'Atividade validada pela TI via Widget'
     }));
     $(document).on(`click${ns}`, '[data-action="confirm-return-corrections"]', () => this.submitDecision({
       decision: 'devolver_correcao',
       descriptionSelector: '#return-reason',
-      successMessage: 'Atividade devolvida para correcao.',
-      comments: 'Atividade devolvida para correcao pela TI via Widget'
+      successMessage: 'Atividade devolvida para correção.',
+      comments: 'Atividade devolvida para correção pela TI via Widget'
     }));
     $(document).on(`click${ns}`, '[data-action="confirm-stop-flow"]', () => this.submitDecision({
       decision: 'nao_continuidade',
       descriptionSelector: '#discontinue-reason',
       categorySelector: '#discontinue-category',
-      successMessage: 'Nao continuidade registrada.',
-      comments: 'Nao continuidade da atividade registrada pela TI via Widget'
+      successMessage: 'Não continuidade registrada.',
+      comments: 'Não continuidade da atividade registrada pela TI via Widget'
     }));
   },
 
   async loadCard() {
     try {
-      this.setLoading(true, 'Carregando validacao TI...');
+      this.setLoading(true, 'Carregando validação TI...');
       await this.resolveContextIds();
 
       const rows = await fluigService.getDatasetRows(this._datasetId, {
@@ -111,7 +111,7 @@ const executionActivityTiValidationController = {
       });
       const card = Array.isArray(rows) ? rows[0] : rows;
       if (!card) {
-        this.renderError('Card nao encontrado para a atividade informada.');
+        this.renderError('Card não encontrado para a atividade informada.');
         return;
       }
 
@@ -122,8 +122,8 @@ const executionActivityTiValidationController = {
       this._state.tiHistory = this.parseTiValidationHistory(card);
       this.render();
     } catch (error) {
-      console.error('Erro ao carregar validacao TI:', error);
-      this.renderError(error && error.message ? error.message : 'Nao foi possivel carregar a validacao TI.');
+      console.error('Erro ao carregar validação TI:', error);
+      this.renderError(error && error.message ? error.message : 'Não foi possível carregar a validação TI.');
     } finally {
       this.setLoading(false);
     }
@@ -226,10 +226,10 @@ const executionActivityTiValidationController = {
       state.processInstanceId = this.normalizeId(await fluigService.resolveProcessInstanceIdByDocumentId(state.documentId));
     }
     if (!state.documentId) {
-      throw new Error('Nao foi possivel localizar o documentId do card da atividade.');
+      throw new Error('Não foi possível localizar o documentId do card da atividade.');
     }
     if (!state.processInstanceId) {
-      throw new Error('Nao foi possivel localizar o processInstanceId da atividade.');
+      throw new Error('Não foi possível localizar o processInstanceId da atividade.');
     }
   },
 
@@ -272,7 +272,7 @@ const executionActivityTiValidationController = {
   render() {
     const card = this._state.card || {};
     this.setText('#ef-ti-activity-name', card.activity || 'Atividade sem nome informado');
-    this.setText('#ef-ti-responsible', card.activityResponsible || 'Nao informado');
+    this.setText('#ef-ti-responsible', card.activityResponsible || 'Não informado');
     this.setText('#ef-ti-due-date', this.formatDate(card.dueDate) || '-');
     this.setText('#ef-ti-phase-name', card.phase || '-');
     this.setText('#ef-ti-phase-responsible', card.phaseResponsible || '-');
@@ -286,7 +286,7 @@ const executionActivityTiValidationController = {
     this.setText('#ef-ti-project-area', card.projectArea || '-');
     this.setText('#ef-ti-project-requester', card.requesterName || '-');
     this.setText('#ef-ti-project-responsible', card.activityResponsible || card.phaseResponsible || '-');
-    $('#ti-feedback-text').val(card.tiComment || '');
+    $('#ti-feedback-text').val('');
     $('#ti-agreement-checkbox').prop('checked', !!card.tiAgreement);
 
     $('#ef-ti-responsible-badge').toggleClass('hidden', !this.asText(card.activityResponsible));
@@ -300,8 +300,8 @@ const executionActivityTiValidationController = {
     this.renderEntries();
     this.renderEffortSummary();
     this.renderAttachmentsList();
-    this.renderHistory('#ti-requester-validation-history', this._state.requesterHistory, 'Nenhuma validacao do solicitante registrada.');
-    this.renderHistory('#ti-validation-history', this._state.tiHistory, 'Nenhum parecer tecnico anterior registrado.');
+    this.renderHistory('#ti-requester-validation-history', this._state.requesterHistory, 'Nenhuma validação do solicitante registrada.');
+    this.renderHistory('#ti-validation-history', this._state.tiHistory, 'Nenhum parecer técnico anterior registrado.');
     this.renderChecklistState();
     this.toggleTab(this._state.activeTab || 'detail');
 
@@ -332,7 +332,7 @@ const executionActivityTiValidationController = {
     const list = $('#ti-entry-history');
     const activeEntries = this.getActiveEntries(this._state.entries);
     if (!activeEntries.length) {
-      list.html('<div class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-500">Nenhum lancamento registrado.</div>');
+      list.html('<div class="rounded-lg border border-dashed border-gray-300 bg-gray-50 p-4 text-sm text-gray-500">Nenhum lançamento registrado.</div>');
       return;
     }
     list.html(activeEntries.map((entry) => this.getEntryMarkup(entry)).join(''));
@@ -347,7 +347,7 @@ const executionActivityTiValidationController = {
           <div class="flex items-center gap-3">
             <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">${this.escapeHtml(initials)}</span>
             <div>
-              <div class="font-semibold leading-5 text-bevap-navy">${this.escapeHtml(entry.authorName || 'Usuario')}</div>
+              <div class="font-semibold leading-5 text-bevap-navy">${this.escapeHtml(entry.authorName || 'Usuário')}</div>
               <div class="mt-1 text-xs text-gray-500">${this.escapeHtml(this.formatDate(entry.date))} ${this.escapeHtml(entry.start)} - ${this.escapeHtml(entry.end)}</div>
             </div>
           </div>
@@ -356,7 +356,7 @@ const executionActivityTiValidationController = {
             <span class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">${this.escapeHtml(this.formatDateTime(entry.updatedAt || entry.createdAt) || '-')}</span>
           </div>
         </div>
-        <p class="mt-2 text-sm text-gray-700">${this.escapeHtml(entry.comment || 'Sem comentario.')}</p>
+        <p class="mt-2 text-sm text-gray-700">${this.escapeHtml(entry.comment || 'Sem comentário.')}</p>
       </div>
     `;
   },
@@ -421,12 +421,12 @@ const executionActivityTiValidationController = {
       <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <div class="font-semibold text-bevap-navy">${this.escapeHtml(entry.userName || 'Usuario')}</div>
+            <div class="font-semibold text-bevap-navy">${this.escapeHtml(entry.userName || 'Usuário')}</div>
             <div class="mt-1 text-xs text-gray-500">${this.escapeHtml(this.formatDateTime(entry.createdAt) || '-')}</div>
           </div>
           <span class="inline-flex w-fit items-center rounded-full border px-2.5 py-1 text-xs font-semibold ${badge}">${this.escapeHtml(label)}</span>
         </div>
-        <p class="mt-2 text-sm text-gray-700">${this.escapeHtml(entry.comment || entry.description || 'Sem observacoes.')}</p>
+        <p class="mt-2 text-sm text-gray-700">${this.escapeHtml(entry.comment || entry.description || 'Sem observações.')}</p>
       </div>
     `;
   },
@@ -434,8 +434,8 @@ const executionActivityTiValidationController = {
   getDecisionLabel(decision) {
     const value = this.asText(decision);
     if (value === 'validado') return 'Validado';
-    if (value === 'correcao' || value === 'devolver_correcao') return 'Devolvido para correcao';
-    if (value === 'nao_continuidade') return 'Nao continuidade';
+    if (value === 'correcao' || value === 'devolver_correcao') return 'Devolvido para correção';
+    if (value === 'nao_continuidade') return 'Não continuidade';
     return 'Registro';
   },
 
@@ -503,13 +503,13 @@ const executionActivityTiValidationController = {
       requireAgreement: true
     });
     if (!validation.valid) {
-      this.showToast('Validacao pendente', validation.message, 'error');
+      this.showToast('Validação pendente', validation.message, 'error');
       this.toggleTab('checklist');
       return;
     }
     this.openConfirmModal({
-      title: 'Confirmar Validacao',
-      body: 'Confirma o registro da validacao tecnica da atividade?',
+      title: 'Confirmar Validação',
+      body: 'Confirma o registro da validação técnica da atividade?',
       confirmAction: 'confirm-approve-ti',
       confirmLabel: 'Confirmar',
       confirmClass: 'bg-bevap-green hover:bg-green-700'
@@ -520,9 +520,9 @@ const executionActivityTiValidationController = {
     $('#modal-root').html(`
       <div id="ti-modal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/50 p-4">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-          <h3 class="text-xl font-bold text-bevap-navy">Devolver para Correcao</h3>
-          <p class="mt-3 text-sm text-gray-600">Descreva os pontos que precisam ser corrigidos antes de uma nova validacao tecnica.</p>
-          <textarea id="return-reason" rows="4" placeholder="Motivo da devolucao..." class="mt-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+          <h3 class="text-xl font-bold text-bevap-navy">Devolver para Correção</h3>
+          <p class="mt-3 text-sm text-gray-600">Descreva os pontos que precisam ser corrigidos antes de uma nova validação técnica.</p>
+          <textarea id="return-reason" rows="4" placeholder="Motivo da devolução..." class="mt-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
           <div class="mt-6 flex justify-end gap-3">
             <button type="button" data-action="close-ti-modal" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">Cancelar</button>
             <button type="button" data-action="confirm-return-corrections" class="rounded-lg bg-yellow-500 px-4 py-2 font-medium text-white hover:bg-yellow-600">Devolver</button>
@@ -536,18 +536,18 @@ const executionActivityTiValidationController = {
     $('#modal-root').html(`
       <div id="ti-modal" class="fixed inset-0 z-[80] flex items-center justify-center bg-black/50 p-4">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-          <h3 class="text-xl font-bold text-bevap-navy">Nao Continuidade da Atividade</h3>
+          <h3 class="text-xl font-bold text-bevap-navy">Não Continuidade da Atividade</h3>
           <p class="mt-3 text-sm text-gray-600">Informe categoria e justificativa para encerrar a atividade.</p>
           <select id="discontinue-category" class="mt-4 w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-red-500">
             <option value="">Selecione a categoria</option>
-            <option value="tecnica">Inviabilidade tecnica</option>
-            <option value="prioridade">Mudanca de prioridade</option>
-            <option value="recurso">Recurso indisponivel</option>
+            <option value="tecnica">Inviabilidade técnica</option>
+            <option value="prioridade">Mudança de prioridade</option>
+            <option value="recurso">Recurso indisponível</option>
             <option value="risco">Risco elevado</option>
             <option value="escopo">Escopo</option>
             <option value="outros">Outros</option>
           </select>
-          <textarea id="discontinue-reason" rows="4" placeholder="Descricao detalhada..." class="mt-3 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-red-500"></textarea>
+          <textarea id="discontinue-reason" rows="4" placeholder="Descrição detalhada..." class="mt-3 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-red-500"></textarea>
           <div class="mt-6 flex justify-end gap-3">
             <button type="button" data-action="close-ti-modal" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">Cancelar</button>
             <button type="button" data-action="confirm-stop-flow" class="rounded-lg bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700">Confirmar</button>
@@ -592,7 +592,7 @@ const executionActivityTiValidationController = {
       requireAgreement: !!config.requireAgreement
     });
     if (!validation.valid) {
-      this.showToast('Validacao pendente', validation.message, 'error');
+      this.showToast('Validação pendente', validation.message, 'error');
       if (!validation.checklistOk || !validation.agreementOk) this.toggleTab('checklist');
       return;
     }
@@ -615,13 +615,13 @@ const executionActivityTiValidationController = {
       await fluigService.saveAndSendTask(this.getMovementTaskData(config.comments), taskFields);
 
       this.closeModal();
-      this.showToast('Sucesso', this.asText(config.successMessage) || 'Movimentacao realizada.', 'success');
+      this.showToast('Sucesso', this.asText(config.successMessage) || 'Movimentação realizada.', 'success');
       setTimeout(() => {
         window.location.hash = '#dashboard';
       }, 900);
     } catch (error) {
-      console.error('Erro ao movimentar validacao TI:', error);
-      this.showToast('Erro ao movimentar', error && error.message ? error.message : 'Nao foi possivel movimentar a atividade.', 'error');
+      console.error('Erro ao movimentar validação TI:', error);
+      this.showToast('Erro ao movimentar', error && error.message ? error.message : 'Não foi possível movimentar a atividade.', 'error');
     } finally {
       this._state.isSubmitting = false;
       this.setActionButtonsState(false);
@@ -651,7 +651,7 @@ const executionActivityTiValidationController = {
       return { valid: false, checklistOk: false, agreementOk, message: 'Conclua o checklist da TI antes de continuar.', description, category };
     }
     if (input && input.requireAgreement && !agreementOk) {
-      return { valid: false, checklistOk: true, agreementOk: false, message: 'Marque a confirmacao da TI antes de continuar.', description, category };
+      return { valid: false, checklistOk: true, agreementOk: false, message: 'Marque a confirmação da TI antes de continuar.', description, category };
     }
     if (input && input.requireCategory && !category) {
       return { valid: false, checklistOk: true, agreementOk: true, message: 'Selecione a categoria.', description, category };
@@ -1211,7 +1211,7 @@ const executionActivityTiValidationController = {
 
   getCurrentUserName() {
     if (typeof WCMAPI !== 'undefined' && WCMAPI.getUser) return this.asText(WCMAPI.getUser());
-    return 'Usuario';
+    return 'Usuário';
   },
 
   updateTabArrows() {
