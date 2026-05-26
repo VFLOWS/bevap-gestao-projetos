@@ -88,7 +88,7 @@
 
     if (normalized.indexOf('critico') !== -1) {
       return {
-        label: 'Critico',
+        label: 'Crítico',
         badgeClasses: 'bg-red-100 text-red-700',
         iconClass: 'fa-solid fa-circle-exclamation'
       };
@@ -96,7 +96,7 @@
 
     if (normalized.indexOf('estrategico') !== -1) {
       return {
-        label: 'Estrategico',
+        label: 'Estratégico',
         badgeClasses: 'bg-green-100 text-green-800',
         iconClass: 'fa-solid fa-star'
       };
@@ -111,7 +111,7 @@
     }
 
     return {
-      label: asText(priority) || 'Nao informado',
+      label: asText(priority) || 'Não informado',
       badgeClasses: 'bg-slate-100 text-slate-700',
       iconClass: 'fa-solid fa-circle'
     };
@@ -124,7 +124,7 @@
           <i class="${iconClass} mr-2"></i>
           <h3 class="text-base font-montserrat font-semibold text-bevap-navy">${escapeHtml(title)}</h3>
         </div>
-        <p class="text-sm text-gray-700 whitespace-pre-line">${escapeHtml(value || 'Nao informado')}</p>
+        <p class="text-sm text-gray-700 whitespace-pre-line">${escapeHtml(value || 'Não informado')}</p>
       </div>
     `;
   }
@@ -241,7 +241,7 @@
         <div class="p-5 bg-white border border-gray-200 rounded-lg">
           <div class="flex items-start justify-between gap-4 mb-4">
             <div>
-              <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-1">Dados Basicos</h3>
+              <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-1">Dados Básicos</h3>
               <p class="text-lg font-semibold text-gray-800">${escapeHtml(row.titulodoprojetoNS || 'Projeto sem titulo')}</p>
             </div>
             <span class="inline-flex items-center px-2 py-1 rounded-full text-xs ${escapeHtml(priority.badgeClasses)} font-medium">
@@ -251,16 +251,16 @@
 
           <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
             <div>
-              <label class="block text-sm font-medium text-gray-500 mb-1">Area/Unidade</label>
-              <p class="text-gray-800">${escapeHtml(row.areaUnidadeNS || 'Nao informado')}</p>
+              <label class="block text-sm font-medium text-gray-500 mb-1">Área/Unidade</label>
+              <p class="text-gray-800">${escapeHtml(row.areaUnidadeNS || 'Não informado')}</p>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-500 mb-1">Centro de Custo</label>
-              <p class="text-gray-800">${escapeHtml(row.centrodecustoNS || 'Nao informado')}</p>
+              <p class="text-gray-800">${escapeHtml(row.centrodecustoNS || 'Não informado')}</p>
             </div>
             <div class="md:col-span-2">
               <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
-              <p class="text-gray-800">${escapeHtml(row.patrocinadorNS || 'Nao informado')}</p>
+              <p class="text-gray-800">${escapeHtml(row.patrocinadorNS || 'Não informado')}</p>
             </div>
           </div>
         </div>
@@ -268,7 +268,7 @@
         <div class="flex items-center px-4 py-3 border rounded-lg ${isAligned ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}">
           <i class="fa-solid ${isAligned ? 'fa-circle-check text-bevap-green' : 'fa-circle-xmark text-red-600'} mr-2"></i>
           <span class="text-sm font-medium ${isAligned ? 'text-bevap-green' : 'text-red-700'}">
-            ${isAligned ? 'Alinhado aos objetivos estrategicos BEVAP' : 'Nao alinhado aos objetivos estrategicos BEVAP'}
+            ${isAligned ? 'Alinhado aos objetivos estratégicos BEVAP' : 'Não alinhado aos objetivos estratégicos BEVAP'}
           </span>
         </div>
 
@@ -278,7 +278,7 @@
         <div class="p-5 bg-white border border-gray-200 rounded-lg">
           <div class="flex items-center mb-3">
             <i class="fa-solid fa-chart-line text-bevap-green mr-2"></i>
-            <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Beneficios Esperados</h3>
+            <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Benefícios Esperados</h3>
           </div>
           <div class="space-y-2">
             ${renderExpectedBenefits(expectedBenefits)}
@@ -290,10 +290,10 @@
           ${renderTextCard('fa-solid fa-ban text-red-600', 'Fora de Escopo', row.foradeescopoNS)}
         </div>
 
-        ${renderTextCard('fa-solid fa-link text-bevap-navy', 'Dependencias', row.dependenciasNS)}
+        ${renderTextCard('fa-solid fa-link text-bevap-navy', 'Dependências', row.dependenciasNS)}
 
         <div class="p-5 bg-white border border-gray-200 rounded-lg">
-          <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Objetivos Estrategicos</h3>
+          <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Objetivos Estratégicos</h3>
           <div class="space-y-2">
             ${objectives.length ? objectives.map((item) => `
               <div class="p-3 bg-green-50 border border-green-200 rounded-lg text-sm text-gray-700">${escapeHtml(item)}</div>
@@ -323,8 +323,8 @@
         </div>
 
         <div class="p-5 bg-white border border-gray-200 rounded-lg">
-          <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Observacoes Adicionais</h3>
-          <p class="text-sm text-gray-700 whitespace-pre-line">${escapeHtml(row.observacoesadicionaisNS || 'Nao informado')}</p>
+          <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Observações Adicionais</h3>
+          <p class="text-sm text-gray-700 whitespace-pre-line">${escapeHtml(row.observacoesadicionaisNS || 'Não informado')}</p>
         </div>
       </div>
     `;
@@ -363,12 +363,12 @@
   async function render(options = {}) {
     const documentId = asText(options.documentId);
     if (!documentId) {
-      return '<div class="text-sm text-gray-500">Selecione uma solicitacao para visualizar o historico.</div>';
+      return '<div class="text-sm text-gray-500">Selecione uma solicitação para visualizar o histórico.</div>';
     }
 
     const row = await loadSolicitationRow(documentId);
     if (!row) {
-      return '<div class="text-sm text-gray-500">Nenhum dado da solicitacao foi encontrado.</div>';
+      return '<div class="text-sm text-gray-500">Nenhum dado da solicitação foi encontrado.</div>';
     }
 
     return renderHtml(buildViewModel(row));
@@ -389,7 +389,7 @@
 
     const row = await loadSolicitationRow(documentId);
     if (!row) {
-      const emptyHtml = '<div class="text-sm text-gray-500">Nenhum dado da solicitacao foi encontrado.</div>';
+      const emptyHtml = '<div class="text-sm text-gray-500">Nenhum dado da solicitação foi encontrado.</div>';
       $target.html(emptyHtml);
       return emptyHtml;
     }

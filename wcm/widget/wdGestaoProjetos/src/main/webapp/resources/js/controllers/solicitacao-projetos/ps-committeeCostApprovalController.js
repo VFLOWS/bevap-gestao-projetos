@@ -40,7 +40,7 @@ const committeeCostApprovalController = {
     'fornecedorRecomendadoTITT',
     'valortotalTIPC',
     'prazoEstimadoTIPC',
-    // GCC (para aba Custo & Orcamento)
+    // GCC (para aba Custo & Orçamento)
     'capexGCC',
     'opexGCC',
     'tblNaturezaCustoCapexGCC.centroCustoCapexGCC',
@@ -398,7 +398,14 @@ const committeeCostApprovalController = {
         taskFields: this.collectCommitteeTaskFields()
       });
 
-      this.showToast('Rascunho salvo', 'As alterações foram salvas com sucesso.', 'success');
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[committeeCostApproval] Error saving draft:', error);
       this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
@@ -548,7 +555,7 @@ const committeeCostApprovalController = {
 
   loadBaseContext: async function () {
     if (!this._state.documentId) {
-      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para esta rota.', 'warning');
+      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para está rota.', 'warning');
       return;
     }
 
@@ -666,7 +673,7 @@ const committeeCostApprovalController = {
         {
           variant: 'block',
           label: 'Fornecedor Recomendado',
-          value: this.asText(row && row.fornecedorRecomendadoTITT) || 'Nao informado'
+          value: this.asText(row && row.fornecedorRecomendadoTITT) || 'Não informado'
         },
         {
           variant: 'kvList',
@@ -1096,7 +1103,20 @@ const committeeCostApprovalController = {
       if (shouldValidateMainFields) {
         const missing = this.validateCap();
         if (missing && missing.length) {
-          this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          if (config && config.modalId) {
+            this.closeModal(config.modalId);
+          }
+          const ui = this.getUiComponents();
+          if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+            ui.validation.showValidationModal(this.getContainer(), {
+              missingFields: missing,
+              title: 'Campos Obrigatórios',
+              message: 'Por favor, preencha todos os campos obrigatórios antes de continuar.',
+              closeSelectors: ['#approve-modal']
+            });
+          } else {
+            this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          }
           return;
         }
       }

@@ -153,9 +153,9 @@
                 <h6 class="font-medium text-bevap-navy">${escapeHtml(risk.title || 'Risco')}</h6>
                 <span class="text-xs font-semibold ${escapeHtml(badge.badgeClasses)} px-1.5 py-0.5 rounded">${escapeHtml(badge.label)}</span>
               </div>
-              <div class="text-sm text-gray-600 mb-2">Probabilidade: ${escapeHtml(risk.probability || 'Nao informado')} | Impacto: ${escapeHtml(risk.impact || 'Nao informado')}</div>
-              ${risk.description ? `<div class="text-sm text-gray-700 mb-1"><strong>Descricao:</strong> ${escapeHtml(risk.description)}</div>` : ''}
-              ${risk.mitigation ? `<div class="text-sm text-gray-700 mb-1"><strong>Mitigacao:</strong> ${escapeHtml(risk.mitigation)}</div>` : ''}
+              <div class="text-sm text-gray-600 mb-2">Probabilidade: ${escapeHtml(risk.probability || 'Não informado')} | Impacto: ${escapeHtml(risk.impact || 'Não informado')}</div>
+              ${risk.description ? `<div class="text-sm text-gray-700 mb-1"><strong>Descrição:</strong> ${escapeHtml(risk.description)}</div>` : ''}
+              ${risk.mitigation ? `<div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> ${escapeHtml(risk.mitigation)}</div>` : ''}
               ${risk.fallback ? `<div class="text-sm text-gray-700"><strong>Plano B:</strong> ${escapeHtml(risk.fallback)}</div>` : ''}
             </div>
           `;
@@ -194,8 +194,8 @@
                 </div>
                 ${getDependencyStatusBadge(dep.status)}
               </div>
-              <div class="mt-2 text-sm text-gray-600"><strong>Responsavel:</strong> ${escapeHtml(dep.owner || 'Nao informado')}</div>
-              ${dep.mitigation ? `<div class="mt-1 text-sm text-gray-700"><strong>Mitigacao:</strong> ${escapeHtml(dep.mitigation)}</div>` : ''}
+              <div class="mt-2 text-sm text-gray-600"><strong>Responsável:</strong> ${escapeHtml(dep.owner || 'Não informado')}</div>
+              ${dep.mitigation ? `<div class="mt-1 text-sm text-gray-700"><strong>Mitigação:</strong> ${escapeHtml(dep.mitigation)}</div>` : ''}
               ${dep.fallback ? `<div class="mt-1 text-sm text-gray-700"><strong>Plano B:</strong> ${escapeHtml(dep.fallback)}</div>` : ''}
             </div>
           `;

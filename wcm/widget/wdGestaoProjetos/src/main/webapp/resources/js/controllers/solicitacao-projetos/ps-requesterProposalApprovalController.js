@@ -344,7 +344,7 @@ const requesterProposalApprovalController = {
 
   loadBaseContext: async function () {
     if (!this._state.documentId) {
-      this.showToast('Sem solicitacao', 'Nenhum documentId foi informado para esta rota.', 'warning');
+      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para está rota.', 'warning');
       return;
     }
 
@@ -369,7 +369,7 @@ const requesterProposalApprovalController = {
       this.updateApproveModalProject(row);
     } catch (error) {
       console.error('[requesterProposalApproval] Error loading base context:', error);
-      this.showToast('Erro ao carregar', 'Nao foi possivel carregar os dados principais da solicitacao.', 'error');
+      this.showToast('Erro ao carregar', 'Não foi possível carregar os dados principais da solicitação.', 'error');
     }
   },
 
@@ -410,14 +410,14 @@ const requesterProposalApprovalController = {
         {
           variant: 'block',
           label: 'Fornecedor Recomendado',
-          value: this.asText(row.fornecedorRecomendadoTITT) || 'Nao informado'
+          value: this.asText(row.fornecedorRecomendadoTITT) || 'Não informado'
         },
         {
           variant: 'kvList',
           label: 'Estimativa Original',
           items: [
-            { label: 'Custo:', value: this.asText(row.valortotalTIPC) || 'Nao informado' },
-            { label: 'Prazo:', value: this.formatWeeks(row.prazoEstimadoTIPC) || 'Nao informado' }
+            { label: 'Custo:', value: this.asText(row.valortotalTIPC) || 'Não informado' },
+            { label: 'Prazo:', value: this.formatWeeks(row.prazoEstimadoTIPC) || 'Não informado' }
           ]
         }
       ],
@@ -519,11 +519,11 @@ const requesterProposalApprovalController = {
     }
 
     if (!component || typeof component.render !== 'function') {
-      target.html('<div class="text-sm text-red-600">Componente da aba indisponivel.</div>');
+      target.html('<div class="text-sm text-red-600">Componente da aba indisponível.</div>');
       return;
     }
 
-    target.html('<div class="text-sm text-gray-500">Carregando conteudo...</div>');
+    target.html('<div class="text-sm text-gray-500">Carregando conteúdo...</div>');
 
     try {
       const html = await component.render({
@@ -536,7 +536,7 @@ const requesterProposalApprovalController = {
       this.mountAttachmentsInTab(target, component);
     } catch (error) {
       console.error(`[requesterProposalApproval] Error loading tab ${tabName}:`, error);
-      target.html('<div class="text-sm text-red-600">Nao foi possivel carregar esta aba.</div>');
+      target.html('<div class="text-sm text-red-600">Não foi possível carregar esta aba.</div>');
     }
   },
 
@@ -654,7 +654,7 @@ const requesterProposalApprovalController = {
     }
 
     if (!this._state.documentId) {
-      throw new Error('Nao foi possivel identificar a solicitacao atual');
+      throw new Error('Não foi possível identificar a solicitação atual');
     }
 
     const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._state.documentId);
@@ -678,13 +678,17 @@ const requesterProposalApprovalController = {
         cardData: this.collectSapCardData()
       });
 
-      this.showToast('Rascunho salvo', 'As alteracoes foram salvas com sucesso.', 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 150);
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[requesterProposalApproval] Error saving draft:', error);
-      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.', 'error');
+      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -696,7 +700,19 @@ const requesterProposalApprovalController = {
 
     const root = this.getContainer();
     if (!root.find('#sap-li-concordo-check').is(':checked')) {
-      this.showToast('Confirmacao', 'Marque o checkbox "Li e concordo" para aprovar a proposta.', 'warning');
+      this.closeModal('approve-modal');
+
+      const ui = $(document).data('gpUiComponents');
+      if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+        ui.validation.showValidationModal(this.getContainer(), {
+          missingFields: ['Li e concordo com a proposta comercial apresentada e suas condições gerais'],
+          title: 'Campos Obrigatórios',
+          message: 'Por favor, preencha todos os campos obrigatórios antes de continuar.',
+          closeSelectors: ['#approve-modal']
+        });
+      } else {
+        this.showToast('Confirmação', 'Marque o checkbox "Li e concordo" para aprovar a proposta.', 'warning');
+      }
       return;
     }
 
@@ -713,7 +729,7 @@ const requesterProposalApprovalController = {
         return { name: fieldName, value: cardData[fieldName] };
       });
 
-      loading.updateMessage('Enviando aprovacao para o Fluig...');
+      loading.updateMessage('Enviando aprovação para o Fluig...');
       await this.waitForUiPaint();
 
       await fluigService.saveAndSendTask({
@@ -731,7 +747,7 @@ const requesterProposalApprovalController = {
       }, 600);
     } catch (error) {
       console.error('[requesterProposalApproval] Error approving proposal:', error);
-      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel aprovar a proposta.', 'error');
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível aprovar a proposta.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -780,14 +796,14 @@ const requesterProposalApprovalController = {
       }, taskFields);
 
       this.closeModal('modal-return');
-      this.showToast('Sucesso', 'Devolvido para correcao.', 'success');
+      this.showToast('Sucesso', 'Devolvido para correção.', 'success');
 
       setTimeout(() => {
         location.hash = '#dashboard';
       }, 600);
     } catch (error) {
       console.error('[requesterProposalApproval] Error returning proposal:', error);
-      this.showToast('Erro ao devolver', error && error.message ? error.message : 'Nao foi possivel devolver para correcao.', 'error');
+      this.showToast('Erro ao devolver', error && error.message ? error.message : 'Não foi possível devolver para correção.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -843,7 +859,7 @@ const requesterProposalApprovalController = {
       }, 600);
     } catch (error) {
       console.error('[requesterProposalApproval] Error discontinuing project:', error);
-      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel registrar a nao continuidade.', 'error');
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível registrar a nao continuidade.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -852,8 +868,8 @@ const requesterProposalApprovalController = {
 
   getPriorityLabel: function (priority) {
     const normalized = this.asText(priority).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (normalized.indexOf('critico') !== -1) return 'Critico';
-    if (normalized.indexOf('estrategico') !== -1) return 'Estrategico';
+    if (normalized.indexOf('critico') !== -1) return 'Crítico';
+    if (normalized.indexOf('estrategico') !== -1) return 'Estratégico';
     if (normalized.indexOf('operacional') !== -1) return 'Operacional';
     return this.asText(priority);
   },

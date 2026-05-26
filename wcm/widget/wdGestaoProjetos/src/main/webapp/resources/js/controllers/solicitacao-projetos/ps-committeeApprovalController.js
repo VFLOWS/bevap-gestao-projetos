@@ -349,7 +349,14 @@ const committeeApprovalController = {
         taskFields: this.collectCommitteeTaskFields()
       });
 
-      this.showToast('Rascunho salvo', 'As alterações foram salvas com sucesso.', 'success');
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[committeeApproval] Error saving draft:', error);
       this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
@@ -498,7 +505,7 @@ const committeeApprovalController = {
 
   loadBaseContext: async function () {
     if (!this._state.documentId) {
-      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para esta rota.', 'warning');
+      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para está rota.', 'warning');
       return;
     }
 
@@ -618,14 +625,14 @@ const committeeApprovalController = {
         {
           variant: 'block',
           label: 'Fornecedor Recomendado',
-          value: this.asText(row && row.fornecedorRecomendadoTITT) || 'Nao informado'
+          value: this.asText(row && row.fornecedorRecomendadoTITT) || 'Não informado'
         },
         {
           variant: 'kvList',
           label: 'Estimativa Original',
           items: [
-            { label: 'Custo:', value: this.asText(row && row.valortotalTIPC) || 'Nao informado' },
-            { label: 'Prazo:', value: this.asText(row && row.prazoEstimadoTIPC) || 'Nao informado' }
+            { label: 'Custo:', value: this.asText(row && row.valortotalTIPC) || 'Não informado' },
+            { label: 'Prazo:', value: this.asText(row && row.prazoEstimadoTIPC) || 'Não informado' }
           ]
         }
       ],

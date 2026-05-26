@@ -139,7 +139,7 @@ const gccCostApprovalController = {
     }
 
     titleEl.text('GCC - Aprovar Custo do Projeto');
-    breadcrumbEl.html('<a href="#dashboard" class="text-gray-300 hover:text-white transition-colors">Home</a><i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i><span class="text-bevap-gold font-medium">Aprovacao GCC</span>');
+    breadcrumbEl.html('<a href="#dashboard" class="text-gray-300 hover:text-white transition-colors">Home</a><i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i><span class="text-bevap-gold font-medium">Aprovação GCC</span>');
   },
 
   restoreHeader: function () {
@@ -390,11 +390,11 @@ const gccCostApprovalController = {
     }
 
     if (!component || typeof component.render !== 'function') {
-      target.html('<div class="text-sm text-red-600">Componente da aba indisponivel.</div>');
+      target.html('<div class="text-sm text-red-600">Componente da aba indisponível.</div>');
       return;
     }
 
-    target.html('<div class="text-sm text-gray-500">Carregando conteudo...</div>');
+    target.html('<div class="text-sm text-gray-500">Carregando conteúdo...</div>');
 
     try {
       const html = typeof component.renderInto === 'function'
@@ -408,7 +408,7 @@ const gccCostApprovalController = {
       this.mountAttachmentsInTab(target, component, options);
     } catch (error) {
       console.error(`[gccCostApproval] Error loading tab ${tabName}:`, error);
-      target.html('<div class="text-sm text-red-600">Nao foi possivel carregar esta aba.</div>');
+      target.html('<div class="text-sm text-red-600">Não foi possível carregar esta aba.</div>');
     }
   },
 
@@ -427,7 +427,7 @@ const gccCostApprovalController = {
 
       if (!row) {
         this.renderSidebarSkeleton();
-        this.showToast('Nao encontrado', 'Nao foi possivel localizar dados da solicitacao.', 'warning');
+        this.showToast('Não encontrado', 'Não foi possível localizar dados da solicitação.', 'warning');
         return;
       }
 
@@ -436,7 +436,7 @@ const gccCostApprovalController = {
       this.updateApproveModalProject(row);
     } catch (error) {
       console.error('[gccCostApproval] Error loading base context:', error);
-      this.showToast('Erro ao carregar', 'Nao foi possivel carregar os dados do GCC.', 'error');
+      this.showToast('Erro ao carregar', 'Não foi possível carregar os dados do GCC.', 'error');
     }
   },
 
@@ -504,7 +504,7 @@ const gccCostApprovalController = {
         {
           variant: 'block',
           label: 'Fornecedor Recomendado',
-          value: 'Nao informado'
+          value: 'Não informado'
         },
         {
           variant: 'kvList',
@@ -558,14 +558,14 @@ const gccCostApprovalController = {
         {
           variant: 'block',
           label: 'Fornecedor Recomendado',
-          value: this.asText(row.fornecedorRecomendadoTITT) || this.asText(row.nomeFornecedorTIPC) || 'Nao informado'
+          value: this.asText(row.fornecedorRecomendadoTITT) || this.asText(row.nomeFornecedorTIPC) || 'Não informado'
         },
         {
           variant: 'kvList',
           label: 'Estimativa Original',
           items: [
-            { label: 'Custo:', value: this.asText(row.valortotalTIPC) || 'Nao informado' },
-            { label: 'Prazo:', value: this.formatDays(row.prazoEstimadoTIPC) || 'Nao informado' }
+            { label: 'Custo:', value: this.asText(row.valortotalTIPC) || 'Não informado' },
+            { label: 'Prazo:', value: this.formatDays(row.prazoEstimadoTIPC) || 'Não informado' }
           ]
         }
       ],
@@ -581,12 +581,12 @@ const gccCostApprovalController = {
 
   getProgressItems: function () {
     return [
-      { style: 'success', label: 'Solicitacao aprovada', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Analise TI concluida', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Impacto na area concluido', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Triagem tecnica concluida', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Solicitação aprovada', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Análise TI concluída', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Impacto na área concluido', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Triagem técnica concluída', iconClass: 'fa-solid fa-check-circle' },
       { style: 'success', label: 'Proposta comercial aprovada', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'warning', label: 'Aprovacao GCC em andamento', iconClass: 'fa-solid fa-clock' },
+      { style: 'warning', label: 'Aprovação GCC em andamento', iconClass: 'fa-solid fa-clock' },
       { style: 'default', label: 'Comite de custo', iconClass: 'fa-solid fa-hourglass-half' }
     ];
   },
@@ -594,12 +594,12 @@ const gccCostApprovalController = {
   fillFieldsFromRow: function (row) {
     const root = this.getContainer();
 
-    root.find('#gcc-summary-supplier').text(this.asText(row.nomeFornecedorTIPC) || 'Nao informado');
-    root.find('#gcc-summary-reference').text(this.asText(row.numeroRefPropostaTIPC) || 'Nao informado');
-    root.find('#gcc-summary-validity').text(this.formatDays(row.vigenciaDiasTIPC) || 'Nao informado');
-    root.find('#gcc-summary-total').text(this.asText(row.valortotalTIPC) || 'Nao informado');
-    root.find('#gcc-summary-condition').text(this.asText(row.condicaoPagamentoTIPC) || 'Nao informado');
-    root.find('#gcc-summary-deadline').text(this.asText(row.prazoEstimadoTIPC) || 'Nao informado');
+    root.find('#gcc-summary-supplier').text(this.asText(row.nomeFornecedorTIPC) || 'Não informado');
+    root.find('#gcc-summary-reference').text(this.asText(row.numeroRefPropostaTIPC) || 'Não informado');
+    root.find('#gcc-summary-validity').text(this.formatDays(row.vigenciaDiasTIPC) || 'Não informado');
+    root.find('#gcc-summary-total').text(this.asText(row.valortotalTIPC) || 'Não informado');
+    root.find('#gcc-summary-condition').text(this.asText(row.condicaoPagamentoTIPC) || 'Não informado');
+    root.find('#gcc-summary-deadline').text(this.asText(row.prazoEstimadoTIPC) || 'Não informado');
 
     this.renderCostStructureFromRow(row);
 
@@ -636,7 +636,7 @@ const gccCostApprovalController = {
     if (!normalized.length) {
       tbody.html(`
         <tr>
-          <td class="px-4 py-3 text-gray-500" colspan="4">Estrutura de custo indisponivel.</td>
+          <td class="px-4 py-3 text-gray-500" colspan="4">Estrutura de custo indisponível.</td>
         </tr>
       `);
     } else {
@@ -745,7 +745,7 @@ const gccCostApprovalController = {
                 <input type="text" data-field="balance" value="${this.escapeHtml(data.balance)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent" />
               </div>
               <div>
-                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo apos compromisso</label>
+                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo após compromisso</label>
                 <input type="text" data-field="balance-after" value="${this.escapeHtml(data.balanceAfter)}" readonly class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700 cursor-not-allowed" />
               </div>
               <div class="flex md:justify-end">
@@ -1089,7 +1089,7 @@ const gccCostApprovalController = {
         }
 
         if (balanceAfter !== null && balanceAfter < -tolerance) {
-          issues.push(`${rowLabel} - Saldo apos compromisso nao pode ficar negativo`);
+          issues.push(`${rowLabel} - Saldo após compromisso não pode ficar negativo`);
         }
       });
     });
@@ -1199,10 +1199,17 @@ const gccCostApprovalController = {
         taskFields: this.collectGccTaskFields()
       });
 
-      this.showToast('Rascunho salvo', 'As alteracoes foram salvas com sucesso.', 'success');
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[gccCostApproval] Error saving draft:', error);
-      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.', 'error');
+      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -1211,7 +1218,7 @@ const gccCostApprovalController = {
 
   handleApprove: function () {
     this.submitAction({
-      actionLabel: 'Aprovar',
+      actionLabel: 'Aprovar Custo',
       modalId: 'approve-modal',
       decisionValue: 'aprovado',
       justification: '',
@@ -1230,8 +1237,8 @@ const gccCostApprovalController = {
       if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
         ui.validation.showValidationModal(this.getContainer(), {
           missingFields: ['Categoria da devolucao'],
-          title: 'Campos Obrigatorios',
-          message: 'Por favor, preencha todos os campos obrigatorios antes de devolver a solicitacao.'
+          title: 'Campos Obrigatórios',
+          message: 'Por favor, preencha todos os campos obrigatórios antes de devolver a solicitação.'
         });
       } else {
         this.showToast('Categoria', 'Selecione a categoria da devolucao.', 'warning');
@@ -1245,8 +1252,8 @@ const gccCostApprovalController = {
       if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
         ui.validation.showValidationModal(this.getContainer(), {
           missingFields: ['Justificativa da devolucao'],
-          title: 'Campos Obrigatorios',
-          message: 'Por favor, preencha todos os campos obrigatorios antes de devolver a solicitacao.'
+          title: 'Campos Obrigatórios',
+          message: 'Por favor, preencha todos os campos obrigatórios antes de devolver a solicitação.'
         });
       } else {
         this.showToast('Justificativa', 'Informe o motivo da devolucao.', 'warning');
@@ -1256,7 +1263,7 @@ const gccCostApprovalController = {
     }
 
     this.submitAction({
-      actionLabel: 'Devolver para Correcao',
+      actionLabel: 'Devolver para Correção',
       modalId: 'modal-return',
       decisionValue: 'correcao',
       justification: justification,
@@ -1275,8 +1282,8 @@ const gccCostApprovalController = {
       if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
         ui.validation.showValidationModal(this.getContainer(), {
           missingFields: ['Categoria da reprovacao'],
-          title: 'Campos Obrigatorios',
-          message: 'Por favor, preencha todos os campos obrigatorios antes de reprovar o projeto.'
+          title: 'Campos Obrigatórios',
+          message: 'Por favor, preencha todos os campos obrigatórios antes de reprovar o projeto.'
         });
       } else {
         this.showToast('Categoria', 'Selecione a categoria da reprovacao.', 'warning');
@@ -1290,8 +1297,8 @@ const gccCostApprovalController = {
       if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
         ui.validation.showValidationModal(this.getContainer(), {
           missingFields: ['Justificativa da reprovacao'],
-          title: 'Campos Obrigatorios',
-          message: 'Por favor, preencha todos os campos obrigatorios antes de reprovar o projeto.'
+          title: 'Campos Obrigatórios',
+          message: 'Por favor, preencha todos os campos obrigatórios antes de reprovar o projeto.'
         });
       } else {
         this.showToast('Justificativa', 'Informe a justificativa da reprovacao.', 'warning');
@@ -1320,15 +1327,19 @@ const gccCostApprovalController = {
       if (config && config.validateFinance) {
         const missing = this.validateFinancePanel();
         if (missing.length) {
+          if (config && config.modalId) {
+            this.closeModal(config.modalId);
+          }
           const ui = this.getUiComponents();
           if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
             ui.validation.showValidationModal(this.getContainer(), {
               missingFields: missing,
-              title: 'Campos Obrigatorios',
-              message: 'Por favor, preencha todos os campos obrigatorios antes de continuar.'
+              title: 'Campos Obrigatórios',
+              message: 'Por favor, preencha todos os campos obrigatórios antes de continuar.',
+              closeSelectors: ['#approve-modal']
             });
           } else {
-            this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+            this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
           }
           return;
         }
@@ -1365,7 +1376,7 @@ const gccCostApprovalController = {
       }, 600);
     } catch (error) {
       console.error('[gccCostApproval] Error moving task:', error);
-      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel movimentar a solicitacao.', 'error');
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -1405,7 +1416,7 @@ const gccCostApprovalController = {
     }
 
     if (!this._state.documentId) {
-      throw new Error('Nao foi possivel identificar a solicitacao atual');
+      throw new Error('Não foi possível identificar a solicitação atual');
     }
 
     const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._state.documentId);
@@ -1541,8 +1552,8 @@ const gccCostApprovalController = {
 
   getPriorityLabel: function (priority) {
     const normalized = this.asText(priority).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (normalized.indexOf('critico') !== -1) return 'Critico';
-    if (normalized.indexOf('estrategico') !== -1) return 'Estrategico';
+    if (normalized.indexOf('critico') !== -1) return 'Crítico';
+    if (normalized.indexOf('estrategico') !== -1) return 'Estratégico';
     if (normalized.indexOf('operacional') !== -1) return 'Operacional';
     return this.asText(priority);
   },

@@ -6,8 +6,8 @@
           <i class="fa-solid fa-circle-dollar-to-slot text-blue-600 mt-0.5 mr-3"></i>
           <div class="text-sm text-blue-800">
             <p class="font-medium mb-1">Gerente do Centro de Custo - Aprovar Custo do Projeto</p>
-            <p>Revise o historico das etapas anteriores, avalie a composicao financeira da proposta comercial e registre
-              sua decisao para o gateway do GCC.</p>
+            <p>Revise o histórico das etapas anteriores, avalie a composição financeira da proposta comercial e registre
+              sua decisão para o gateway do GCC.</p>
           </div>
         </div>
       </div>
@@ -18,11 +18,11 @@
             <div class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2" data-tabs-scroll>
               <button type="button" data-tab="solicitacao"
                 class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                <i class="fa-solid fa-file-lines mr-2"></i>Solicitacao
+                <i class="fa-solid fa-file-lines mr-2"></i>Solicitação
               </button>
               <button type="button" data-tab="analise-ti"
                 class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                <i class="fa-solid fa-microscope mr-2"></i>Analise TI
+                <i class="fa-solid fa-microscope mr-2"></i>Análise TI
               </button>
               <button type="button" data-tab="impacto"
                 class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
@@ -43,7 +43,7 @@
                   title="Atencao" aria-label="Atencao">
                   <i class="fa-solid fa-exclamation text-[10px]"></i>
                 </span>
-                <i class="fa-solid fa-sack-dollar mr-2"></i>Painel financeiro
+                <i class="fa-solid fa-sack-dollar mr-2"></i>Painel Financeiro
               </button>
             </div>
 
@@ -71,17 +71,17 @@
         </div>
 
         <div class="p-6 hidden" data-tab-panel="solicitacao">
-          <div data-component="tab-solicitacao-history" class="text-sm text-gray-500">Carregando conteudo da
-            solicitacao...</div>
+          <div data-component="tab-solicitacao-history" class="text-sm text-gray-500">Carregando conteúdo da
+            solicitação...</div>
         </div>
 
         <div class="p-6 hidden" data-tab-panel="analise-ti">
-          <div data-component="tab-analise-ti-history" class="text-sm text-gray-500">Carregando conteudo da analise
+          <div data-component="tab-analise-ti-history" class="text-sm text-gray-500">Carregando conteúdo da analise
             TI...</div>
         </div>
 
         <div class="p-6 hidden" data-tab-panel="impacto">
-          <div data-component="tab-impacto-history" class="text-sm text-gray-500">Carregando impacto na area...</div>
+          <div data-component="tab-impacto-history" class="text-sm text-gray-500">Carregando impacto na área...</div>
         </div>
 
         <div class="p-6 hidden" data-tab-panel="triagem-ti">
@@ -99,8 +99,8 @@
               <div class="flex items-start">
                 <i class="fa-solid fa-dollar-sign text-yellow-600 mt-0.5 mr-3"></i>
                 <div class="text-sm text-yellow-800">
-                  <p class="font-medium mb-1">Analise Financeira - GCC</p>
-                  <p>Revise os valores, estrutura de custos e a classificacao contabil antes de aprovar.</p>
+                  <p class="font-medium mb-1">Análise Financeira - GCC</p>
+                  <p>Revise os valores, estrutura de custos e a classificação contábil antes de aprovar.</p>
                 </div>
               </div>
             </div>
@@ -111,15 +111,15 @@
                 <div class="space-y-2 text-sm">
                   <div class="flex justify-between">
                     <span class="text-gray-600">Fornecedor:</span>
-                    <span id="gcc-summary-supplier" class="font-medium text-gray-900">Nao informado</span>
+                    <span id="gcc-summary-supplier" class="font-medium text-gray-900">Não informado</span>
                   </div>
                   <div class="flex justify-between">
                     <span class="text-gray-600">Nº Proposta:</span>
-                    <span id="gcc-summary-reference" class="font-mono font-medium text-gray-900">Nao informado</span>
+                    <span id="gcc-summary-reference" class="font-mono font-medium text-gray-900">Não informado</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Vigencia:</span>
-                    <span id="gcc-summary-validity" class="font-medium text-gray-900">Nao informado</span>
+                    <span class="text-gray-600">Vigência:</span>
+                    <span id="gcc-summary-validity" class="font-medium text-gray-900">Não informado</span>
                   </div>
                 </div>
               </div>
@@ -128,15 +128,15 @@
                 <div class="space-y-2 text-sm">
                   <div class="flex justify-between">
                     <span class="text-gray-600">Valor Total:</span>
-                    <span id="gcc-summary-total" class="font-bold text-bevap-navy text-lg">Nao informado</span>
+                    <span id="gcc-summary-total" class="font-bold text-bevap-navy text-lg">Não informado</span>
                   </div>
                   <div class="flex justify-between">
-                    <span class="text-gray-600">Condicao:</span>
-                    <span id="gcc-summary-condition" class="font-medium text-gray-900">Nao informado</span>
+                    <span class="text-gray-600">Condição:</span>
+                    <span id="gcc-summary-condition" class="font-medium text-gray-900">Não informado</span>
                   </div>
                   <div class="flex justify-between">
                     <span class="text-gray-600">Prazo:</span>
-                    <span id="gcc-summary-deadline" class="font-medium text-gray-900">Nao informado</span>
+                    <span id="gcc-summary-deadline" class="font-medium text-gray-900">Não informado</span>
                   </div>
                 </div>
               </div>
@@ -163,7 +163,7 @@
                   </thead>
                   <tbody class="divide-y divide-gray-200" data-component="gcc-cost-structure">
                     <tr>
-                      <td class="px-4 py-3 text-gray-500" colspan="4">Estrutura de custo indisponivel.</td>
+                      <td class="px-4 py-3 text-gray-500" colspan="4">Estrutura de custo indisponível.</td>
                     </tr>
                   </tbody>
                   <tfoot class="bg-gray-50 font-semibold">
@@ -178,9 +178,9 @@
 
             <div class="bg-white border border-gray-200 rounded-lg p-5">
               <label class="block text-sm font-medium text-gray-700 mb-2 flex items-center">
-                Natureza do Custo *
+                Natureza do Custo <span class="text-red-500">*</span>
                 <i class="fa-solid fa-info-circle text-gray-400 ml-2 cursor-help"
-                  title="Defina se o investimento sera CAPEX (bens duraveis) ou OPEX (despesas operacionais)"></i>
+                  title="Defina se o investimento será CAPEX (bens duráveis) ou OPEX (despesas operacionais)"></i>
               </label>
 
               <div class="space-y-3">
@@ -214,7 +214,7 @@
 
                   <div id="gcc-capex-wrapper" class="mt-4 pt-4 border-t hidden">
                     <div class="flex items-center justify-between mb-3">
-                      <span class="text-sm font-medium text-gray-700">Centro de Custo*</span>
+                      <span class="text-sm font-medium text-gray-700">Centro de Custo <span class="text-red-500">*</span></span>
                       <button type="button" data-action="add-capex-row"
                         class="px-3 py-1.5 text-xs font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
                         <i class="fa-solid fa-plus mr-1"></i> Adicionar rateio
@@ -258,7 +258,7 @@
                                 </div>
                               </div>
                               <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo apos
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo após
                                   compromisso</label>
                                 <div
                                   class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-semibold">
@@ -310,7 +310,7 @@
 
                   <div id="gcc-opex-wrapper" class="mt-4 pt-4 border-t hidden">
                     <div class="flex items-center justify-between mb-3">
-                      <span class="text-sm font-medium text-gray-700">Centro de Custo*</span>
+                      <span class="text-sm font-medium text-gray-700">Centro de Custo <span class="text-red-500">*</span></span>
                       <button type="button" data-action="add-opex-row"
                         class="px-3 py-1.5 text-xs font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
                         <i class="fa-solid fa-plus mr-1"></i> Adicionar rateio
@@ -354,7 +354,7 @@
                                 </div>
                               </div>
                               <div>
-                                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo apos
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Saldo após
                                   compromisso</label>
                                 <div
                                   class="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-right font-semibold">
@@ -381,8 +381,8 @@
 
             <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
               <div>
-                <label for="gcc-competence" class="block text-sm font-medium text-gray-700 mb-2">Periodo Competencia
-                  *</label>
+                <label for="gcc-competence" class="block text-sm font-medium text-gray-700 mb-2">Período Competência
+                  <span class="text-red-500">*</span></label>
                 <input type="month" id="gcc-competence"
                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm" />
               </div>
@@ -395,14 +395,14 @@
       <div class="bg-white rounded-lg shadow-md p-6 mt-6">
         <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
           <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
-          Observacoes do Gerente do Centro de Custo
+          Observações do Gerente do Centro de Custo
         </h3>
         <div>
-          <label for="gcc-observations" class="block text-sm font-medium text-gray-700 mb-2">Observacoes /
-            Negociacao</label>
+          <label for="gcc-observations" class="block text-sm font-medium text-gray-700 mb-2">Observações /
+            Negociação</label>
           <textarea id="gcc-observations" rows="4"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent text-sm resize-none"
-            placeholder="Adicione observacoes sobre a aprovacao do custo, rateios, condicoes especiais e negociacao..."></textarea>
+            placeholder="Adicione observações sobre a aprovação do custo, rateios, condições especiais e negociação..."></textarea>
         </div>
       </div>
     </div>
@@ -423,7 +423,7 @@
             </div>
             <div class="h-px bg-blue-700"></div>
             <div>
-              <div class="text-xs text-blue-200 mb-1">Saldo Disponivel CC</div>
+              <div class="text-xs text-blue-200 mb-1">Saldo Disponível CC</div>
               <div id="impact-available-list" class="space-y-1 mb-2">
                 <div class="flex justify-between text-xs">
                   <span class="text-blue-100">—</span>
@@ -434,7 +434,7 @@
             </div>
             <div class="h-px bg-blue-700"></div>
             <div>
-              <div class="text-xs text-blue-200 mb-1">Saldo Apos Aprovacao</div>
+              <div class="text-xs text-blue-200 mb-1">Saldo Apos Aprovação</div>
               <div id="impact-after-list" class="space-y-1 mb-2">
                 <div class="flex justify-between text-xs">
                   <span class="text-blue-100">—</span>
@@ -463,11 +463,11 @@
           </button>
           <button data-action="open-return-modal"
             class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
-            <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correcao
+            <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
           </button>
           <button data-action="open-approve-modal"
             class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
-            <i class="fa-solid fa-check mr-2"></i> Aprovar
+            <i class="fa-solid fa-check mr-2"></i> Aprovar Custo
           </button>
         </div>
       </div>
@@ -480,30 +480,30 @@
         <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
           <i class="fa-solid fa-check-circle text-bevap-green text-2xl"></i>
         </div>
-        <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovacao</h3>
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovação</h3>
       </div>
-      <p class="text-gray-700 mb-6">Voce esta aprovando o custo do projeto <strong id="gcc-approve-project">-</strong>.
+      <p class="text-gray-700 mb-6">Você está aprovando o custo do projeto <strong id="gcc-approve-project">-</strong>.
       </p>
-      <p class="text-sm text-gray-600 mb-6">Ao confirmar, a solicitacao sera encaminhada ao <strong>Comite - Aprovar
+      <p class="text-sm text-gray-600 mb-6">Ao confirmar, a solicitacao será encaminhada ao <strong>Comite - Aprovar
           Custo Projeto</strong>.</p>
       <div class="flex justify-end space-x-3">
         <button data-action="close-modal" data-modal-id="approve-modal"
           class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Cancelar</button>
         <button data-action="confirm-approve"
-          class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">Confirmar</button>
+          class="px-6 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors font-medium">Aprovar Custo</button>
       </div>
     </div>
   </div>
 
   <div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-      <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correcao</h3>
-      <p class="text-sm text-gray-600 mb-4">Descreva os pontos que precisam ser corrigidos antes de uma nova avaliacao
+      <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correção</h3>
+      <p class="text-sm text-gray-600 mb-4">Descreva os pontos que precisam ser corrigidos antes de uma nova avaliação
         do GCC:</p>
       <select id="gcc-return-category"
         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
         <option value="">Selecione a categoria</option>
-        <option value="orcamento">Orcamento</option>
+        <option value="orcamento">Orçamento</option>
         <option value="rateio">Rateio inconsistente</option>
         <option value="capacidade-financeira">Capacidade financeira</option>
         <option value="risco">Risco</option>
@@ -523,21 +523,21 @@
   <div id="modal-reject" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
       <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Reprovar Custo do Projeto</h3>
-      <p class="text-sm text-gray-600 mb-4">Informe a categoria e a justificativa da reprovacao para registrar a decisao
+      <p class="text-sm text-gray-600 mb-4">Informe a categoria e a justificativa da reprovação para registrar a decisão
         do GCC.</p>
       <select id="gcc-reject-category"
         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
         <option value="">Selecione a categoria</option>
-        <option value="orcamento">Orcamento</option>
+        <option value="orcamento">Orçamento</option>
         <option value="rateio">Rateio inconsistente</option>
         <option value="capacidade-financeira">Capacidade financeira</option>
         <option value="risco">Risco</option>
         <option value="outro">Outro</option>
       </select>
-      <textarea id="gcc-justification-reject" rows="4" placeholder="Descricao detalhada..."
+      <textarea id="gcc-justification-reject" rows="4" placeholder="Descrição detalhada..."
         class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
       <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-        <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> O processo sera encerrado quando a
+        <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> O processo será encerrado quando a
           reprovacao for confirmada.</p>
       </div>
       <div class="flex justify-end space-x-3">

@@ -164,7 +164,17 @@ const evaluateProjectController = {
 
     container.on(`click${ns}`, '[data-action="remove-risk"]', (event) => {
       event.preventDefault();
-      this.removeRiskItem(event.currentTarget);
+      this.openRemoveRiskModal(event.currentTarget);
+    });
+
+    container.on(`click${ns}`, '[data-action="cancel-remove-risk"]', (event) => {
+      event.preventDefault();
+      this.closeRemoveRiskModal();
+    });
+
+    container.on(`click${ns}`, '[data-action="confirm-remove-risk"]', (event) => {
+      event.preventDefault();
+      this.confirmRemoveRiskItem();
     });
 
     container.on(`change${ns}`, '#tab-content-checklist input[type="checkbox"]', () => {
@@ -202,8 +212,8 @@ const evaluateProjectController = {
         if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
           ui.validation.showValidationModal(this.getContainer(), {
             missingFields: ['Justificativa da devolucao'],
-            title: 'Campos Obrigatorios',
-            message: 'Por favor, preencha todos os campos obrigatorios antes de devolver a solicitacao.'
+            title: 'Campos Obrigatórios',
+            message: 'Por favor, preencha todos os campos obrigatórios antes de devolver a solicitação.'
           });
         } else {
           this.showToast('Informe o motivo da devolucao.', 'warning');
@@ -217,7 +227,7 @@ const evaluateProjectController = {
         choosedState: 14,
         decisionField: 'decisaoAvaliarProjeto',
         decisionValue: 'correcao',
-        successMessage: 'Projeto devolvido para correcao'
+        successMessage: 'Projeto devolvido para correção'
       });
     });
 
@@ -229,7 +239,7 @@ const evaluateProjectController = {
         decisionField: 'decisaoAvaliarProjeto',
         decisionValue: 'aprovado',
         validateRequiredFields: true,
-        successMessage: 'Encaminhado para aprovacao do projeto'
+        successMessage: 'Encaminhado para aprovação do projeto'
       });
     });
 
@@ -243,7 +253,7 @@ const evaluateProjectController = {
       const url = this.asText($(event.currentTarget).attr('data-url'));
       const fileName = this.asText($(event.currentTarget).attr('data-file-name'));
       if (!url) {
-        this.showToast('Nao foi possivel abrir o anexo', 'error');
+        this.showToast('Não foi possível abrir o anexo', 'error');
         return;
       }
 
@@ -259,7 +269,7 @@ const evaluateProjectController = {
       const url = this.asText($(event.currentTarget).attr('data-url'));
       const fileName = this.asText($(event.currentTarget).attr('data-file-name'));
       if (!url) {
-        this.showToast('Nao foi possivel baixar o anexo', 'error');
+        this.showToast('Não foi possível baixar o anexo', 'error');
         return;
       }
 
@@ -286,7 +296,7 @@ const evaluateProjectController = {
       this.openAttachmentsFromSidebar();
     });
 
-    container.on(`click${ns}`, '#approve-modal, #modal-return', (event) => {
+    container.on(`click${ns}`, '#approve-modal, #modal-return, #remove-risk-modal', (event) => {
       if (event.target !== event.currentTarget) return;
       $(event.currentTarget).addClass('hidden');
     });
@@ -368,8 +378,8 @@ const evaluateProjectController = {
 
     ui.sidebar.renderProgress(progressTarget, {
       items: [
-        { style: 'success', label: 'Solicitacao completa', iconClass: 'fa-solid fa-check-circle' },
-        { style: 'warning', label: 'Analise tecnica pendente', iconClass: 'fa-solid fa-exclamation-circle' }
+        { style: 'success', label: 'Solicitação completa', iconClass: 'fa-solid fa-check-circle' },
+        { style: 'warning', label: 'Análise técnica pendente', iconClass: 'fa-solid fa-exclamation-circle' }
       ]
     });
   },
@@ -390,13 +400,13 @@ const evaluateProjectController = {
         <select data-field="nivelRiscoAPTI" class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all text-sm">
           <option value="" selected disabled>Selecione</option>
           <option value="baixo">Baixo</option>
-          <option value="medio">Medio</option>
+          <option value="medio">Médio</option>
           <option value="alto">Alto</option>
         </select>
       </div>
       <div class="md:col-span-8">
-        <label class="block text-xs font-medium text-gray-600 mb-1">Descricao do Risco</label>
-        <textarea data-field="descricaoRiscoAPTI" rows="2" placeholder="Descreva o risco tecnico identificado..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm"></textarea>
+        <label class="block text-xs font-medium text-gray-600 mb-1">Descrição do Risco</label>
+        <textarea data-field="descricaoRiscoAPTI" rows="2" placeholder="Descreva o risco técnico identificado..." class="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none text-sm"></textarea>
       </div>
       <div class="md:col-span-1 flex md:justify-end md:pt-6">
         <button type="button" data-action="remove-risk" class="w-9 h-9 inline-flex items-center justify-center rounded-lg border border-red-200 text-red-600 hover:bg-red-50 transition-colors" title="Remover risco">
@@ -416,9 +426,28 @@ const evaluateProjectController = {
     container.appendChild(riskItem);
   },
 
-  removeRiskItem: function (button) {
-    const container = document.getElementById('risks-container');
+  openRemoveRiskModal: function (button) {
     const item = button && button.closest ? button.closest('.risk-item') : null;
+    if (!item) return;
+
+    this._riskItemPendingRemoval = item;
+    this.openModal('remove-risk-modal');
+  },
+
+  closeRemoveRiskModal: function () {
+    this._riskItemPendingRemoval = null;
+    this.closeModal('remove-risk-modal');
+  },
+
+  confirmRemoveRiskItem: function () {
+    const item = this._riskItemPendingRemoval;
+    this._riskItemPendingRemoval = null;
+    this.closeModal('remove-risk-modal');
+    this.removeRiskItem(item);
+  },
+
+  removeRiskItem: function (item) {
+    const container = document.getElementById('risks-container');
     if (!container || !item) return;
 
     if (container.children.length === 1) {
@@ -556,7 +585,7 @@ const evaluateProjectController = {
     const components = this.getApprovalTabComponents();
     const component = components && components.solicitationHistory;
     if (!component || typeof component.render !== 'function') {
-      target.html('<div class="text-sm text-red-600">Componente de solicitacao indisponivel.</div>');
+      target.html('<div class="text-sm text-red-600">Componente de solicitacao indisponível.</div>');
       return;
     }
 
@@ -565,12 +594,12 @@ const evaluateProjectController = {
         const emptyHtml = await component.render({ documentId: '' });
         target.html(emptyHtml);
       } catch (error) {
-        target.html('<div class="text-sm text-gray-500">Selecione uma solicitacao para visualizar o historico.</div>');
+        target.html('<div class="text-sm text-gray-500">Selecione uma solicitação para visualizar o histórico.</div>');
       }
       return;
     }
 
-    target.html('<div class="text-sm text-gray-500">Carregando conteudo...</div>');
+    target.html('<div class="text-sm text-gray-500">Carregando conteúdo...</div>');
 
     try {
       if (typeof component.renderInto === 'function') {
@@ -585,7 +614,7 @@ const evaluateProjectController = {
       this.autoResizeSolicitacaoTextareas();
     } catch (error) {
       console.error('[evaluateProject] Error rendering solicitationHistory:', error);
-      target.html('<div class="text-sm text-red-600">Nao foi possivel carregar a solicitacao.</div>');
+      target.html('<div class="text-sm text-red-600">Não foi possível carregar a solicitação.</div>');
     }
   },
 
@@ -842,8 +871,8 @@ const evaluateProjectController = {
   getPriorityLabel: function (priority) {
     const raw = this.asText(priority);
     const normalized = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (normalized.indexOf('critico') !== -1) return 'Critico';
-    if (normalized.indexOf('estrategico') !== -1) return 'Estrategico';
+    if (normalized.indexOf('critico') !== -1) return 'Crítico';
+    if (normalized.indexOf('estrategico') !== -1) return 'Estratégico';
     if (normalized.indexOf('operacional') !== -1) return 'Operacional';
     return raw || '';
   },
@@ -901,7 +930,7 @@ const evaluateProjectController = {
     banner.addClass(isAligned ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50');
     icon.attr('class', `fa-solid fa-circle-info mr-2 ${isAligned ? 'text-bevap-green' : 'text-red-600'}`);
     text.attr('class', `text-sm font-medium ${isAligned ? 'text-bevap-green' : 'text-red-700'}`);
-    text.text(isAligned ? 'Alinhado aos objetivos estrategicos BEVAP' : 'Nao alinhado aos objetivos estrategicos BEVAP');
+    text.text(isAligned ? 'Alinhado aos objetivos estratégicos BEVAP' : 'Não alinhado aos objetivos estratégicos BEVAP');
   },
 
   createActionLoading: function () {
@@ -975,11 +1004,11 @@ const evaluateProjectController = {
       fallbackSelector: 'textarea'
     });
 
-    if (!visibility) missing.push('Viabilidade Tecnica');
+    if (!visibility) missing.push('Viabilidade Técnica');
     if (!alternatives) missing.push('Alternativas Consideradas');
-    if (!estimatedHours) missing.push('Esforco Estimado (horas)');
-    if (!estimatedPoints) missing.push('Esforco Estimado (pontos)');
-    if (!dependencies) missing.push('Dependencias Tecnicas');
+    if (!estimatedHours) missing.push('Esforço Estimado (horas)');
+    if (!estimatedPoints) missing.push('Esforço Estimado (pontos)');
+    if (!dependencies) missing.push('Dependências Técnicas');
 
     return missing;
   },
@@ -989,13 +1018,13 @@ const evaluateProjectController = {
     if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
       ui.validation.showValidationModal(this.getContainer(), {
         missingFields: missing,
-        title: 'Campos Obrigatorios',
-        message: 'Por favor, preencha todos os campos obrigatorios antes de continuar.'
+        title: 'Campos Obrigatórios',
+        message: 'Por favor, preencha todos os campos obrigatórios antes de continuar.'
       });
       return;
     }
 
-    this.showToast(`Campos obrigatorios: Preencha ${missing.join(' | ')}`, 'warning');
+    this.showToast(`Campos obrigatórios: Preencha ${missing.join(' | ')}`, 'warning');
   },
 
   openEvaluateAnalysisTab: function () {
@@ -1122,20 +1151,24 @@ const evaluateProjectController = {
     this._isSubmitting = true;
 
     try {
-      loading.updateMessage('Salvando rascunho da avaliacao...');
+      loading.updateMessage('Salvando rascunho da avaliação...');
       await this.waitForUiPaint();
       await fluigService.saveDraft({
         mode: 'updateCardDraft',
         documentId: this._currentDocumentId,
         taskFields: this.collectEvaluateTaskFields()
       });
-      this.showToast('Rascunho salvo', 'As alteracoes foram salvas com sucesso.', 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 150);
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[evaluateProject] Error saving draft:', error);
-      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.', 'error');
+      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
     } finally {
       this._isSubmitting = false;
       loading.hide();
@@ -1148,7 +1181,7 @@ const evaluateProjectController = {
     }
 
     if (!this._currentDocumentId) {
-      throw new Error('Nao foi possivel identificar a solicitacao atual');
+      throw new Error('Não foi possível identificar a solicitação atual');
     }
 
     const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._currentDocumentId);
@@ -1197,7 +1230,7 @@ const evaluateProjectController = {
       }, 600);
     } catch (error) {
       console.error('[evaluateProject] Error moving task:', error);
-      this.showToast(error && error.message ? error.message : 'Nao foi possivel movimentar a solicitacao.', 'error');
+      this.showToast(error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
     } finally {
       this._isSubmitting = false;
       loading.hide();

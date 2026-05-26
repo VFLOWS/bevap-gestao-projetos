@@ -9,6 +9,7 @@ const dashboardController = {
       const html = await $.get(this.getTemplateUrl());
       container.html(html);
       this.bindEvents();
+      this.showDeferredFeedback();
       await this.loadPendencies();
     } catch (error) {
       console.error('Dashboard template load error:', error);
@@ -203,6 +204,69 @@ const dashboardController = {
 
   updatePendencyCount: function (count) {
     $('#pending-approvals-count').text(count);
+  },
+
+  showDeferredFeedback: function () {
+    let payload = null;
+
+    try {
+      const raw = sessionStorage.getItem('gpDashboardFeedback');
+      if (!raw) return;
+      sessionStorage.removeItem('gpDashboardFeedback');
+      payload = JSON.parse(raw);
+    } catch (error) {
+      sessionStorage.removeItem('gpDashboardFeedback');
+      return;
+    }
+
+    this.showFeedbackToast(payload || {});
+  },
+
+  showFeedbackToast: function (payload) {
+    const container = $('#page-container');
+    if (!container.length) return;
+
+    const type = this.asText(payload.type) || 'success';
+    const config = {
+      success: { icon: 'fa-solid fa-check-circle text-bevap-green', border: 'border-bevap-green' },
+      error: { icon: 'fa-solid fa-times-circle text-red-500', border: 'border-red-500' },
+      warning: { icon: 'fa-solid fa-exclamation-triangle text-bevap-gold', border: 'border-bevap-gold' },
+      info: { icon: 'fa-solid fa-info-circle text-blue-500', border: 'border-blue-500' }
+    }[type] || { icon: 'fa-solid fa-info-circle text-blue-500', border: 'border-blue-500' };
+
+    let toast = $('#dashboard-feedback-toast');
+    if (!toast.length) {
+      container.append(`
+        <div id="dashboard-feedback-toast" class="hidden fixed top-4 right-4 bg-white border-l-4 rounded-lg shadow-lg p-4 z-50 max-w-sm transform transition-all duration-300 opacity-0 translate-x-4">
+          <div class="flex items-start">
+            <i id="dashboard-feedback-icon" class="mr-3 mt-1"></i>
+            <div>
+              <h4 id="dashboard-feedback-title" class="font-semibold text-gray-900"></h4>
+              <p id="dashboard-feedback-message" class="text-sm text-gray-600 mt-1"></p>
+            </div>
+          </div>
+        </div>
+      `);
+      toast = $('#dashboard-feedback-toast');
+    }
+
+    toast
+      .removeClass('border-bevap-green border-red-500 border-bevap-gold border-blue-500')
+      .addClass(config.border);
+    toast.find('#dashboard-feedback-icon').attr('class', `${config.icon} mr-3 mt-1`);
+    toast.find('#dashboard-feedback-title').text(this.asText(payload.title) || 'Rascunho salvo');
+    toast.find('#dashboard-feedback-message').text(this.asText(payload.message) || 'As alterações foram salvas com sucesso.');
+
+    toast.removeClass('hidden');
+    const animate = window.requestAnimationFrame || function (callback) { return setTimeout(callback, 0); };
+    animate(() => {
+      toast.removeClass('opacity-0 translate-x-4');
+    });
+
+    setTimeout(() => {
+      toast.addClass('opacity-0 translate-x-4');
+      setTimeout(() => toast.addClass('hidden'), 300);
+    }, 5000);
   },
 
   getPriorityInfo: function (priority) {

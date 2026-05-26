@@ -16,13 +16,13 @@
                     <div class="relative">
                         <div class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2" data-tabs-scroll>
                             <button type="button" data-tab="solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                                <i class="fa-solid fa-file-lines mr-2"></i>Solicitacao
+                                <i class="fa-solid fa-file-lines mr-2"></i>Solicitação
                             </button>
                             <button type="button" data-tab="analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                                <i class="fa-solid fa-microscope mr-2"></i>Analise TI
+                                <i class="fa-solid fa-microscope mr-2"></i>Análise TI
                             </button>
                             <button type="button" data-tab="impacto" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
-                                <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Area
+                                <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Área
                             </button>
                             <button type="button" data-tab="triagem-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700 whitespace-nowrap">
                                 <i class="fa-solid fa-route mr-2"></i>Triagem TI
@@ -64,19 +64,19 @@
                 </div>
 
                 <div class="p-6 hidden" data-tab-panel="solicitacao">
-                    <div data-component="tab-solicitacao-history" class="text-sm text-gray-500">Carregando conteudo da solicitacao...</div>
+                    <div data-component="tab-solicitacao-history" class="text-sm text-gray-500">Carregando conteúdo da solicitação...</div>
                 </div>
 
                 <div class="p-6 hidden" data-tab-panel="analise-ti">
-                    <div data-component="tab-analise-ti-history" class="text-sm text-gray-500">Carregando conteudo da analise TI...</div>
+                    <div data-component="tab-analise-ti-history" class="text-sm text-gray-500">Carregando conteúdo da análise TI...</div>
                 </div>
 
                 <div class="p-6 hidden" data-tab-panel="impacto">
-                    <div data-component="tab-impacto-history" class="text-sm text-gray-500">Carregando conteudo de impacto...</div>
+                    <div data-component="tab-impacto-history" class="text-sm text-gray-500">Carregando conteúdo de impacto...</div>
                 </div>
 
                 <div class="p-6 hidden" data-tab-panel="triagem-ti">
-                    <div data-component="tab-triagem-ti-history" class="text-sm text-gray-500">Carregando conteudo da triagem...</div>
+                    <div data-component="tab-triagem-ti-history" class="text-sm text-gray-500">Carregando conteúdo da triagem...</div>
                 </div>
 
                 <div class="p-6 hidden" data-tab-panel="fornecedor">
@@ -145,7 +145,7 @@
                                     <input id="proposal-reference-number" type="text" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Vigencia em Dias <span class="text-red-500">*</span></label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Vigência em Dias <span class="text-red-500">*</span></label>
                                     <input id="proposal-validity-days" type="number" min="1" step="1" inputmode="numeric" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent">
                                 </div>
                             </div>
@@ -168,7 +168,7 @@
                             </div>
 
                             <div class="mb-6">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Condicao de Pagamento <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Condição de Pagamento <span class="text-red-500">*</span></label>
                                 <div id="proposal-payment-condition-filter"></div>
                                 <input id="proposal-payment-condition" type="hidden">
                                 <input id="proposal-payment-condition-code" type="hidden">
@@ -182,7 +182,7 @@
 
                         <section>
                             <div class="flex items-center justify-between mb-4">
-                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Itens / Servicos <span class="text-red-500">*</span></h3>
+                                <h3 class="text-lg font-montserrat font-semibold text-bevap-navy">Itens / Serviços <span class="text-red-500">*</span></h3>
                                 <button type="button" data-action="add-proposal-item" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
                                     <i class="fa-solid fa-plus mr-2"></i>Adicionar
                                 </button>
@@ -219,7 +219,7 @@
                                         </button>
                                     </div>
                                     <div id="proposal-prerequisite-list" class="space-y-2"></div>
-                                    <div id="proposal-prerequisite-empty" class="text-sm text-gray-500 hidden">Nenhum pre-requisito informado.</div>
+                                    <div id="proposal-prerequisite-empty" class="text-sm text-gray-500 hidden">Nenhum pré-requisito informado.</div>
                                 </div>
                             </div>
                         </section>
@@ -247,43 +247,43 @@
                         <label class="flex items-start">
                             <input id="proposal-check-scope" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                             <span class="ml-3 text-sm text-gray-700">
-                                <span class="font-medium">Escopo esta claro e detalhado</span>
-                                <p class="text-gray-500 text-xs mt-1">Escopo e entregaveis estao descritos de forma objetiva.</p>
+                                <span class="font-medium">Escopo está claro e detalhado</span>
+                                <p class="text-gray-500 text-xs mt-1">Escopo e entregáveis estão descritos de forma objetiva.</p>
                             </span>
                         </label>
                         <label class="flex items-start">
                             <input id="proposal-check-taxes" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                             <span class="ml-3 text-sm text-gray-700">
-                                <span class="font-medium">Impostos e taxas estao inclusos no valor</span>
-                                <p class="text-gray-500 text-xs mt-1">A proposta ja considera encargos aplicaveis.</p>
+                                <span class="font-medium">Impostos e taxas estão inclusos no valor</span>
+                                <p class="text-gray-500 text-xs mt-1">A proposta já considera encargos aplicáveis.</p>
                             </span>
                         </label>
                         <label class="flex items-start">
                             <input id="proposal-check-deadlines" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                             <span class="ml-3 text-sm text-gray-700">
                                 <span class="font-medium">Prazos de entrega definidos</span>
-                                <p class="text-gray-500 text-xs mt-1">Cronograma e marcos estao descritos.</p>
+                                <p class="text-gray-500 text-xs mt-1">Cronograma e marcos estão descritos.</p>
                             </span>
                         </label>
                         <label class="flex items-start">
                             <input id="proposal-check-sla" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                             <span class="ml-3 text-sm text-gray-700">
                                 <span class="font-medium">Garantias e SLA especificados</span>
-                                <p class="text-gray-500 text-xs mt-1">Condicoes de garantia, suporte e SLA estao claras.</p>
+                                <p class="text-gray-500 text-xs mt-1">Condições de garantia, suporte e SLA estão claras.</p>
                             </span>
                         </label>
                         <label class="flex items-start">
                             <input id="proposal-check-validity" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                             <span class="ml-3 text-sm text-gray-700">
-                                <span class="font-medium">Vigencia da proposta confirmada</span>
-                                <p class="text-gray-500 text-xs mt-1">A validade comercial esta informada e vigente.</p>
+                                <span class="font-medium">Vigência da proposta confirmada</span>
+                                <p class="text-gray-500 text-xs mt-1">A validade comercial está informada e vigente.</p>
                             </span>
                         </label>
                         <label class="flex items-start">
                             <input id="proposal-check-documents" type="checkbox" class="proposal-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                             <span class="ml-3 text-sm text-gray-700">
                                 <span class="font-medium">Documentos anexados e completos</span>
-                                <p class="text-gray-500 text-xs mt-1">Proposta e anexos de apoio foram incluidos.</p>
+                                <p class="text-gray-500 text-xs mt-1">Proposta e anexos de apoio foram incluídos.</p>
                             </span>
                         </label>
                     </div>
@@ -333,8 +333,8 @@
             </div>
             <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar envio</h3>
         </div>
-        <p class="text-gray-700 mb-3">Voce esta enviando a proposta comercial para o projeto <strong id="approve-project-label">Projeto selecionado</strong>.</p>
-        <p class="text-sm text-gray-600 mb-6">Ao confirmar, a solicitacao seguira para aprovacao do solicitante.</p>
+        <p class="text-gray-700 mb-3">Você está enviando a proposta comercial para o projeto <strong id="approve-project-label">Projeto selecionado</strong>.</p>
+        <p class="text-sm text-gray-600 mb-6">Ao confirmar, a solicitação seguirá para aprovação do solicitante.</p>
         <div class="flex justify-end space-x-3">
             <button data-action="close-modal" data-modal-id="approve-modal" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 Cancelar
@@ -349,18 +349,18 @@
 
 <div id="modal-reject" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Confirmar remocao</h3>
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Confirmar remoção</h3>
         <p class="text-sm text-gray-600 mb-4">Informe categoria e justificativa da reprovação:</p>
         <select id="reject-category-input" class="hidden w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
             <option value="">Selecione a categoria</option>
-            <option value="tecnica">Inviabilidade tecnica</option>
+            <option value="tecnica">Inviabilidade técnica</option>
             <option value="prioridades">Mudanca de prioridades</option>
             <option value="recursos">Recursos indisponiveis</option>
             <option value="riscos">Risco elevado</option>
             <option value="escopo">Escopo indefinido</option>
             <option value="outro">Outro</option>
         </select>
-        <textarea id="reject-reason-input" rows="4" placeholder="Descricao detalhada..." class="hidden w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+        <textarea id="reject-reason-input" rows="4" placeholder="Descrição detalhada..." class="hidden w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
         <div class="flex justify-end space-x-3">
             <button data-action="close-modal" data-modal-id="modal-reject" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
             <button data-action="confirm-remove-item" class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all">Remover</button>

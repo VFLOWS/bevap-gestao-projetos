@@ -222,7 +222,7 @@ const immediateApprovalController = {
         decisionField: 'decisaoSuperiorImediato',
         decisionValue: 'aprovado',
         validateRequiredFields: true,
-        successMessage: 'Projeto aprovado e encaminhado para a proxima etapa'
+        successMessage: 'Projeto aprovado e encaminhado para a próxima etapa'
       });
     });
 
@@ -241,7 +241,7 @@ const immediateApprovalController = {
         choosedState: 21,
         decisionField: 'decisaoSuperiorImediato',
         decisionValue: 'correcao',
-        successMessage: 'Projeto devolvido para correcao'
+        successMessage: 'Projeto devolvido para correção'
       });
     });
 
@@ -273,7 +273,7 @@ const immediateApprovalController = {
 
     container.on(`click${ns}`, '[data-action="show-timeline"]', (event) => {
       event.preventDefault();
-      this.showToast('Linha do tempo', 'Visualizacao de historico ainda nao implementada.', 'info');
+      this.showToast('Linha do tempo', 'Visualizacao de histórico ainda nao implementada.', 'info');
     });
 
     container.on(`click${ns}`, '[data-action="show-attachments"]', (event) => {
@@ -300,7 +300,7 @@ const immediateApprovalController = {
 
   loadBaseContext: async function () {
     if (!this._state.documentId) {
-      this.showToast('Sem solicitacao', 'Nenhum documentId foi informado para esta rota.', 'warning');
+      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para está rota.', 'warning');
       return;
     }
 
@@ -325,7 +325,7 @@ const immediateApprovalController = {
       this.updateApproveModalProject(row);
     } catch (error) {
       console.error('[immediateApproval] Error loading base context:', error);
-      this.showToast('Erro ao carregar', 'Nao foi possivel carregar os dados principais da solicitacao.', 'error');
+      this.showToast('Erro ao carregar', 'Não foi possível carregar os dados principais da solicitação.', 'error');
     }
   },
 
@@ -346,11 +346,11 @@ const immediateApprovalController = {
     }
 
     if (!component || typeof component.render !== 'function') {
-      target.html('<div class="text-sm text-red-600">Componente da aba indisponivel.</div>');
+      target.html('<div class="text-sm text-red-600">Componente da aba indisponível.</div>');
       return;
     }
 
-    target.html('<div class="text-sm text-gray-500">Carregando conteudo...</div>');
+    target.html('<div class="text-sm text-gray-500">Carregando conteúdo...</div>');
 
     try {
       const html = await component.render({
@@ -362,7 +362,7 @@ const immediateApprovalController = {
       this.mountAttachmentsInTab(tabName, target, component);
     } catch (error) {
       console.error(`[immediateApproval] Error loading tab ${tabName}:`, error);
-      target.html('<div class="text-sm text-red-600">Nao foi possivel carregar esta aba.</div>');
+      target.html('<div class="text-sm text-red-600">Não foi possível carregar esta aba.</div>');
     }
   },
 
@@ -474,9 +474,9 @@ const immediateApprovalController = {
 
   getProgressItems: function () {
     return [
-      { style: 'success', label: 'Solicitacao recebida', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Analise TI concluida', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'warning', label: 'Impacto na area pendente', iconClass: 'fa-solid fa-exclamation-circle' }
+      { style: 'success', label: 'Solicitação recebida', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Análise TI concluída', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'warning', label: 'Impacto na área pendente', iconClass: 'fa-solid fa-exclamation-circle' }
     ];
   },
 
@@ -530,7 +530,7 @@ const immediateApprovalController = {
     }
 
     if (!requiredResources) {
-      missing.push('Recursos Necessarios da Area');
+      missing.push('Recursos Necessários da Área');
     }
 
     if (!scheduleConflicts) {
@@ -538,7 +538,7 @@ const immediateApprovalController = {
     }
 
     if (!areaPriority) {
-      missing.push('Prioridade para a Area');
+      missing.push('Prioridade para a Área');
     }
 
     return missing;
@@ -549,13 +549,13 @@ const immediateApprovalController = {
     if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
       ui.validation.showValidationModal(this.getContainer(), {
         missingFields: missing,
-        title: 'Campos Obrigatorios',
-        message: 'Por favor, preencha todos os campos obrigatorios antes de continuar.'
+        title: 'Campos Obrigatórios',
+        message: 'Por favor, preencha todos os campos obrigatórios antes de continuar.'
       });
       return;
     }
 
-    this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+    this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
   },
 
   openImpactTab: function () {
@@ -574,9 +574,9 @@ const immediateApprovalController = {
   focusFirstInvalidImmediateField: function (missing) {
     const selectorMap = {
       'Disponibilidade da Equipe': '#team-availability-input',
-      'Recursos Necessarios da Area': '#required-resources-input',
+      'Recursos Necessários da Área': '#required-resources-input',
       'Conflitos de Agenda': '#schedule-conflicts-input',
-      'Prioridade para a Area': 'input[name="area-priority"]'
+      'Prioridade para a Área': 'input[name="area-priority"]'
     };
 
     const firstMissing = Array.isArray(missing) && missing.length ? missing[0] : '';
@@ -729,20 +729,24 @@ const immediateApprovalController = {
     this._state.isSubmitting = true;
 
     try {
-      loading.updateMessage('Salvando rascunho da aprovacao...');
+      loading.updateMessage('Salvando rascunho da aprovação...');
       await this.waitForUiPaint();
       await fluigService.saveDraft({
         mode: 'updateCardDraft',
         documentId: this._state.documentId,
         cardData: this.collectImmediateCardData()
       });
-      this.showToast('Rascunho salvo', 'As alteracoes foram salvas com sucesso.', 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 150);
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[immediateApproval] Error saving draft:', error);
-      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.', 'error');
+      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -755,7 +759,7 @@ const immediateApprovalController = {
     }
 
     if (!this._state.documentId) {
-      throw new Error('Nao foi possivel identificar a solicitacao atual');
+      throw new Error('Não foi possível identificar a solicitação atual');
     }
 
     const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._state.documentId);
@@ -811,7 +815,7 @@ const immediateApprovalController = {
       }, 600);
     } catch (error) {
       console.error('[immediateApproval] Error moving task:', error);
-      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel movimentar a solicitacao.', 'error');
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -820,8 +824,8 @@ const immediateApprovalController = {
 
   getPriorityLabel: function (priority) {
     const normalized = this.asText(priority).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (normalized.indexOf('critico') !== -1) return 'Critico';
-    if (normalized.indexOf('estrategico') !== -1) return 'Estrategico';
+    if (normalized.indexOf('critico') !== -1) return 'Crítico';
+    if (normalized.indexOf('estrategico') !== -1) return 'Estratégico';
     if (normalized.indexOf('operacional') !== -1) return 'Operacional';
     return this.asText(priority);
   },

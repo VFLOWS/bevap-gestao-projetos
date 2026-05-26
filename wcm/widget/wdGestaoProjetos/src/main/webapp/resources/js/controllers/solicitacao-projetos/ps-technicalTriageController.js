@@ -448,7 +448,7 @@ const technicalTriageController = {
 
   loadBaseContext: async function () {
     if (!this._state.documentId) {
-      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para esta rota.', 'warning');
+      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para está rota.', 'warning');
       return;
     }
 
@@ -881,9 +881,9 @@ const technicalTriageController = {
         <span class="${this.escapeHtml(visual.badge)} shrink-0">${this.escapeHtml(level)}</span>
       </div>
       <div class="${this.escapeHtml(visual.meta)} break-all">Probabilidade: ${this.escapeHtml(probability)} | Impacto: ${this.escapeHtml(impact)}</div>
-      ${description ? `<div class="text-sm text-gray-700 mt-2 break-all"><strong>Descricao:</strong> ${this.escapeHtml(description)}</div>` : ''}
-      <div class="text-sm text-gray-700 mt-2 break-all"><strong>Mitigacao:</strong> ${this.escapeHtml(mitigation || 'Nao informado')}</div>
-      <div class="text-sm text-gray-700 mt-2 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Nao informado')}</div>
+      ${description ? `<div class="text-sm text-gray-700 mt-2 break-all"><strong>Descrição:</strong> ${this.escapeHtml(description)}</div>` : ''}
+      <div class="text-sm text-gray-700 mt-2 break-all"><strong>Mitigação:</strong> ${this.escapeHtml(mitigation || 'Não informado')}</div>
+      <div class="text-sm text-gray-700 mt-2 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Não informado')}</div>
       <div class="flex justify-end items-center gap-2 mt-2">
         <button type="button" data-action="edit-risk-matrix" class="text-blue-500 hover:text-blue-700" title="Editar risco"><i class="fa-solid fa-pen"></i></button>
         <button type="button" data-action="remove-risk-matrix" class="text-red-400 hover:text-red-600" title="Remover risco"><i class="fa-solid fa-trash"></i></button>
@@ -939,11 +939,11 @@ const technicalTriageController = {
           </div>
         </div>
         <div class="space-y-1 text-gray-700">
-          <strong class="block">Descricao:</strong>
+          <strong class="block">Descrição:</strong>
           <textarea data-field="risk-description" placeholder="Descreva o risco identificado..." rows="2" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none resize-none">${description}</textarea>
         </div>
         <div class="space-y-1 text-gray-700">
-          <strong class="block">Mitigacao:</strong>
+          <strong class="block">Mitigação:</strong>
           <textarea data-field="risk-mitigation" placeholder="Descreva a estrategia de mitigacao..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none resize-none">${mitigation}</textarea>
         </div>
         <div class="space-y-1 text-gray-700">
@@ -989,11 +989,11 @@ const technicalTriageController = {
       if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
         ui.validation.showValidationModal(this.getContainer(), {
           missingFields: validation.missing,
-          title: 'Campos Obrigatorios',
-          message: 'Por favor, preencha todos os campos obrigatorios antes de confirmar este item.'
+          title: 'Campos Obrigatórios',
+          message: 'Por favor, preencha todos os campos obrigatórios antes de confirmar este item.'
         });
       } else {
-        this.showToast('Campos obrigatorios', `Preencha: ${validation.missing.join(' | ')}`, 'warning');
+        this.showToast('Campos obrigatórios', `Preencha: ${validation.missing.join(' | ')}`, 'warning');
       }
       if (validation.firstInvalid && typeof validation.firstInvalid.focus === 'function') {
         validation.firstInvalid.focus();
@@ -1196,9 +1196,9 @@ const technicalTriageController = {
         <h5 class="font-medium text-bevap-navy break-all">${this.escapeHtml(title)}</h5>
         ${this.getDependencyStatusBadgeHtml(status)}
       </div>
-      <div class="text-sm text-gray-600 mb-1 break-all"><strong>Responsavel:</strong> ${this.escapeHtml(owner || 'Nao informado')}</div>
-      <div class="text-sm text-gray-700 mb-1 break-all"><strong>Mitigacao:</strong> ${this.escapeHtml(mitigation || 'Nao informado')}</div>
-      <div class="text-sm text-gray-700 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Nao informado')}</div>
+      <div class="text-sm text-gray-600 mb-1 break-all"><strong>Responsável:</strong> ${this.escapeHtml(owner || 'Não informado')}</div>
+      <div class="text-sm text-gray-700 mb-1 break-all"><strong>Mitigação:</strong> ${this.escapeHtml(mitigation || 'Não informado')}</div>
+      <div class="text-sm text-gray-700 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Não informado')}</div>
       <div class="flex justify-end items-center gap-2 mt-2">
         <button type="button" data-action="edit-dependency" class="text-blue-500 hover:text-blue-700" title="Editar dependência"><i class="fa-solid fa-pen"></i></button>
         <button type="button" data-action="remove-dependency" class="text-red-400 hover:text-red-600" title="Remover dependência"><i class="fa-solid fa-trash"></i></button>
@@ -1235,12 +1235,12 @@ const technicalTriageController = {
           </select>
         </div>
         <div class="space-y-1 text-gray-600">
-          <span class="block">Responsavel:</span>
+          <span class="block">Responsável:</span>
           <div data-field="dependency-owner-filter" class="w-full"></div>
           <input data-field="dependency-owner" type="hidden" value="${owner}">
         </div>
         <div class="space-y-1 text-gray-700">
-          <strong class="block">Mitigacao:</strong>
+          <strong class="block">Mitigação:</strong>
           <textarea data-field="dependency-mitigation" placeholder="Descreva a mitigação..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">${mitigation}</textarea>
         </div>
         <div class="space-y-1 text-gray-700">
@@ -1286,7 +1286,7 @@ const technicalTriageController = {
 
     const title = this.asText(card.find('.dependency-edit [data-field="dependency-title"]').val());
     if (!title) {
-      this.showToast('Campo obrigatorio', 'Preencha a dependência antes de confirmar.', 'warning');
+      this.showToast('Campo obrigatório', 'Preencha a dependência antes de confirmar.', 'warning');
       return;
     }
 
@@ -1323,11 +1323,11 @@ const technicalTriageController = {
       if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
         ui.validation.showValidationModal(this.getContainer(), {
           missingFields: validation.missing,
-          title: 'Campos Obrigatorios',
-          message: 'Por favor, preencha todos os campos obrigatorios antes de confirmar este item.'
+          title: 'Campos Obrigatórios',
+          message: 'Por favor, preencha todos os campos obrigatórios antes de confirmar este item.'
         });
       } else {
-        this.showToast('Campos obrigatorios', `Preencha: ${validation.missing.join(' | ')}`, 'warning');
+        this.showToast('Campos obrigatórios', `Preencha: ${validation.missing.join(' | ')}`, 'warning');
       }
       if (validation.firstInvalid && typeof validation.firstInvalid.focus === 'function') {
         validation.firstInvalid.focus();
@@ -1354,10 +1354,10 @@ const technicalTriageController = {
     const item = target && target.jquery ? target.get(0) : target;
     if (!item) return;
 
-    const title = kind === 'risk' ? 'Confirmar remocao de risco' : 'Confirmar remocao de dependencia';
+    const title = kind === 'risk' ? 'Confirmar remoção de risco' : 'Confirmar remoção de dependência';
     const message = kind === 'risk'
       ? 'Deseja remover este item da matriz de riscos?'
-      : 'Deseja remover esta dependencia interna/externa?';
+      : 'Deseja remover está dependencia interna/externa?';
 
     this._state.pendingRemoval = {
       kind: kind,
@@ -1393,7 +1393,7 @@ const technicalTriageController = {
       { label: 'Nivel', selector: '.risk-edit [data-field="risk-level"]' },
       { label: 'Probabilidade', selector: '.risk-edit [data-field="risk-probability"]' },
       { label: 'Impacto', selector: '.risk-edit [data-field="risk-impact"]' },
-      { label: 'Descricao', selector: '.risk-edit [data-field="risk-description"]' },
+      { label: 'Descrição', selector: '.risk-edit [data-field="risk-description"]' },
       { label: 'Mitigacao', selector: '.risk-edit [data-field="risk-mitigation"]' },
       { label: 'Plano B', selector: '.risk-edit [data-field="risk-fallback"]' }
     ];
@@ -2090,7 +2090,14 @@ const technicalTriageController = {
         documentId: this._state.documentId,
         taskFields: this.collectTriageTaskFields()
       });
-      this.showToast('Rascunho salvo', 'As alterações foram salvas com sucesso.', 'success');
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[technicalTriage] Error saving draft:', error);
       this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
@@ -2131,8 +2138,8 @@ const technicalTriageController = {
         if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
           ui.validation.showValidationModal(this.getContainer(), {
             missingFields: missing,
-            title: 'Campos Obrigatorios',
-            message: 'Por favor, preencha todos os campos obrigatorios antes de continuar.'
+            title: 'Campos Obrigatórios',
+            message: 'Por favor, preencha todos os campos obrigatórios antes de continuar.'
           });
         } else {
           this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
@@ -2148,7 +2155,7 @@ const technicalTriageController = {
         : '';
 
       if (!choosedState) {
-        throw new Error('Numero da atividade destino e obrigatorio');
+        throw new Error('Numero da atividade destino e obrigatório');
       }
       const taskFields = this.collectTriageTaskFields();
       const attachments = await this.collectAttachmentsPayload();

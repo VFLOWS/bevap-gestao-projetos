@@ -38,7 +38,7 @@ const solicitationDetailController = {
       })
       .fail((error) => {
         console.error('[solicitationDetail] Template load error:', error);
-        container.html('<div class="p-6 text-red-600">Nao foi possivel carregar o detalhamento da solicitacao.</div>');
+        container.html('<div class="p-6 text-red-600">Não foi possível carregar o detalhamento da solicitação.</div>');
       });
   },
 
@@ -79,14 +79,14 @@ const solicitationDetailController = {
     }
 
     if (titleEl.length) {
-      titleEl.text('Minha Solicitacao');
+      titleEl.text('Minha Solicitação');
     }
 
     if (breadcrumbEl.length) {
       breadcrumbEl.html(`
         <a href="#dashboard" class="text-gray-300 hover:text-white transition-colors">Home</a>
         <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-        <span class="text-bevap-gold font-medium">Minha Solicitacao</span>
+        <span class="text-bevap-gold font-medium">Minha Solicitação</span>
       `);
     }
   },
@@ -189,7 +189,7 @@ const solicitationDetailController = {
 
     if (normalized.indexOf('critico') !== -1) {
       return {
-        label: 'Critico',
+        label: 'Crítico',
         iconClass: 'fa-solid fa-circle-exclamation',
         badgeClasses: 'bg-red-100 text-red-700'
       };
@@ -204,7 +204,7 @@ const solicitationDetailController = {
     }
 
     return {
-      label: 'Estrategico',
+      label: 'Estratégico',
       iconClass: 'fa-solid fa-star',
       badgeClasses: 'bg-green-100 text-green-800'
     };
@@ -215,16 +215,16 @@ const solicitationDetailController = {
     const mapping = {
       0: { label: 'Rascunho', iconClass: 'fa-solid fa-pen-to-square', badgeClasses: 'bg-slate-100 text-slate-700' },
       4: { label: 'Rascunho', iconClass: 'fa-solid fa-pen-to-square', badgeClasses: 'bg-slate-100 text-slate-700' },
-      5: { label: 'Em avaliacao TI', iconClass: 'fa-solid fa-microscope', badgeClasses: 'bg-blue-100 text-blue-700' },
-      15: { label: 'Em correcao', iconClass: 'fa-solid fa-rotate-left', badgeClasses: 'bg-yellow-100 text-yellow-700' },
+      5: { label: 'Em avaliação TI', iconClass: 'fa-solid fa-microscope', badgeClasses: 'bg-blue-100 text-blue-700' },
+      15: { label: 'Em correção', iconClass: 'fa-solid fa-rotate-left', badgeClasses: 'bg-yellow-100 text-yellow-700' },
       19: { label: 'Superior imediato', iconClass: 'fa-solid fa-user-check', badgeClasses: 'bg-indigo-100 text-indigo-700' },
-      26: { label: 'Triagem tecnica', iconClass: 'fa-solid fa-laptop-code', badgeClasses: 'bg-cyan-100 text-cyan-700' },
+      26: { label: 'Triagem técnica', iconClass: 'fa-solid fa-laptop-code', badgeClasses: 'bg-cyan-100 text-cyan-700' },
       36: { label: 'Comite', iconClass: 'fa-solid fa-users', badgeClasses: 'bg-purple-100 text-purple-700' },
       38: { label: 'Proposta comercial', iconClass: 'fa-solid fa-file-signature', badgeClasses: 'bg-amber-100 text-amber-700' },
-      40: { label: 'Aprovacao da proposta', iconClass: 'fa-solid fa-thumbs-up', badgeClasses: 'bg-lime-100 text-lime-700' },
-      54: { label: 'Aprovacao GCC', iconClass: 'fa-solid fa-coins', badgeClasses: 'bg-orange-100 text-orange-700' },
+      40: { label: 'Aprovação da proposta', iconClass: 'fa-solid fa-thumbs-up', badgeClasses: 'bg-lime-100 text-lime-700' },
+      54: { label: 'Aprovação GCC', iconClass: 'fa-solid fa-coins', badgeClasses: 'bg-orange-100 text-orange-700' },
       61: { label: 'Comite de custo', iconClass: 'fa-solid fa-scale-balanced', badgeClasses: 'bg-fuchsia-100 text-fuchsia-700' },
-      66: { label: 'Contratacao', iconClass: 'fa-solid fa-cart-shopping', badgeClasses: 'bg-emerald-100 text-emerald-700' },
+      66: { label: 'Contratação', iconClass: 'fa-solid fa-cart-shopping', badgeClasses: 'bg-emerald-100 text-emerald-700' },
       72: { label: 'Finalizado', iconClass: 'fa-solid fa-circle-check', badgeClasses: 'bg-green-100 text-green-700' }
     };
 
@@ -241,7 +241,7 @@ const solicitationDetailController = {
     }
 
     return {
-      label: this.asText(estadoProcesso) || 'Solicitacao enviada',
+      label: this.asText(estadoProcesso) || 'Solicitação enviada',
       iconClass: 'fa-solid fa-clock',
       badgeClasses: 'bg-slate-100 text-slate-700'
     };
@@ -282,7 +282,7 @@ const solicitationDetailController = {
       }
 
       if (!this._state.documentId) {
-        throw new Error('Nao foi possivel identificar a solicitacao para detalhamento.');
+        throw new Error('Não foi possível identificar a solicitação para detalhamento.');
       }
 
       const rows = await fluigService.getDatasetRows(this._datasetId, {
@@ -294,7 +294,7 @@ const solicitationDetailController = {
 
       const row = rows && rows.length ? rows[0] : null;
       if (!row) {
-        throw new Error('Nenhum dado da solicitacao foi encontrado.');
+        throw new Error('Nenhum dado da solicitação foi encontrado.');
       }
 
       this._state.row = row;
@@ -306,12 +306,12 @@ const solicitationDetailController = {
       if (detailTarget.length) {
         detailTarget.html(`
           <div class="bg-white border border-red-200 rounded-lg p-6 text-sm text-red-700">
-            ${this.escapeHtml(error && error.message ? error.message : 'Nao foi possivel carregar a solicitacao.')}
+            ${this.escapeHtml(error && error.message ? error.message : 'Não foi possível carregar a solicitação.')}
           </div>
         `);
       }
 
-      this.showToast('Nao foi possivel carregar o detalhamento da solicitacao.', 'error');
+      this.showToast('Não foi possível carregar o detalhamento da solicitação.', 'error');
     }
   },
 
@@ -323,11 +323,11 @@ const solicitationDetailController = {
     if (!target.length) return;
 
     if (!component || typeof component.render !== 'function') {
-      target.html('<div class="text-sm text-red-600">Componente de detalhamento indisponivel.</div>');
+      target.html('<div class="text-sm text-red-600">Componente de detalhamento indisponível.</div>');
       return;
     }
 
-    target.html('<div class="text-sm text-gray-500">Carregando conteudo...</div>');
+    target.html('<div class="text-sm text-gray-500">Carregando conteúdo...</div>');
 
     if (typeof component.renderInto === 'function') {
       await component.renderInto(target, { documentId: this._state.documentId });
@@ -376,7 +376,7 @@ const solicitationDetailController = {
 
     const target = this.getContainer().find('[data-gp-attachments]').first();
     if (!target.length) {
-      this.showToast('Nenhum anexo foi localizado nesta solicitacao.', 'warning');
+      this.showToast('Nenhum anexo foi localizado nesta solicitação.', 'warning');
       return;
     }
 

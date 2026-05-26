@@ -77,14 +77,14 @@ Object.assign(correctionController, {
     }
 
     if (titleEl.length) {
-      titleEl.text('Solicitante - Corrigir Solicitacao');
+      titleEl.text('Solicitante - Corrigir Solicitação');
     }
 
     if (breadcrumbEl.length) {
       breadcrumbEl.html(`
         <a href="#dashboard" class="text-gray-300 hover:text-white transition-colors">Home</a>
         <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-        <span class="text-bevap-gold font-medium">Correcao</span>
+        <span class="text-bevap-gold font-medium">Correção</span>
       `);
     }
   },
@@ -114,31 +114,31 @@ Object.assign(correctionController, {
 
     container.find('#summary-card-title').first().html(`
       <i class="fa-solid fa-clipboard-check mr-2 text-bevap-gold"></i>
-      Resumo da Correcao
+      Resumo da Correção
     `);
 
-    container.find('#context-tip-title').first().text('Correcao');
-    container.find('#context-tip-message').first().text('Revise os campos solicitados, ajuste as informacoes necessarias e reenvie a correcao para nova avaliacao da TI.');
+    container.find('#context-tip-title').first().text('Correção');
+    container.find('#context-tip-message').first().text('Revise os campos solicitados, ajuste as informações necessárias e reenvie a correção para nova avaliação da TI.');
 
-    container.find('#submit-form-button').first().html('<i class="fa-solid fa-paper-plane mr-2"></i> Enviar Correcao para Avaliacao TI');
+    container.find('#submit-form-button').first().html('<i class="fa-solid fa-paper-plane mr-2"></i> Enviar Correção para Avaliação TI');
     container.find('[data-action="cancel-form"]').first().attr('data-action', 'open-cancel-modal');
 
-    container.find('#success-modal-title').first().text('Correcao Enviada!');
-    container.find('#success-modal-message').first().text('Sua correcao foi enviada com sucesso e retornou para avaliacao da equipe de TI.');
+    container.find('#success-modal-title').first().text('Correção Enviada!');
+    container.find('#success-modal-message').first().text('Sua correção foi enviada com sucesso e retornou para avaliação da equipe de TI.');
     container.find('#success-modal-next-step').first().text('TI - Avaliar Projeto');
 
-    container.find('#validation-modal-message').first().html('Por favor, preencha todos os campos obrigatorios marcados com <span class="text-red-500 font-semibold">*</span> antes de reenviar sua correcao.');
+    container.find('#validation-modal-message').first().html('Por favor, preencha todos os campos obrigatórios marcados com <span class="text-red-500 font-semibold">*</span> antes de reenviar sua correção.');
 
     if (!container.find('#correction-cancel-modal').length) {
       container.append(`
         <div id="correction-cancel-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
           <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-            <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Cancelar Solicitacao</h3>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Cancelar Solicitação</h3>
             <p class="text-sm text-gray-600 mb-4">Informe categoria e justificativa para cancelar:</p>
             <select id="correction-cancel-category" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
               <option value="">Selecione a categoria</option>
               <option value="escopo">Escopo</option>
-              <option value="orcamento">Orcamento</option>
+              <option value="orcamento">Orçamento</option>
               <option value="prioridade">Prioridade</option>
               <option value="outro">Outro</option>
             </select>
@@ -203,8 +203,8 @@ Object.assign(correctionController, {
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
-        title: 'Correcao nao encontrada',
-        message: 'Nao foi possivel identificar a solicitacao para correcao.'
+        title: 'Correção nao encontrada',
+        message: 'Não foi possível identificar a solicitação para correção.'
       });
       return;
     }
@@ -222,8 +222,8 @@ Object.assign(correctionController, {
         this.showNotification({
           borderClass: 'border-red-500',
           iconClass: 'fa-triangle-exclamation text-red-500',
-          title: 'Correcao nao encontrada',
-          message: 'Nao foi possivel localizar os dados salvos desta solicitacao.'
+          title: 'Correção nao encontrada',
+          message: 'Não foi possível localizar os dados salvos desta solicitação.'
         });
         return;
       }
@@ -234,8 +234,8 @@ Object.assign(correctionController, {
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
-        title: 'Erro ao carregar correcao',
-        message: 'Nao foi possivel carregar os dados salvos desta solicitacao.'
+        title: 'Erro ao carregar correção',
+        message: 'Não foi possível carregar os dados salvos desta solicitação.'
       });
     }
   },
@@ -243,19 +243,19 @@ Object.assign(correctionController, {
   saveDraft: async function () {
     if (this._state.isSubmitting) return;
 
-    const loading = this.createSubmitLoading('Salvando correcao', 'Aguarde enquanto a correcao e salva...');
+    const loading = this.createSubmitLoading('Salvando correção', 'Aguarde enquanto a correção e salva...');
     this._state.isSubmitting = true;
 
     try {
       if (!this._state.documentId) {
-        throw new Error('Nao foi possivel identificar a solicitacao para salvar a correcao.');
+        throw new Error('Não foi possível identificar a solicitação para salvar a correção.');
       }
 
-      loading.updateMessage('Preparando dados da correcao...');
+      loading.updateMessage('Preparando dados da correção...');
       await this.waitForUiPaint();
       const payload = await this.buildSubmissionPayload();
 
-      loading.updateMessage('Atualizando correcao em andamento...');
+      loading.updateMessage('Atualizando correção em andamento...');
       await this.waitForUiPaint();
       await fluigService.saveDraft({
         mode: 'updateCardDraft',
@@ -265,23 +265,21 @@ Object.assign(correctionController, {
 
       this.writeDraftUiCache(this._state.documentId, payload);
 
-      this.showNotification({
-        borderClass: 'border-bevap-green',
-        iconClass: 'fa-check-circle text-bevap-green',
-        title: 'Correcao salva!',
-        message: 'As alteracoes foram salvas com sucesso.'
-      });
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 150);
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Correção salva',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[correction] Error saving draft:', error);
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
-        title: 'Erro ao salvar correcao',
-        message: error && error.message ? error.message : 'Nao foi possivel salvar a correcao.'
+        title: 'Erro ao salvar correção',
+        message: error && error.message ? error.message : 'Não foi possível salvar a correção.'
       });
     } finally {
       this._state.isSubmitting = false;
@@ -300,15 +298,15 @@ Object.assign(correctionController, {
 
     this.closeValidationModal();
 
-    const loading = this.createSubmitLoading('Enviando correcao', 'Aguarde enquanto a correcao e reenviada ao Fluig...');
+    const loading = this.createSubmitLoading('Enviando correção', 'Aguarde enquanto a correção e reenviada ao Fluig...');
     this._state.isSubmitting = true;
 
     try {
       if (!this._state.documentId) {
-        throw new Error('Nao foi possivel identificar a solicitacao para reenviar a correcao.');
+        throw new Error('Não foi possível identificar a solicitação para reenviar a correção.');
       }
 
-      loading.updateMessage('Preparando dados da correcao...');
+      loading.updateMessage('Preparando dados da correção...');
       await this.waitForUiPaint();
       const payload = await this.buildSubmissionPayload();
 
@@ -329,7 +327,7 @@ Object.assign(correctionController, {
         value: ''
       });
 
-      loading.updateMessage('Enviando correcao para avaliacao TI...');
+      loading.updateMessage('Enviando correção para avaliação TI...');
       await this.waitForUiPaint();
       await fluigService.saveAndSendTask({
         id: processInstanceId,
@@ -347,8 +345,8 @@ Object.assign(correctionController, {
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
-        title: 'Erro ao enviar correcao',
-        message: (error && error.message) || String(error || '') || 'Nao foi possivel reenviar a correcao para avaliacao.'
+        title: 'Erro ao enviar correção',
+        message: (error && error.message) || String(error || '') || 'Não foi possível reenviar a correção para avaliação.'
       });
     } finally {
       this._state.isSubmitting = false;
@@ -389,15 +387,15 @@ Object.assign(correctionController, {
       return;
     }
 
-    const loading = this.createSubmitLoading('Cancelando correcao', 'Registrando e enviando cancelamento...');
+    const loading = this.createSubmitLoading('Cancelando correção', 'Registrando e enviando cancelamento...');
     this._state.isSubmitting = true;
 
     try {
       if (!this._state.documentId) {
-        throw new Error('Nao foi possivel identificar a solicitacao para cancelar.');
+        throw new Error('Não foi possível identificar a solicitação para cancelar.');
       }
 
-      loading.updateMessage('Preparando dados da correcao...');
+      loading.updateMessage('Preparando dados da correção...');
       await this.waitForUiPaint();
       const payload = await this.buildSubmissionPayload();
 
@@ -433,7 +431,7 @@ Object.assign(correctionController, {
       this.showNotification({
         borderClass: 'border-bevap-green',
         iconClass: 'fa-check-circle text-bevap-green',
-        title: 'Correcao cancelada',
+        title: 'Correção cancelada',
         message: 'O cancelamento foi registrado com sucesso.'
       });
 
@@ -446,7 +444,7 @@ Object.assign(correctionController, {
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
         title: 'Erro ao cancelar',
-        message: (error && error.message) || String(error || '') || 'Nao foi possivel concluir o cancelamento.'
+        message: (error && error.message) || String(error || '') || 'Não foi possível concluir o cancelamento.'
       });
     } finally {
       this._state.isSubmitting = false;
@@ -463,7 +461,7 @@ Object.assign(correctionController, {
       mode: 'updateCardDraft',
       documentId: this._state.documentId,
       cardData: {
-        decisaoCorrecao: this.asText(decisionValue),
+      decisaoCorrecao: this.asText(decisionValue),
         justificativaCorrecao: this.asText(justification),
         categoriajustiCorrecao: this.asText(category)
       }

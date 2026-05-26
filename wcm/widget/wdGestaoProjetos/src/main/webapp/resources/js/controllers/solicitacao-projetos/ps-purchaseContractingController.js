@@ -174,7 +174,7 @@ const purchaseContractingController = {
     }
 
     if (titleEl.length) {
-      titleEl.text('Compras - Realizar Contratacao');
+      titleEl.text('Compras - Realizar Contratação');
     }
 
     if (breadcrumbEl.length) {
@@ -468,11 +468,11 @@ const purchaseContractingController = {
     }
 
     if (!component || typeof component.render !== 'function') {
-      target.html('<div class="text-sm text-red-600">Componente da aba indisponivel.</div>');
+      target.html('<div class="text-sm text-red-600">Componente da aba indisponível.</div>');
       return;
     }
 
-    target.html('<div class="text-sm text-gray-500">Carregando conteudo...</div>');
+    target.html('<div class="text-sm text-gray-500">Carregando conteúdo...</div>');
 
     try {
       const html = typeof component.renderInto === 'function'
@@ -486,7 +486,7 @@ const purchaseContractingController = {
       this.mountAttachmentsInTab(target, component, options);
     } catch (error) {
       console.error(`[purchaseContracting] Error loading tab ${tabName}:`, error);
-      target.html('<div class="text-sm text-red-600">Nao foi possivel carregar esta aba.</div>');
+      target.html('<div class="text-sm text-red-600">Não foi possível carregar esta aba.</div>');
     }
   },
 
@@ -505,7 +505,7 @@ const purchaseContractingController = {
 
       if (!row) {
         this.renderSidebarSkeleton();
-        this.showToast('Nao encontrado', 'Nao foi possivel localizar dados da solicitacao.', 'warning');
+        this.showToast('Não encontrado', 'Não foi possível localizar dados da solicitação.', 'warning');
         return;
       }
 
@@ -514,7 +514,7 @@ const purchaseContractingController = {
       this.updateApproveModalProject(row);
     } catch (error) {
       console.error('[purchaseContracting] Error loading base context:', error);
-      this.showToast('Erro ao carregar', 'Nao foi possivel carregar os dados de Compras.', 'error');
+      this.showToast('Erro ao carregar', 'Não foi possível carregar os dados de Compras.', 'error');
     }
   },
 
@@ -565,10 +565,10 @@ const purchaseContractingController = {
       priorityClasses: 'bg-gray-100 text-gray-700',
       typeLabel: 'N/A',
       typeClasses: 'bg-gray-100 text-gray-700',
-      supplier: 'Nao informado',
+      supplier: 'Não informado',
       totalValue: 'R$ 0,00',
-      payment: 'Nao informado',
-      vigencia: 'Nao informado',
+      payment: 'Não informado',
+      vigencia: 'Não informado',
       statusLabel: 'Aguardando Compras'
     });
 
@@ -594,10 +594,10 @@ const purchaseContractingController = {
       priorityClasses: this.getPriorityBadgeClasses(row.prioridadeNS),
       typeLabel: this.getExecutionTypeLabel(row.execucaoProjetoTITT) || 'N/A',
       typeClasses: this.getExecutionTypeBadgeClasses(row.execucaoProjetoTITT),
-      supplier: this.asText(row.fornecedorRecomendadoTITT) || this.asText(row.nomeFornecedorTIPC) || 'Nao informado',
+      supplier: this.asText(row.fornecedorRecomendadoTITT) || this.asText(row.nomeFornecedorTIPC) || 'Não informado',
       totalValue: totalValueRaw ? this.formatCurrency(this.parseCurrencyValue(totalValueRaw) || 0) : 'R$ 0,00',
-      payment: this.asText(row.condicaoPagamentoCRC) || this.asText(row.condicaoPagamentoTIPC) || 'Nao informado',
-      vigencia: this.formatSummaryVigencia(row.vigenciaDiasTIPC) || 'Nao informado',
+      payment: this.asText(row.condicaoPagamentoCRC) || this.asText(row.condicaoPagamentoTIPC) || 'Não informado',
+      vigencia: this.formatSummaryVigencia(row.vigenciaDiasTIPC) || 'Não informado',
       statusLabel: 'Aguardando Compras'
     });
 
@@ -617,10 +617,10 @@ const purchaseContractingController = {
     const priorityClasses = this.escapeHtml(this.asText(summary && summary.priorityClasses) || 'bg-gray-100 text-gray-700');
     const typeLabel = this.escapeHtml(this.asText(summary && summary.typeLabel) || 'N/A');
     const typeClasses = this.escapeHtml(this.asText(summary && summary.typeClasses) || 'bg-gray-100 text-gray-700');
-    const supplier = this.escapeHtml(this.asText(summary && summary.supplier) || 'Nao informado');
+    const supplier = this.escapeHtml(this.asText(summary && summary.supplier) || 'Não informado');
     const totalValue = this.escapeHtml(this.asText(summary && summary.totalValue) || 'R$ 0,00');
-    const payment = this.escapeHtml(this.asText(summary && summary.payment) || 'Nao informado');
-    const vigencia = this.escapeHtml(this.asText(summary && summary.vigencia) || 'Nao informado');
+    const payment = this.escapeHtml(this.asText(summary && summary.payment) || 'Não informado');
+    const vigencia = this.escapeHtml(this.asText(summary && summary.vigencia) || 'Não informado');
     const statusLabel = this.escapeHtml(this.asText(summary && summary.statusLabel) || 'Aguardando Compras');
 
     target.html(`
@@ -729,14 +729,14 @@ const purchaseContractingController = {
 
   getProgressItems: function () {
     return [
-      { style: 'success', label: 'Solicitacao aprovada', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Analise TI concluida', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Impacto na area concluido', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Triagem tecnica concluida', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Solicitação aprovada', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Análise TI concluída', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Impacto na área concluido', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Triagem técnica concluída', iconClass: 'fa-solid fa-check-circle' },
       { style: 'success', label: 'Proposta comercial aprovada', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Aprovacao GCC concluida', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Aprovação GCC concluída', iconClass: 'fa-solid fa-check-circle' },
       { style: 'success', label: 'Comite de custo concluido', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'warning', label: 'Compras - contratacao em andamento', iconClass: 'fa-solid fa-clock' }
+      { style: 'warning', label: 'Compras - contratação em andamento', iconClass: 'fa-solid fa-clock' }
     ];
   },
 
@@ -1167,7 +1167,7 @@ const purchaseContractingController = {
     }
 
     this._state.paymentConditionFilter = new TagInputFilter('#finance-payment-condition-filter', {
-      placeholder: 'Selecione a condicao...',
+      placeholder: 'Selecione a condição...',
       data: [],
       labelField: 'NOME',
       valueField: 'CODIGO',
@@ -1888,7 +1888,7 @@ const purchaseContractingController = {
         }
 
         if (balanceAfter !== null && balanceAfter < -tolerance) {
-          issues.push(`${rowLabel} - Saldo apos compromisso nao pode ficar negativo`);
+          issues.push(`${rowLabel} - Saldo após compromisso não pode ficar negativo`);
         }
       });
     });
@@ -1901,9 +1901,9 @@ const purchaseContractingController = {
     const missing = [];
 
     if (!this.asText(root.find('#contract-number').val())) missing.push('N do Pedido/Contrato');
-    if (!this.asText(root.find('#contract-issue-date').val())) missing.push('Data de Emissao');
-    if (!this.asText(root.find('#contract-start-date').val())) missing.push('Inicio da Vigencia');
-    if (!this.asText(root.find('#contract-end-date').val())) missing.push('Fim da Vigencia');
+    if (!this.asText(root.find('#contract-issue-date').val())) missing.push('Data de Emissão');
+    if (!this.asText(root.find('#contract-start-date').val())) missing.push('Início da Vigência');
+    if (!this.asText(root.find('#contract-end-date').val())) missing.push('Fim da Vigência');
     if (!this.asText(root.find('#contract-scope').val())) missing.push('Escopo Acordado');
 
     const capexChecked = Boolean(root.find('#contract-cost-nature-capex').prop('checked'));
@@ -1938,7 +1938,7 @@ const purchaseContractingController = {
     });
 
     if (!this.asText(root.find('#contract-final-value').val())) missing.push('Valor Final');
-    if (!this.asText(root.find('#finance-payment-condition').val())) missing.push('Condicao de Pagamento (Financeiro)');
+    if (!this.asText(root.find('#finance-payment-condition').val())) missing.push('Condição de Pagamento (Financeiro)');
 
     const finalValue = this.parseCurrencyValue(root.find('#contract-final-value').val());
     const installmentsTotal = this.getInstallmentsTotalAmount();
@@ -2059,10 +2059,17 @@ const purchaseContractingController = {
         taskFields: this.collectTaskFields()
       });
 
-      this.showToast('Rascunho salvo', 'As alteracoes foram salvas com sucesso.', 'success');
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[purchaseContracting] Error saving draft:', error);
-      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.', 'error');
+      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -2071,7 +2078,7 @@ const purchaseContractingController = {
 
   handleApprove: function () {
     this.submitAction({
-      actionLabel: 'Concluir Contratacao',
+      actionLabel: 'Concluir Contratação',
       modalId: 'approve-modal',
       decisionValue: 'aprovado',
       justification: '',
@@ -2098,7 +2105,7 @@ const purchaseContractingController = {
     }
 
     this.submitAction({
-      actionLabel: 'Devolver para Correcao',
+      actionLabel: 'Devolver para Correção',
       modalId: 'modal-return',
       decisionValue: 'correcao',
       justification: justification,
@@ -2144,7 +2151,7 @@ const purchaseContractingController = {
       if (config && config.requireValidation) {
         const missing = this.validateRequiredForApproval();
         if (missing.length) {
-          this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
           return;
         }
       }
@@ -2182,7 +2189,7 @@ const purchaseContractingController = {
       }, 600);
     } catch (error) {
       console.error('[purchaseContracting] Error moving task:', error);
-      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel movimentar a solicitacao.', 'error');
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -2222,7 +2229,7 @@ const purchaseContractingController = {
     }
 
     if (!this._state.documentId) {
-      throw new Error('Nao foi possivel identificar a solicitacao atual');
+      throw new Error('Não foi possível identificar a solicitação atual');
     }
 
     const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._state.documentId);

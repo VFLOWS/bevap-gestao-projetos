@@ -438,7 +438,7 @@ const commercialProposalController = {
     const modal = this.getContainer().find('#modal-reject');
     if (!modal.length) return;
 
-    modal.find('h3').first().text('Confirmar remocao');
+    modal.find('h3').first().text('Confirmar remoção');
     modal.find('p').first().text('Deseja realmente remover este registro da proposta comercial?');
     modal.find('#reject-category-input').addClass('hidden');
     modal.find('#reject-reason-input').addClass('hidden');
@@ -504,7 +504,7 @@ const commercialProposalController = {
       valueField: 'DESCRICAO',
       columns: [
         { header: 'Simbolo', field: 'SIMBOLO', width: 'w-1/4' },
-        { header: 'Descricao', field: 'DESCRICAO', width: 'w-2/4' },
+        { header: 'Descrição', field: 'DESCRICAO', width: 'w-2/4' },
         { header: 'Casas', field: 'NUMCASASDECIMAIS', width: 'w-1/4' }
       ],
       singleSelection: true,
@@ -538,7 +538,7 @@ const commercialProposalController = {
     }
 
     this._state.paymentConditionFilter = new TagInputFilter('#proposal-payment-condition-filter', {
-      placeholder: 'Selecione a condicao...',
+      placeholder: 'Selecione a condição...',
       data: [],
       labelField: 'NOME',
       valueField: 'CODIGO',
@@ -743,7 +743,7 @@ const commercialProposalController = {
         portalDropdown: true,
         columns: [
           { header: 'Codigo', field: 'codprod', width: 'w-1/4' },
-          { header: 'Descricao', field: 'descricao', width: 'w-2/4' },
+          { header: 'Descrição', field: 'descricao', width: 'w-2/4' },
           { header: 'Marca', field: 'marca', width: 'w-1/4' }
         ],
         singleSelection: true,
@@ -1278,17 +1278,17 @@ const commercialProposalController = {
 
   getProgressItems: function () {
     return [
-      { style: 'success', label: 'Solicitacao aprovada', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Analise TI concluida', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Impacto na area concluido', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Triagem tecnica (Externo)', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Solicitação aprovada', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Análise TI concluída', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Impacto na área concluido', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Triagem técnica (Externo)', iconClass: 'fa-solid fa-check-circle' },
       { style: 'warning', label: 'Validacao proposta comercial', iconClass: 'fa-solid fa-clock' }
     ];
   },
 
   loadBaseContext: async function () {
     if (!this._state.documentId) {
-      this.showToast('Sem solicitacao', 'Nenhum documentId foi informado para esta rota.', 'warning');
+      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para está rota.', 'warning');
       return;
     }
 
@@ -1302,7 +1302,7 @@ const commercialProposalController = {
       this._state.baseRow = row;
 
       if (!row) {
-        this.showToast('Nao encontrado', 'Nao foi possivel localizar dados da solicitacao.', 'warning');
+        this.showToast('Não encontrado', 'Não foi possível localizar dados da solicitação.', 'warning');
         return;
       }
 
@@ -1311,7 +1311,7 @@ const commercialProposalController = {
       this.updateApproveModalProject(row);
     } catch (error) {
       console.error('[commercialProposal] Error loading base context:', error);
-      this.showToast('Erro ao carregar', 'Nao foi possivel carregar os dados principais da solicitacao.', 'error');
+      this.showToast('Erro ao carregar', 'Não foi possível carregar os dados principais da solicitação.', 'error');
     }
   },
 
@@ -1369,11 +1369,11 @@ const commercialProposalController = {
     }
 
     if (!component || typeof component.render !== 'function') {
-      target.html('<div class="text-sm text-red-600">Componente da aba indisponivel.</div>');
+      target.html('<div class="text-sm text-red-600">Componente da aba indisponível.</div>');
       return;
     }
 
-    target.html('<div class="text-sm text-gray-500">Carregando conteudo...</div>');
+    target.html('<div class="text-sm text-gray-500">Carregando conteúdo...</div>');
 
     try {
       const html = typeof component.renderInto === 'function'
@@ -1387,7 +1387,7 @@ const commercialProposalController = {
       this.mountAttachmentsInTab(target, component, componentOptions);
     } catch (error) {
       console.error(`[commercialProposal] Error loading tab ${tabName}:`, error);
-      target.html('<div class="text-sm text-red-600">Nao foi possivel carregar esta aba.</div>');
+      target.html('<div class="text-sm text-red-600">Não foi possível carregar esta aba.</div>');
     }
   },
 
@@ -1856,8 +1856,8 @@ const commercialProposalController = {
         <span class="${this.escapeHtml(visual.badge)} shrink-0">${this.escapeHtml(level)}</span>
       </div>
       <div class="${this.escapeHtml(visual.meta)} break-all">Probabilidade: ${this.escapeHtml(probability)} | Impacto: ${this.escapeHtml(impact)}</div>
-      <div class="text-sm text-gray-700 mb-2 break-all"><strong>Mitigacao:</strong> ${this.escapeHtml(mitigation || 'Nao informado')}</div>
-      <div class="text-sm text-gray-700 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Nao informado')}</div>
+      <div class="text-sm text-gray-700 mb-2 break-all"><strong>Mitigação:</strong> ${this.escapeHtml(mitigation || 'Não informado')}</div>
+      <div class="text-sm text-gray-700 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Não informado')}</div>
       <div class="flex justify-end items-center gap-2 mt-2">
         <button type="button" data-action="edit-proposal-risk" class="text-blue-500 hover:text-blue-700" title="Editar risco"><i class="fa-solid fa-pen"></i></button>
         <button type="button" data-action="remove-proposal-risk" class="text-red-400 hover:text-red-600" title="Remover risco"><i class="fa-solid fa-trash"></i></button>
@@ -1912,7 +1912,7 @@ const commercialProposalController = {
           </div>
         </div>
         <div class="space-y-1 text-gray-700">
-          <strong class="block">Mitigacao:</strong>
+          <strong class="block">Mitigação:</strong>
           <textarea data-field="risk-mitigation" placeholder="Descreva a mitigacao..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none resize-none">${mitigation}</textarea>
         </div>
         <div class="space-y-1 text-gray-700">
@@ -2151,12 +2151,12 @@ const commercialProposalController = {
         <h5 class="font-medium text-bevap-navy break-all">${this.escapeHtml(title)}</h5>
         ${this.getPrerequisiteStatusBadgeHtml(status)}
       </div>
-      <div class="text-sm text-gray-600 mb-1 break-all">Responsavel: ${this.escapeHtml(owner || 'Nao informado')}</div>
-      <div class="text-sm text-gray-700 mb-1 break-all"><strong>Mitigacao:</strong> ${this.escapeHtml(mitigation || 'Nao informado')}</div>
-      <div class="text-sm text-gray-700 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Nao informado')}</div>
+      <div class="text-sm text-gray-600 mb-1 break-all">Responsável: ${this.escapeHtml(owner || 'Não informado')}</div>
+      <div class="text-sm text-gray-700 mb-1 break-all"><strong>Mitigação:</strong> ${this.escapeHtml(mitigation || 'Não informado')}</div>
+      <div class="text-sm text-gray-700 break-all"><strong>Plano B:</strong> ${this.escapeHtml(fallback || 'Não informado')}</div>
       <div class="flex justify-end items-center gap-2 mt-2">
-        <button type="button" data-action="edit-proposal-prerequisite" class="text-blue-500 hover:text-blue-700" title="Editar pre-requisito"><i class="fa-solid fa-pen"></i></button>
-        <button type="button" data-action="remove-proposal-prerequisite" class="text-red-400 hover:text-red-600" title="Remover pre-requisito"><i class="fa-solid fa-trash"></i></button>
+        <button type="button" data-action="edit-proposal-prerequisite" class="text-blue-500 hover:text-blue-700" title="Editar pré-requisito"><i class="fa-solid fa-pen"></i></button>
+        <button type="button" data-action="remove-proposal-prerequisite" class="text-red-400 hover:text-red-600" title="Remover pré-requisito"><i class="fa-solid fa-trash"></i></button>
       </div>
     `;
   },
@@ -2176,8 +2176,8 @@ const commercialProposalController = {
 
     container.innerHTML = `
       <div class="flex items-center justify-between gap-2 mb-2">
-        <input data-field="prerequisite-title" type="text" value="${title}" placeholder="Novo pre-requisito" class="font-medium text-bevap-navy bg-transparent border-none p-0 focus:outline-none w-full">
-        <button type="button" data-action="remove-proposal-prerequisite" class="text-red-400 hover:text-red-600" title="Remover pre-requisito"><i class="fa-solid fa-trash"></i></button>
+        <input data-field="prerequisite-title" type="text" value="${title}" placeholder="Novo pré-requisito" class="font-medium text-bevap-navy bg-transparent border-none p-0 focus:outline-none w-full">
+        <button type="button" data-action="remove-proposal-prerequisite" class="text-red-400 hover:text-red-600" title="Remover pré-requisito"><i class="fa-solid fa-trash"></i></button>
       </div>
       <div class="space-y-3 text-sm">
         <div class="flex items-center gap-2">
@@ -2190,11 +2190,11 @@ const commercialProposalController = {
           </select>
         </div>
         <div class="space-y-1 text-gray-600">
-          <span class="block">Responsavel:</span>
+          <span class="block">Responsável:</span>
           <input data-field="prerequisite-owner" type="text" value="${owner}" placeholder="Informe o responsavel" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">
         </div>
         <div class="space-y-1 text-gray-700">
-          <strong class="block">Mitigacao:</strong>
+          <strong class="block">Mitigação:</strong>
           <textarea data-field="prerequisite-mitigation" placeholder="Descreva a mitigacao..." rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none resize-none">${mitigation}</textarea>
         </div>
         <div class="space-y-1 text-gray-700">
@@ -2439,15 +2439,15 @@ const commercialProposalController = {
 
     if (!this.asText(root.find('#proposal-supplier-name').val())) missing.push('Nome do Fornecedor');
     if (!this.asText(root.find('#proposal-reference-number').val())) missing.push('No/Ref. da Proposta');
-    if (!this.asText(root.find('#proposal-validity-days').val())) missing.push('Vigencia em Dias');
+    if (!this.asText(root.find('#proposal-validity-days').val())) missing.push('Vigência em Dias');
     if (!this.asText(root.find('#proposal-total-value').val())) missing.push('Valor Total');
     if (!this.asText(root.find('#proposal-currency').val())) missing.push('Moeda');
     if (!this.asText(root.find('#proposal-estimated-deadline').val())) missing.push('Prazo estimado semana');
     if (!/^\d+$/.test(this.asText(root.find('#proposal-estimated-deadline').val()))) missing.push('Prazo estimado semana (somente numero)');
-    if (!this.asText(root.find('#proposal-payment-condition').val())) missing.push('Condicao de Pagamento');
+    if (!this.asText(root.find('#proposal-payment-condition').val())) missing.push('Condição de Pagamento');
     if (!this.asText(root.find('#proposal-scope-summary').val())) missing.push('Escopo Resumido');
 
-    // Confirmacao Matriz/Pre-requisitos (prototipo): so conta quando clicar em "Confirmar" nos cards.
+    // Confirmação Matriz/Pré-requisitos (protótipo): só conta quando clicar em "Confirmar" nos cards.
     const risksConfirmed = root.find('#proposal-risk-list .tipc-risk-item[data-confirmed="1"]').length;
     const prerequisitesConfirmed = root.find('#proposal-prerequisite-list .tipc-prerequisite-item[data-confirmed="1"]').length;
     const hasAnyConfirmed = (risksConfirmed + prerequisitesConfirmed) > 0;
@@ -2470,10 +2470,10 @@ const commercialProposalController = {
     }).get().filter((item) => item.description || item.quantity || item.unit || item.total);
 
     if (!items.length) {
-      missing.push('Itens / Servicos (adicione ao menos 1 item)');
+      missing.push('Itens / Serviços (adicione ao menos 1 item)');
     } else {
       const first = items[0];
-      if (!first.description) missing.push('Item/Servico: Descricao');
+      if (!first.description) missing.push('Item/Servico: Descrição');
       if (!first.quantity) missing.push('Item/Servico: Qtd');
       if (!first.unit) missing.push('Item/Servico: Valor Unit.');
       if (!first.total) missing.push('Item/Servico: Total');
@@ -2599,18 +2599,18 @@ const commercialProposalController = {
     const card = $(btnEl).closest('.tipc-risk-item');
     if (!card.length) return;
 
-    // Inputs de edicao estao dentro de .risk-edit
+    // Inputs de edicao estão dentro de .risk-edit
     const title = this.asText(card.find('.risk-edit [data-field="risk-title"]').val());
     if (!title) {
       const ui = this.getUiComponents();
       if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
         ui.validation.showValidationModal(this.getContainer(), {
           missingFields: ['Titulo do risco'],
-          title: 'Campos Obrigatorios',
-          message: 'Por favor, preencha todos os campos obrigatorios antes de confirmar este item.'
+          title: 'Campos Obrigatórios',
+          message: 'Por favor, preencha todos os campos obrigatórios antes de confirmar este item.'
         });
       } else {
-        this.showToast('Campo obrigatorio', 'Informe o titulo do risco.', 'warning');
+        this.showToast('Campo obrigatório', 'Informe o titulo do risco.', 'warning');
       }
       return;
     }
@@ -2649,12 +2649,12 @@ const commercialProposalController = {
       const ui = this.getUiComponents();
       if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
         ui.validation.showValidationModal(this.getContainer(), {
-          missingFields: ['Titulo do pre-requisito'],
-          title: 'Campos Obrigatorios',
-          message: 'Por favor, preencha todos os campos obrigatorios antes de confirmar este item.'
+          missingFields: ['Título do pré-requisito'],
+          title: 'Campos Obrigatórios',
+          message: 'Por favor, preencha todos os campos obrigatórios antes de confirmar este item.'
         });
       } else {
-        this.showToast('Campo obrigatorio', 'Informe o titulo do pre-requisito.', 'warning');
+        this.showToast('Campo obrigatório', 'Informe o título do pré-requisito.', 'warning');
       }
       return;
     }
@@ -2696,10 +2696,17 @@ const commercialProposalController = {
         documentId: this._state.documentId,
         taskFields: this.collectTaskFields()
       });
-      this.showToast('Rascunho salvo', 'As alteracoes foram salvas com sucesso.', 'success');
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[commercialProposal] Error saving draft:', error);
-      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.', 'error');
+      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -2739,7 +2746,7 @@ const commercialProposalController = {
     }
 
     if (!this._state.documentId) {
-      throw new Error('Nao foi possivel identificar a solicitacao atual');
+      throw new Error('Não foi possível identificar a solicitação atual');
     }
 
     const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._state.documentId);
@@ -2767,11 +2774,12 @@ const commercialProposalController = {
           if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
             ui.validation.showValidationModal(this.getContainer(), {
               missingFields: missing,
-              title: 'Campos Obrigatorios',
-              message: 'Por favor, preencha todos os campos obrigatorios antes de continuar.'
+              title: 'Campos Obrigatórios',
+              message: 'Por favor, preencha todos os campos obrigatórios antes de continuar.',
+              closeSelectors: ['#approve-modal']
             });
           } else {
-            this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+            this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
           }
           return;
         }
@@ -2814,7 +2822,7 @@ const commercialProposalController = {
       }, 600);
     } catch (error) {
       console.error('[commercialProposal] Error sending proposal:', error);
-      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel enviar a proposta.', 'error');
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível enviar a proposta.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -2858,8 +2866,8 @@ const commercialProposalController = {
 
   getPriorityLabel: function (priority) {
     const normalized = this.asText(priority).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-    if (normalized.indexOf('critico') !== -1) return 'Critico';
-    if (normalized.indexOf('estrategico') !== -1) return 'Estrategico';
+    if (normalized.indexOf('critico') !== -1) return 'Crítico';
+    if (normalized.indexOf('estrategico') !== -1) return 'Estratégico';
     if (normalized.indexOf('operacional') !== -1) return 'Operacional';
     return this.asText(priority);
   },

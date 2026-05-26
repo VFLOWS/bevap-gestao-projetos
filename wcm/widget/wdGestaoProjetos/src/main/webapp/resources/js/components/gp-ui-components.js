@@ -657,6 +657,9 @@
       const title = finalOptions.title || 'Campos Obrigatorios';
       const message = finalOptions.message || 'Por favor, preencha todos os campos obrigatorios antes de continuar.';
       const confirmLabel = finalOptions.confirmLabel || 'Entendi, vou corrigir';
+      const closeSelectors = Array.isArray(finalOptions.closeSelectors)
+        ? finalOptions.closeSelectors.filter(Boolean).join(',')
+        : String(finalOptions.closeSelectors || '').trim();
 
       const $titleEl = $modal.find('#validation-modal-title').first().length
         ? $modal.find('#validation-modal-title').first()
@@ -666,6 +669,7 @@
       }
       $modal.find('#validation-modal-message').first().html(message);
       $modal.find('[data-action="close-validation-modal"]').first().text(confirmLabel);
+      $modal.attr('data-close-selectors', closeSelectors);
 
       return $modal;
     },
@@ -704,7 +708,43 @@
     closeValidationModal: function (targetEl) {
       const $target = $(targetEl);
       if (!$target.length) return;
-      $target.find('#validation-modal').first().addClass('hidden');
+      const $modal = $target.find('#validation-modal').first();
+      const closeSelectors = String($modal.attr('data-close-selectors') || '').trim();
+
+      $modal.addClass('hidden');
+
+      if (closeSelectors) {
+        closeSelectors
+          .split(',')
+          .map((selector) => String(selector || '').trim())
+          .filter(Boolean)
+          .forEach((selector) => {
+            const closeModal = ($scope) => {
+              const $matched = $scope.find(selector);
+              if (!$matched.length) return false;
+
+              $matched.each(function () {
+                const $currentModal = $(this);
+                const modalId = String($currentModal.attr('id') || '').trim();
+                const $closeButton = modalId
+                  ? $currentModal.find(`[data-action="close-modal"][data-modal-id="${modalId}"]`).first()
+                  : $();
+
+                if ($closeButton.length) {
+                  $closeButton.trigger('click');
+                  return;
+                }
+
+                $currentModal.addClass('hidden');
+              });
+
+              return true;
+            };
+
+            if (closeModal($target)) return;
+            closeModal($(document));
+          });
+      }
     },
 
     _buildLegacyValidationPayload: function (title, message) {

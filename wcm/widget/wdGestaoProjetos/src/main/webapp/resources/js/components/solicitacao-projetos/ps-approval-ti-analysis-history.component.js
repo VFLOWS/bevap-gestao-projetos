@@ -77,7 +77,7 @@
           <i class="${iconClass} mr-2"></i>
           <h3 class="text-base font-montserrat font-semibold text-bevap-navy">${escapeHtml(title)}</h3>
         </div>
-        <p class="text-sm text-gray-700 whitespace-pre-line">${escapeHtml(value || 'Nao informado')}</p>
+        <p class="text-sm text-gray-700 whitespace-pre-line">${escapeHtml(value || 'Não informado')}</p>
       </div>
     `;
   }
@@ -88,9 +88,11 @@
     }
 
     return items.map((item) => {
-      const level = asText(item && item.nivelRiscoAPTI) || 'Nao informado';
-      const description = asText(item && item.descricaoRiscoAPTI) || 'Nao informado';
-      const normalized = level.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const levelRaw = asText(item && item.nivelRiscoAPTI) || 'Não informado';
+      const normalizedLevel = levelRaw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      const level = normalizedLevel === 'medio' ? 'Médio' : levelRaw;
+      const description = asText(item && item.descricaoRiscoAPTI) || 'Não informado';
+      const normalized = normalizedLevel;
       const badgeClasses = normalized.indexOf('alto') !== -1
         ? 'bg-red-100 text-red-700'
         : normalized.indexOf('medio') !== -1
@@ -98,9 +100,9 @@
           : 'bg-green-100 text-green-700';
 
       return `
-        <div class="flex items-start p-3 bg-slate-50 border border-slate-200 rounded-lg">
-          <span class="inline-flex items-center px-2 py-1 rounded text-xs ${badgeClasses} font-medium mr-3">${escapeHtml(level)}</span>
-          <div class="text-sm text-gray-700">${escapeHtml(description)}</div>
+        <div class="grid grid-cols-1 md:grid-cols-[140px_minmax(0,1fr)] gap-3 items-start p-3 bg-slate-50 border border-slate-200 rounded-lg">
+          <span class="inline-flex items-center justify-center px-2 py-1 rounded text-xs ${badgeClasses} font-medium w-full">${escapeHtml(level)}</span>
+          <div class="text-sm text-gray-700 min-w-0 break-words">${escapeHtml(description)}</div>
         </div>
       `;
     }).join('');
@@ -110,7 +112,7 @@
     return rows.map((item) => {
       const parsed = parseBooleanLike(item.value);
       const isYes = parsed === true;
-      const label = isYes ? 'Sim' : parsed === false ? 'Nao' : 'Nao informado';
+      const label = isYes ? 'Sim' : parsed === false ? 'Não' : 'Não informado';
       const badgeClasses = isYes ? 'bg-green-100 text-green-700' : parsed === false ? 'bg-red-100 text-red-700' : 'bg-slate-100 text-slate-700';
       const iconClass = isYes ? 'fa-circle-check text-bevap-green' : parsed === false ? 'fa-circle-xmark text-red-600' : 'fa-circle-info text-slate-500';
 
@@ -129,7 +131,7 @@
   async function render(options = {}) {
     const documentId = asText(options.documentId);
     if (!documentId) {
-      return '<div class="text-sm text-gray-500">Selecione uma solicitacao para visualizar a analise TI.</div>';
+      return '<div class="text-sm text-gray-500">Selecione uma solicitação para visualizar a análise TI.</div>';
     }
 
     const rows = await fluigService.getDatasetRows(DATASET_ID, {
@@ -141,17 +143,17 @@
 
     const row = rows && rows.length ? rows[0] : null;
     if (!row) {
-      return '<div class="text-sm text-gray-500">Nenhum dado da analise TI foi encontrado.</div>';
+      return '<div class="text-sm text-gray-500">Nenhum dado da análise TI foi encontrado.</div>';
     }
 
     const risks = parseTableJson(row.tblRiscosIdentificadosAPTI);
     const checklistRows = [
       { label: 'Objetivo claramente definido', value: row.objetivoClaramenteDefinidoAPTI },
       { label: 'Escopo bem delimitado', value: row.escopoBemDelimitadoAPTI },
-      { label: 'Documentacao tecnica adequada', value: row.documentacaoTecnicaAdeqAPTI },
+      { label: 'Documentação técnica adequada', value: row.documentacaoTecnicaAdeqAPTI },
       { label: 'Patrocinador identificado', value: row.patrocinadoridentificadoAPTI },
-      { label: 'Alinhamento estrategico confirmado', value: row.alinhEstratConfAPTI },
-      { label: 'Recursos tecnicos disponiveis', value: row.recursosTecDispAPTI },
+      { label: 'Alinhamento estratégico confirmado', value: row.alinhEstratConfAPTI },
+      { label: 'Recursos técnicos disponíveis', value: row.recursosTecDispAPTI },
       { label: 'Anexos essenciais presentes', value: row.anexosessenciaispresentesAPTI }
     ];
 
@@ -162,7 +164,7 @@
             <i class="fa-solid fa-microscope text-bevap-green text-xl mr-2"></i>
             <h3 class="font-montserrat font-semibold text-bevap-navy">Parecer TI</h3>
           </div>
-          <p class="text-sm text-gray-700 whitespace-pre-line">${escapeHtml(row.visibilidadetecnicaAPTI || 'Nao informado')}</p>
+          <p class="text-sm text-gray-700 whitespace-pre-line">${escapeHtml(row.visibilidadetecnicaAPTI || 'Não informado')}</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -170,16 +172,16 @@
           <div class="p-5 bg-white border border-gray-200 rounded-lg">
             <div class="flex items-center mb-3">
               <i class="fa-solid fa-chart-simple text-blue-600 mr-2"></i>
-              <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Esforco Estimado</h3>
+              <h3 class="text-base font-montserrat font-semibold text-bevap-navy">Esforço Estimado</h3>
             </div>
             <div class="space-y-3 text-sm text-gray-700">
               <div class="flex items-center justify-between border-b border-gray-100 pb-2">
                 <span>Horas</span>
-                <span class="font-semibold text-bevap-navy">${escapeHtml(row.esforcoestimadohorasAPTI || 'Nao informado')}</span>
+                <span class="font-semibold text-bevap-navy">${escapeHtml(row.esforcoestimadohorasAPTI || 'Não informado')}</span>
               </div>
               <div class="flex items-center justify-between">
                 <span>Pontos</span>
-                <span class="font-semibold text-bevap-navy">${escapeHtml(row.esforcoestimadopontosAPTI || 'Nao informado')}</span>
+                <span class="font-semibold text-bevap-navy">${escapeHtml(row.esforcoestimadopontosAPTI || 'Não informado')}</span>
               </div>
             </div>
           </div>
@@ -192,11 +194,11 @@
           </div>
         </div>
 
-        ${renderTextSection('Dependencias Tecnicas', row.dependenciastecnicasAPTI, 'fa-solid fa-link text-bevap-navy')}
-        ${renderTextSection('Observacoes da Analise', row.observacoesdaanaliseAPTI, 'fa-solid fa-comment-dots text-bevap-navy')}
+        ${renderTextSection('Dependências Técnicas', row.dependenciastecnicasAPTI, 'fa-solid fa-link text-bevap-navy')}
+        ${renderTextSection('Observações da Análise', row.observacoesdaanaliseAPTI, 'fa-solid fa-comment-dots text-bevap-navy')}
 
         <div class="p-5 bg-white border border-gray-200 rounded-lg">
-          <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Checklist da Analise TI</h3>
+          <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Checklist da Análise TI</h3>
           <div class="space-y-3">
             ${renderCheckRows(checklistRows)}
           </div>

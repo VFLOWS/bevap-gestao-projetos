@@ -80,7 +80,7 @@ const newSolicitationController = {
       patrocinador: 'Patrocinador',
       objetivo: 'Objetivo do Projeto',
       problema: 'Problema/Oportunidade',
-      beneficios: 'Beneficios Esperados',
+      beneficios: 'Benefícios Esperados',
       'escopo-inicial': 'Escopo Inicial',
       'out-of-scope': 'Fora de Escopo',
       dependencies: 'Dependencias',
@@ -190,7 +190,7 @@ const newSolicitationController = {
         fields: ['CODCOLIGADA', 'NOMEFANTASIA'],
         columns: [
           { header: 'Codigo', field: 'CODCOLIGADA', width: 'w-1/3' },
-          { header: 'Descricao', field: 'NOMEFANTASIA', width: 'w-2/3' },
+          { header: 'Descrição', field: 'NOMEFANTASIA', width: 'w-2/3' },
         ]
       },
       {
@@ -204,7 +204,7 @@ const newSolicitationController = {
         fields: ['CODIGO', 'DESCRICAO'],
         columns: [
           { header: 'Codigo', field: 'CODIGO', width: 'w-1/3' },
-          { header: 'Descricao', field: 'DESCRICAO', width: 'w-2/3' },
+          { header: 'Descrição', field: 'DESCRICAO', width: 'w-2/3' },
         ],
         dependsOnColigada: true,
         getItemLabel: (row) => this.buildLookupDisplayValue(row, 'CODIGO', 'DESCRICAO')
@@ -765,13 +765,13 @@ const newSolicitationController = {
     if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
       ui.validation.showValidationModal(this.getContainer(), {
         missingFields: missingFields,
-        title: 'Campos Obrigatorios',
-        message: 'Por favor, preencha todos os campos obrigatorios marcados com <span class="text-red-500 font-semibold">*</span> antes de enviar sua solicitacao.'
+        title: 'Campos Obrigatórios',
+        message: 'Por favor, preencha todos os campos obrigatórios marcados com <span class="text-red-500 font-semibold">*</span> antes de enviar sua solicitação.'
       });
       return;
     }
 
-    this.showToast('Campos obrigatorios', `Preencha: ${(missingFields || []).join(' | ')}`, 'warning');
+    this.showToast('Campos obrigatórios', `Preencha: ${(missingFields || []).join(' | ')}`, 'warning');
   },
 
   closeValidationModal: function () {
@@ -1053,7 +1053,7 @@ const newSolicitationController = {
       this.showNotification({
         borderClass: 'border-yellow-500',
         iconClass: 'fa-circle-exclamation text-yellow-500',
-        title: 'Stakeholder obrigatorio',
+        title: 'Stakeholder obrigatório',
         message: 'Selecione um colaborador antes de adicionar.'
       });
       return;
@@ -1363,7 +1363,7 @@ const newSolicitationController = {
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
         title: 'Erro ao carregar rascunho',
-        message: 'Nao foi possivel carregar os dados salvos desta solicitacao.'
+        message: 'Não foi possível carregar os dados salvos desta solicitação.'
       });
     }
   },
@@ -1395,11 +1395,11 @@ const newSolicitationController = {
 
     this._state.documentId = currentDocumentId;
     this.setFieldValue('#titulo', row.titulodoprojetoNS);
-    // A partir de agora os campos do card guardam os CODIGOS; a descricao e reidratada via TagInputFilter.
+    // A partir de agora os campos do card guardam os CÓDIGOS; a descrição e reidratada via TagInputFilter.
     this.setFieldValue('#cod-coligada', row.ColigadaNS);
     this.setFieldValue('#cod-area', row.areaUnidadeNS);
     this.setFieldValue('#cod-centro-custo', row.centrodecustoNS);
-    // Limpa labels; serao preenchidos ao sincronizar com os TagInputFilters.
+    // Limpa labels; serão preenchidos ao sincronizar com os TagInputFilters.
     this.setFieldValue('#coligada', '');
     this.setFieldValue('#area', '');
     this.setFieldValue('#centro-custo', '');
@@ -1625,7 +1625,7 @@ const newSolicitationController = {
     if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
       return modalLoadingService.show({
         title: title || 'Enviando solicitacao',
-        message: message || 'Aguarde enquanto a solicitacao e criada no Fluig...'
+        message: message || 'Aguarde enquanto a solicitação é criada no Fluig...'
       });
     }
 
@@ -1656,7 +1656,7 @@ const newSolicitationController = {
     }
 
     if (!this._state.documentId) {
-      throw new Error('Nao foi possivel identificar a solicitacao atual');
+      throw new Error('Não foi possível identificar a solicitação atual');
     }
 
     const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._state.documentId);
@@ -1709,23 +1709,21 @@ const newSolicitationController = {
       await this.syncProcessMetadata();
       this.writeDraftUiCache(this._state.documentId, payload);
 
-      this.showNotification({
-        borderClass: 'border-bevap-green',
-        iconClass: 'fa-check-circle text-bevap-green',
-        title: 'Rascunho salvo!',
-        message: 'Os dados informados foram salvos com sucesso.'
-      });
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 150);
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'Os dados informados foram salvos com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[newSolicitation] Error saving draft:', error);
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
         title: 'Erro ao salvar rascunho',
-        message: error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.'
+        message: error && error.message ? error.message : 'Não foi possível salvar o rascunho.'
       });
     } finally {
       this._state.isSubmitting = false;
@@ -1825,7 +1823,7 @@ const newSolicitationController = {
         } catch (error) {}
       }
     } catch (error) {
-      console.warn('[newSolicitation] Nao foi possivel sincronizar os metadados do processo:', error);
+      console.warn('[newSolicitation] Não foi possível sincronizar os metadados do processo:', error);
     } finally {
       this.updateSummaryDetails();
       this.updateSuccessModalProjectCode();
@@ -1857,7 +1855,7 @@ const newSolicitationController = {
         const processInstanceId = await this.resolveProcessInstanceId();
         const taskFields = this.toTaskFields(fluigService.buildProjectSolicitationCardData(payload));
 
-        loading.updateMessage('Concluindo envio da solicitacao...');
+        loading.updateMessage('Concluindo envio da solicitação...');
         await this.waitForUiPaint();
         await fluigService.saveAndSendTask({
           id: processInstanceId,
@@ -1886,7 +1884,7 @@ const newSolicitationController = {
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
         title: 'Erro ao enviar',
-        message: 'Nao foi possivel criar a solicitacao no Fluig. Tente novamente.'
+        message: 'Não foi possível criar a solicitação no Fluig. Tente novamente.'
       });
     } finally {
       this._state.isSubmitting = false;
@@ -1910,8 +1908,8 @@ const newSolicitationController = {
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
-        title: 'Solicitacao nao encontrada',
-        message: 'Nao foi possivel localizar os dados da solicitacao.'
+        title: 'Solicitação não encontrada',
+        message: 'Não foi possível localizar os dados da solicitação.'
       });
       return;
     }
@@ -1991,7 +1989,7 @@ function setSelectedZoomItem(zoomItem) {
     setZoomHiddenValue('cod-coligada', zoomItem && (zoomItem.CODCOLIGADA || zoomItem.codigo || ''));
   }
 
-  // Area/Unidade
+  // Área/Unidade
   if (idSelecionado === 'area') {
     setZoomHiddenValue('cod-area', zoomItem && (zoomItem.CODIGO || zoomItem.codigo || ''));
   }
