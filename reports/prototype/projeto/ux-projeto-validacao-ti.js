@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         agreementId: 'validation-agreement-checkbox',
         commentRequired: true,
         redirects: {
-            onApprove: '../ux-planejamento.html',
+            onApprove: 'ux-projeto-final.html',
             onReturn: 'ux-execucao-projeto.html',
             onDiscontinue: '../ux-planejamento.html'
         },
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
             confirmationPendingTitle: 'Confirmação pendente',
             confirmationPendingMessage: 'Marque a confirmação da TI antes de validar o projeto.',
             approveSuccessTitle: 'Validação concluída',
-            approveSuccessMessage: 'A validação da TI foi registrada com sucesso.',
+            approveSuccessMessage: 'A validação da TI foi registrada com sucesso e o projeto seguirá para a visão final.',
             returnPendingTitle: 'Campo obrigatório',
             returnPendingMessage: 'Informe o motivo do novo planejamento.',
             returnSuccessTitle: 'Novo planejamento solicitado',

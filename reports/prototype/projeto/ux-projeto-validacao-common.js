@@ -438,9 +438,12 @@
             var percentage = items.length ? Math.round((checked / items.length) * 100) : 0;
             var hasPendingItems = items.length > 0 && checked < items.length;
             var noticeByIncomplete = !!config.checklist.noticeByIncomplete;
-            document.getElementById(config.checklist.percentageId).textContent = percentage + '%';
-            document.getElementById(config.checklist.progressId).style.width = percentage + '%';
-            document.getElementById(config.checklist.noticeId)?.classList.toggle('hidden', noticeByIncomplete ? !hasPendingItems : checklistVisited);
+            var percentageElement = document.getElementById(config.checklist.percentageId);
+            var progressElement = document.getElementById(config.checklist.progressId);
+            var noticeElement = document.getElementById(config.checklist.noticeId);
+            if (percentageElement) percentageElement.textContent = percentage + '%';
+            if (progressElement) progressElement.style.width = percentage + '%';
+            noticeElement?.classList.toggle('hidden', noticeByIncomplete ? !hasPendingItems : checklistVisited);
             showChecklistArrowNotice = noticeByIncomplete ? hasPendingItems : !checklistVisited;
             refreshExecutionTabArrows();
         }

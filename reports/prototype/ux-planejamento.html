@@ -330,10 +330,6 @@
                         <div class="flex items-center justify-between mb-4">
                             <h4 class="text-lg font-semibold text-bevap-navy">Marcos do Projeto</h4>
                             <div class="flex flex-wrap items-center gap-2">
-                                <a href="marcos/ux-marcos-documentacao.html" target="_blank" class="px-4 py-2 border border-bevap-navy text-bevap-navy rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
-                                    <i class="fa-solid fa-book-open mr-2"></i>
-                                    Documentação do Fluxo
-                                </a>
                                 <button onclick="addMilestone()" class="px-4 py-2 bg-bevap-green text-white rounded-lg hover:bg-green-700 transition-colors">
                                     <i class="fa-solid fa-plus mr-2"></i>
                                     Adicionar Marco
@@ -2301,30 +2297,7 @@
 
             const whenLabel = getTimelineWhenLabel(item.date);
             const currentDateFormatted = formatMilestonePeriodBr(item.period || item.date);
-            const taskCount = item.tasks.length;
-            const previewTasks = item.tasks.slice(0, 2).map((task) => task.taskName).filter(Boolean);
-            const taskPreviewText = previewTasks.length ? previewTasks.join(' • ') : 'Sem tarefas vinculadas';
-            const descriptionText = `Marco: ${item.phaseName} • ${taskPreviewText}`;
-            const extraTasks = taskCount > 2 ? ` (+${taskCount - 2})` : '';
-            const tasksHtml = taskCount === 0
-                ? '<div class="mt-3 rounded-lg border border-dashed border-slate-300 bg-white p-3 text-xs text-slate-500">Nenhuma tarefa vinculada ao marco.</div>'
-                : `
-                    <div class="mt-4 space-y-2">
-                        ${item.tasks.map((task, taskIndex) => `
-                            <div class="rounded-lg border border-slate-200 bg-white p-3">
-                                <div class="flex flex-wrap items-start justify-between gap-2">
-                                    <div class="min-w-0">
-                                        <div class="text-sm font-semibold text-bevap-navy">${escapeHtml(task.taskName || `Tarefa ${taskIndex + 1}`)}</div>
-                                        <div class="text-xs text-slate-500">${escapeHtml(task.taskPhase || 'Fase não definida')} • ${task.date ? formatDateBr(task.date) : 'Sem data definida'}</div>
-                                    </div>
-                                    <button type="button" onclick="openExecutionFlow('pending', ${index}, ${taskIndex})" class="shrink-0 rounded-lg border border-bevap-green px-3 py-1.5 text-xs font-medium text-bevap-green hover:bg-green-50 transition-colors">
-                                        <i class="fa-solid fa-arrow-up-right-from-square mr-1"></i>Abrir Fluxo
-                                    </button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+            const descriptionText = `Marco: ${item.phaseName}`;
             const criteriaCount = item.acceptanceCriteria.length;
             const criteriaPreview = item.acceptanceCriteria.slice(0, 2);
             const criteriaHtml = criteriaCount === 0
@@ -2356,9 +2329,8 @@
                             <span class="text-xs text-slate-500 whitespace-nowrap">${whenLabel}</span>
                         </div>
                         <p class="text-xs text-slate-500 mb-1">${currentDateFormatted}</p>
-                        <p class="text-sm text-slate-600">${escapeHtml(descriptionText)}${extraTasks}</p>
+                        <p class="text-sm text-slate-600">${escapeHtml(descriptionText)}</p>
                         ${criteriaHtml}
-                        ${tasksHtml}
                     </div>
                 </div>
             `;
