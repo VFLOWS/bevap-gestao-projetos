@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TI - Anexar Documentação de Encerramento do Projeto</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#3D567E',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434'
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        #closure-tabs-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #closure-tabs-scroll::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-inter text-gray-900">
+    <header class="fixed left-0 right-0 top-0 z-50 bg-bevap-navy shadow-lg">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 rounded-lg bg-white px-4 py-1">
+                    <img src="../logoBevap.png" class="h-auto w-24" alt="BEVAP">
+                </div>
+                <div class="hidden h-8 w-px bg-gray-400 md:block"></div>
+                <h1 class="hidden font-montserrat text-lg font-semibold text-white md:block">TI - Anexar Documentação de Encerramento do Projeto</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Usuário" class="h-9 w-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="mx-auto flex h-10 max-w-7xl items-center px-4 text-sm sm:px-6 lg:px-8">
+            <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                <a href="../ux-dashboard.html" class="inline-flex items-center gap-2 text-gray-300 transition-colors hover:text-white">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Início</span>
+                </a>
+                <span class="text-gray-400">/</span>
+                <a href="../ux-planejamento.html" class="text-gray-300 transition-colors hover:text-white">Planejamento</a>
+                <span class="text-gray-400">/</span>
+                <a href="../projeto/ux-execucao-projeto.html" class="text-gray-300 transition-colors hover:text-white">Execução do Projeto</a>
+                <span class="text-gray-400">/</span>
+                <span class="font-medium text-bevap-gold">TI - Anexar Documentação de Encerramento do Projeto</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-4 pb-28 pt-32 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <div class="lg:col-span-2">
+                <section class="rounded-lg bg-white shadow-md">
+                    <div class="border-b border-gray-200">
+                        <div class="relative">
+                            <div id="closure-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
+                                <button type="button" id="tab-ti-final-validation" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-shield-halved mr-2"></i>Validação Final TI
+                                </button>
+                                <button type="button" id="tab-ti-go-live-validation" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-rocket mr-2"></i>TI Realizar GO Live
+                                </button>
+                                <button type="button" id="tab-requester-validation" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-user-check mr-2"></i>Solicitante Validar GO Live
+                                </button>
+                                <button type="button" id="tab-closure-overview" class="whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
+                                    <i class="fa-solid fa-folder-open mr-2"></i>TI Anexar Documentação de Encerramento
+                                </button>
+                            </div>
+                            <button id="closure-tabs-left-arrow" type="button" class="pointer-events-none absolute bottom-0 left-0 top-0 flex w-24 items-center justify-start rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent pl-2 text-bevap-navy opacity-0 transition-opacity duration-300">
+                                <span class="flex items-center gap-0 text-base leading-none">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </span>
+                            </button>
+                            <button id="closure-tabs-right-arrow" type="button" class="pointer-events-none absolute bottom-0 right-0 top-0 flex w-24 items-center justify-end rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent pr-2 text-bevap-navy opacity-0 transition-opacity duration-300">
+                                <span class="flex items-center gap-0 text-base leading-none">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="tab-content-closure-overview" class="p-6">
+                        <div class="mb-4 flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                            <i class="fa-solid fa-folder-open mt-0.5 text-blue-600"></i>
+                            <div class="text-sm text-gray-700">
+                                <p class="font-medium text-bevap-navy">Documentação de encerramento do projeto</p>
+                                <p class="mt-1">Anexe os documentos finais de encerramento, registre as evidências consolidadas e prepare a conclusão administrativa do projeto.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="mb-4 flex items-center text-lg font-montserrat font-bold text-bevap-navy">
+                                    <i class="fa-solid fa-paperclip mr-3 text-bevap-gold"></i>
+                                    Anexar Documentação de Encerramento
+                                </h3>
+                                <div id="closure-documents-panel"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-content-requester-validation" class="hidden p-6">
+                        <div class="space-y-6">
+                            <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-700 shrink-0">
+                                        <i class="fa-solid fa-user-check text-base"></i>
+                                    </span>
+                                    <div>
+                                        <h4 class="text-sm font-montserrat font-semibold text-gray-900">Solicitante Validar GO Live</h4>
+                                        <p class="text-xs text-gray-500">Registro da validação do solicitante em produção na etapa anterior.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 space-y-3">
+                                    <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">JV</span>
+                                                <div>
+                                                    <div class="font-semibold leading-5 text-bevap-navy">João Vieira</div>
+                                                    <div class="mt-1 text-xs text-gray-500">Comentário final do solicitante</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Validado</span>
+                                                <div class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">23/03/2026 09:15</div>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-700">O GO Live em produção foi validado pelo solicitante, com confirmação do funcionamento esperado, aceite operacional e liberação para encerramento formal do projeto.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-content-ti-final-validation" class="hidden p-6">
+                        <div class="space-y-6">
+                            <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 shrink-0">
+                                        <i class="fa-solid fa-shield-halved text-base"></i>
+                                    </span>
+                                    <div>
+                                        <h4 class="text-sm font-montserrat font-semibold text-gray-900">Validação Final TI</h4>
+                                        <p class="text-xs text-gray-500">Registro da validação técnica final concluída antes da execução do GO Live.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 space-y-3">
+                                    <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">MF</span>
+                                                <div>
+                                                    <div class="font-semibold leading-5 text-bevap-navy">Mariana Ferraz</div>
+                                                    <div class="mt-1 text-xs text-gray-500">Comentário final da TI</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Validado</span>
+                                                <div class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">21/03/2026 17:40</div>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-700">Validação final concluída pela TI com revisão do planejamento de GO Live, conferência dos treinamentos realizados e confirmação de que a entrega está apta para execução controlada em produção.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-content-ti-go-live-validation" class="hidden p-6">
+                        <div class="space-y-6">
+                            <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 shrink-0">
+                                        <i class="fa-solid fa-shield-halved text-base"></i>
+                                    </span>
+                                    <div>
+                                        <h4 class="text-sm font-montserrat font-semibold text-gray-900">TI Realizar GO Live</h4>
+                                        <p class="text-xs text-gray-500">Registro da execução concluída pela TI na etapa anterior.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 space-y-3">
+                                    <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">MF</span>
+                                                <div>
+                                                    <div class="font-semibold leading-5 text-bevap-navy">Mariana Ferraz</div>
+                                                    <div class="mt-1 text-xs text-gray-500">Comentário final da TI</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Concluído</span>
+                                                <div class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">22/03/2026 23:35</div>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-700">Execução do GO Live concluída pela TI em produção com monitoramento assistido, validações iniciais concluídas e registro das evidências operacionais da janela executada.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <section class="mt-6 rounded-lg bg-white p-6 shadow-md">
+                    <h3 class="mb-4 flex items-center text-lg font-montserrat font-bold text-bevap-navy">
+                        <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>
+                        Comentário Final da TI
+                    </h3>
+                    <label for="closure-final-note" class="mb-2 block text-sm font-medium text-gray-700">Observação Final da TI <span class="text-red-500" title="Obrigatório" aria-label="Obrigatório">*</span></label>
+                    <textarea id="closure-final-note" rows="5" placeholder="Registre o fechamento final da TI e a consolidação da documentação de encerramento..." class="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+                    <div class="mt-4">
+                        <label class="flex items-start">
+                            <input type="checkbox" id="closure-agreement-checkbox" class="mr-3 mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
+                            <span class="text-sm text-gray-700">Li e confirmo que a documentação de encerramento do projeto foi revisada, anexada e está pronta para conclusão <span class="text-red-500">*</span></span>
+                        </label>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="lg:col-span-1">
+                <div class="sticky top-24 space-y-4">
+                    <div class="rounded-lg bg-white p-5 shadow-md">
+                        <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                            <i class="fa-solid fa-clipboard-list mr-2 text-bevap-gold"></i>
+                            Resumo do Projeto
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Código</span><span class="font-mono font-semibold text-bevap-navy">PRJ-2026-014</span></div>
+                            <div class="border-b pb-2"><span class="text-gray-600">Título</span><p class="mt-1 font-medium text-gray-900">Implantar SSO corporativo</p></div>
+                            <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span class="font-medium text-gray-900">João Vieira</span></div>
+                            <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Líder TI</span><span class="font-medium text-gray-900">Mariana Ferraz</span></div>
+                            <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Janela GO Live</span><span class="font-medium text-gray-900">22/03/2026 22:00</span></div>
+                            <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800"><i class="fa-solid fa-folder-open mr-1"></i>Encerramento do projeto</span></div>
+                        </div>
+                        <div class="mt-4 space-y-2 border-t pt-4">
+                            <a href="../ux-planejamento.html" class="flex w-full items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy transition-colors hover:bg-gray-50">
+                                <i class="fa-solid fa-timeline mr-2"></i>Linha do Tempo
+                            </a>
+                            <button type="button" data-action="open-closure-documents" class="flex w-full items-center justify-center rounded-lg border border-bevap-green px-4 py-2 text-sm font-medium text-bevap-green transition-colors hover:bg-green-50">
+                                <i class="fa-solid fa-paperclip mr-2"></i>Ver Anexos
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="rounded-lg bg-white p-5 shadow-md">
+                        <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                            <i class="fa-solid fa-list-check mr-2 text-bevap-green"></i>
+                            Progresso
+                        </h3>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Execução do projeto concluída</span></div>
+                            <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Validação do solicitante concluída</span></div>
+                            <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Validação do TI concluída</span></div>
+                            <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Planejamento GO Live concluído</span></div>
+                            <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Treinamento dos usuários concluído</span></div>
+                            <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>TI - Validação final do projeto para GO Live concluída</span></div>
+                            <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>TI - Realizar GO Live concluído</span></div>
+                            <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Solicitante - Validar GO Live em Produção concluído</span></div>
+                            <div class="flex items-center text-bevap-gold"><i class="fa-solid fa-clock mr-2"></i><span>TI - Anexar Documentação de Encerramento do Projeto</span></div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white shadow-lg">
+        <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                    <button type="button" data-action="save-closure-progress" class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50">
+                    <i class="fa-solid fa-save mr-2"></i>Salvar Rascunho
+                </button>
+                <div class="flex items-center space-x-3">
+                    <button type="button" data-action="discontinue-closure" class="rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-red-700">
+                        <i class="fa-solid fa-ban mr-2"></i>Não Continuidade
+                    </button>
+                    <button type="button" data-action="return-planning" class="rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
+                        <i class="fa-solid fa-rotate-left mr-2"></i>Realizar Novo Planejamento
+                    </button>
+                    <button type="button" data-action="conclude-closure" class="rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
+                        <i class="fa-solid fa-circle-check mr-2"></i>Concluir Encerramento do Projeto
+                    </button>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="return-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Realizar Novo Planejamento</h3>
+            <p class="mb-4 text-sm text-gray-600">Descreva os pontos que exigem novo planejamento antes de devolver a entrega para revisão do encerramento do projeto.</p>
+            <textarea id="return-reason" rows="4" placeholder="Motivo do novo planejamento..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+            <div class="flex justify-end space-x-3">
+                <button type="button" id="return-cancel" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50">Cancelar</button>
+                <button type="button" id="return-confirm" class="rounded-lg bg-yellow-500 px-6 py-2 font-medium text-white transition-colors hover:bg-yellow-600">Confirmar Retorno</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="discontinue-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Não Continuidade</h3>
+            <p class="mb-4 text-sm text-gray-600">Justifique a decisão de não continuidade do projeto:</p>
+            <select id="discontinue-category" class="mb-3 w-full rounded-lg border border-gray-300 px-4 py-2.5 focus:ring-2 focus:ring-bevap-green">
+                <option value="">Selecione a categoria</option>
+                <option value="orcamento">Restrição orçamentária</option>
+                <option value="tecnica">Inviabilidade técnica</option>
+                <option value="prioridade">Baixa prioridade</option>
+                <option value="recursos">Falta de recursos</option>
+            </select>
+            <textarea id="discontinue-reason" rows="4" placeholder="Descrição detalhada..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+            <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-3">
+                <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> Os stakeholders serão notificados automaticamente.</p>
+            </div>
+            <div class="flex justify-end space-x-3">
+                <button type="button" id="discontinue-cancel" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
+                <button type="button" id="discontinue-confirm" class="rounded-lg bg-red-600 px-4 py-2 text-sm text-white transition-all hover:bg-red-700">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="conclude-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <div class="mb-4 flex items-center">
+                <div class="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                    <i class="fa-solid fa-circle-check text-2xl text-bevap-green"></i>
+                </div>
+                <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Concluir Encerramento do Projeto</h3>
+            </div>
+            <p class="mb-6 text-gray-700">Você está confirmando o encerramento do projeto <strong>PRJ-2026-014 • Implantar SSO corporativo</strong>.</p>
+            <p class="mb-6 text-sm text-gray-600">Ao confirmar, a documentação final será registrada e o projeto será marcado como encerrado.</p>
+            <div class="flex justify-end space-x-3">
+                <button type="button" id="conclude-cancel" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50">Cancelar</button>
+                <button type="button" id="conclude-confirm" class="rounded-lg bg-bevap-green px-6 py-2 font-medium text-white transition-colors hover:bg-green-700">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed right-4 top-24 z-[70] hidden max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+        <div class="flex items-start gap-3">
+            <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600"></i>
+            <div>
+                <div id="toast-title" class="font-semibold text-bevap-navy"></div>
+                <div id="toast-message" class="text-sm text-gray-600"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ux-ti-anexar-documentacao-encerramento-projeto-entrega.js"></script>
+</body>
+</html>
