@@ -74,17 +74,20 @@
                     <div class="border-b border-gray-200">
                         <div class="relative">
                             <div id="closure-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
-                                <button type="button" id="tab-ti-final-validation" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
-                                    <i class="fa-solid fa-shield-halved mr-2"></i>Validação Final TI
+                                <button type="button" id="tab-closure-overview" class="shrink-0 whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
+                                    <i class="fa-solid fa-folder-open mr-2"></i>TI Anexar Documentação de Encerramento
                                 </button>
-                                <button type="button" id="tab-ti-go-live-validation" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
-                                    <i class="fa-solid fa-rocket mr-2"></i>TI Realizar GO Live
-                                </button>
-                                <button type="button" id="tab-requester-validation" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                <button type="button" id="tab-requester-validation" class="shrink-0 whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
                                     <i class="fa-solid fa-user-check mr-2"></i>Solicitante Validar GO Live
                                 </button>
-                                <button type="button" id="tab-closure-overview" class="whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
-                                    <i class="fa-solid fa-folder-open mr-2"></i>TI Anexar Documentação de Encerramento
+                                <button type="button" id="tab-ti-final-validation" class="shrink-0 whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-shield-halved mr-2"></i>Validação Final TI
+                                </button>
+                                <button type="button" id="tab-ti-go-live-validation" class="shrink-0 whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-rocket mr-2"></i>TI Realizar GO Live
+                                </button>
+                                <button type="button" id="tab-project-planning" class="shrink-0 whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                    <i class="fa-solid fa-list-check mr-2"></i>Planejamento da Entrega do Projeto
                                 </button>
                             </div>
                             <button id="closure-tabs-left-arrow" type="button" class="pointer-events-none absolute bottom-0 left-0 top-0 flex w-24 items-center justify-start rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent pl-2 text-bevap-navy opacity-0 transition-opacity duration-300">
@@ -221,6 +224,23 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-content-project-planning" class="hidden p-6">
+                        <div class="mb-4 flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                            <i class="fa-solid fa-list-check mt-0.5 text-blue-600"></i>
+                            <div class="text-sm text-gray-700">
+                                <p class="font-medium text-bevap-navy">Planejamento da Entrega do Projeto</p>
+                                <p class="mt-1">Consulte abaixo os planejamentos consolidados do GO Live utilizados ao longo da entrega antes do encerramento final do projeto.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="mb-4 flex items-center text-lg font-montserrat font-bold text-bevap-navy">
+                                <i class="fa-solid fa-rocket mr-3 text-bevap-gold"></i>
+                                Planejamento GO Live
+                            </h3>
+                            <div id="project-planning-list" class="space-y-5"></div>
                         </div>
                     </div>
 
