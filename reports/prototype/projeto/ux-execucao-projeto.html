@@ -26,6 +26,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css">
     <style>
         #execution-tabs-scroll {
             -ms-overflow-style: none;
@@ -34,6 +38,10 @@
 
         #execution-tabs-scroll::-webkit-scrollbar {
             display: none;
+        }
+
+        .daterangepicker {
+            z-index: 9999 !important;
         }
     </style>
 </head>
@@ -212,7 +220,7 @@
         <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <button type="button" class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50">
-                    <i class="fa-solid fa-save mr-2"></i>Salvar Rascunho
+                    <i class="fa-solid fa-save mr-2"></i>Salvar
                 </button>
                 <div class="flex flex-wrap items-center gap-2">
                     <button type="button" data-action="return-planning" class="inline-flex items-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
@@ -251,6 +259,89 @@
             <div class="flex justify-end space-x-3">
                 <button type="button" data-action="close-return-modal" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
                 <button type="button" data-action="confirm-return-modal" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm text-white transition-all hover:bg-yellow-600">Devolver</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="milestone-edit-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="flex max-h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white shadow-xl">
+            <div class="flex items-center border-b border-gray-200 p-6">
+                <div class="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
+                    <i class="fa-solid fa-pen-to-square text-xl text-amber-700"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Modificar Marco</h3>
+                    <p class="text-sm text-gray-500">Ajuste as informações principais do marco e das tarefas vinculadas.</p>
+                </div>
+            </div>
+            <div class="space-y-4 overflow-y-auto p-6">
+                <div>
+                    <label for="milestone-edit-justification" class="mb-1 block text-sm font-medium text-gray-700">Justificativa <span class="text-red-500">*</span></label>
+                    <textarea id="milestone-edit-justification" rows="3" class="w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green" placeholder="Descreva a justificativa da alteração do marco e das tarefas..."></textarea>
+                </div>
+                <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                    <div class="mb-3">
+                        <h4 class="text-sm font-montserrat font-semibold text-gray-900">Dados do Marco</h4>
+                        <p class="text-xs text-gray-500">Atualize os dados principais do marco antes de salvar a alteração.</p>
+                    </div>
+                    <div class="grid gap-3 md:grid-cols-2">
+                        <div>
+                            <label for="milestone-edit-period" class="mb-1 block text-xs font-medium uppercase tracking-wide text-gray-500">Data / Período do Marco</label>
+                            <input id="milestone-edit-period" type="text" class="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green" placeholder="Selecione um período">
+                        </div>
+                        <div>
+                            <label for="milestone-edit-owner" class="mb-1 block text-xs font-medium uppercase tracking-wide text-gray-500">Responsável</label>
+                            <div class="responsible-search-field relative" id="milestone-edit-owner-field">
+                                <div class="relative">
+                                    <input id="milestone-edit-owner" type="text" class="responsible-input responsible-search-input w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 pr-16 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green" placeholder="Pesquisar responsável...">
+                                    <button type="button" class="responsible-search-clear hidden absolute top-1/2 right-8 -translate-y-1/2 px-1 text-red-500 hover:text-red-700" title="Limpar">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                    <button type="button" class="responsible-search-toggle absolute top-1/2 right-2 -translate-y-1/2 px-1 text-gray-500 hover:text-gray-700" title="Abrir opções">
+                                        <i class="fa-solid fa-chevron-down text-xs"></i>
+                                    </button>
+                                </div>
+                                <div class="responsible-search-dropdown hidden absolute left-0 right-0 z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                    <div class="mb-3 flex items-center justify-between gap-3">
+                        <div>
+                            <h4 class="text-sm font-montserrat font-semibold text-gray-900">Tarefas do Marco</h4>
+                            <p class="text-xs text-gray-500">Altere responsável e data das tarefas vinculadas a este marco.</p>
+                        </div>
+                        <span id="milestone-edit-task-count" class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600">0 tarefas</span>
+                    </div>
+                    <div id="milestone-edit-tasks-list" class="space-y-3"></div>
+                </div>
+            </div>
+            <div class="flex justify-end space-x-3 border-t border-gray-200 p-6">
+                <button type="button" data-action="close-milestone-edit-modal" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50">Cancelar</button>
+                <button type="button" data-action="confirm-milestone-edit-modal" class="rounded-lg bg-bevap-green px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700">Salvar Alterações</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="milestone-history-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="flex max-h-[80vh] w-full max-w-3xl flex-col overflow-hidden rounded-lg bg-white shadow-xl">
+            <div class="flex items-center justify-between border-b border-gray-200 p-6">
+                <div class="flex items-center gap-4">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-100">
+                        <i class="fa-solid fa-clock-rotate-left text-xl text-amber-700"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Histórico de Alteração do Marco</h3>
+                        <p class="text-sm text-gray-500">Consulte as alterações registradas para este marco e suas tarefas.</p>
+                    </div>
+                </div>
+                <button type="button" data-action="close-milestone-history-modal" class="inline-flex h-10 w-10 items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-600">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="overflow-y-auto p-6">
+                <div id="milestone-history-content"></div>
             </div>
         </div>
     </div>
@@ -353,6 +444,50 @@
                 period: '10/03/2026 até 18/03/2026',
                 status: 'em_andamento',
                 owner: 'TechPartners',
+                changeLog: {
+                    changedAt: '11/03/2026 09:40',
+                    changedBy: 'Ana Costa',
+                    note: 'Marco ajustado durante a execução para refletir realocação operacional do fornecedor.',
+                    changes: [
+                        {
+                            field: 'Data',
+                            from: '08/03/2026 até 16/03/2026',
+                            to: '10/03/2026 até 18/03/2026'
+                        },
+                        {
+                            field: 'Responsável',
+                            from: 'Ana Costa',
+                            to: 'TechPartners'
+                        }
+                    ],
+                    taskChanges: [
+                        {
+                            taskName: 'Configurar federação com AD',
+                            changes: [
+                                {
+                                    field: 'Data da Tarefa',
+                                    from: '12/02/2026',
+                                    to: '14/02/2026'
+                                },
+                                {
+                                    field: 'Responsável',
+                                    from: 'TechPartners',
+                                    to: 'Rafael Souza'
+                                }
+                            ]
+                        },
+                        {
+                            taskName: 'Aplicar políticas de segurança',
+                            changes: [
+                                {
+                                    field: 'Data da Tarefa',
+                                    from: '20/02/2026',
+                                    to: '22/02/2026'
+                                }
+                            ]
+                        }
+                    ]
+                },
                 criteria: [
                     'Federação com AD funcionando para usuários piloto.',
                     'Políticas de segurança aplicadas e auditadas.'
@@ -369,6 +504,50 @@
                 period: '14/03/2026 até 20/03/2026',
                 status: 'planejado',
                 owner: 'PMO Corporativo',
+                changeLog: {
+                    changedAt: '15/03/2026 14:20',
+                    changedBy: 'Mariana Lima',
+                    note: 'Marco ajustado para acomodar a janela final de produção e o apoio operacional na estabilização inicial.',
+                    changes: [
+                        {
+                            field: 'Data',
+                            from: '12/03/2026 até 18/03/2026',
+                            to: '14/03/2026 até 20/03/2026'
+                        },
+                        {
+                            field: 'Responsável',
+                            from: 'Ana Costa',
+                            to: 'PMO Corporativo'
+                        }
+                    ],
+                    taskChanges: [
+                        {
+                            taskName: 'Monitorar estabilização inicial',
+                            changes: [
+                                {
+                                    field: 'Data da Tarefa',
+                                    from: '12/03/2026',
+                                    to: '14/03/2026'
+                                }
+                            ]
+                        },
+                        {
+                            taskName: 'Aprovar checklist de produção',
+                            changes: [
+                                {
+                                    field: 'Responsável',
+                                    from: 'Ana Costa',
+                                    to: 'Segurança da Informação'
+                                },
+                                {
+                                    field: 'Data da Tarefa',
+                                    from: '10/03/2026',
+                                    to: '12/03/2026'
+                                }
+                            ]
+                        }
+                    ]
+                },
                 criteria: [
                     'UAT concluído sem pendências críticas abertas.',
                     'Checklist de produção aprovado pelas áreas responsáveis.'
@@ -461,6 +640,200 @@
 
         var collapsedPhases = {};
         var collapsedMilestones = {};
+        var activeMilestoneEditIndex = null;
+        var responsibleOptions = [
+            'Ana Costa',
+            'TechPartners',
+            'Carlos Silva',
+            'Equipe Infraestrutura',
+            'Segurança da Informação',
+            'PMO Corporativo',
+            'Rafael Souza',
+            'Mariana Lima'
+        ];
+
+        function getResponsibleSearchFieldHTML(selectedValue, inputId, extraAttributes) {
+            return '' +
+                '<div class="responsible-search-field relative">' +
+                    '<div class="relative">' +
+                        '<input ' + (inputId ? 'id="' + inputId + '" ' : '') + (extraAttributes ? extraAttributes + ' ' : '') + 'type="text" value="' + escapeHtml(selectedValue || '') + '" class="responsible-input responsible-search-input w-full rounded-lg border border-gray-300 bg-white px-3 py-2 pr-16 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green" placeholder="Pesquisar responsável...">' +
+                        '<button type="button" class="responsible-search-clear hidden absolute top-1/2 right-8 -translate-y-1/2 px-1 text-red-500 hover:text-red-700" title="Limpar">' +
+                            '<i class="fa-solid fa-xmark"></i>' +
+                        '</button>' +
+                        '<button type="button" class="responsible-search-toggle absolute top-1/2 right-2 -translate-y-1/2 px-1 text-gray-500 hover:text-gray-700" title="Abrir opções">' +
+                            '<i class="fa-solid fa-chevron-down text-xs"></i>' +
+                        '</button>' +
+                    '</div>' +
+                    '<div class="responsible-search-dropdown hidden absolute left-0 right-0 z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"></div>' +
+                '</div>';
+        }
+
+        function refreshResponsibleSearchField(fieldElement) {
+            if (!fieldElement) return;
+            var searchInput = fieldElement.querySelector('.responsible-search-input');
+            var clearButton = fieldElement.querySelector('.responsible-search-clear');
+            var toggleButton = fieldElement.querySelector('.responsible-search-toggle');
+            var dropdown = fieldElement.querySelector('.responsible-search-dropdown');
+            if (!searchInput || !dropdown) return;
+
+            var searchText = searchInput.value ? searchInput.value.trim() : '';
+            var searchTextLower = searchText.toLowerCase();
+            var exactMatch = responsibleOptions.find(function (name) {
+                return name.toLowerCase() === searchTextLower;
+            });
+
+            if (exactMatch && (document.activeElement !== searchInput || searchTextLower === exactMatch.toLowerCase())) {
+                searchInput.value = exactMatch;
+            }
+
+            var hasInputValue = Boolean(searchInput.value.trim());
+            clearButton?.classList.toggle('hidden', !hasInputValue);
+            clearButton?.classList.toggle('right-2', hasInputValue);
+            clearButton?.classList.toggle('right-8', !hasInputValue);
+            toggleButton?.classList.toggle('hidden', hasInputValue);
+
+            var filteredOptions = searchText
+                ? responsibleOptions.filter(function (name) {
+                    return name.toLowerCase().includes(searchTextLower);
+                })
+                : responsibleOptions;
+            var isFocused = document.activeElement === searchInput;
+            var shouldShowDropdown = fieldElement.dataset.dropdownOpen === 'true' && (isFocused || Boolean(searchText));
+
+            if (!shouldShowDropdown) {
+                dropdown.classList.add('hidden');
+                dropdown.innerHTML = '';
+                return;
+            }
+
+            if (!filteredOptions.length) {
+                dropdown.innerHTML = '<div class="px-3 py-2 text-sm text-gray-500">Nenhum responsável encontrado</div>';
+                dropdown.classList.remove('hidden');
+                return;
+            }
+
+            dropdown.innerHTML = filteredOptions.map(function (name) {
+                return '<button type="button" class="responsible-search-option w-full cursor-pointer px-3 py-2 text-left text-sm text-gray-700 hover:bg-gray-100" data-value="' + escapeHtml(name) + '">' + escapeHtml(name) + '</button>';
+            }).join('');
+            dropdown.classList.remove('hidden');
+
+            dropdown.querySelectorAll('.responsible-search-option').forEach(function (optionElement) {
+                optionElement.addEventListener('mousedown', function (event) {
+                    event.preventDefault();
+                });
+                optionElement.addEventListener('click', function () {
+                    var selectedValue = optionElement.getAttribute('data-value') || '';
+                    searchInput.value = selectedValue;
+                    fieldElement.dataset.dropdownOpen = 'false';
+                    refreshResponsibleSearchField(fieldElement);
+                    searchInput.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+            });
+        }
+
+        function bindResponsibleSearchField(fieldElement) {
+            if (!fieldElement || fieldElement.dataset.eventsReady === 'true') return;
+            var searchInput = fieldElement.querySelector('.responsible-search-input');
+            var clearButton = fieldElement.querySelector('.responsible-search-clear');
+            var toggleButton = fieldElement.querySelector('.responsible-search-toggle');
+            if (!searchInput) return;
+
+            searchInput.addEventListener('focus', function () {
+                fieldElement.dataset.dropdownOpen = 'true';
+                refreshResponsibleSearchField(fieldElement);
+            });
+            searchInput.addEventListener('input', function () {
+                fieldElement.dataset.dropdownOpen = 'true';
+                refreshResponsibleSearchField(fieldElement);
+            });
+            searchInput.addEventListener('change', function () {
+                refreshResponsibleSearchField(fieldElement);
+            });
+            searchInput.addEventListener('blur', function () {
+                window.setTimeout(function () {
+                    fieldElement.dataset.dropdownOpen = 'false';
+                    refreshResponsibleSearchField(fieldElement);
+                }, 120);
+            });
+
+            clearButton?.addEventListener('click', function (event) {
+                event.preventDefault();
+                searchInput.value = '';
+                fieldElement.dataset.dropdownOpen = 'false';
+                refreshResponsibleSearchField(fieldElement);
+                searchInput.dispatchEvent(new Event('change', { bubbles: true }));
+                searchInput.focus();
+            });
+
+            toggleButton?.addEventListener('click', function (event) {
+                event.preventDefault();
+                fieldElement.dataset.dropdownOpen = fieldElement.dataset.dropdownOpen === 'true' ? 'false' : 'true';
+                refreshResponsibleSearchField(fieldElement);
+                searchInput.focus();
+            });
+
+            fieldElement.dataset.eventsReady = 'true';
+            refreshResponsibleSearchField(fieldElement);
+        }
+
+        function initResponsibleSearchFields(rootElement) {
+            (rootElement || document).querySelectorAll('.responsible-search-field').forEach(function (fieldElement) {
+                bindResponsibleSearchField(fieldElement);
+            });
+        }
+
+        function getMilestoneChangeHistoryHTML(changeLog, extraClasses) {
+            if (!changeLog) return '';
+            return '' +
+                '<div class="' + (extraClasses || '') + ' rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">' +
+                    '<div class="flex flex-wrap items-start justify-between gap-2">' +
+                        '<div class="min-w-0 flex-1">' +
+                            '<div class="flex items-center gap-2">' +
+                                '<i class="fa-solid fa-clock-rotate-left text-xs text-amber-700"></i>' +
+                                '<h4 class="text-sm font-montserrat font-semibold text-gray-900">Histórico de Alteração do Marco</h4>' +
+                            '</div>' +
+                            '<p class="mt-1 text-xs text-gray-500">Alterado em ' + escapeHtml(changeLog.changedAt) + ' por ' + escapeHtml(changeLog.changedBy) + '.</p>' +
+                        '</div>' +
+                        '<span class="inline-flex items-center rounded-full border border-amber-300 bg-white px-2 py-0.5 text-[11px] font-medium text-amber-700">Marco Alterado</span>' +
+                    '</div>' +
+                    '<p class="mt-2 text-sm text-gray-700">' + escapeHtml(changeLog.note || 'Marco alterado durante a execução.') + '</p>' +
+                    '<div class="mt-3 flex flex-wrap gap-2">' +
+                        (changeLog.changes || []).map(function (change) {
+                            return '<div class="rounded-lg border border-amber-200 bg-white px-3 py-2 text-sm">' +
+                                '<span class="font-semibold text-amber-700">' + escapeHtml(change.field) + ':</span> ' +
+                                '<span class="text-gray-600">' + escapeHtml(change.from) + '</span> ' +
+                                '<i class="fa-solid fa-arrow-right mx-1 text-[10px] text-gray-400"></i>' +
+                                '<span class="font-medium text-bevap-navy">' + escapeHtml(change.to) + '</span>' +
+                            '</div>';
+                        }).join('') +
+                    '</div>' +
+                    (changeLog.taskChanges && changeLog.taskChanges.length
+                        ? '<div class="mt-3 border-t border-amber-200 pt-3">' +
+                            '<div class="mb-2 flex flex-wrap items-center justify-between gap-2">' +
+                                '<h5 class="text-xs font-montserrat font-semibold uppercase tracking-wide text-amber-700">Tarefas Alteradas</h5>' +
+                                '<span class="text-xs text-gray-500">' + changeLog.taskChanges.length + ' tarefas ajustadas</span>' +
+                            '</div>' +
+                            '<div class="space-y-2">' +
+                                changeLog.taskChanges.map(function (taskChange) {
+                                    return '<div class="rounded-lg border border-amber-200 bg-white px-3 py-2">' +
+                                        '<div class="text-sm font-semibold text-bevap-navy">' + escapeHtml(taskChange.taskName) + '</div>' +
+                                        '<div class="mt-1 flex flex-wrap gap-2">' +
+                                            taskChange.changes.map(function (change) {
+                                                return '<span class="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs text-gray-700">' +
+                                                    '<span class="font-medium text-amber-700">' + escapeHtml(change.field) + ':</span>' +
+                                                    '<span class="ml-1">' + escapeHtml(change.from) + '</span>' +
+                                                    '<i class="fa-solid fa-arrow-right mx-1 text-[10px] text-gray-400"></i>' +
+                                                    '<span class="font-medium text-bevap-navy">' + escapeHtml(change.to) + '</span>' +
+                                                '</span>';
+                                            }).join('') +
+                                        '</div>' +
+                                    '</div>';
+                                }).join('') +
+                            '</div>' +
+                        '</div>'
+                        : '') +
+                '</div>';
+        }
 
         function getStatusMeta(status) {
             var map = {
@@ -632,14 +1005,26 @@
                                 '<span>' + status.label + '</span>' +
                             '</span>' +
                         '</div>' +
-                        '<div class="mt-4 flex flex-wrap items-center justify-between gap-3">' +
-                            '<div class="flex flex-wrap gap-2 text-[13px]">' +
+                        '<div class="mt-4 flex flex-wrap gap-2 text-[13px]">' +
                                 '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user-tie mr-1" style="color: #dbeafe;"></i>Responsável: ' + escapeHtml(milestone.owner) + '</span>' +
                                 '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>' + escapeHtml(milestone.period) + '</span>' +
+                        '</div>' +
+                        '<div class="mt-3 flex items-center justify-between gap-3">' +
+                            '<div class="flex flex-wrap items-center gap-2">' +
+                                (milestone.changeLog
+                                    ? '<button type="button" onclick="openMilestoneHistoryModal(' + index + ')" class="inline-flex items-center rounded-lg border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-100">' +
+                                        '<i class="fa-solid fa-clock-rotate-left mr-1.5"></i>Ver Histórico de Alteração' +
+                                    '</button>'
+                                    : '') +
+                                '<button type="button" onclick="openMilestoneEditModal(' + index + ')" class="inline-flex items-center rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-medium text-amber-700 transition-colors hover:bg-amber-50">' +
+                                    '<i class="fa-solid fa-pen-to-square mr-1.5"></i>Modificar Marco' +
+                                '</button>' +
                             '</div>' +
-                            '<button type="button" onclick="toggleMilestoneCollapse(' + index + ')" class="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50">' +
-                                '<i class="fa-solid ' + (isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up') + ' mr-2 text-gray-400"></i>' + (isCollapsed ? 'Expandir' : 'Recolher') +
-                            '</button>' +
+                            '<div class="ml-auto shrink-0">' +
+                                '<button type="button" onclick="toggleMilestoneCollapse(' + index + ')" class="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50">' +
+                                    '<i class="fa-solid ' + (isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up') + ' mr-2 text-gray-400"></i>' + (isCollapsed ? 'Expandir' : 'Recolher') +
+                                '</button>' +
+                            '</div>' +
                         '</div>' +
                         '<div class="' + (isCollapsed ? 'hidden' : 'block') + '">' +
                         '<div class="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">' +
@@ -695,6 +1080,280 @@
         function toggleMilestoneCollapse(index) {
             collapsedMilestones[index] = !collapsedMilestones[index];
             renderMilestones();
+        }
+
+        function parseFlexibleDate(dateValue) {
+            if (typeof window.moment !== 'function' || !dateValue) return null;
+            var parsedDate = window.moment(dateValue, ['DD/MM/YYYY', 'YYYY-MM-DD', 'MM/DD/YYYY'], true);
+            return parsedDate.isValid() ? parsedDate : null;
+        }
+
+        function parseMilestonePeriod(periodValue) {
+            var normalizedValue = (periodValue || '').replace(/\s+até\s+/i, ' - ').trim();
+            if (!normalizedValue) return { start: null, end: null };
+            var parts = normalizedValue.split(' - ').map(function (item) { return item.trim(); }).filter(Boolean);
+            return {
+                start: parts[0] || null,
+                end: parts[1] || parts[0] || null
+            };
+        }
+
+        function formatPeriodForDisplay(startValue, endValue) {
+            var startDate = parseFlexibleDate(startValue);
+            var endDate = parseFlexibleDate(endValue);
+            if (!startDate || !endDate) return '';
+            return startDate.format('DD/MM/YYYY') + ' até ' + endDate.format('DD/MM/YYYY');
+        }
+
+        function formatDateForInput(dateValue) {
+            var parsedDate = parseFlexibleDate(dateValue);
+            return parsedDate ? parsedDate.format('YYYY-MM-DD') : '';
+        }
+
+        function syncMilestoneEditPicker(periodValue) {
+            var input = document.getElementById('milestone-edit-period');
+            if (!input || typeof window.jQuery !== 'function') return;
+            var picker = window.jQuery(input).data('daterangepicker');
+            if (!picker) {
+                input.value = periodValue || '';
+                return;
+            }
+
+            var parsedPeriod = parseMilestonePeriod(periodValue);
+            var startMoment = parseFlexibleDate(parsedPeriod.start) || window.moment();
+            var endMoment = parseFlexibleDate(parsedPeriod.end) || startMoment.clone();
+            picker.setStartDate(startMoment);
+            picker.setEndDate(endMoment);
+            input.value = startMoment.format('MM/DD/YYYY') + ' - ' + endMoment.format('MM/DD/YYYY');
+        }
+
+        function renderResponsibleOptions() {
+            var uniqueOptions = {};
+
+            responsibleOptions.forEach(function (name) {
+                if (name) uniqueOptions[name] = true;
+            });
+
+            phasesData.forEach(function (phase) {
+                if (phase.responsible) uniqueOptions[phase.responsible] = true;
+                (phase.tasks || []).forEach(function (task) {
+                    if (task.responsible) uniqueOptions[task.responsible] = true;
+                });
+            });
+
+            milestonesData.forEach(function (milestone) {
+                if (milestone.owner) uniqueOptions[milestone.owner] = true;
+                (milestone.tasks || []).forEach(function (task) {
+                    if (task.responsible) uniqueOptions[task.responsible] = true;
+                });
+            });
+
+            responsibleOptions = Object.keys(uniqueOptions).sort(function (a, b) {
+                return a.localeCompare(b, 'pt-BR');
+            });
+        }
+
+        function initMilestoneEditPeriodPicker() {
+            if (typeof window.jQuery !== 'function' || typeof window.moment !== 'function') return;
+            var input = document.getElementById('milestone-edit-period');
+            if (!input) return;
+            var $ = window.jQuery;
+            if (typeof $.fn.daterangepicker !== 'function' || input.dataset.periodPickerReady === 'true') return;
+
+            $(input).daterangepicker({
+                autoUpdateInput: true,
+                opens: 'center',
+                locale: {
+                    format: 'MM/DD/YYYY',
+                    separator: ' - ',
+                    applyLabel: 'Aplicar',
+                    cancelLabel: 'Cancelar',
+                    fromLabel: 'De',
+                    toLabel: 'Até',
+                    customRangeLabel: 'Personalizado',
+                    weekLabel: 'S',
+                    daysOfWeek: ['Do', 'Se', 'Te', 'Qa', 'Qi', 'Se', 'Sa'],
+                    monthNames: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+                    firstDay: 1
+                }
+            });
+
+            input.dataset.periodPickerReady = 'true';
+        }
+
+        function openMilestoneEditModal(index) {
+            var milestone = milestonesData[index];
+            if (!milestone) return;
+            activeMilestoneEditIndex = index;
+            var periodInput = document.getElementById('milestone-edit-period');
+            var ownerInput = document.getElementById('milestone-edit-owner');
+            var justificationInput = document.getElementById('milestone-edit-justification');
+            var tasksList = document.getElementById('milestone-edit-tasks-list');
+            var tasksCount = document.getElementById('milestone-edit-task-count');
+            syncMilestoneEditPicker(milestone.period || '');
+            if (periodInput && !periodInput.value) periodInput.value = milestone.period || '';
+            if (ownerInput) ownerInput.value = milestone.owner || '';
+            if (justificationInput) justificationInput.value = milestone.changeLog?.note || '';
+            if (tasksCount) tasksCount.textContent = (milestone.tasks?.length || 0) + ' tarefas';
+            if (tasksList) {
+                tasksList.innerHTML = (milestone.tasks || []).map(function (task, taskIndex) {
+                    return '' +
+                        '<div class="milestone-edit-task-row rounded-xl border border-gray-200 bg-white p-4" data-task-index="' + taskIndex + '">' +
+                            '<div class="mb-3 text-sm font-semibold text-bevap-navy">' + escapeHtml(task.taskName || ('Tarefa ' + (taskIndex + 1))) + '</div>' +
+                            '<div class="grid gap-3 md:grid-cols-2">' +
+                                '<div>' +
+                                    '<label class="mb-1 block text-xs font-medium uppercase tracking-wide text-gray-500">Responsável</label>' +
+                                    getResponsibleSearchFieldHTML(task.responsible || '', '', 'data-task-index="' + taskIndex + '" data-task-field="responsible"') +
+                                '</div>' +
+                                '<div>' +
+                                    '<label class="mb-1 block text-xs font-medium uppercase tracking-wide text-gray-500">Data da Tarefa</label>' +
+                                    '<input type="date" data-task-index="' + taskIndex + '" data-task-field="date" value="' + escapeHtml(formatDateForInput(task.date || '')) + '" class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green">' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                }).join('');
+            }
+            initResponsibleSearchFields(document.getElementById('milestone-edit-modal'));
+            document.getElementById('milestone-edit-modal')?.classList.remove('hidden');
+        }
+
+        function closeMilestoneEditModal() {
+            activeMilestoneEditIndex = null;
+            document.getElementById('milestone-edit-modal')?.classList.add('hidden');
+        }
+
+        function openMilestoneHistoryModal(index) {
+            var milestone = milestonesData[index];
+            if (!milestone || !milestone.changeLog) return;
+            var content = document.getElementById('milestone-history-content');
+            if (content) content.innerHTML = getMilestoneChangeHistoryHTML(milestone.changeLog);
+            document.getElementById('milestone-history-modal')?.classList.remove('hidden');
+        }
+
+        function closeMilestoneHistoryModal() {
+            document.getElementById('milestone-history-modal')?.classList.add('hidden');
+        }
+
+        function confirmMilestoneEditModal() {
+            if (activeMilestoneEditIndex === null || !milestonesData[activeMilestoneEditIndex]) {
+                closeMilestoneEditModal();
+                return;
+            }
+            var milestone = milestonesData[activeMilestoneEditIndex];
+            var periodInput = document.getElementById('milestone-edit-period');
+            var ownerInput = document.getElementById('milestone-edit-owner');
+            var justificationInput = document.getElementById('milestone-edit-justification');
+            var newPeriodRaw = periodInput?.value.trim() || '';
+            var newOwner = ownerInput?.value.trim() || '';
+            var newJustification = justificationInput?.value.trim() || '';
+            var taskChanges = [];
+            var parsedPeriod = parseMilestonePeriod(newPeriodRaw);
+            var newPeriod = formatPeriodForDisplay(parsedPeriod.start, parsedPeriod.end);
+
+            if (!newPeriodRaw || !newPeriod) {
+                showToast('Campo obrigatório', 'Informe a data do marco.', 'error');
+                periodInput?.focus();
+                return;
+            }
+
+            if (!newOwner) {
+                showToast('Campo obrigatório', 'Informe o responsável do marco.', 'error');
+                ownerInput?.focus();
+                return;
+            }
+
+            if (!newJustification) {
+                showToast('Campo obrigatório', 'Informe a justificativa da alteração.', 'error');
+                justificationInput?.focus();
+                return;
+            }
+
+            var changes = [];
+            if (milestone.period !== newPeriod) {
+                changes.push({
+                    field: 'Data',
+                    from: milestone.period,
+                    to: newPeriod
+                });
+            }
+
+            if (milestone.owner !== newOwner) {
+                changes.push({
+                    field: 'Responsável',
+                    from: milestone.owner,
+                    to: newOwner
+                });
+            }
+
+            (milestone.tasks || []).forEach(function (task, taskIndex) {
+                var responsibleInput = document.querySelector('.milestone-edit-task-row[data-task-index="' + taskIndex + '"] [data-task-field="responsible"]');
+                var dateInput = document.querySelector('[data-task-index="' + taskIndex + '"][data-task-field="date"]');
+                var newTaskResponsible = responsibleInput?.value.trim() || '';
+                var newTaskDateRaw = dateInput?.value.trim() || '';
+                var newTaskDate = parseFlexibleDate(newTaskDateRaw)?.format('DD/MM/YYYY') || '';
+                var taskChangeItems = [];
+
+                if (!newTaskResponsible) {
+                    responsibleInput?.focus();
+                    taskChanges = null;
+                    showToast('Campo obrigatório', 'Informe o responsável de todas as tarefas listadas.', 'error');
+                    return;
+                }
+
+                if (!newTaskDateRaw || !newTaskDate) {
+                    dateInput?.focus();
+                    taskChanges = null;
+                    showToast('Campo obrigatório', 'Informe a data de todas as tarefas listadas.', 'error');
+                    return;
+                }
+
+                if (task.responsible !== newTaskResponsible) {
+                    taskChangeItems.push({
+                        field: 'Responsável',
+                        from: task.responsible,
+                        to: newTaskResponsible
+                    });
+                }
+
+                if (task.date !== newTaskDate) {
+                    taskChangeItems.push({
+                        field: 'Data da Tarefa',
+                        from: task.date,
+                        to: newTaskDate
+                    });
+                }
+
+                task.responsible = newTaskResponsible;
+                task.date = newTaskDate;
+
+                if (taskChangeItems.length) {
+                    taskChanges.push({
+                        taskName: task.taskName,
+                        changes: taskChangeItems
+                    });
+                }
+            });
+
+            if (taskChanges === null) return;
+
+            if (!changes.length && !taskChanges.length) {
+                showToast('Sem alterações', 'Nenhuma informação do marco foi modificada.', 'info');
+                closeMilestoneEditModal();
+                return;
+            }
+
+            milestone.period = newPeriod;
+            milestone.owner = newOwner;
+            milestone.changeLog = milestone.changeLog || {};
+            milestone.changeLog.changedAt = new Date().toLocaleString('pt-BR');
+            milestone.changeLog.changedBy = 'Ana Costa';
+            milestone.changeLog.note = newJustification;
+            if (changes.length) milestone.changeLog.changes = changes;
+            if (taskChanges.length) milestone.changeLog.taskChanges = taskChanges;
+
+            closeMilestoneEditModal();
+            renderMilestones();
+            showToast('Marco atualizado', 'As informações do marco e das tarefas foram atualizadas.', 'success');
         }
 
         function renderRisks() {
@@ -891,8 +1550,11 @@
             renderRisks();
             renderRaci();
             renderCommunicationPlan();
+            renderResponsibleOptions();
             updateSummary();
             bindTabs();
+            initMilestoneEditPeriodPicker();
+            initResponsibleSearchFields();
 
             document.querySelector('[data-action="return-planning"]')?.addEventListener('click', openReturnModal);
             document.querySelector('[data-action="complete-execution"]')?.addEventListener('click', openApproveModal);
@@ -900,11 +1562,20 @@
             document.querySelector('[data-action="confirm-return-modal"]')?.addEventListener('click', confirmReturnModal);
             document.querySelector('[data-action="close-approve-modal"]')?.addEventListener('click', closeApproveModal);
             document.querySelector('[data-action="confirm-approve-modal"]')?.addEventListener('click', confirmApproveModal);
+            document.querySelector('[data-action="close-milestone-edit-modal"]')?.addEventListener('click', closeMilestoneEditModal);
+            document.querySelector('[data-action="confirm-milestone-edit-modal"]')?.addEventListener('click', confirmMilestoneEditModal);
+            document.querySelector('[data-action="close-milestone-history-modal"]')?.addEventListener('click', closeMilestoneHistoryModal);
             document.getElementById('return-modal')?.addEventListener('click', function (event) {
                 if (event.target && event.target.id === 'return-modal') closeReturnModal();
             });
             document.getElementById('approve-modal')?.addEventListener('click', function (event) {
                 if (event.target && event.target.id === 'approve-modal') closeApproveModal();
+            });
+            document.getElementById('milestone-edit-modal')?.addEventListener('click', function (event) {
+                if (event.target && event.target.id === 'milestone-edit-modal') closeMilestoneEditModal();
+            });
+            document.getElementById('milestone-history-modal')?.addEventListener('click', function (event) {
+                if (event.target && event.target.id === 'milestone-history-modal') closeMilestoneHistoryModal();
             });
         });
     </script>
