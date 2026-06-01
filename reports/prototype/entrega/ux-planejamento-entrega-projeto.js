@@ -56,6 +56,7 @@
             title: 'Planejamento do Go-live',
             responsible: 'PMO Corporativo',
             executionDate: '03/20/2026',
+            stage: 'pre-go-live',
             description: 'Consolidar a janela de implantação, a comunicação operacional e a prontidão técnica para a entrada em produção.',
             dependencies: ['Checklist técnico consolidado', 'Janela de implantação aprovada']
         },
@@ -64,6 +65,7 @@
             title: 'Acompanhamento da liberação',
             responsible: 'Rafael Souza',
             executionDate: '03/23/2026',
+            stage: 'pos-go-live',
             description: 'Detalhar o acompanhamento inicial após a liberação e a estabilização do ambiente produtivo.',
             dependencies: ['Plano de rollback validado', 'Comunicação de produção aprovada']
         }
@@ -918,9 +920,11 @@
 
         var phaseResponsibleElement = phaseElement.querySelector('.delivery-phase-responsible .responsible-search-input');
         var phaseExecutionDateElement = phaseElement.querySelector('.delivery-execution-date-input');
+        var phaseStageElement = phaseElement.querySelector('.delivery-stage-select');
         var phaseDescriptionElement = phaseElement.querySelector('.delivery-phase-description');
         data.responsible = phaseResponsibleElement ? phaseResponsibleElement.value.trim() : '';
         data.executionDate = phaseExecutionDateElement ? phaseExecutionDateElement.value.trim() : '';
+        data.stage = phaseStageElement ? phaseStageElement.value : 'pre-go-live';
         data.description = phaseDescriptionElement ? phaseDescriptionElement.value.trim() : '';
         data.dependencies = Array.prototype.slice.call(phaseElement.querySelectorAll('.delivery-dependency-input')).map(function (inputElement) {
             return inputElement.value.trim();
@@ -938,11 +942,24 @@
             '</div>';
     }
 
+    function getPlanningStageFieldHTML(selectedStage) {
+        var safeStage = selectedStage || 'pre-go-live';
+        return '' +
+            '<div>' +
+                '<label class="mb-1 block text-sm text-gray-600">Estágio</label>' +
+                '<select class="delivery-stage-select w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm">' +
+                    '<option value="pre-go-live"' + (safeStage === 'pre-go-live' ? ' selected' : '') + '>Pré-Go Live</option>' +
+                    '<option value="durante-go-live"' + (safeStage === 'durante-go-live' ? ' selected' : '') + '>Durante o Go Live</option>' +
+                    '<option value="pos-go-live"' + (safeStage === 'pos-go-live' ? ' selected' : '') + '>Pós-Go Live</option>' +
+                '</select>' +
+            '</div>';
+    }
+
     function getDeliveryPhaseBodyHTML(phaseData) {
         var selectedType = phaseData.type || 'planejamento';
         var bodyHtml = '' +
-            '<div class="grid grid-cols-1 gap-4 md:grid-cols-2">' +
-                getPlanningTypeFieldHTML(selectedType);
+            getPlanningTypeFieldHTML(selectedType) +
+            '<div class="mt-4 grid grid-cols-1 gap-4 ' + (selectedType === 'treinamento' ? 'md:grid-cols-2' : 'md:grid-cols-3') + '">';
 
         if (selectedType === 'treinamento') {
             bodyHtml += '' +
@@ -981,6 +998,7 @@
                     '<label class="mb-1 block text-sm text-gray-600">Data Execução</label>' +
                     '<input type="text" value="' + escapeHtml(phaseData.executionDate || '') + '" class="delivery-execution-date-input w-full rounded-lg border border-gray-300 px-3 py-2 text-sm bg-white" placeholder="Selecione a data">' +
                 '</div>' +
+                getPlanningStageFieldHTML(phaseData.stage || 'pre-go-live') +
             '</div>' +
             getDependenciesFieldHTML(phaseData.dependencies || ['']) +
             '<div class="mt-4">' +
@@ -1224,6 +1242,7 @@
             title: '',
             responsible: 'Ana Costa',
             executionDate: '03/20/2026',
+            stage: 'pre-go-live',
             trainingHours: '',
             description: '',
             participants: [],

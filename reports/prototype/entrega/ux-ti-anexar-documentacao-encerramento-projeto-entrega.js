@@ -1,12 +1,16 @@
 (function () {
     var finalNote = '';
     var currentTab = 'overview';
+    var pendingPlanningStatusChange = null;
 
-    var projectPlanningData = [
+    var goLivePlanningData = [
         {
             title: 'Planejamento do Go Live',
             responsible: 'PMO Corporativo',
             executionDate: '22/03/2026',
+            stage: 'pre-go-live',
+            planningStatus: 'realizado',
+            isEditingStatus: false,
             description: 'Consolidar a janela produtiva, alinhar a sequência operacional e garantir a comunicação com as áreas envolvidas durante o início do GO Live.',
             dependencies: [
                 'Janela produtiva aprovada',
@@ -18,11 +22,56 @@
             title: 'Acompanhamento da liberação',
             responsible: 'Rafael Souza',
             executionDate: '22/03/2026',
+            stage: 'durante-go-live',
+            planningStatus: 'realizado',
+            isEditingStatus: false,
             description: 'Monitorar a liberação, apoiar a estabilização inicial do ambiente e acionar rapidamente o fluxo de contingência em caso de desvio operacional.',
             dependencies: [
                 'Equipe de plantão alocada',
                 'Monitoramento ativo em produção',
                 'Plano de rollback revisado'
+            ]
+        },
+        {
+            title: 'Estabilização e acompanhamento pós-produção',
+            responsible: 'Mariana Ferraz',
+            executionDate: '23/03/2026',
+            stage: 'pos-go-live',
+            planningStatus: 'planejado',
+            isEditingStatus: false,
+            description: 'Conduzir o acompanhamento assistido após a entrada em produção, consolidar pendências residuais e validar a estabilização do ambiente com as áreas de suporte.',
+            dependencies: [
+                'Operação assistida iniciada',
+                'Incidentes críticos equalizados',
+                'Área de negócio acompanhando a estabilização'
+            ]
+        },
+        {
+            title: 'Checklist final de prontidão do Go Live',
+            responsible: 'Carlos Silva',
+            executionDate: '21/03/2026',
+            stage: 'pre-go-live',
+            planningStatus: 'realizado',
+            isEditingStatus: false,
+            description: 'Validar a prontidão final antes da janela produtiva, consolidando acessos, comunicação e checklist operacional das equipes envolvidas.',
+            dependencies: [
+                'Checklist técnico aprovado',
+                'Plano de comunicação revisado',
+                'Equipes-chave confirmadas para a janela'
+            ]
+        },
+        {
+            title: 'Alinhamento executivo de contingência',
+            responsible: 'Ana Costa',
+            executionDate: '21/03/2026',
+            stage: 'pre-go-live',
+            planningStatus: 'nao_realizado',
+            isEditingStatus: false,
+            description: 'Executar o alinhamento final com liderança e áreas de negócio para validar a estratégia de contingência antes da janela produtiva.',
+            dependencies: [
+                'Diretoria disponível para alinhamento',
+                'Fluxo de contingência revisado',
+                'Plano de escalonamento aprovado'
             ]
         }
     ];
@@ -53,7 +102,11 @@
             ],
             confirmed: true,
             confirmedDate: '2026-03-19T09:00',
-            notes: 'Treinamento realizado com usuários-chave, equipe de suporte e multiplicadores do negócio.'
+            notes: 'Treinamento realizado com usuários-chave, equipe de suporte e multiplicadores do negócio.',
+            attachments: [
+                { name: 'Lista_Presenca_Treinamento.pdf', meta: '1.1 MB' },
+                { name: 'Material_Apoio_Usuarios.xlsx', meta: '860 KB' }
+            ]
         },
         {
             title: 'Reciclagem operacional da equipe de suporte e atendimento',
@@ -72,7 +125,10 @@
             ],
             confirmed: true,
             confirmedDate: '2026-03-21T14:00',
-            notes: 'Treinamento complementar realizado com a equipe de suporte e operação para reforçar o fluxo de atendimento durante o Go Live.'
+            notes: 'Treinamento complementar realizado com a equipe de suporte e operação para reforçar o fluxo de atendimento durante o Go Live.',
+            attachments: [
+                { name: 'Roteiro_Suporte_GoLive.pdf', meta: '540 KB' }
+            ]
         }
     ];
 
@@ -106,6 +162,57 @@
         return (participants || []).map(function (participant) {
             return '<span class="inline-flex items-center rounded-full border border-gray-200 bg-white px-3 py-1 text-xs font-medium text-gray-700">' + escapeHtml(participant) + '</span>';
         }).join('');
+    }
+
+    function getTrainingStatusBadge(item) {
+        if (item.confirmed) {
+            return '<span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700"><i class="fa-solid fa-circle-check text-green-600"></i><span>Realizado</span></span>';
+        }
+        return '<span class="inline-flex items-center gap-1.5 rounded-full border border-yellow-200 bg-yellow-50 px-3 py-1 text-xs font-semibold text-yellow-700"><i class="fa-solid fa-clock text-yellow-600"></i><span>Pendente</span></span>';
+    }
+
+    function getPlanningStageMeta(stage) {
+        var map = {
+            'pre-go-live': {
+                label: 'Pré-Go Live',
+                badge: 'background-color: #1d4ed8; border-color: #1d4ed8;',
+                icon: 'fa-solid fa-flag-checkered text-blue-100'
+            },
+            'durante-go-live': {
+                label: 'Durante o Go Live',
+                badge: 'background-color: #ea580c; border-color: #ea580c;',
+                icon: 'fa-solid fa-bolt text-orange-100'
+            },
+            'pos-go-live': {
+                label: 'Pós-Go Live',
+                badge: 'background-color: #7c3aed; border-color: #7c3aed;',
+                icon: 'fa-solid fa-chart-line text-violet-100'
+            }
+        };
+        return map[stage] || map['pre-go-live'];
+    }
+
+    function getPlanningStatusBadge(status) {
+        if (status === 'realizado') {
+            return '<span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700"><i class="fa-solid fa-circle-check text-green-600"></i><span>Planejamento Realizado</span></span>';
+        }
+        if (status === 'nao_realizado') {
+            return '<span class="inline-flex items-center gap-1.5 rounded-full border border-red-200 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700"><i class="fa-solid fa-ban text-red-600"></i><span>Planejamento Não Realizado</span></span>';
+        }
+        return '<span class="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"><i class="fa-solid fa-calendar-check text-blue-600"></i><span>Planejado</span></span>';
+    }
+
+    function createAttachmentItemHTML(attachment) {
+        return '' +
+            '<div class="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3">' +
+                '<div class="flex items-center gap-3">' +
+                    '<i class="fa-solid fa-file-lines text-blue-500"></i>' +
+                    '<div>' +
+                        '<div class="text-sm font-medium text-gray-900">' + escapeHtml(attachment.name) + '</div>' +
+                        '<div class="text-xs text-gray-500">' + escapeHtml(attachment.meta) + '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
     }
 
     function formatDateTimeDisplay(value) {
@@ -181,11 +288,55 @@
             '</div>';
     }
 
-    function renderProjectPlanningPanel() {
-        var container = document.getElementById('project-planning-list');
+    function renderGoLiveCards() {
+        var container = document.getElementById('closure-go-live-planning-list');
         if (!container) return;
 
-        var planningHtml = projectPlanningData.map(function (item) {
+        var planningHtml = goLivePlanningData.map(function (item, planningIndex) {
+            var stageMeta = getPlanningStageMeta(item.stage);
+            var planningStatusBadge = getPlanningStatusBadge(item.planningStatus);
+            var isPreGoLive = item.stage === 'pre-go-live';
+            var isDuringGoLive = item.stage === 'durante-go-live';
+            var isPostGoLive = item.stage === 'pos-go-live';
+            var canEditResolvedStatus = false;
+            var canShowStatusFlag = (isPreGoLive && item.planningStatus === 'planejado') ||
+                (isDuringGoLive && (item.planningStatus === 'planejado' || item.isEditingStatus)) ||
+                (isPostGoLive && item.planningStatus === 'planejado');
+            var statusFlag = '';
+
+            if (isPreGoLive && item.planningStatus === 'planejado') {
+                statusFlag = '' +
+                    '<div class="inline-flex items-center overflow-hidden rounded-full border border-gray-200 bg-gray-50 shadow-sm">' +
+                        '<button type="button" data-action="set-planning-status" data-status="realizado" data-planning-index="' + planningIndex + '" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ' + (item.planningStatus === 'realizado' ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-green-50 hover:text-green-700') + '">' +
+                            '<i class="fa-solid fa-circle-check"></i><span>Realizado</span>' +
+                        '</button>' +
+                        '<button type="button" data-action="set-planning-status" data-status="nao_realizado" data-planning-index="' + planningIndex + '" class="inline-flex items-center gap-1.5 border-l border-gray-200 px-3 py-1.5 text-xs font-medium transition-colors ' + (item.planningStatus === 'nao_realizado' ? 'bg-red-600 text-white' : 'text-gray-600 hover:bg-red-50 hover:text-red-700') + '">' +
+                            '<i class="fa-solid fa-ban"></i><span>Não Realizado</span>' +
+                        '</button>' +
+                    '</div>';
+            } else if (isDuringGoLive && (item.planningStatus === 'planejado' || item.isEditingStatus)) {
+                statusFlag = '' +
+                    '<div class="inline-flex items-center overflow-hidden rounded-full border border-gray-200 bg-gray-50 shadow-sm">' +
+                        '<button type="button" data-action="set-planning-status" data-status="realizado" data-planning-index="' + planningIndex + '" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ' + (item.planningStatus === 'realizado' ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-green-50 hover:text-green-700') + '">' +
+                            '<i class="fa-solid fa-circle-check"></i><span>Realizado</span>' +
+                        '</button>' +
+                    '</div>';
+            } else if (isPostGoLive && item.planningStatus === 'planejado') {
+                statusFlag = '' +
+                    '<div class="inline-flex items-center overflow-hidden rounded-full border border-gray-200 bg-gray-50 shadow-sm">' +
+                        '<button type="button" data-action="set-planning-status" data-status="realizado" data-planning-index="' + planningIndex + '" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ' + (item.planningStatus === 'realizado' ? 'bg-green-600 text-white' : 'text-gray-600 hover:bg-green-50 hover:text-green-700') + '">' +
+                            '<i class="fa-solid fa-circle-check"></i><span>Realizado</span>' +
+                        '</button>' +
+                        '<button type="button" data-action="set-planning-status" data-status="nao_realizado" data-planning-index="' + planningIndex + '" class="inline-flex items-center gap-1.5 border-l border-gray-200 px-3 py-1.5 text-xs font-medium transition-colors ' + (item.planningStatus === 'nao_realizado' ? 'bg-red-600 text-white' : 'text-gray-600 hover:bg-red-50 hover:text-red-700') + '">' +
+                            '<i class="fa-solid fa-ban"></i><span>Não Realizado</span>' +
+                        '</button>' +
+                    '</div>';
+            }
+
+            var editStatusButton = canEditResolvedStatus
+                ? '<button type="button" data-action="edit-planning-status" data-planning-index="' + planningIndex + '" class="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 transition-colors hover:border-gray-300 hover:text-gray-700" title="Editar status do planejamento" aria-label="Editar status do planejamento"><i class="fa-solid fa-pen text-sm"></i></button>'
+                : '';
+
             return '' +
                 '<div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">' +
                     '<div class="flex items-start justify-between gap-4">' +
@@ -200,10 +351,15 @@
                                 '</div>' +
                             '</div>' +
                         '</div>' +
-                        '<span class="inline-flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700"><i class="fa-solid fa-calendar-check text-blue-600"></i><span>Planejado</span></span>' +
+                        '<div class="flex items-center gap-2">' +
+                            planningStatusBadge +
+                            editStatusButton +
+                        '</div>' +
                     '</div>' +
-                    '<div class="mt-4 flex flex-wrap gap-2 text-[13px]">' +
+                    '<div class="mt-4 flex flex-wrap items-center gap-2 text-[13px]">' +
                         '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-days mr-1 text-red-100"></i>Planejado: ' + escapeHtml(item.executionDate) + '</span>' +
+                        '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="' + stageMeta.badge + '"><i class="' + stageMeta.icon + ' mr-1"></i>' + escapeHtml(stageMeta.label) + '</span>' +
+                        (canShowStatusFlag ? '<span class="ml-auto">' + statusFlag + '</span>' : '') +
                     '</div>' +
                     '<div class="mt-4 rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700">' +
                         '<span class="font-semibold text-bevap-navy">Descrição:</span> ' + escapeHtml(item.description) +
@@ -221,6 +377,10 @@
         }).join('');
 
         var trainingHtml = trainingsSummaryData.map(function (item) {
+            var statusMessage = item.confirmed
+                ? '<div class="rounded-lg border border-gray-200 bg-white px-4 py-3 text-sm text-gray-700"><span class="font-semibold text-bevap-navy">Data realizada:</span> ' + escapeHtml(formatDateTimeDisplay(item.confirmedDate)) + '</div>'
+                : '<div class="rounded-lg border border-dashed border-amber-300 bg-white px-4 py-3 text-sm text-amber-800"><span class="font-semibold">Aguardando realização:</span> este treinamento ainda está pendente de confirmação.</div>';
+
             return '' +
                 '<div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">' +
                     '<div class="flex items-start justify-between gap-4">' +
@@ -235,12 +395,15 @@
                                 '</div>' +
                             '</div>' +
                         '</div>' +
-                        '<span class="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-semibold text-green-700"><i class="fa-solid fa-circle-check text-green-600"></i><span>Realizado</span></span>' +
+                        getTrainingStatusBadge(item) +
                     '</div>' +
                     '<div class="mt-4 flex flex-wrap gap-2 text-[13px]">' +
                         '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-days mr-1 text-red-100"></i>Planejado: ' + escapeHtml(item.plannedDate) + '</span>' +
                         '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #16a34a; border-color: #16a34a;"><i class="fa-regular fa-clock mr-1 text-green-200"></i>' + escapeHtml(item.plannedHours) + '</span>' +
-                        '<span class="inline-flex items-center rounded-full border border-gray-200 bg-white px-3 py-1.5 text-gray-700"><i class="fa-solid fa-calendar-check mr-1 text-gray-500"></i>Realizado: ' + escapeHtml(formatDateTimeDisplay(item.confirmedDate)) + '</span>' +
+                        '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #7c3aed; border-color: #7c3aed;"><i class="fa-solid fa-users mr-1 text-violet-100"></i>' + (item.participants || []).length + ' participantes</span>' +
+                    '</div>' +
+                    '<div class="mt-4">' +
+                        statusMessage +
                     '</div>' +
                     '<div class="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4">' +
                         '<div class="mb-3">' +
@@ -253,6 +416,14 @@
                     '<div class="mt-4">' +
                         '<label class="mb-1 block text-sm text-gray-600">Observações</label>' +
                         '<textarea class="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm" rows="3" readonly>' + escapeHtml(item.notes) + '</textarea>' +
+                    '</div>' +
+                    '<div class="mt-4">' +
+                        '<label class="mb-3 block text-sm text-gray-600">Documentos do Treinamento</label>' +
+                        '<div class="space-y-3">' +
+                            (item.attachments || []).map(function (attachment) {
+                                return createAttachmentItemHTML(attachment);
+                            }).join('') +
+                        '</div>' +
                     '</div>' +
                 '</div>';
         }).join('');
@@ -304,19 +475,16 @@
         var requesterValidationTab = document.getElementById('tab-requester-validation');
         var finalValidationTab = document.getElementById('tab-ti-final-validation');
         var validationTab = document.getElementById('tab-ti-go-live-validation');
-        var projectPlanningTab = document.getElementById('tab-project-planning');
         var overviewContent = document.getElementById('tab-content-closure-overview');
         var requesterValidationContent = document.getElementById('tab-content-requester-validation');
         var finalValidationContent = document.getElementById('tab-content-ti-final-validation');
         var validationContent = document.getElementById('tab-content-ti-go-live-validation');
-        var projectPlanningContent = document.getElementById('tab-content-project-planning');
-        if (!overviewTab || !requesterValidationTab || !finalValidationTab || !validationTab || !projectPlanningTab || !overviewContent || !requesterValidationContent || !finalValidationContent || !validationContent || !projectPlanningContent) return;
+        if (!overviewTab || !requesterValidationTab || !finalValidationTab || !validationTab || !overviewContent || !requesterValidationContent || !finalValidationContent || !validationContent) return;
 
         var isOverview = currentTab === 'overview';
         var isRequesterValidation = currentTab === 'requester-validation';
         var isFinalValidation = currentTab === 'final-validation';
         var isValidation = currentTab === 'validation';
-        var isProjectPlanning = currentTab === 'project-planning';
 
         overviewTab.className = isOverview
             ? 'shrink-0 whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green'
@@ -330,15 +498,11 @@
         validationTab.className = isValidation
             ? 'shrink-0 whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green'
             : 'shrink-0 whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700';
-        projectPlanningTab.className = isProjectPlanning
-            ? 'shrink-0 whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green'
-            : 'shrink-0 whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700';
 
         overviewContent.classList.toggle('hidden', !isOverview);
         requesterValidationContent.classList.toggle('hidden', !isRequesterValidation);
         finalValidationContent.classList.toggle('hidden', !isFinalValidation);
         validationContent.classList.toggle('hidden', !isValidation);
-        projectPlanningContent.classList.toggle('hidden', !isProjectPlanning);
 
         var activeTab = isOverview
             ? overviewTab
@@ -346,16 +510,14 @@
                 ? requesterValidationTab
                 : isFinalValidation
                     ? finalValidationTab
-                    : isValidation
-                        ? validationTab
-                        : projectPlanningTab;
+                    : validationTab;
 
         scrollTabIntoView(activeTab);
         window.setTimeout(refreshTabsArrows, 200);
     }
 
     function setCurrentTab(tabName) {
-        currentTab = tabName === 'requester-validation' || tabName === 'final-validation' || tabName === 'validation' || tabName === 'project-planning'
+        currentTab = tabName === 'requester-validation' || tabName === 'final-validation' || tabName === 'validation'
             ? tabName
             : 'overview';
         updateTabs();
@@ -373,6 +535,27 @@
         if (!modal) return;
         modal.classList.add('hidden');
         modal.classList.remove('flex');
+    }
+
+    function openPlanningStatusModal(planningIndex, status) {
+        var modal = document.getElementById('planning-status-modal');
+        var title = document.getElementById('planning-status-modal-title');
+        var message = document.getElementById('planning-status-modal-message');
+        var confirm = document.getElementById('planning-status-confirm');
+        if (!modal || !title || !message || !confirm || !goLivePlanningData[planningIndex]) return;
+
+        var item = goLivePlanningData[planningIndex];
+        var isRealized = status === 'realizado';
+        pendingPlanningStatusChange = { planningIndex: planningIndex, status: status };
+        title.textContent = isRealized ? 'Confirmar Planejamento Realizado' : 'Confirmar Planejamento Não Realizado';
+        message.textContent = 'Deseja atualizar "' + item.title + '" para o status ' + (isRealized ? 'Realizado' : 'Não Realizado') + '?';
+        confirm.className = 'rounded-lg px-6 py-2 font-medium text-white transition-colors ' + (isRealized ? 'bg-bevap-green hover:bg-green-700' : 'bg-red-600 hover:bg-red-700');
+        openModal('planning-status-modal');
+    }
+
+    function closePlanningStatusModal() {
+        closeModal('planning-status-modal');
+        pendingPlanningStatusChange = null;
     }
 
     function bindEvents() {
@@ -407,6 +590,24 @@
         window.addEventListener('resize', refreshTabsArrows);
 
         document.addEventListener('click', function (event) {
+            var editPlanningStatusButton = event.target.closest('[data-action="edit-planning-status"]');
+            if (editPlanningStatusButton) {
+                var editPlanningIndex = Number(editPlanningStatusButton.getAttribute('data-planning-index'));
+                if (Number.isNaN(editPlanningIndex) || !goLivePlanningData[editPlanningIndex]) return;
+                goLivePlanningData[editPlanningIndex].isEditingStatus = true;
+                renderGoLiveCards();
+                return;
+            }
+
+            var planningStatusButton = event.target.closest('[data-action="set-planning-status"]');
+            if (planningStatusButton) {
+                var clickedPlanningIndex = Number(planningStatusButton.getAttribute('data-planning-index'));
+                var clickedStatus = planningStatusButton.getAttribute('data-status');
+                if (Number.isNaN(clickedPlanningIndex) || !goLivePlanningData[clickedPlanningIndex]) return;
+                openPlanningStatusModal(clickedPlanningIndex, clickedStatus || 'planejado');
+                return;
+            }
+
             var overviewTabButton = event.target.closest('#tab-closure-overview');
             if (overviewTabButton) {
                 setCurrentTab('overview');
@@ -428,12 +629,6 @@
             var validationTabButton = event.target.closest('#tab-ti-go-live-validation');
             if (validationTabButton) {
                 setCurrentTab('validation');
-                return;
-            }
-
-            var projectPlanningTabButton = event.target.closest('#tab-project-planning');
-            if (projectPlanningTabButton) {
-                setCurrentTab('project-planning');
                 return;
             }
 
@@ -488,6 +683,8 @@
         var discontinueConfirmButton = document.getElementById('discontinue-confirm');
         var concludeCancelButton = document.getElementById('conclude-cancel');
         var concludeConfirmButton = document.getElementById('conclude-confirm');
+        var planningStatusCancelButton = document.getElementById('planning-status-cancel');
+        var planningStatusConfirmButton = document.getElementById('planning-status-confirm');
 
         if (returnCancelButton) {
             returnCancelButton.addEventListener('click', function () {
@@ -548,6 +745,27 @@
                 showToast('Projeto encerrado', 'A documentação final foi registrada e o projeto foi encerrado com sucesso.', 'success');
             });
         }
+
+        if (planningStatusCancelButton) planningStatusCancelButton.addEventListener('click', closePlanningStatusModal);
+        if (planningStatusConfirmButton) {
+            planningStatusConfirmButton.addEventListener('click', function () {
+                if (!pendingPlanningStatusChange || !goLivePlanningData[pendingPlanningStatusChange.planningIndex]) {
+                    closePlanningStatusModal();
+                    return;
+                }
+                var planning = goLivePlanningData[pendingPlanningStatusChange.planningIndex];
+                var selectedStatus = pendingPlanningStatusChange.status;
+                planning.planningStatus = selectedStatus;
+                planning.isEditingStatus = false;
+                closePlanningStatusModal();
+                renderGoLiveCards();
+                showToast(
+                    selectedStatus === 'realizado' ? 'Planejamento realizado' : 'Planejamento não realizado',
+                    'O status do planejamento foi atualizado com sucesso.',
+                    selectedStatus === 'realizado' ? 'success' : 'info'
+                );
+            });
+        }
     }
 
     document.addEventListener('DOMContentLoaded', function () {
@@ -556,7 +774,7 @@
             finalNote = finalNoteField.value || '';
         }
         renderClosureDocumentsPanel();
-        renderProjectPlanningPanel();
+        renderGoLiveCards();
         updateTabs();
         bindEvents();
         refreshTabsArrows();
