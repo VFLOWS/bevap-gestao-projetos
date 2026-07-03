@@ -4,6 +4,7 @@ const executionActivityWaitingController = {
   _datasetName: 'formExecucaoAtividade',
   _eventNamespace: '.executionActivityWaiting',
   _toastTimer: null,
+  _loadingHandle: null,
   _state: {
     documentId: null,
     processInstanceId: null,
@@ -30,6 +31,7 @@ const executionActivityWaitingController = {
 
   destroy() {
     $(document).off(this._eventNamespace);
+    this.setLoading(false);
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
       this._toastTimer = null;
@@ -70,15 +72,15 @@ const executionActivityWaitingController = {
       const card = Array.isArray(rows) ? rows[0] : rows;
 
       if (!card) {
-        this.renderError('Card nao encontrado para a solicitacao informada.');
+        this.renderError('Card não encontrado para a solicitação informada.');
         return;
       }
 
       this._state.card = this.normalizeCard(card);
       this.renderCard(this._state.card);
     } catch (error) {
-      console.error('Erro ao carregar atividade em aguardando execucao:', error);
-      this.renderError(error && error.message ? error.message : 'Nao foi possivel carregar a atividade.');
+      console.error('Erro ao carregar atividade em aguardando execução:', error);
+      this.renderError(error && error.message ? error.message : 'Não foi possível carregar a atividade.');
     } finally {
       this.setLoading(false);
     }
@@ -143,11 +145,11 @@ const executionActivityWaitingController = {
     }
 
     if (!state.documentId) {
-      throw new Error('Nao foi possivel localizar o documentId do card da atividade.');
+      throw new Error('Não foi possível localizar o documentId do card da atividade.');
     }
 
     if (!state.processInstanceId) {
-      throw new Error('Nao foi possivel localizar o processInstanceId da atividade.');
+      throw new Error('Não foi possível localizar o processInstanceId da atividade.');
     }
   },
 
@@ -184,11 +186,10 @@ const executionActivityWaitingController = {
 
   renderCard(card) {
     this.setText('#ef-activity-name', card.activity || 'Atividade sem nome informado');
-    this.setText('#ef-responsible', card.activityResponsible || 'Nao informado');
+    this.setText('#ef-responsible', card.activityResponsible || 'Não informado');
     this.setText('#ef-due-date', this.formatDate(card.dueDate) || '-');
     this.setText('#ef-phase-name', card.phase || '-');
     this.setText('#ef-phase-responsible', card.phaseResponsible || '-');
-    this.setText('#ef-phase-effort', this.formatEffort(card.phaseEffort) || '-');
     this.setText('#ef-milestone-name', card.milestone || '-');
     this.setText('#ef-milestone-period', card.milestonePeriod || '-');
     this.setText('#ef-activity-effort', this.formatEffort(card.activityEffort) || '-');
@@ -196,14 +197,13 @@ const executionActivityWaitingController = {
     this.setText('#ef-project-title', card.projectTitle || '-');
     this.setText('#ef-project-area', card.projectArea || '-');
     this.setText('#ef-project-sponsor', card.projectSponsor || '-');
-    this.setText('#ef-project-priority', card.projectPriority || '-');
+    this.setText('#ef-project-priority', this.getPriorityLabel(card.projectPriority) || '-');
     this.setText('#ef-project-requester', card.requesterName || '-');
     this.setText('#ef-project-responsible', card.activityResponsible || card.phaseResponsible || '-');
 
     $('#ef-responsible-badge').toggleClass('hidden', !this.asText(card.activityResponsible));
     $('#ef-effort-badge').toggleClass('hidden', !this.asText(card.activityEffort));
     $('#ef-phase-responsible-row').toggleClass('hidden', !this.asText(card.phaseResponsible));
-    $('#ef-phase-effort-row').toggleClass('hidden', !this.asText(card.phaseEffort));
     $('#ef-milestone-period-row').toggleClass('hidden', !this.asText(card.milestonePeriod));
 
     this.renderDependencies(card.dependencies);
@@ -253,14 +253,14 @@ const executionActivityWaitingController = {
       : 'esta atividade';
 
     $('#modal-root').html(`
-      <div class="fixed inset-0 z-40 bg-black/40 px-4 py-8" role="dialog" aria-modal="true">
-        <div class="mx-auto max-w-lg rounded-lg bg-white shadow-xl">
+      <div class="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 p-4" role="dialog" aria-modal="true">
+        <div class="w-full max-w-lg rounded-lg bg-white shadow-xl">
           <div class="border-b border-gray-200 px-5 py-4">
-            <h3 class="text-lg font-semibold text-gray-900">Iniciar execucao?</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Iniciar Execução?</h3>
           </div>
           <div class="px-5 py-4">
             <p class="text-sm text-gray-600">
-              A solicitacao sera enviada para a atividade <strong>18 - Execucao do Atividade</strong>.
+              A solicitação será enviada para a atividade <strong>18 - Execução da Atividade</strong>.
             </p>
             <p class="mt-3 text-sm font-medium text-gray-900">${this.escapeHtml(activityName)}</p>
           </div>
@@ -290,8 +290,10 @@ const executionActivityWaitingController = {
       this._state.isSubmitting = true;
       this.closeModal();
       this.setStartButtonState(true);
-      this.setLoading(true, 'Iniciando execucao...');
+      this.setLoading(true, 'Iniciando execução...');
 
+      this.setLoading(true, 'Enviando movimentacao para o Fluig...');
+      await modalLoadingService.waitForPaint();
       await fluigService.saveAndSendTask({
         id: this._state.processInstanceId,
         numState: 18,
@@ -299,13 +301,26 @@ const executionActivityWaitingController = {
         datasetName: this._datasetName
       }, []);
 
-      this.showToast('Atividade enviada para execucao.');
-      setTimeout(() => {
-        window.location.hash = `#executionActivity?processInstanceId=${this._state.processInstanceId}&documentId=${this._state.documentId}`;
-      }, 900);
+      this.setLoading(false);
+      const executionRoute = `#executionActivity?processInstanceId=${this._state.processInstanceId}&documentId=${this._state.documentId}`;
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: this._state.processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Atividade iniciada!',
+          message: 'Atividade enviada para execucao.',
+          nextStep: 'Continue o apontamento na tela de execucao.',
+          primaryActionLabel: 'Abrir Execucao',
+          primaryRoute: executionRoute,
+          showPrimaryAction: true
+        });
+      } else {
+        this.showToast('Atividade enviada para execução.');
+      }
     } catch (error) {
-      console.error('Erro ao iniciar execucao da atividade:', error);
-      this.showToast('Nao foi possivel iniciar a execucao da atividade.', 'error');
+      console.error('Erro ao iniciar execução da atividade:', error);
+      this.showToast('Não foi possível iniciar a execução da atividade.', 'error');
       this.setStartButtonState(false);
     } finally {
       this._state.isSubmitting = false;
@@ -320,9 +335,25 @@ const executionActivityWaitingController = {
   },
 
   setLoading(isVisible, label = 'Carregando...') {
-    const overlay = $('#ui-loading-overlay');
-    $('#ui-loading-label').text(label);
-    overlay.toggleClass('hidden', !isVisible);
+    $('#ui-loading-overlay').addClass('hidden');
+
+    if (isVisible) {
+      if (this._loadingHandle) {
+        this._loadingHandle.updateMessage(label);
+        return;
+      }
+
+      this._loadingHandle = modalLoadingService.show({
+        title: 'Aguarde',
+        message: label
+      });
+      return;
+    }
+
+    if (this._loadingHandle) {
+      this._loadingHandle.hide();
+      this._loadingHandle = null;
+    }
   },
 
   showToast(message, type = 'success') {
@@ -361,6 +392,13 @@ const executionActivityWaitingController = {
 
   setText(selector, value) {
     $(selector).text(this.asText(value));
+  },
+
+  getPriorityLabel(priority) {
+    const raw = this.asText(priority);
+    const normalized = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('estrategico') !== -1) return 'Estratégico';
+    return raw;
   },
 
   normalizeId(value) {

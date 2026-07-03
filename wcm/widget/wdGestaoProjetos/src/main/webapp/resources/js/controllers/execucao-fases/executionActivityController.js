@@ -4,6 +4,7 @@ const executionActivityController = {
   _datasetName: 'formExecucaoAtividade',
   _eventNamespace: '.executionActivity',
   _toastTimer: null,
+  _loadingHandle: null,
   _state: {
     documentId: null,
     processInstanceId: null,
@@ -36,6 +37,7 @@ const executionActivityController = {
 
   destroy() {
     $(document).off(this._eventNamespace);
+    this.setLoading(false);
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
       this._toastTimer = null;
@@ -99,7 +101,7 @@ const executionActivityController = {
 
   async loadCard() {
     try {
-      this.setLoading(true, 'Carregando execucao da atividade...');
+      this.setLoading(true, 'Carregando execução da atividade...');
       await this.resolveContextIds();
 
       const rows = await fluigService.getDatasetRows(this._datasetId, {
@@ -111,7 +113,7 @@ const executionActivityController = {
       });
       const card = Array.isArray(rows) ? rows[0] : rows;
       if (!card) {
-        this.renderError('Card nao encontrado para a atividade informada.');
+        this.renderError('Card não encontrado para a atividade informada.');
         return;
       }
 
@@ -120,8 +122,8 @@ const executionActivityController = {
       this._state.attachments = this.parsePersistedAttachments(card.anexosExecucaoAtividade);
       this.render();
     } catch (error) {
-      console.error('Erro ao carregar tela de execucao da atividade:', error);
-      this.renderError(error && error.message ? error.message : 'Nao foi possivel carregar a execucao da atividade.');
+      console.error('Erro ao carregar tela de execução da atividade:', error);
+      this.renderError(error && error.message ? error.message : 'Não foi possível carregar a execução da atividade.');
     } finally {
       this.setLoading(false);
     }
@@ -199,11 +201,11 @@ const executionActivityController = {
     }
 
     if (!state.documentId) {
-      throw new Error('Nao foi possivel localizar o documentId do card da atividade.');
+      throw new Error('Não foi possível localizar o documentId do card da atividade.');
     }
 
     if (!state.processInstanceId) {
-      throw new Error('Nao foi possivel localizar o processInstanceId da atividade.');
+      throw new Error('Não foi possível localizar o processInstanceId da atividade.');
     }
   },
 
@@ -242,11 +244,10 @@ const executionActivityController = {
   render() {
     const card = this._state.card || {};
     this.setText('#ef-exec-activity-name', card.activity || 'Atividade sem nome informado');
-    this.setText('#ef-exec-responsible', card.activityResponsible || 'Nao informado');
+    this.setText('#ef-exec-responsible', card.activityResponsible || 'Não informado');
     this.setText('#ef-exec-due-date', this.formatDate(card.dueDate) || '-');
     this.setText('#ef-exec-phase-name', card.phase || '-');
     this.setText('#ef-exec-phase-responsible', card.phaseResponsible || '-');
-    this.setText('#ef-exec-phase-effort', this.formatEffort(card.phaseEffort) || '-');
     this.setText('#ef-exec-milestone-name', card.milestone || '-');
     this.setText('#ef-exec-milestone-period', card.milestonePeriod || '-');
     this.setText('#ef-exec-estimated-effort', this.formatEffort(card.activityEffort) || '-');
@@ -255,7 +256,7 @@ const executionActivityController = {
     this.setText('#ef-exec-project-title', card.projectTitle || '-');
     this.setText('#ef-exec-project-area', card.projectArea || '-');
     this.setText('#ef-exec-project-sponsor', card.projectSponsor || '-');
-    this.setText('#ef-exec-project-priority', card.projectPriority || '-');
+    this.setText('#ef-exec-project-priority', this.getPriorityLabel(card.projectPriority) || '-');
     this.setText('#ef-exec-project-requester', card.requesterName || '-');
     this.setText('#ef-exec-project-responsible', card.activityResponsible || card.phaseResponsible || '-');
 
@@ -264,7 +265,6 @@ const executionActivityController = {
     $('#ef-exec-estimated-summary').toggleClass('hidden', !this.asText(card.activityEffort));
     $('#ef-exec-remaining-summary').toggleClass('hidden', !this.asText(card.activityEffort));
     $('#ef-exec-phase-responsible-row').toggleClass('hidden', !this.asText(card.phaseResponsible));
-    $('#ef-exec-phase-effort-row').toggleClass('hidden', !this.asText(card.phaseEffort));
     $('#ef-exec-milestone-period-row').toggleClass('hidden', !this.asText(card.milestonePeriod));
 
     this.renderDependencies(card.dependencies);
@@ -403,7 +403,7 @@ const executionActivityController = {
               </span>
               <div>
                 <h3 class="text-lg font-bold text-bevap-navy">${editing ? 'Editar Apontamento de Tempo' : 'Adicionar Apontamento de Tempo'}</h3>
-                <p class="text-sm text-gray-500">Informe data, intervalo e comentario da atividade.</p>
+                <p class="text-sm text-gray-500">Informe data, intervalo e comentário da atividade.</p>
               </div>
             </div>
             <button type="button" data-action="close-exec-modal" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-500 hover:bg-gray-50">
@@ -418,26 +418,26 @@ const executionActivityController = {
             <div class="grid gap-3 md:grid-cols-2">
               <div class="rounded-lg border border-gray-200 bg-slate-50 p-4">
                 <label for="ef-entry-start" class="flex items-center gap-2 text-sm font-medium text-bevap-navy">
-                  <i class="fa-regular fa-clock text-blue-600" aria-hidden="true"></i>Inicio
+                  <i class="fa-regular fa-clock text-blue-600" aria-hidden="true"></i>Início
                 </label>
-                <input id="ef-entry-start" type="text" inputmode="numeric" maxlength="5" value="${this.escapeHtml(entry ? entry.start : '')}" class="mt-3 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green" placeholder="08:00">
+                <input id="ef-entry-start" type="text" inputmode="numeric" maxlength="5" pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$" value="${this.escapeHtml(entry ? entry.start : '')}" class="mt-3 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green" placeholder="08:00">
               </div>
               <div class="rounded-lg border border-gray-200 bg-slate-50 p-4">
                 <label for="ef-entry-end" class="flex items-center gap-2 text-sm font-medium text-bevap-navy">
                   <i class="fa-solid fa-clock-rotate-left text-blue-600" aria-hidden="true"></i>Fim
                 </label>
-                <input id="ef-entry-end" type="text" inputmode="numeric" maxlength="5" value="${this.escapeHtml(entry ? entry.end : '')}" class="mt-3 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green" placeholder="10:00">
+                <input id="ef-entry-end" type="text" inputmode="numeric" maxlength="5" pattern="^([01][0-9]|2[0-3]):[0-5][0-9]$" value="${this.escapeHtml(entry ? entry.end : '')}" class="mt-3 w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green" placeholder="10:00">
               </div>
             </div>
             <div>
-              <label for="ef-entry-comment" class="mb-2 block text-sm font-medium text-gray-700">Comentario da Atividade</label>
-              <textarea id="ef-entry-comment" rows="5" class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green" placeholder="Descreva o andamento, decisoes ou impedimentos.">${this.escapeHtml(entry ? entry.comment : '')}</textarea>
+              <label for="ef-entry-comment" class="mb-2 block text-sm font-medium text-gray-700">Comentário da Atividade</label>
+              <textarea id="ef-entry-comment" rows="5" class="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green" placeholder="Descreva o andamento, decisões ou impedimentos.">${this.escapeHtml(entry ? entry.comment : '')}</textarea>
             </div>
           </div>
           <div class="flex justify-end gap-2 border-t border-gray-200 px-6 py-4">
             <button type="button" data-action="close-exec-modal" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">Cancelar</button>
             <button type="button" data-action="confirm-entry" data-entry-id="${this.escapeHtml(entryId || '')}" class="rounded-lg bg-bevap-navy px-4 py-2 text-sm font-medium text-white hover:opacity-95">
-              ${editing ? 'Atualizar Lancamento' : 'Adicionar Lancamento'}
+              ${editing ? 'Atualizar Lançamento' : 'Adicionar Lançamento'}
             </button>
           </div>
         </div>
@@ -459,7 +459,7 @@ const executionActivityController = {
     const validation = this.validateEntryInput({ date, start, end, comment });
 
     if (!validation.valid) {
-      this.showToast('Apontamento invalido', validation.message, 'error');
+      this.showToast('Apontamento inválido', validation.message, 'error');
       return;
     }
 
@@ -495,7 +495,7 @@ const executionActivityController = {
     this.setLoading(false);
     this.renderEntries();
     this.renderEffortSummary();
-    this.showToast(existing ? 'Lancamento atualizado' : 'Lancamento adicionado', 'Salve a atividade para gravar no card.', 'success');
+    this.showToast(existing ? 'Lançamento atualizado' : 'Lançamento adicionado', 'Salve a atividade para gravar no card.', 'success');
   },
 
   openDeleteEntryModal(entryId) {
@@ -511,8 +511,8 @@ const executionActivityController = {
             </div>
             <h3 class="text-xl font-bold text-bevap-navy">Excluir Apontamento de Tempo</h3>
           </div>
-          <p class="mb-2 text-gray-700">Confirma a exclusao logica deste apontamento?</p>
-          <p class="mb-6 text-sm text-gray-600">A linha sera mantida no card com status deleted.</p>
+          <p class="mb-2 text-gray-700">Confirma a exclusão lógica deste apontamento?</p>
+          <p class="mb-6 text-sm text-gray-600">A linha será mantida no card com status deleted.</p>
           <div class="flex justify-end gap-3">
             <button type="button" data-action="close-exec-modal" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">Cancelar</button>
             <button type="button" data-action="confirm-delete-entry" data-entry-id="${this.escapeHtml(entry.id)}" class="rounded-lg bg-red-600 px-4 py-2 font-medium text-white hover:bg-red-700">Excluir</button>
@@ -545,18 +545,18 @@ const executionActivityController = {
     this.setLoading(false);
     this.renderEntries();
     this.renderEffortSummary();
-    this.showToast('Lancamento excluido', 'A exclusao sera gravada no proximo salvar ou enviar.', 'info');
+    this.showToast('Lançamento excluído', 'A exclusão será gravada no próximo salvar ou enviar.', 'info');
   },
 
   openSaveModal() {
     const pendingText = this.hasLocalAttachments()
-      ? '<p class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">Existem anexos pendentes. Eles nao serao anexados no Salvar; serao enviados apenas ao enviar para validacao.</p>'
+      ? '<p class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">Existem anexos pendentes. Eles não serão anexados no Salvar; serão enviados apenas ao enviar para validação.</p>'
       : '';
 
     $('#modal-root').html(`
       <div class="fixed inset-0 z-[80] flex items-center justify-center bg-black/50 p-4">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-          <h3 class="text-xl font-bold text-bevap-navy">Salvar Alteracoes da Atividade</h3>
+          <h3 class="text-xl font-bold text-bevap-navy">Salvar Alterações da Atividade</h3>
           <p class="mt-4 text-gray-700">Confirma o salvamento dos apontamentos no card?</p>
           ${pendingText}
           <div class="mt-6 flex justify-end gap-3">
@@ -572,8 +572,8 @@ const executionActivityController = {
     $('#modal-root').html(`
       <div class="fixed inset-0 z-[80] flex items-center justify-center bg-black/50 p-4">
         <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
-          <h3 class="text-xl font-bold text-bevap-navy">Enviar para Validacao do Solicitante</h3>
-          <p class="mt-4 text-gray-700">Os apontamentos serao salvos e os anexos pendentes serao enviados ao processo.</p>
+          <h3 class="text-xl font-bold text-bevap-navy">Enviar para Validação do Solicitante</h3>
+          <p class="mt-4 text-gray-700">Os apontamentos serão salvos e os anexos pendentes serão enviados ao processo.</p>
           <div class="mt-6 flex justify-end gap-3">
             <button type="button" data-action="close-exec-modal" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 hover:bg-gray-50">Cancelar</button>
             <button type="button" data-action="confirm-send-requester" class="rounded-lg bg-bevap-green px-4 py-2 font-medium text-white hover:bg-green-700">Enviar</button>
@@ -604,11 +604,11 @@ const executionActivityController = {
 
       this.markEntriesPersisted();
       if (!options.silent) {
-        this.showToast('Alteracoes salvas', this.hasLocalAttachments() ? 'Apontamentos salvos. Anexos pendentes serao enviados na validacao.' : 'Apontamentos salvos no card.', 'success');
+        this.showToast('Alterações salvas', this.hasLocalAttachments() ? 'Apontamentos salvos. Anexos pendentes serão enviados na validação.' : 'Apontamentos salvos no card.', 'success');
       }
     } catch (error) {
-      console.error('Erro ao salvar execucao da atividade:', error);
-      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar os apontamentos.', 'error');
+      console.error('Erro ao salvar execução da atividade:', error);
+      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar os apontamentos.', 'error');
     } finally {
       this._state.isSubmitting = false;
       this.setActionButtonsState(false);
@@ -624,14 +624,17 @@ const executionActivityController = {
       this.setActionButtonsState(true);
       this.setModalButtonState($('[data-action="confirm-send-requester"]').first(), true, 'Enviando...');
       this.closeModal();
-      this.setLoading(true, 'Enviando para validacao...');
+      this.setLoading(true, 'Enviando para validação...');
       await this.waitForUiTick();
 
       const taskFields = this.collectExecutionTaskFields(this._state.entries, {
         decision: 'concluido'
       });
+      this.setLoading(true, 'Preparando anexos da atividade...');
       const attachments = await this.collectAttachmentsPayload();
 
+      this.setLoading(true, 'Enviando movimentacao para o Fluig...');
+      await modalLoadingService.waitForPaint();
       await fluigService.saveAndSendTask({
         id: this._state.processInstanceId,
         numState: 23,
@@ -641,13 +644,22 @@ const executionActivityController = {
       }, taskFields);
 
       this.markEntriesPersisted();
-      this.showToast('Atividade enviada', 'A validacao do solicitante foi iniciada.', 'success');
-      setTimeout(() => {
-        window.location.hash = '#dashboard';
-      }, 900);
+      this.setLoading(false);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: this._state.processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Atividade enviada!',
+          message: 'A validacao do solicitante foi iniciada.',
+          nextStep: 'Acompanhe a validacao pelo dashboard.'
+        });
+      } else {
+        this.showToast('Atividade enviada', 'A validação do solicitante foi iniciada.', 'success');
+      }
     } catch (error) {
-      console.error('Erro ao enviar execucao da atividade:', error);
-      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel enviar a atividade.', 'error');
+      console.error('Erro ao enviar execução da atividade:', error);
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível enviar a atividade.', 'error');
     } finally {
       this._state.isSubmitting = false;
       this.setActionButtonsState(false);
@@ -824,12 +836,12 @@ const executionActivityController = {
     const start = this.parseTimeInputValue(entry.start);
     const end = this.parseTimeInputValue(entry.end);
     if (!start || !end) {
-      return { valid: false, message: 'Informe inicio e fim no formato HH:MM.' };
+      return { valid: false, message: 'Informe início e fim no formato HH:MM, com hora entre 00 e 23 e minutos entre 00 e 59.' };
     }
 
     const durationMinutes = end.totalMinutes - start.totalMinutes;
     if (durationMinutes <= 0) {
-      return { valid: false, message: 'O horario final deve ser maior que o inicial.' };
+      return { valid: false, message: 'O horário final deve ser maior que o inicial.' };
     }
 
     if (!this.asText(entry.comment)) {
@@ -865,6 +877,13 @@ const executionActivityController = {
     const digits = this.asText(value).replace(/\D/g, '').slice(0, 4);
     if (digits.length <= 2) return digits;
     return `${digits.slice(0, 2)}:${digits.slice(2)}`;
+  },
+
+  getPriorityLabel(priority) {
+    const raw = this.asText(priority);
+    const normalized = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('estrategico') !== -1) return 'Estratégico';
+    return raw;
   },
 
   addAttachments(fileList) {
@@ -1013,8 +1032,25 @@ const executionActivityController = {
   },
 
   setLoading(isVisible, label = 'Carregando...') {
-    $('#ui-loading-label').text(label);
-    $('#ui-loading-overlay').toggleClass('hidden', !isVisible);
+    $('#ui-loading-overlay').addClass('hidden');
+
+    if (isVisible) {
+      if (this._loadingHandle) {
+        this._loadingHandle.updateMessage(label);
+        return;
+      }
+
+      this._loadingHandle = modalLoadingService.show({
+        title: 'Aguarde',
+        message: label
+      });
+      return;
+    }
+
+    if (this._loadingHandle) {
+      this._loadingHandle.hide();
+      this._loadingHandle = null;
+    }
   },
 
   setActionButtonsState(isDisabled) {

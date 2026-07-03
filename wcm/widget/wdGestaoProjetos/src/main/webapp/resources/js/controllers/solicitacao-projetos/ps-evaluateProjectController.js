@@ -474,6 +474,17 @@ const evaluateProjectController = {
   },
 
   showToast: function (message, type) {
+    const normalizedType = type || 'success';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(
+        this,
+        normalizedType === 'error' ? 'Erro' : 'Atencao',
+        message,
+        normalizedType
+      );
+      return;
+    }
+
     const root = this.getContainer();
     const toast = root.find('#toast');
     const messageEl = root.find('#toast-message');
@@ -940,16 +951,6 @@ const evaluateProjectController = {
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () {
-        legacyLoading.hide();
-      },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {
@@ -1223,11 +1224,14 @@ const evaluateProjectController = {
       }, taskFields);
 
       this.closeModal(config.modalId);
-      this.showToast(config.successMessage, 'success');
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showActionSuccess === 'function') {
+        window.gpActionFeedback.showActionSuccess(this, config, {
+          processInstanceId: processInstanceId,
+          documentId: this._currentDocumentId
+        });
+      } else {
+        this.showToast(config.successMessage, 'success');
+      }
     } catch (error) {
       console.error('[evaluateProject] Error moving task:', error);
       this.showToast(error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');

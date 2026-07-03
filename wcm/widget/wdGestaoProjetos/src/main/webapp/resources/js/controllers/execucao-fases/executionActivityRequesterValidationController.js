@@ -5,6 +5,7 @@ const executionActivityRequesterValidationController = {
   _eventNamespace: '.executionActivityRequesterValidation',
   _nextState: 25,
   _toastTimer: null,
+  _loadingHandle: null,
   _state: {
     documentId: null,
     processInstanceId: null,
@@ -41,6 +42,7 @@ const executionActivityRequesterValidationController = {
 
   destroy() {
     $(document).off(this._eventNamespace);
+    this.setLoading(false);
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
       this._toastTimer = null;
@@ -256,7 +258,6 @@ const executionActivityRequesterValidationController = {
     this.setText('#ef-req-due-date', this.formatDate(card.dueDate) || '-');
     this.setText('#ef-req-phase-name', card.phase || '-');
     this.setText('#ef-req-phase-responsible', card.phaseResponsible || '-');
-    this.setText('#ef-req-phase-effort', this.formatEffort(card.phaseEffort) || '-');
     this.setText('#ef-req-milestone-name', card.milestone || '-');
     this.setText('#ef-req-milestone-period', card.milestonePeriod || '-');
     this.setText('#ef-req-estimated-effort', this.formatEffort(card.activityEffort) || '-');
@@ -265,7 +266,7 @@ const executionActivityRequesterValidationController = {
     this.setText('#ef-req-project-title', card.projectTitle || '-');
     this.setText('#ef-req-project-area', card.projectArea || '-');
     this.setText('#ef-req-project-sponsor', card.projectSponsor || '-');
-    this.setText('#ef-req-project-priority', card.projectPriority || '-');
+    this.setText('#ef-req-project-priority', this.getPriorityLabel(card.projectPriority) || '-');
     this.setText('#ef-req-project-requester', card.requesterName || '-');
     this.setText('#ef-req-project-responsible', card.activityResponsible || card.phaseResponsible || '-');
     $('#requester-feedback-text').val('');
@@ -275,7 +276,6 @@ const executionActivityRequesterValidationController = {
     $('#ef-req-effort-badge').toggleClass('hidden', !this.asText(card.activityEffort));
     $('#ef-req-estimated-summary').toggleClass('hidden', !this.asText(card.activityEffort));
     $('#ef-req-phase-responsible-row').toggleClass('hidden', !this.asText(card.phaseResponsible));
-    $('#ef-req-phase-effort-row').toggleClass('hidden', !this.asText(card.phaseEffort));
     $('#ef-req-milestone-period-row').toggleClass('hidden', !this.asText(card.milestonePeriod));
 
     this.renderDependencies(card.dependencies);
@@ -400,7 +400,7 @@ const executionActivityRequesterValidationController = {
 
   getHistoryMarkup(entry) {
     const decision = this.asText(entry && entry.decision);
-    const label = decision === 'validado' ? 'Validado' : decision === 'correcao' ? 'Devolvido para correção' : decision === 'nao_continuidade' ? 'Não continuidade' : 'Registro';
+    const label = decision === 'validado' ? 'Validado' : decision === 'correcao' ? 'Devolvido para Correção' : decision === 'nao_continuidade' ? 'Não continuidade' : 'Registro';
     const badge = decision === 'validado'
       ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
       : decision === 'correcao'
@@ -532,6 +532,13 @@ const executionActivityRequesterValidationController = {
     $('#modal-root').empty();
   },
 
+  getPriorityLabel(priority) {
+    const raw = this.asText(priority);
+    const normalized = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('estrategico') !== -1) return 'Estratégico';
+    return raw;
+  },
+
   async submitDecision(config) {
     if (this._state.isSubmitting) return;
 
@@ -564,6 +571,8 @@ const executionActivityRequesterValidationController = {
         history: this._state.requesterHistory
       });
 
+      this.setLoading(true, 'Enviando movimentacao para o Fluig...');
+      await modalLoadingService.waitForPaint();
       await fluigService.saveAndSendTask({
         id: this._state.processInstanceId,
         numState: this._nextState,
@@ -573,10 +582,20 @@ const executionActivityRequesterValidationController = {
       }, taskFields);
 
       this.closeModal();
-      this.showToast('Sucesso', this.asText(config.successMessage) || 'Movimentação realizada.', 'success');
-      setTimeout(() => {
-        window.location.hash = '#dashboard';
-      }, 900);
+      this.setLoading(false);
+      const successMessage = this.asText(config.successMessage) || 'Movimentacao realizada.';
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: this._state.processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Acao concluida!',
+          message: successMessage,
+          nextStep: 'Acompanhe a proxima etapa pelo dashboard.'
+        });
+      } else {
+        this.showToast('Sucesso', successMessage, 'success');
+      }
     } catch (error) {
       console.error('Erro ao movimentar validação do solicitante:', error);
       this.showToast('Erro ao movimentar', error && error.message ? error.message : 'Não foi possível movimentar a atividade.', 'error');
@@ -1146,8 +1165,25 @@ const executionActivityRequesterValidationController = {
   },
 
   setLoading(isVisible, label = 'Carregando...') {
-    $('#ui-loading-label').text(label);
-    $('#ui-loading-overlay').toggleClass('hidden', !isVisible);
+    $('#ui-loading-overlay').addClass('hidden');
+
+    if (isVisible) {
+      if (this._loadingHandle) {
+        this._loadingHandle.updateMessage(label);
+        return;
+      }
+
+      this._loadingHandle = modalLoadingService.show({
+        title: 'Aguarde',
+        message: label
+      });
+      return;
+    }
+
+    if (this._loadingHandle) {
+      this._loadingHandle.hide();
+      this._loadingHandle = null;
+    }
   },
 
   setActionButtonsState(isDisabled) {

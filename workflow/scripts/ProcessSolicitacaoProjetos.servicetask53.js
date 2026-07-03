@@ -40,6 +40,8 @@ function servicetask53(attempt, message) {
             "ColigadaNS",
             "areaUnidadeNS",
             "centrodecustoNS",
+            "centrodecustoNomeNS",
+            "aprovadorSuperiorImedNS",
             "patrocinadorNS",
             "solicitanteNomeNS",
             "solicitanteColleagueIdNS",

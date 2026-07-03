@@ -213,16 +213,6 @@ const glpiErrorTreatmentController = {
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () {
-        legacyLoading.hide();
-      },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {
@@ -261,10 +251,18 @@ const glpiErrorTreatmentController = {
         datasetName: 'DSFormSolicitacaoProjetos'
       }, taskFields);
 
-      this.showToast('Sucesso', 'Solicitação enviada para Integração GLPI.', 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showSuccess === 'function') {
+        window.gpActionFeedback.showSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Acao concluida!',
+          message: 'Solicitacao enviada para Integracao GLPI.',
+          nextStep: 'Integracao GLPI'
+        });
+      } else {
+        this.showToast('Sucesso', 'Solicitação enviada para Integração GLPI.', 'success');
+      }
     } catch (error) {
       console.error('[glpiErrorTreatment] Error moving task:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
@@ -276,6 +274,12 @@ const glpiErrorTreatmentController = {
   },
 
   showToast: function (title, message, type) {
+    const normalizedType = type || 'info';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
+      return;
+    }
+
     const toast = this.getContainer().find('#toast');
     const icon = this.getContainer().find('#toast-icon');
     const toastTitle = this.getContainer().find('#toast-title');

@@ -396,6 +396,17 @@ const solicitationDetailController = {
   },
 
   showToast: function (message, type) {
+    const normalizedType = type || 'success';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(
+        this,
+        normalizedType === 'error' ? 'Erro' : 'Atencao',
+        message,
+        normalizedType
+      );
+      return;
+    }
+
     const root = this.getContainer();
     const toast = root.find('#solicitation-detail-toast');
     const messageEl = root.find('#solicitation-detail-toast-message');

@@ -418,12 +418,18 @@ function createProjectValidationController(config) {
         throw new Error('documentId não informado.');
       }
 
-      var processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
-      var taskFields = this.collectValidationTaskFields(config);
-      var legacyLoading = typeof FLUIGC !== 'undefined' ? FLUIGC.loading($('#page-container')) : null;
-      if (legacyLoading) legacyLoading.show();
+      var loading = modalLoadingService.show({
+        title: 'Movendo validacao',
+        message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
+      });
 
       try {
+        await loading.waitForPaint();
+        loading.updateMessage('Localizando processo do desenvolvimento...');
+        var processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
+        loading.updateMessage('Preparando dados da validacao...');
+        var taskFields = this.collectValidationTaskFields(config);
+        loading.updateMessage('Enviando movimentacao para o Fluig...');
         await fluigService.saveAndSendTask({
           id: processInstanceId,
           numState: this.asText(config && config.nextState),
@@ -432,12 +438,22 @@ function createProjectValidationController(config) {
           comments: this.asText(config && config.comments) || ''
         }, taskFields);
 
-        this.showToast(this.asText(config && config.successMessage) || 'Movimentação realizada com sucesso.', 'success');
-        setTimeout(function () {
-          location.hash = '#dashboard';
-        }, 800);
+        var successMessage = this.asText(config && config.successMessage) || 'Movimentacao realizada com sucesso.';
+        loading.hide();
+        if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+          window.gpActionFeedback.showProcessSuccess({
+            controller: this,
+            processInstanceId: processInstanceId,
+            documentId: documentId,
+            title: 'Acao concluida!',
+            message: successMessage,
+            nextStep: 'Acompanhe a proxima etapa pelo dashboard.'
+          });
+        } else {
+          this.showToast(successMessage, 'success');
+        }
       } finally {
-        if (legacyLoading) legacyLoading.hide();
+        loading.hide();
       }
     },
 

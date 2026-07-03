@@ -16,11 +16,26 @@ var modalLoadingService = (function () {
 
     function hide(modalId) {
         if (!modalId) return;
-        getModalElement(modalId).remove();
+        var modal = getModalElement(modalId);
+        if (modal.length) {
+            modal.remove();
+        }
     }
 
     function hideAll() {
         $('[data-loading-modal-id]').remove();
+    }
+
+    function waitForPaint() {
+        return new Promise(function (resolve) {
+            var raf = window.requestAnimationFrame || function (callback) {
+                return setTimeout(callback, 0);
+            };
+
+            raf(function () {
+                setTimeout(resolve, 0);
+            });
+        });
     }
 
     function show(options) {
@@ -41,7 +56,7 @@ var modalLoadingService = (function () {
 
         $('body').append(modal);
 
-        return {
+        var handle = {
             id: modalId,
             hide: function () {
                 hide(modalId);
@@ -51,13 +66,28 @@ var modalLoadingService = (function () {
             },
             updateMessage: function (value) {
                 getModalElement(modalId).find('[data-role="loading-message"]').text(String(value || ""));
+            },
+            update: function (values) {
+                var nextValues = values || {};
+                if (nextValues.title !== undefined) {
+                    this.updateTitle(nextValues.title);
+                }
+                if (nextValues.message !== undefined) {
+                    this.updateMessage(nextValues.message);
+                }
+            },
+            waitForPaint: function () {
+                return waitForPaint();
             }
         };
+
+        return handle;
     }
 
     return {
         show: show,
         hide: hide,
-        hideAll: hideAll
+        hideAll: hideAll,
+        waitForPaint: waitForPaint
     };
 })();
