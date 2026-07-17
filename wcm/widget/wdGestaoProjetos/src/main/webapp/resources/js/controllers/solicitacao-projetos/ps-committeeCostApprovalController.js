@@ -1154,10 +1154,15 @@ const committeeCostApprovalController = {
         this.closeModal(config.modalId);
       }
 
-      this.showToast('Sucesso', `Ação registrada: ${this.asText(config && config.action)}.`, 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showActionSuccess === 'function') {
+        window.gpActionFeedback.showActionSuccess(this, config, {
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          message: `Acao registrada: ${this.asText(config && config.action)}.`
+        });
+      } else {
+        this.showToast('Sucesso', `Ação registrada: ${this.asText(config && config.action)}.`, 'success');
+      }
     } catch (error) {
       console.error('[committeeCostApproval] Error moving task:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
@@ -1168,6 +1173,12 @@ const committeeCostApprovalController = {
   },
 
   showToast: function (title, message, type) {
+    const normalizedType = type || 'info';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
+      return;
+    }
+
     const ui = $(document).data('gpUiComponents');
     if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
       if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;

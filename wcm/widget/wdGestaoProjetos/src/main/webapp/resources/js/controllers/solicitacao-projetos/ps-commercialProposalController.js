@@ -20,6 +20,13 @@ const commercialProposalController = {
     'execucaoProjetoTITT',
     'fornecedorRecomendadoTITT',
     'codfornTITT',
+    'tblRiscosIdentificadosTITT.tituloRiscoTITT',
+    'tblRiscosIdentificadosTITT.descricaoRiscoTITT',
+    'tblRiscosIdentificadosTITT.mitigacaoRiscoTITT',
+    'tblRiscosIdentificadosTITT.planoBRiscoTITT',
+    'tblRiscosIdentificadosTITT.nivelRiscoTITT',
+    'tblRiscosIdentificadosTITT.impactoRiscoTITT',
+    'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT',
     'nomeFornecedorTIPC',
     'codFornecedorTIPC',
     'cnpjTIPC',
@@ -294,6 +301,7 @@ const commercialProposalController = {
     container.on(`click${ns}`, '[data-action="confirm-send"]', (event) => {
       event.preventDefault();
       this.submitProposal({
+        decisionField: 'decisaoTIPC',
         decisionValue: 'aprovado',
         justification: '',
         category: '',
@@ -1475,7 +1483,10 @@ const commercialProposalController = {
     this.requestPaymentConditionSyncFromHidden();
 
     this.renderItemsFromRow(row.tblItensServicosTIPC || row['tblItensServicosTIPC']);
-    this.renderRiskMatrixFromRow(row.tblRiscosIniciaisTIPC || row['tblRiscosIniciaisTIPC']);
+    this.renderRiskMatrixFromRow(
+      row.tblRiscosIniciaisTIPC || row['tblRiscosIniciaisTIPC'],
+      row.tblRiscosIdentificadosTITT || row['tblRiscosIdentificadosTITT']
+    );
     this.renderPrerequisitesFromRow(row.tblPreRequisitosTIPC || row['tblPreRequisitosTIPC']);
 
     this._state.attachments = this.parsePersistedAttachments(row.anexosPropostaTIPC);
@@ -1644,7 +1655,7 @@ const commercialProposalController = {
     this.updateProposalTotalValue();
   },
 
-  renderRiskMatrixFromRow: function (tblValue) {
+  renderRiskMatrixFromRow: function (tblValue, triageTblValue) {
     const list = this.getContainer().find('#proposal-risk-list');
     const empty = this.getContainer().find('#proposal-risk-empty');
     if (!list.length) return;
@@ -1652,7 +1663,7 @@ const commercialProposalController = {
     list.empty();
 
     const rows = this.parseTableJson(tblValue);
-    const risks = rows.map((item) => {
+    let risks = rows.map((item) => {
       const legacy = this.asText(item && item.riscoPotencialTIPC);
       const title = this.asText(item && item.tituloRiscoTIPC) || legacy;
       const description = this.asText(item && item.descricaoRiscoTIPC);
@@ -1669,12 +1680,33 @@ const commercialProposalController = {
     }).filter((item) => item.title || item.description || item.mitigation || item.fallback || item.level || item.impact || item.probability);
 
     if (!risks.length) {
+      risks = this.mapTriageRisksToProposal(triageTblValue);
+    }
+
+    if (!risks.length) {
       if (empty.length) empty.removeClass('hidden');
       return;
     }
 
     risks.forEach((risk) => this.addRiskMatrixItem(risk));
     if (empty.length) empty.addClass('hidden');
+  },
+
+  mapTriageRisksToProposal: function (tblValue) {
+    const rows = this.parseTableJson(tblValue);
+    return rows.map((item) => {
+      return {
+        title: this.asText(item && item.tituloRiscoTITT),
+        description: this.asText(item && item.descricaoRiscoTITT),
+        mitigation: this.asText(item && item.mitigacaoRiscoTITT),
+        fallback: this.asText(item && item.planoBRiscoTITT),
+        level: this.asText(item && item.nivelRiscoTITT),
+        impact: this.asText(item && item.impactoRiscoTITT),
+        probability: this.asText(item && item.probabilidadeRiscoTITT)
+      };
+    }).filter((item) => {
+      return item.title || item.description || item.mitigation || item.fallback || item.level || item.impact || item.probability;
+    });
   },
 
   addRiskMatrixItem: function (data) {
@@ -2815,11 +2847,14 @@ const commercialProposalController = {
       if (config && config.modalId) {
         this.closeModal(config.modalId);
       }
-      this.showToast('Sucesso', this.asText(config && config.successMessage) || 'Movimentacao registrada com sucesso.', 'success');
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showActionSuccess === 'function') {
+        window.gpActionFeedback.showActionSuccess(this, config, {
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId
+        });
+      } else {
+        this.showToast('Sucesso', this.asText(config && config.successMessage) || 'Movimentacao registrada com sucesso.', 'success');
+      }
     } catch (error) {
       console.error('[commercialProposal] Error sending proposal:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível enviar a proposta.', 'error');
@@ -2830,6 +2865,12 @@ const commercialProposalController = {
   },
 
   showToast: function (title, message, type) {
+    const normalizedType = type || 'info';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
+      return;
+    }
+
     const ui = $(document).data('gpUiComponents');
     if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
       if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) {

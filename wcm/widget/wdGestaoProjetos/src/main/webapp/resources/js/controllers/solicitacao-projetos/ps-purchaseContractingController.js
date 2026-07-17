@@ -277,18 +277,13 @@ const purchaseContractingController = {
       this.openModal('modal-return');
     });
 
-    root.on(`click${ns}`, '[data-action="open-reject-modal"]', (event) => {
-      event.preventDefault();
-      this.openModal('modal-reject');
-    });
-
     root.on(`click${ns}`, '[data-action="close-modal"]', (event) => {
       event.preventDefault();
       const modalId = this.asText($(event.currentTarget).attr('data-modal-id'));
       if (modalId) this.closeModal(modalId);
     });
 
-    root.on(`click${ns}`, '#approve-modal, #modal-return, #modal-reject, #finance-installment-edit-modal', (event) => {
+    root.on(`click${ns}`, '#approve-modal, #modal-return, #finance-installment-edit-modal', (event) => {
       if (event.target === event.currentTarget) {
         $(event.currentTarget).addClass('hidden');
       }
@@ -302,11 +297,6 @@ const purchaseContractingController = {
     root.on(`click${ns}`, '[data-action="confirm-return"]', (event) => {
       event.preventDefault();
       this.handleReturn();
-    });
-
-    root.on(`click${ns}`, '[data-action="confirm-reject"]', (event) => {
-      event.preventDefault();
-      this.handleReject();
     });
 
     root.on(`change${ns}`, 'input[name="contract-type"]', () => {
@@ -2080,6 +2070,7 @@ const purchaseContractingController = {
     this.submitAction({
       actionLabel: 'Concluir Contratação',
       modalId: 'approve-modal',
+      decisionField: 'decisaoCRC',
       decisionValue: 'aprovado',
       justification: '',
       category: '',
@@ -2107,34 +2098,8 @@ const purchaseContractingController = {
     this.submitAction({
       actionLabel: 'Devolver para Correção',
       modalId: 'modal-return',
+      decisionField: 'decisaoCRC',
       decisionValue: 'correcao',
-      justification: justification,
-      category: category,
-      requireValidation: false
-    });
-  },
-
-  handleReject: function () {
-    const root = this.getContainer();
-    const category = this.asText(root.find('#purchase-reject-category').val());
-    const justification = this.asText(root.find('#purchase-justification-reject').val());
-
-    if (!category) {
-      this.showToast('Categoria', 'Selecione a categoria do cancelamento.', 'warning');
-      root.find('#purchase-reject-category').trigger('focus');
-      return;
-    }
-
-    if (!justification) {
-      this.showToast('Justificativa', 'Informe a justificativa do cancelamento.', 'warning');
-      root.find('#purchase-justification-reject').trigger('focus');
-      return;
-    }
-
-    this.submitAction({
-      actionLabel: 'Cancelar Processo',
-      modalId: 'modal-reject',
-      decisionValue: 'cancelado',
       justification: justification,
       category: category,
       requireValidation: false
@@ -2183,10 +2148,15 @@ const purchaseContractingController = {
         this.closeModal(config.modalId);
       }
 
-      this.showToast('Sucesso', `Acao registrada: ${this.asText(config && config.actionLabel)}.`, 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showActionSuccess === 'function') {
+        window.gpActionFeedback.showActionSuccess(this, config, {
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          message: `Acao registrada: ${this.asText(config && config.actionLabel)}.`
+        });
+      } else {
+        this.showToast('Sucesso', `Acao registrada: ${this.asText(config && config.actionLabel)}.`, 'success');
+      }
     } catch (error) {
       console.error('[purchaseContracting] Error moving task:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
@@ -2238,6 +2208,12 @@ const purchaseContractingController = {
   },
 
   showToast: function (title, message, type) {
+    const normalizedType = type || 'info';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
+      return;
+    }
+
     const ui = $(document).data('gpUiComponents');
     if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
       if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;

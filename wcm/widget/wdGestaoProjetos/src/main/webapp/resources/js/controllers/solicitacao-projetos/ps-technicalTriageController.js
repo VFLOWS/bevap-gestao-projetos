@@ -2121,6 +2121,18 @@ const technicalTriageController = {
     return this._state.processInstanceId;
   },
 
+  resolvePostTriageNextStep: function () {
+    const root = this.getContainer();
+    const executionMode = this.asText(root.find('input[name="execucao"]:checked').val() || this._state.executionMode).toLowerCase();
+    if (executionMode === 'externo') {
+      return 'TI - Anexar Proposta Comercial';
+    }
+    if (executionMode === 'interno') {
+      return 'Comite - Aprovar Projeto';
+    }
+    return 'Integrar GLPI - Projetos';
+  },
+
   handleTaskAction: async function (config) {
     if (this._state.isSubmitting) return;
 
@@ -2172,11 +2184,15 @@ const technicalTriageController = {
       }, taskFields);
 
       this.closeModal(config.modalId);
-      this.showToast('Sucesso', config.successMessage, 'success');
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showActionSuccess === 'function') {
+        window.gpActionFeedback.showActionSuccess(this, config, {
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          nextStep: this.resolvePostTriageNextStep()
+        });
+      } else {
+        this.showToast('Sucesso', config.successMessage, 'success');
+      }
     } catch (error) {
       console.error('[technicalTriage] Error moving task:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
@@ -2202,6 +2218,12 @@ const technicalTriageController = {
   },
 
   showToast: function (title, message, type) {
+    const normalizedType = type || 'info';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
+      return;
+    }
+
     const ui = $(document).data('gpUiComponents');
     if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
       if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;

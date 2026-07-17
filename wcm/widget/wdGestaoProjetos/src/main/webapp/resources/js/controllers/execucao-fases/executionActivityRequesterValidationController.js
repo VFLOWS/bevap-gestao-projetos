@@ -256,7 +256,6 @@ const executionActivityRequesterValidationController = {
     this.setText('#ef-req-due-date', this.formatDate(card.dueDate) || '-');
     this.setText('#ef-req-phase-name', card.phase || '-');
     this.setText('#ef-req-phase-responsible', card.phaseResponsible || '-');
-    this.setText('#ef-req-phase-effort', this.formatEffort(card.phaseEffort) || '-');
     this.setText('#ef-req-milestone-name', card.milestone || '-');
     this.setText('#ef-req-milestone-period', card.milestonePeriod || '-');
     this.setText('#ef-req-estimated-effort', this.formatEffort(card.activityEffort) || '-');
@@ -265,7 +264,7 @@ const executionActivityRequesterValidationController = {
     this.setText('#ef-req-project-title', card.projectTitle || '-');
     this.setText('#ef-req-project-area', card.projectArea || '-');
     this.setText('#ef-req-project-sponsor', card.projectSponsor || '-');
-    this.setText('#ef-req-project-priority', card.projectPriority || '-');
+    this.setText('#ef-req-project-priority', this.getPriorityLabel(card.projectPriority) || '-');
     this.setText('#ef-req-project-requester', card.requesterName || '-');
     this.setText('#ef-req-project-responsible', card.activityResponsible || card.phaseResponsible || '-');
     $('#requester-feedback-text').val('');
@@ -275,7 +274,6 @@ const executionActivityRequesterValidationController = {
     $('#ef-req-effort-badge').toggleClass('hidden', !this.asText(card.activityEffort));
     $('#ef-req-estimated-summary').toggleClass('hidden', !this.asText(card.activityEffort));
     $('#ef-req-phase-responsible-row').toggleClass('hidden', !this.asText(card.phaseResponsible));
-    $('#ef-req-phase-effort-row').toggleClass('hidden', !this.asText(card.phaseEffort));
     $('#ef-req-milestone-period-row').toggleClass('hidden', !this.asText(card.milestonePeriod));
 
     this.renderDependencies(card.dependencies);
@@ -400,7 +398,7 @@ const executionActivityRequesterValidationController = {
 
   getHistoryMarkup(entry) {
     const decision = this.asText(entry && entry.decision);
-    const label = decision === 'validado' ? 'Validado' : decision === 'correcao' ? 'Devolvido para correção' : decision === 'nao_continuidade' ? 'Não continuidade' : 'Registro';
+    const label = decision === 'validado' ? 'Validado' : decision === 'correcao' ? 'Devolvido para Correção' : decision === 'nao_continuidade' ? 'Não continuidade' : 'Registro';
     const badge = decision === 'validado'
       ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
       : decision === 'correcao'
@@ -530,6 +528,13 @@ const executionActivityRequesterValidationController = {
 
   closeModal() {
     $('#modal-root').empty();
+  },
+
+  getPriorityLabel(priority) {
+    const raw = this.asText(priority);
+    const normalized = raw.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (normalized.indexOf('estrategico') !== -1) return 'Estratégico';
+    return raw;
   },
 
   async submitDecision(config) {

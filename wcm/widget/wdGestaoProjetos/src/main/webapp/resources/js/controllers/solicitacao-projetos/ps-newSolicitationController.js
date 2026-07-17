@@ -13,7 +13,11 @@ const newSolicitationController = {
     tagFilters: {},
     tagFilterConfigs: [],
     pendingTagFilterSync: {},
-    lastColigadaCode: ''
+    lastColigadaCode: '',
+    currentUserEmail: '',
+    costCenterLookupEmail: '',
+    superiorLookupEmail: '',
+    superiorColleagueId: ''
   },
 
   _draftFields: [
@@ -22,6 +26,8 @@ const newSolicitationController = {
     'ColigadaNS',
     'areaUnidadeNS',
     'centrodecustoNS',
+    'centrodecustoNomeNS',
+    'aprovadorSuperiorImedNS',
     'patrocinadorNS',
     'solicitanteNomeNS',
     'solicitanteColleagueIdNS',
@@ -133,6 +139,10 @@ const newSolicitationController = {
     this._state.tagFilterConfigs = [];
     this._state.pendingTagFilterSync = {};
     this._state.lastColigadaCode = '';
+    this._state.currentUserEmail = '';
+    this._state.costCenterLookupEmail = '';
+    this._state.superiorLookupEmail = '';
+    this._state.superiorColleagueId = '';
   },
 
   getTemplateUrl: function () {
@@ -184,13 +194,14 @@ const newSolicitationController = {
         containerSelector: '#coligada-tag-filter',
         hiddenLabelSelector: '#coligada',
         hiddenCodeSelector: '#cod-coligada',
-        datasetId: 'deGetColigada_RM',
+        datasetId: 'ds_ConsultaCentroCustoUsuario',
         valueField: 'CODCOLIGADA',
-        labelField: 'NOMEFANTASIA',
-        fields: ['CODCOLIGADA', 'NOMEFANTASIA'],
+        labelField: 'CODCOLIGADA',
+        fields: ['CODCOLIGADA', 'CODCCUSTO', 'NOME_CENTRO_CUSTO'],
+        requiresUserCostCenter: true,
+        normalizeRows: 'user-coligada',
         columns: [
-          { header: 'Codigo', field: 'CODCOLIGADA', width: 'w-1/3' },
-          { header: 'Descrição', field: 'NOMEFANTASIA', width: 'w-2/3' },
+          { header: 'Codigo', field: 'CODCOLIGADA', width: 'w-full' },
         ]
       },
       {
@@ -214,16 +225,21 @@ const newSolicitationController = {
         containerSelector: '#centro-custo-tag-filter',
         hiddenLabelSelector: '#centro-custo',
         hiddenCodeSelector: '#cod-centro-custo',
-        datasetId: 'dsGetCentroCusto_RM',
+        datasetId: 'ds_ConsultaCentroCustoUsuario',
         valueField: 'CODCCUSTO',
-        labelField: 'NOME',
-        fields: ['CODCCUSTO', 'NOME'],
+        labelField: 'NOME_CENTRO_CUSTO',
+        fields: ['CODCOLIGADA', 'CODCCUSTO', 'NOME_CENTRO_CUSTO'],
         columns: [
           { header: 'Codigo', field: 'CODCCUSTO', width: 'w-1/3' },
-          { header: 'Nome', field: 'NOME', width: 'w-2/3' },
+          { header: 'Nome', field: 'NOME_CENTRO_CUSTO', width: 'w-2/3' },
         ],
         dependsOnColigada: true,
-        getItemLabel: (row) => this.buildLookupDisplayValue(row, 'CODCCUSTO', 'NOME')
+        requiresUserCostCenter: true,
+        normalizeRows: 'user-centro-custo',
+        filterFieldMap: {
+          codColigada: 'CODCOLIGADA'
+        },
+        getItemLabel: (row) => this.buildLookupDisplayValue(row, 'CODCCUSTO', 'NOME_CENTRO_CUSTO')
       },
       {
         key: 'patrocinador',
@@ -378,21 +394,80 @@ const newSolicitationController = {
     });
   },
 
-  loadTagFilterDataset: function (cfg, filtersOverride) {
+  loadTagFilterDataset: async function (cfg, filtersOverride) {
     if (typeof fluigService === 'undefined' || !fluigService.getDatasetRows) {
       return Promise.resolve([]);
     }
 
-    return fluigService.getDatasetRows(cfg.datasetId, {
-      fields: cfg.fields,
-      filters: filtersOverride || null
-    }).then((rows) => {
-      const finalRows = Array.isArray(rows) ? rows : [];
-      if (cfg && cfg.normalizeRows === 'employee') {
-        return this.normalizeEmployeeRows(finalRows);
+    const filters = Object.assign({}, filtersOverride || {});
+
+    if (cfg && cfg.filterFieldMap) {
+      Object.keys(cfg.filterFieldMap).forEach((sourceKey) => {
+        const targetKey = cfg.filterFieldMap[sourceKey];
+        if (filters[sourceKey] !== undefined && filters[targetKey] === undefined) {
+          filters[targetKey] = filters[sourceKey];
+        }
+        delete filters[sourceKey];
+      });
+    }
+
+    if (cfg && cfg.requiresUserCostCenter) {
+      const emailUsuario = await this.getCostCenterLookupEmail();
+      if (!emailUsuario) {
+        return [];
       }
-      return finalRows;
+      filters.EMAILUSUARIO = emailUsuario;
+    }
+
+    const rows = await fluigService.getDatasetRows(cfg.datasetId, {
+      fields: cfg.fields,
+      filters: Object.keys(filters).length ? filters : null
     });
+
+    const finalRows = Array.isArray(rows) ? rows : [];
+    if (cfg && cfg.normalizeRows === 'employee') {
+      return this.normalizeEmployeeRows(finalRows);
+    }
+    if (cfg && cfg.normalizeRows === 'user-coligada') {
+      return this.normalizeUserColigadaRows(finalRows);
+    }
+    if (cfg && cfg.normalizeRows === 'user-centro-custo') {
+      return this.normalizeUserCostCenterRows(finalRows);
+    }
+    return finalRows;
+  },
+
+  normalizeUserColigadaRows: function (rows) {
+    const seen = {};
+    return (Array.isArray(rows) ? rows : []).map((row) => {
+      const code = this.asText(this.getFirstValue(row, ['CODCOLIGADA', 'codcoligada']));
+      if (!code || seen[code] || this.isDatasetMessageRow(row)) {
+        return null;
+      }
+      seen[code] = true;
+      return {
+        CODCOLIGADA: code
+      };
+    }).filter(Boolean);
+  },
+
+  normalizeUserCostCenterRows: function (rows) {
+    const seen = {};
+    return (Array.isArray(rows) ? rows : []).map((row) => {
+      const coligada = this.asText(this.getFirstValue(row, ['CODCOLIGADA', 'codcoligada']));
+      const code = this.asText(this.getFirstValue(row, ['CODCCUSTO', 'codccusto']));
+      const name = this.asText(this.getFirstValue(row, ['NOME_CENTRO_CUSTO', 'nome_centro_custo', 'NOME', 'nome']));
+      const key = `${coligada}|${code}`;
+      if (!code || seen[key] || this.isDatasetMessageRow(row)) {
+        return null;
+      }
+      seen[key] = true;
+      return {
+        CODCOLIGADA: coligada,
+        CODCCUSTO: code,
+        NOME_CENTRO_CUSTO: name
+      };
+    }).filter(Boolean);
   },
 
   normalizeEmployeeRows: function (rows) {
@@ -432,6 +507,181 @@ const newSolicitationController = {
     return text.replace(/(^|\s)(\S)/g, function (match, separator, letter) {
       return separator + letter.toUpperCase();
     });
+  },
+
+  getFirstValue: function (row, keys) {
+    if (!row || !Array.isArray(keys)) return '';
+
+    for (let index = 0; index < keys.length; index += 1) {
+      const key = keys[index];
+      if (row[key] !== undefined && row[key] !== null && row[key] !== '') {
+        return row[key];
+      }
+    }
+
+    return '';
+  },
+
+  isDatasetMessageRow: function (row) {
+    if (!row) return false;
+    return !!(row.ERRO || row.erro || row.RETORNO || row.retorno);
+  },
+
+  isViniciusEmail: function (email) {
+    return this.asText(email).toLowerCase() === 'vinicius.nogueira@vflows.com.br';
+  },
+
+  getCurrentUserEmail: async function () {
+    if (this._state.currentUserEmail) {
+      return this._state.currentUserEmail;
+    }
+
+    let email = '';
+    const userCode = typeof WCMAPI !== 'undefined' && WCMAPI.getUserCode
+      ? this.asText(WCMAPI.getUserCode())
+      : '';
+
+    try {
+      if (userCode && typeof fluigService !== 'undefined' && fluigService.getDatasetRows) {
+        const rows = await fluigService.getDatasetRows('colleague', {
+          fields: ['colleaguePK.colleagueId', 'mail'],
+          filters: {
+            'colleaguePK.colleagueId': userCode
+          }
+        });
+        const row = rows && rows.length ? rows[0] : null;
+        email = this.asText(this.getFirstValue(row, ['mail', 'email', 'EMAIL']));
+      }
+    } catch (error) {
+      console.warn('[newSolicitation] Nao foi possivel consultar e-mail do usuario no colleague:', error);
+    }
+
+    if (!email && typeof WCMAPI !== 'undefined') {
+      email = this.asText(WCMAPI.userEmail || WCMAPI.email || WCMAPI.user);
+    }
+
+    this._state.currentUserEmail = email;
+    return email;
+  },
+
+  getCostCenterLookupEmail: async function () {
+    if (this._state.costCenterLookupEmail) {
+      return this._state.costCenterLookupEmail;
+    }
+
+    const currentEmail = await this.getCurrentUserEmail();
+    const finalEmail = this.isViniciusEmail(currentEmail)
+      ? 'asalmeida@bevap.com.br'
+      : currentEmail;
+
+    this._state.costCenterLookupEmail = finalEmail;
+    return finalEmail;
+  },
+
+  getSuperiorLookupEmail: async function () {
+    if (this._state.superiorLookupEmail) {
+      return this._state.superiorLookupEmail;
+    }
+
+    const currentEmail = await this.getCurrentUserEmail();
+    const finalEmail = this.isViniciusEmail(currentEmail)
+      ? 'asalmeida@bevap.com.br'
+      : currentEmail;
+
+    this._state.superiorLookupEmail = finalEmail;
+    return finalEmail;
+  },
+
+  getSolicitationRequesterEmail: async function () {
+    const currentEmail = await this.getCurrentUserEmail();
+    return this.isViniciusEmail(currentEmail)
+      ? 'asalmeida@bevap.com.br'
+      : currentEmail;
+  },
+
+  getColleagueByEmail: async function (email) {
+    if (!email || typeof fluigService === 'undefined' || !fluigService.getDatasetRows) {
+      return null;
+    }
+
+    try {
+      const rows = await fluigService.getDatasetRows('colleague', {
+        filters: {
+          mail: email
+        }
+      });
+      return rows && rows.length ? rows[0] : null;
+    } catch (error) {
+      console.warn('[newSolicitation] Erro ao consultar colleague por e-mail:', error);
+      return null;
+    }
+  },
+
+  getColleagueIdByEmail: async function (email) {
+    const row = await this.getColleagueByEmail(email);
+    return this.asText(this.getFirstValue(row, [
+      'colleaguePK.colleagueId',
+      'colleagueId',
+      'colleagueid',
+      'COLLEAGUEID'
+    ]));
+  },
+
+  resolveSolicitationRequesterInfo: async function () {
+    const fallbackName = typeof WCMAPI !== 'undefined' && WCMAPI.getUser ? this.asText(WCMAPI.getUser()) : '';
+    const fallbackId = typeof WCMAPI !== 'undefined' && WCMAPI.getUserCode ? this.asText(WCMAPI.getUserCode()) : '';
+    const requesterEmail = await this.getSolicitationRequesterEmail();
+    const requesterRow = await this.getColleagueByEmail(requesterEmail);
+
+    return {
+      name: this.asText(this.getFirstValue(requesterRow, [
+        'colleagueName',
+        'COLLEAGUENAME',
+        'name',
+        'NOME'
+      ])) || fallbackName,
+      colleagueId: this.asText(this.getFirstValue(requesterRow, [
+        'colleaguePK.colleagueId',
+        'colleagueId',
+        'colleagueid',
+        'COLLEAGUEID'
+      ])) || fallbackId
+    };
+  },
+
+  resolveImmediateSuperiorColleagueId: async function () {
+    if (this._state.superiorColleagueId) {
+      return this._state.superiorColleagueId;
+    }
+
+    try {
+      const email = await this.getSuperiorLookupEmail();
+      const superiorRows = await fluigService.getDatasetRows('ds_ConsultaSuperiorImediato', {
+        filters: {
+          EMAIL_USUARIO: email
+        }
+      });
+      const superiorRow = superiorRows && superiorRows.length ? superiorRows[0] : null;
+      const superiorEmail = this.asText(this.getFirstValue(superiorRow, [
+        'EMAIL APROVADOR',
+        'EMAIL_APROVADOR',
+        'EMAILAPROVADOR',
+        'EMAIL_APROV',
+        'emailAprovador',
+        'email_aprovador'
+      ]));
+      const colleagueId = await this.getColleagueIdByEmail(superiorEmail);
+
+      if (colleagueId) {
+        this._state.superiorColleagueId = colleagueId;
+        return colleagueId;
+      }
+
+      return '';
+    } catch (error) {
+      console.warn('[newSolicitation] Erro ao resolver aprovador superior imediato:', error);
+      return '';
+    }
   },
 
   normalizeLookupText: function (value) {
@@ -1282,7 +1532,7 @@ const newSolicitationController = {
 
     try {
       window.localStorage.setItem(cacheKey, JSON.stringify({
-        "centro-custo": this.asText(payload && payload["centro-custo"]),
+        "centro-custo": this.asText(payload && payload.centroCustoNome),
         stakeholders: Array.isArray(payload && payload.stakeholders) ? payload.stakeholders : [],
         declaracao: !!(payload && payload.declaracao)
       }));
@@ -1390,7 +1640,7 @@ const newSolicitationController = {
       ? expectedBenefitsFromDataset
       : this.normalizeExpectedBenefitsFromLegacyField(row.beneficiosesperadosNS);
     const attachments = this.parseAttachmentMetadata(row.anexosNS);
-    const centroCusto = this.asText(row.centrodecustoNS) || this.asText(cachedUiState["centro-custo"]);
+    const centroCustoNome = this.asText(row.centrodecustoNomeNS) || this.asText(cachedUiState["centro-custo"]);
     const declaracao = cachedUiState.declaracao === true;
 
     this._state.documentId = currentDocumentId;
@@ -1402,7 +1652,7 @@ const newSolicitationController = {
     // Limpa labels; serão preenchidos ao sincronizar com os TagInputFilters.
     this.setFieldValue('#coligada', '');
     this.setFieldValue('#area', '');
-    this.setFieldValue('#centro-custo', '');
+    this.setFieldValue('#centro-custo', centroCustoNome);
     this.setFieldValue('#patrocinador', this.normalizeEmployeeName(row.patrocinadorNS) || this.asText(row.patrocinadorNS));
     this.setFieldValue('#objetivo', row.objetivodoprojetoNS);
     this.setFieldValue('#problema', row.problemaOportunidadeNS);
@@ -1593,6 +1843,8 @@ const newSolicitationController = {
 
     const attachments = await this.collectAttachmentsPayload();
     const attachmentsMetadata = this.buildAttachmentMetadata();
+    const superiorImediatoColleagueId = await this.resolveImmediateSuperiorColleagueId();
+    const requesterInfo = await this.resolveSolicitationRequesterInfo();
 
     return {
       titulo: getValue("#titulo"),
@@ -1600,9 +1852,11 @@ const newSolicitationController = {
       coligada: getValue('#cod-coligada'),
       area: getValue("#cod-area"),
       "centro-custo": getValue("#cod-centro-custo"),
+      centroCustoNome: getValue("#centro-custo"),
       patrocinador: getValue("#patrocinador"),
-      solicitanteNome: typeof WCMAPI !== 'undefined' && WCMAPI.getUser ? this.asText(WCMAPI.getUser()) : '',
-      solicitanteColleagueId: typeof WCMAPI !== 'undefined' && WCMAPI.getUserCode ? this.asText(WCMAPI.getUserCode()) : '',
+      solicitanteNome: requesterInfo.name,
+      solicitanteColleagueId: requesterInfo.colleagueId,
+      superiorImediatoColleagueId: superiorImediatoColleagueId,
       objetivo: getValue("#objetivo"),
       problema: getValue("#problema"),
       beneficiosEsperados: beneficiosEsperados,
@@ -1884,7 +2138,7 @@ const newSolicitationController = {
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
         title: 'Erro ao enviar',
-        message: 'Não foi possível criar a solicitação no Fluig. Tente novamente.'
+        message: error && error.message ? error.message : 'Não foi possível criar a solicitação no Fluig. Tente novamente.'
       });
     } finally {
       this._state.isSubmitting = false;

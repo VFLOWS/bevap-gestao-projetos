@@ -1220,6 +1220,7 @@ const gccCostApprovalController = {
     this.submitAction({
       actionLabel: 'Aprovar Custo',
       modalId: 'approve-modal',
+      decisionField: 'decisaoGCC',
       decisionValue: 'aprovado',
       justification: '',
       category: '',
@@ -1265,6 +1266,7 @@ const gccCostApprovalController = {
     this.submitAction({
       actionLabel: 'Devolver para Correção',
       modalId: 'modal-return',
+      decisionField: 'decisaoGCC',
       decisionValue: 'correcao',
       justification: justification,
       category: category,
@@ -1310,6 +1312,7 @@ const gccCostApprovalController = {
     this.submitAction({
       actionLabel: 'Reprovar',
       modalId: 'modal-reject',
+      decisionField: 'decisaoGCC',
       decisionValue: 'reprovado',
       justification: justification,
       category: category,
@@ -1370,10 +1373,15 @@ const gccCostApprovalController = {
         this.closeModal(config.modalId);
       }
 
-      this.showToast('Sucesso', `Acao registrada: ${this.asText(config && config.actionLabel)}.`, 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showActionSuccess === 'function') {
+        window.gpActionFeedback.showActionSuccess(this, config, {
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          message: `Acao registrada: ${this.asText(config && config.actionLabel)}.`
+        });
+      } else {
+        this.showToast('Sucesso', `Acao registrada: ${this.asText(config && config.actionLabel)}.`, 'success');
+      }
     } catch (error) {
       console.error('[gccCostApproval] Error moving task:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
@@ -1425,6 +1433,12 @@ const gccCostApprovalController = {
   },
 
   showToast: function (title, message, type) {
+    const normalizedType = type || 'info';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
+      return;
+    }
+
     const ui = $(document).data('gpUiComponents');
     if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
       if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;

@@ -342,12 +342,20 @@ Object.assign(correctionController, {
       this.getContainer().find('#success-modal').removeClass('hidden');
     } catch (error) {
       console.error('[correction] Error submitting correction:', error);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showError === 'function') {
+        window.gpActionFeedback.showError({
+          controller: this,
+          title: 'Erro ao enviar correcao',
+          message: (error && error.message) || String(error || '') || 'Nao foi possivel reenviar a correcao para avaliacao.'
+        });
+      } else {
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
         title: 'Erro ao enviar correção',
         message: (error && error.message) || String(error || '') || 'Não foi possível reenviar a correção para avaliação.'
       });
+      }
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -366,23 +374,41 @@ Object.assign(correctionController, {
     const justification = this.asText(container.find('#correction-cancel-reason').val());
 
     if (!category) {
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showValidation === 'function') {
+        window.gpActionFeedback.showValidation({
+          controller: this,
+          title: 'Categoria obrigatoria',
+          message: 'Selecione a categoria do cancelamento.',
+          missingFields: ['Categoria do cancelamento']
+        });
+      } else {
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
         title: 'Categoria obrigatoria',
         message: 'Selecione a categoria do cancelamento.'
       });
+      }
       container.find('#correction-cancel-category').trigger('focus');
       return;
     }
 
     if (!justification) {
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showValidation === 'function') {
+        window.gpActionFeedback.showValidation({
+          controller: this,
+          title: 'Justificativa obrigatoria',
+          message: 'Informe o motivo do cancelamento.',
+          missingFields: ['Motivo do cancelamento']
+        });
+      } else {
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
         title: 'Justificativa obrigatoria',
         message: 'Informe o motivo do cancelamento.'
       });
+      }
       container.find('#correction-cancel-reason').trigger('focus');
       return;
     }
@@ -428,24 +454,39 @@ Object.assign(correctionController, {
 
       this.closeCancelModal();
       this.clearDraftUiCache(this._state.documentId);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showSuccess === 'function') {
+        window.gpActionFeedback.showSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Nao continuidade registrada!',
+          message: 'O cancelamento foi registrado com sucesso.',
+          nextStep: 'Processo cancelado'
+        });
+      } else {
       this.showNotification({
         borderClass: 'border-bevap-green',
         iconClass: 'fa-check-circle text-bevap-green',
         title: 'Correção cancelada',
         message: 'O cancelamento foi registrado com sucesso.'
       });
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 300);
+      }
     } catch (error) {
       console.error('[correction] Error canceling correction:', error);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showError === 'function') {
+        window.gpActionFeedback.showError({
+          controller: this,
+          title: 'Erro ao cancelar',
+          message: (error && error.message) || String(error || '') || 'Nao foi possivel concluir o cancelamento.'
+        });
+      } else {
       this.showNotification({
         borderClass: 'border-red-500',
         iconClass: 'fa-triangle-exclamation text-red-500',
         title: 'Erro ao cancelar',
         message: (error && error.message) || String(error || '') || 'Não foi possível concluir o cancelamento.'
       });
+      }
     } finally {
       this._state.isSubmitting = false;
       loading.hide();

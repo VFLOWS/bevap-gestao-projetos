@@ -299,7 +299,14 @@ var fluigService = {
                 processName: 'execucaoFasesAtividades',
                 datasetId: 'dsGetExecucaoAtividade',
                 formName: 'formExecucaoAtividade',
-                label: 'Execucao de Fases'
+                label: 'Execução de Fases'
+            },
+            entrega: {
+                type: 'entrega',
+                processName: 'ProcessEntregaProjetos',
+                datasetId: 'dsGetEntregaProjetos',
+                formName: 'FormEntregaProjetos',
+                label: 'Entrega'
             }
         };
     },
@@ -320,6 +327,14 @@ var fluigService = {
 
         if (text === 'execucaofases' || text === 'execucao-fases' || text === 'execucao fases') {
             return 'execucaoFases';
+        }
+
+        if (text === 'entrega' || text === 'entregaprojetos' || text === 'entrega-projetos' || text === 'entrega projetos') {
+            return 'entrega';
+        }
+
+        if (text.indexOf('processentregaprojetos') !== -1 || text.indexOf('entrega') !== -1) {
+            return 'entrega';
         }
 
         return '';
@@ -346,6 +361,10 @@ var fluigService = {
 
         if (text.indexOf('execucaofasesatividades') !== -1 || text.indexOf('execucao fases') !== -1 || text.indexOf('execuÃ§Ã£o fases') !== -1) {
             return 'execucaoFases';
+        }
+
+        if (text.indexOf('processentregaprojetos') !== -1 || text.indexOf('entrega') !== -1) {
+            return 'entrega';
         }
 
         return '';
@@ -382,6 +401,18 @@ var fluigService = {
             return 38;
         }
 
+        if (activity === null && normalizedType === 'entrega' && statusText === '2') {
+            return 56;
+        }
+
+        if (activity === null && normalizedType === 'solicitacao' && statusText === '2') {
+            return 72;
+        }
+
+        if (activity === null && normalizedType === 'solicitacao' && statusText === '1') {
+            return 24;
+        }
+
         return activity;
     },
 
@@ -391,7 +422,7 @@ var fluigService = {
         }
 
         var normalizedType = this.detectProjectProcessType(processType);
-        if (normalizedType !== 'desenvolvimento') {
+        if (['solicitacao', 'desenvolvimento', 'entrega'].indexOf(normalizedType) === -1) {
             return fields;
         }
 
@@ -435,8 +466,22 @@ var fluigService = {
         return definition ? definition.label : 'Processo';
     },
 
-    getProjectCancelledActivities: function () {
-        return [24, 47, 55, 56, 59];
+    getProjectCancelledActivities: function (processType) {
+        var normalizedType = this.detectProjectProcessType(processType);
+
+        if (normalizedType === 'desenvolvimento') {
+            return [30];
+        }
+
+        if (normalizedType === 'execucaoFases') {
+            return [55, 56];
+        }
+
+        if (normalizedType === 'entrega') {
+            return [33, 38, 48];
+        }
+
+        return [24, 47, 59, 79, 81, 83, 88];
     },
 
     getProjectProcessActionMap: function (processType) {
@@ -464,7 +509,12 @@ var fluigService = {
                  route: 'dpStartExecErrorTreatment',
                  label: 'Tratar Erro Iniciar Execução'
                  },
-                 
+                56: {
+                 enabled: true,
+                 route: 'dpStartDeliveryErrorTreatment',
+                 label: 'Tratar Erro Iniciar Entrega'
+                 },
+
                  18: {
                  enabled: true,
                  route: 'projectExecution', // Aponta para a chave criada no router
@@ -493,7 +543,7 @@ var fluigService = {
                 14: {
                     enabled: true,
                     route: 'executionActivityWaiting',
-                    label: 'Aguardar Execucao'
+                    label: 'Aguardar Execução'
                 },
                 18: {
                     enabled: true,
@@ -509,6 +559,63 @@ var fluigService = {
                     enabled: true,
                     route: 'executionActivityTiValidation',
                     label: 'Validar Atividade TI'
+                }
+            };
+        }
+
+        if (normalizedType === 'entrega') {
+            return {
+                14: {
+                    enabled: true,
+                    route: 'epGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
+                18: {
+                    enabled: true,
+                    route: 'epDeliveryPlanning',
+                    label: 'Planejar Entrega'
+                },
+                22: {
+                    enabled: true,
+                    route: 'epUserTraining',
+                    label: 'Treinamento dos Usuarios'
+                },
+                27: {
+                    enabled: true,
+                    route: 'epFinalGoLiveValidation',
+                    label: 'Validacao Final GO Live'
+                },
+                35: {
+                    enabled: true,
+                    route: 'epGoLiveExecution',
+                    label: 'Realizar GO Live'
+                },
+                42: {
+                    enabled: true,
+                    route: 'epRequesterGoLiveValidation',
+                    label: 'Validar GO Live'
+                },
+                46: {
+                    enabled: true,
+                    route: 'epProjectClosureDocumentation',
+                    label: 'Anexar Documentacao de Encerramento'
+                },
+                50: {
+                    enabled: true,
+                    route: 'epGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
+                51: {
+                    enabled: false,
+                    route: '',
+                    label: 'Integrando GLPI',
+                    hideButton: true
+                },
+                56: {
+                    enabled: false,
+                    route: '',
+                    label: 'Finalizado',
+                    hideButton: true
                 }
             };
         }
@@ -591,13 +698,15 @@ var fluigService = {
                 4: 'Planejamento do Projeto',
                 14: 'Aguardando Planejamento do Projeto',
                 18: 'Execução do Projeto',
-                23: 'Validacao do Solicitante',
-                25: 'Aguardando Encaminhamento da Validacao do Solicitante',
-                32: 'Validacao TI',
-                34: 'Aguardando Encaminhamento da Validacao TI',
-                38: 'Execucao de Projeto Finalizada',
+                23: 'Validação do Solicitante',
+                25: 'Aguardando Encaminhamento da Validação do Solicitante',
+                32: 'Validação TI',
+                34: 'Aguardando Encaminhamento da Validação TI',
+                38: 'Execução de Projeto Finalizada',
                 46: 'Erro de Integracao GLPI',
                 52: 'Erro de Integracao GLPI',
+                55: 'Iniciando Entrega Projeto',
+                56: 'Tratar Erro - Iniciar Entrega Projeto',
                 72: 'Finalizado'
             };
         }
@@ -606,16 +715,33 @@ var fluigService = {
             return {
                 0: 'Inicio da Atividade',
                 12: 'Integracao GLPI',
-                14: 'Aguardando Execucao da Atividade',
-                18: 'Execucao da Atividade',
-                23: 'Validacao do Solicitante',
-                25: 'Aguardando Encaminhamento da Validacao do Solicitante',
-                32: 'Validacao TI',
-                34: 'Aguardando Encaminhamento da Validacao TI',
+                14: 'Aguardando Execução da Atividade',
+                18: 'Execução da Atividade',
+                23: 'Validação do Solicitante',
+                25: 'Aguardando Encaminhamento da Validação do Solicitante',
+                32: 'Validação TI',
+                34: 'Aguardando Encaminhamento da Validação TI',
                 36: 'Integracao GLPI',
                 41: 'Finalizado',
                 46: 'Erro de Integracao GLPI',
                 52: 'Erro de Integracao GLPI'
+            };
+        }
+
+        if (normalizedType === 'entrega') {
+            return {
+                0: 'Inicio da Entrega',
+                12: 'Integracao GLPI',
+                14: 'Erro de Integracao GLPI',
+                18: 'Planejamento da Entrega do Projeto',
+                22: 'Treinamento dos Usuarios - QA',
+                27: 'Validacao Final para GO Live',
+                35: 'GO Live em Producao',
+                42: 'Validacao do GO Live',
+                46: 'Documentacao de Encerramento',
+                50: 'Erro de Integracao GLPI',
+                51: 'Integracao GLPI',
+                56: 'Finalizado'
             };
         }
 
@@ -694,7 +820,7 @@ var fluigService = {
         var activity = this.parseProjectProcessActivity(context.activity !== undefined ? context.activity : raw);
         var stateLabelMap = this.getProjectProcessStateLabelMap(processType);
 
-        if (this.getProjectCancelledActivities().indexOf(activity) !== -1) {
+        if (this.getProjectCancelledActivities(processType).indexOf(activity) !== -1) {
             return 'Cancelado';
         }
 
@@ -943,6 +1069,8 @@ var fluigService = {
             { formField: "coligada", fluigField: "ColigadaNS" },
             { formField: "area", fluigField: "areaUnidadeNS" },
             { formField: "centro-custo", fluigField: "centrodecustoNS" },
+            { formField: "centroCustoNome", fluigField: "centrodecustoNomeNS" },
+            { formField: "superiorImediatoColleagueId", fluigField: "aprovadorSuperiorImedNS" },
             { formField: "patrocinador", fluigField: "patrocinadorNS" },
             { formField: "objetivo", fluigField: "objetivodoprojetoNS" },
             { formField: "problema", fluigField: "problemaOportunidadeNS" },
@@ -1021,7 +1149,11 @@ var fluigService = {
             var numSolicitacao = result.numSolicitacao || result.NUMSOLICITACAO || "";
 
             if (status !== "OK") {
-                throw new Error(result.message || result.MESSAGE || "Erro ao iniciar solicitacao no Fluig");
+                var errorMessage = result.message || result.MESSAGE || result.error || result.ERROR || "";
+                if (!errorMessage && numSolicitacao && status !== "OK") {
+                    errorMessage = numSolicitacao;
+                }
+                throw new Error(errorMessage || "Erro ao iniciar solicitacao no Fluig");
             }
 
             // Monta o código do projeto e salva no card recém-criado

@@ -2,9 +2,11 @@ const router = {
   _lastHash: null,
   _isRouting: false,
   _currentController: null,
+  _headerEventNamespace: '.routerHeader',
 
   init: function () {
     this._lastHash = window.location.hash;
+    this.bindHeaderEvents();
 
     $(window).off('hashchange.router').on('hashchange.router', () => {
       if (window.location.hash !== this._lastHash) {
@@ -146,28 +148,76 @@ const router = {
           breadcrumb: ['TI', 'Erro Iniciar Execução'],
           handler: () => dpStartExecErrorTreatmentController.load(params)
         },
+        dpStartDeliveryErrorTreatment: {
+          controller: dpStartDeliveryErrorTreatmentController,
+          title: 'TI - Tratar Erro Iniciar Entrega Projeto',
+          breadcrumb: ['TI', 'Erro Iniciar Entrega'],
+          handler: () => dpStartDeliveryErrorTreatmentController.load(params)
+        },
+        epGlpiErrorTreatment: {
+          controller: epGlpiErrorTreatmentController,
+          title: 'Entrega - Tratar Erro Integracao GLPI',
+          breadcrumb: ['Entrega', 'Erro Integracao GLPI'],
+          handler: () => epGlpiErrorTreatmentController.load(params)
+        },
+        epDeliveryPlanning: {
+          controller: epDeliveryPlanningController,
+          title: 'Planejamento da Entrega do Projeto',
+          breadcrumb: ['Entrega', 'Planejamento da Entrega'],
+          handler: () => epDeliveryPlanningController.load(params)
+        },
+        epUserTraining: {
+          controller: epUserTrainingController,
+          title: 'Treinamento dos Usuarios da Entrega',
+          breadcrumb: ['Entrega', 'Treinamento dos Usuarios'],
+          handler: () => epUserTrainingController.load(params)
+        },
+        epFinalGoLiveValidation: {
+          controller: epFinalGoLiveValidationController,
+          title: 'TI - Validacao Final do Projeto para GO Live',
+          breadcrumb: ['Entrega', 'Validacao Final GO Live'],
+          handler: () => epFinalGoLiveValidationController.load(params)
+        },
+        epGoLiveExecution: {
+          controller: epGoLiveExecutionController,
+          title: 'TI - Realizar GO Live em Producao',
+          breadcrumb: ['Entrega', 'Realizar GO Live'],
+          handler: () => epGoLiveExecutionController.load(params)
+        },
+        epRequesterGoLiveValidation: {
+          controller: epRequesterGoLiveValidationController,
+          title: 'Solicitante - Validar GO Live em Producao',
+          breadcrumb: ['Entrega', 'Validar GO Live'],
+          handler: () => epRequesterGoLiveValidationController.load(params)
+        },
+        epProjectClosureDocumentation: {
+          controller: epProjectClosureDocumentationController,
+          title: 'TI - Anexar Documentacao de Encerramento do Projeto',
+          breadcrumb: ['Entrega', 'Encerramento'],
+          handler: () => epProjectClosureDocumentationController.load(params)
+        },
         executionActivityWaiting: {
           controller: executionActivityWaitingController,
-          title: 'Aguardando Execucao da Atividade',
-          breadcrumb: ['Execucao de Fases', 'Aguardando Execucao'],
+          title: 'Aguardando Execução da Atividade',
+          breadcrumb: ['Execução de Fases', 'Aguardando Execução'],
           handler: () => executionActivityWaitingController.load(params)
         },
         executionActivity: {
           controller: executionActivityController,
-          title: 'Execucao da Atividade',
-          breadcrumb: ['Execucao de Fases', 'Execucao da Atividade'],
+          title: 'Execução da Atividade',
+          breadcrumb: ['Execução de Fases', 'Execução da Atividade'],
           handler: () => executionActivityController.load(params)
         },
         executionActivityRequesterValidation: {
           controller: executionActivityRequesterValidationController,
-          title: 'Solicitante - Validacao da Atividade',
-          breadcrumb: ['Execucao de Fases', 'Validacao do Solicitante'],
+          title: 'Solicitante - Validação da Atividade',
+          breadcrumb: ['Execução de Fases', 'Validação do Solicitante'],
           handler: () => executionActivityRequesterValidationController.load(params)
         },
         executionActivityTiValidation: {
           controller: executionActivityTiValidationController,
-          title: 'TI - Validacao da Atividade',
-          breadcrumb: ['Execucao de Fases', 'Validacao TI'],
+          title: 'TI - Validação da Atividade',
+          breadcrumb: ['Execução de Fases', 'Validação TI'],
           handler: () => executionActivityTiValidationController.load(params)
         },
         requesterProposalApproval: {
@@ -179,26 +229,26 @@ const router = {
         // ADICIONE ESTA NOVA ROTA:
         projectExecution: {
           controller: projectExecutionController,
-          title: 'Desenvolvimento - Execução do Projeto',
-          breadcrumb: ['Desenvolvimento', 'Execução do Projeto'],
+          title: 'Desenvolvimento - Execução de Projeto',
+          breadcrumb: ['Desenvolvimento', 'Execução de Projeto'],
           handler: () => projectExecutionController.load(params)
         },
         projectRequesterValidation: {
           controller: projectRequesterValidationController,
-          title: 'Desenvolvimento - Validacao do Solicitante',
-          breadcrumb: ['Desenvolvimento', 'Validacao do Solicitante'],
+          title: 'Desenvolvimento - Validação do Solicitante',
+          breadcrumb: ['Desenvolvimento', 'Validação do Solicitante'],
           handler: () => projectRequesterValidationController.load(params)
         },
         projectTiValidation: {
           controller: projectTiValidationController,
-          title: 'Desenvolvimento - Validacao TI',
-          breadcrumb: ['Desenvolvimento', 'Validacao TI'],
+          title: 'Desenvolvimento - Validação TI',
+          breadcrumb: ['Desenvolvimento', 'Validação TI'],
           handler: () => projectTiValidationController.load(params)
         },
         projectFinal: {
           controller: projectFinalController,
-          title: 'Desenvolvimento - Execucao de Projeto Finalizada',
-          breadcrumb: ['Desenvolvimento', 'Execucao de Projeto Finalizada'],
+          title: 'Desenvolvimento - Execução de Projeto Finalizada',
+          breadcrumb: ['Desenvolvimento', 'Execução de Projeto Finalizada'],
           handler: () => projectFinalController.load(params)
         },
       };
@@ -213,6 +263,7 @@ const router = {
 
       this._currentController = route.controller;
       await Promise.resolve(route.handler());
+      route.page = page;
       this.applyHeader(route);
     } catch (error) {
       console.error('Router error:', error);
@@ -255,6 +306,68 @@ const router = {
         ${trailHtml}
       `);
     }
+
+    this.updateBackButton(route);
+  },
+
+  bindHeaderEvents: function () {
+    const ns = this._headerEventNamespace;
+    $(document)
+      .off(`click${ns}`, '[data-action="gp-back-dashboard"]')
+      .on(`click${ns}`, '[data-action="gp-back-dashboard"]', (event) => {
+        event.preventDefault();
+        this.openBackDashboardModal();
+      });
+
+    $(document)
+      .off(`click${ns}`, '[data-action="gp-cancel-back-dashboard"]')
+      .on(`click${ns}`, '[data-action="gp-cancel-back-dashboard"]', (event) => {
+        event.preventDefault();
+        this.closeBackDashboardModal();
+      });
+
+    $(document)
+      .off(`click${ns}`, '[data-action="gp-confirm-back-dashboard"]')
+      .on(`click${ns}`, '[data-action="gp-confirm-back-dashboard"]', (event) => {
+        event.preventDefault();
+        this.confirmBackToDashboard();
+      });
+
+    $(document)
+      .off(`click${ns}`, '[data-component="gp-back-dashboard-modal"]')
+      .on(`click${ns}`, '[data-component="gp-back-dashboard-modal"]', (event) => {
+        if (event.target !== event.currentTarget) return;
+        this.closeBackDashboardModal();
+      });
+  },
+
+  updateBackButton: function (route) {
+    const isDashboard = route && route.page === 'dashboard';
+    $('[data-action="gp-back-dashboard"]').toggleClass('hidden', Boolean(isDashboard));
+  },
+
+  getBackDashboardModal: function () {
+    return $('[data-component="gp-back-dashboard-modal"]').first();
+  },
+
+  openBackDashboardModal: function () {
+    if ((window.location.hash || '#dashboard').replace('#', '').split('?')[0] === 'dashboard') {
+      return;
+    }
+    this.getBackDashboardModal().removeClass('hidden');
+  },
+
+  closeBackDashboardModal: function () {
+    this.getBackDashboardModal().addClass('hidden');
+  },
+
+  confirmBackToDashboard: function () {
+    this.closeBackDashboardModal();
+    if (window.location.hash === '#dashboard') {
+      this.route();
+      return;
+    }
+    window.location.hash = '#dashboard';
   },
 
   escapeHtml: function (value) {

@@ -1,1 +1,37 @@
 /* Coloque aqui seu codigo CSS */
+
+#page-container .risk-item,
+#page-container .titt-risk-item,
+#page-container .tipc-risk-item,
+#page-container #risks-container .risk-item {
+  border-color: #cbd5e1 !important;
+}
+
+#page-container .risk-item textarea,
+#page-container .risk-item select,
+#page-container .risk-item input[type="text"] {
+  border: 1px solid #cbd5e1 !important;
+  border-color: #cbd5e1 !important;
+}
+
+#page-container .risk-item select {
+  min-height: 36px !important;
+  background-color: #ffffff !important;
+}
+
+#page-container .risk-item [data-field="risk-title"],
+#page-container #riscos-list [data-field="riscos"] {
+  min-height: 44px !important;
+  padding: 0 12px !important;
+  border: 1px solid #b6c2d2 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 1px rgba(15, 23, 42, 0.04) !important;
+  font-weight: 600 !important;
+}
+
+#page-container .risk-item [data-field="risk-title"]:focus,
+#page-container #riscos-list [data-field="riscos"]:focus {
+  border-color: #1C8C5D !important;
+  box-shadow: 0 0 0 2px rgba(28, 140, 93, 0.18) !important;
+}

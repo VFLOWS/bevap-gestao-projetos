@@ -87,8 +87,11 @@ var MyWidget = SuperWidget.extend({
       document.head.appendChild(styleTag);
     }
 
+    const self = this;
     $(document).ready(function () {
-      router.init();
+      self.waitForRouterDependencies(function () {
+        router.init();
+      });
 
       // 🔹 Preenche informações do usuário no header
       $("#userName").text(WCMAPI.userLogin); // Nome completo
@@ -114,7 +117,73 @@ var MyWidget = SuperWidget.extend({
       script.onerror = () => reject(new Error('Falha ao carregar biblioteca XLSX'));
       document.head.appendChild(script);
     });
+  },
+
+  hasGlobalDependency: function (name) {
+    try {
+      return Function(`return typeof ${name} !== "undefined";`)();
+    } catch (error) {
+      return typeof window[name] !== 'undefined';
+    }
+  },
+
+  waitForRouterDependencies: function (callback, attempt) {
+    const currentAttempt = attempt || 0;
+    const dependencies = [
+      'router',
+      'dashboardController',
+      'projectPlanningController',
+      'newSolicitationController',
+      'solicitationDetailController',
+      'correctionController',
+      'evaluateProjectController',
+      'immediateApprovalController',
+      'technicalTriageController',
+      'committeeApprovalController',
+      'commercialProposalController',
+      'gccCostApprovalController',
+      'committeeCostApprovalController',
+      'purchaseContractingController',
+      'glpiErrorTreatmentController',
+      'dpGlpiErrorTreatmentController',
+      'dpStartExecErrorTreatmentController',
+      'dpStartDeliveryErrorTreatmentController',
+      'epGlpiErrorTreatmentController',
+      'epDeliveryPlanningController',
+      'epUserTrainingController',
+      'epFinalGoLiveValidationController',
+      'epGoLiveExecutionController',
+      'epRequesterGoLiveValidationController',
+      'epProjectClosureDocumentationController',
+      'executionActivityWaitingController',
+      'executionActivityController',
+      'executionActivityRequesterValidationController',
+      'executionActivityTiValidationController',
+      'requesterProposalApprovalController',
+      'projectExecutionController',
+      'projectRequesterValidationController',
+      'projectTiValidationController',
+      'projectFinalController'
+    ];
+
+    const missing = dependencies.filter((name) => !this.hasGlobalDependency(name));
+    if (!missing.length) {
+      callback();
+      return;
+    }
+
+    if (currentAttempt >= 120) {
+      console.error('[wdGestaoProjetos] Dependencias do router nao carregadas:', missing);
+      callback();
+      return;
+    }
+
+    setTimeout(() => {
+      this.waitForRouterDependencies(callback, currentAttempt + 1);
+    }, 50);
   }
 
 });
+
+window.MyWidget = MyWidget;
 

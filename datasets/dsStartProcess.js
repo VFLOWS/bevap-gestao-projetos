@@ -3,6 +3,7 @@ function createDataset(fields, constraints, sortFields) {
     var dataset = DatasetBuilder.newDataset();
     dataset.addColumn("status");
     dataset.addColumn("numSolicitacao");
+    dataset.addColumn("message");
 
     try {
 
@@ -185,19 +186,19 @@ function createDataset(fields, constraints, sortFields) {
             }
 
             if (error === "") {
-                dataset.addRow(["OK", iProcess]);
+                dataset.addRow(["OK", iProcess, ""]);
             } else {
-                dataset.addRow(["ERRO", ""]);
+                dataset.addRow(["ERRO", "", error]);
             }
 
         } else {
-            dataset.addRow(["ERRO", ""]);
+            dataset.addRow(["ERRO", "", "Webservice startProcess nao retornou dados."]);
         }
 
     } catch (erro) {
 
         log.error("ERRO NO DATASET: " + erro);
-        dataset.addRow(["ERRO", erro.toString()]);
+        dataset.addRow(["ERRO", "", erro.toString()]);
     }
 
     return dataset;

@@ -11,6 +11,10 @@
                     <h1 id="gp-page-title_${instanceId}" class="text-white font-montserrat font-semibold text-lg">Dashboard</h1>
                 </div>
                 <div class="flex items-center space-x-3">
+                    <button type="button" data-action="gp-back-dashboard" class="hidden inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-bevap-navy shadow-sm transition-colors hover:bg-gray-100">
+                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                        <span>Voltar</span>
+                    </button>
                     <button class="text-white hover:text-bevap-gold transition-colors">
                         <i class="fa-regular fa-bell text-xl"></i>
                     </button>
@@ -35,6 +39,22 @@
     <main id="page-container" class="">
         <!-- O JS insere aqui o conteúdo da tela -->
     </main>
+
+    <div data-component="gp-back-dashboard-modal" class="hidden fixed inset-0 z-[90] flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <div class="mb-4 flex items-center">
+                <div class="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
+                    <i class="fa-solid fa-arrow-left text-xl text-bevap-navy"></i>
+                </div>
+                <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Voltar ao Dashboard</h3>
+            </div>
+            <p class="mb-6 text-sm text-gray-600">Voce voltara para o dashboard. Alteracoes nao salvas nesta tela podem ser perdidas.</p>
+            <div class="flex justify-end gap-3">
+                <button type="button" data-action="gp-cancel-back-dashboard" class="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-50">Cancelar</button>
+                <button type="button" data-action="gp-confirm-back-dashboard" class="rounded-lg bg-bevap-green px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700">Confirmar</button>
+            </div>
+        </div>
+    </div>
 
 </div>
 

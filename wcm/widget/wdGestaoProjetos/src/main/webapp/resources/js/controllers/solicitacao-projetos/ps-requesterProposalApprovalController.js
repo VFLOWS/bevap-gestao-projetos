@@ -259,6 +259,12 @@ const requesterProposalApprovalController = {
   },
 
   showToast: function (title, message, type = 'info') {
+    const normalizedType = type || 'info';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
+      return;
+    }
+
     const ui = $(document).data('gpUiComponents');
     if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
       if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;
@@ -740,11 +746,18 @@ const requesterProposalApprovalController = {
       }, taskFields);
 
       this.closeModal('approve-modal');
-      this.showToast('Sucesso', 'Proposta aprovada.', 'success');
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showSuccess === 'function') {
+        window.gpActionFeedback.showSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Acao concluida!',
+          message: 'Proposta aprovada.',
+          nextStep: 'Gerente do Centro de Custo - Aprovar Custo Projeto'
+        });
+      } else {
+        this.showToast('Sucesso', 'Proposta aprovada.', 'success');
+      }
     } catch (error) {
       console.error('[requesterProposalApproval] Error approving proposal:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível aprovar a proposta.', 'error');
@@ -796,11 +809,18 @@ const requesterProposalApprovalController = {
       }, taskFields);
 
       this.closeModal('modal-return');
-      this.showToast('Sucesso', 'Devolvido para correção.', 'success');
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showSuccess === 'function') {
+        window.gpActionFeedback.showSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Correcao solicitada!',
+          message: 'Devolvido para correcao.',
+          nextStep: 'TI - Triagem Tecnica'
+        });
+      } else {
+        this.showToast('Sucesso', 'Devolvido para correção.', 'success');
+      }
     } catch (error) {
       console.error('[requesterProposalApproval] Error returning proposal:', error);
       this.showToast('Erro ao devolver', error && error.message ? error.message : 'Não foi possível devolver para correção.', 'error');
@@ -852,11 +872,18 @@ const requesterProposalApprovalController = {
       }, taskFields);
 
       this.closeModal('modal-discontinue');
-      this.showToast('Sucesso', 'Nao continuidade registrada.', 'success');
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showSuccess === 'function') {
+        window.gpActionFeedback.showSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Nao continuidade registrada!',
+          message: 'Nao continuidade registrada.',
+          nextStep: 'Processo cancelado'
+        });
+      } else {
+        this.showToast('Sucesso', 'Nao continuidade registrada.', 'success');
+      }
     } catch (error) {
       console.error('[requesterProposalApproval] Error discontinuing project:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível registrar a nao continuidade.', 'error');
