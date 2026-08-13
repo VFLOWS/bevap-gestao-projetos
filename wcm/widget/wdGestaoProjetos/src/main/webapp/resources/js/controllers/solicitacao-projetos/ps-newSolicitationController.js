@@ -194,15 +194,16 @@ const newSolicitationController = {
         containerSelector: '#coligada-tag-filter',
         hiddenLabelSelector: '#coligada',
         hiddenCodeSelector: '#cod-coligada',
-        datasetId: 'ds_ConsultaCentroCustoUsuario',
+        datasetId: 'deGetColigada_RM',
         valueField: 'CODCOLIGADA',
-        labelField: 'CODCOLIGADA',
-        fields: ['CODCOLIGADA', 'CODCCUSTO', 'NOME_CENTRO_CUSTO'],
-        requiresUserCostCenter: true,
-        normalizeRows: 'user-coligada',
+        labelField: 'COLIGADA_DISPLAY',
+        fields: ['CODCOLIGADA', 'NOMEFANTASIA'],
+        normalizeRows: 'rm-coligada',
         columns: [
-          { header: 'Codigo', field: 'CODCOLIGADA', width: 'w-full' },
-        ]
+          { header: 'Codigo', field: 'CODCOLIGADA', width: 'w-1/4' },
+          { header: 'Nome fantasia', field: 'NOMEFANTASIA', width: 'w-3/4' },
+        ],
+        getItemLabel: (row) => this.buildLookupDisplayValue(row, 'CODCOLIGADA', 'NOMEFANTASIA')
       },
       {
         key: 'area',
@@ -431,6 +432,9 @@ const newSolicitationController = {
     if (cfg && cfg.normalizeRows === 'user-coligada') {
       return this.normalizeUserColigadaRows(finalRows);
     }
+    if (cfg && cfg.normalizeRows === 'rm-coligada') {
+      return this.normalizeRmColigadaRows(finalRows);
+    }
     if (cfg && cfg.normalizeRows === 'user-centro-custo') {
       return this.normalizeUserCostCenterRows(finalRows);
     }
@@ -447,6 +451,23 @@ const newSolicitationController = {
       seen[code] = true;
       return {
         CODCOLIGADA: code
+      };
+    }).filter(Boolean);
+  },
+
+  normalizeRmColigadaRows: function (rows) {
+    const seen = {};
+    return (Array.isArray(rows) ? rows : []).map((row) => {
+      const code = this.asText(this.getFirstValue(row, ['CODCOLIGADA', 'codcoligada']));
+      const name = this.asText(this.getFirstValue(row, ['NOMEFANTASIA', 'nomefantasia', 'nomeFantasia']));
+      if (!code || seen[code] || this.isDatasetMessageRow(row)) {
+        return null;
+      }
+      seen[code] = true;
+      return {
+        CODCOLIGADA: code,
+        NOMEFANTASIA: name,
+        COLIGADA_DISPLAY: this.buildLookupDisplayValue({ CODCOLIGADA: code, NOMEFANTASIA: name }, 'CODCOLIGADA', 'NOMEFANTASIA')
       };
     }).filter(Boolean);
   },

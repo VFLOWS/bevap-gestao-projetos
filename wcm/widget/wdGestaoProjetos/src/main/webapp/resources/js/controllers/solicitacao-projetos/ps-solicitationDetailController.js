@@ -15,11 +15,14 @@ const solicitationDetailController = {
   _uiComponentsKey: 'gpUiComponents',
   _approvalTabComponentsKey: 'gpApprovalTabComponents',
   _headerBackup: null,
+  _tabsRoot: null,
   _toastTimer: null,
   _state: {
     documentId: '',
     processInstanceId: '',
-    row: null
+    row: null,
+    historyCache: {},
+    tabPromises: {}
   },
 
   load: function (params = {}) {
@@ -33,6 +36,7 @@ const solicitationDetailController = {
         container.html(html);
         this.backupAndSetHeader();
         this.bindEvents();
+        this.initializeTabs();
         this.renderSidebarSkeleton();
         this.loadSolicitation();
       })
@@ -43,6 +47,7 @@ const solicitationDetailController = {
   },
 
   destroy: function () {
+    this.destroyTabs();
     this.unbindEvents();
     this.restoreHeader();
 
@@ -54,6 +59,8 @@ const solicitationDetailController = {
     this._state.documentId = '';
     this._state.processInstanceId = '';
     this._state.row = null;
+    this._state.historyCache = {};
+    this._state.tabPromises = {};
   },
 
   getTemplateUrl: function () {
@@ -135,6 +142,32 @@ const solicitationDetailController = {
 
   unbindEvents: function () {
     this.getContainer().off(this._eventNamespace);
+  },
+
+  initializeTabs: function () {
+    const ui = this.getUiComponents();
+    const tabsRoot = this.getContainer().find('[data-component="tabs"]').first();
+    if (!ui || !ui.tabs || !tabsRoot.length) return;
+
+    this.destroyTabs();
+    this._tabsRoot = tabsRoot;
+
+    ui.tabs.init(tabsRoot, {
+      defaultTab: 'solicitacao',
+      hideNoticeOnOpen: false,
+      onChange: (tabName) => {
+        this.loadReadOnlyTab(tabName);
+      }
+    });
+  },
+
+  destroyTabs: function () {
+    const ui = this.getUiComponents();
+    if (ui && ui.tabs && this._tabsRoot && this._tabsRoot.length) {
+      ui.tabs.destroy(this._tabsRoot);
+    }
+
+    this._tabsRoot = null;
   },
 
   getUiComponents: function () {
@@ -270,7 +303,7 @@ const solicitationDetailController = {
   },
 
   loadSolicitation: async function () {
-    const detailTarget = this.getContainer().find('[data-component="solicitation-detail-content"]').first();
+    const detailTarget = this.getContainer().find('[data-component="tab-solicitacao-history"]').first();
 
     try {
       if (!this._state.documentId && this._state.processInstanceId) {
@@ -298,7 +331,7 @@ const solicitationDetailController = {
       }
 
       this._state.row = row;
-      await this.renderSolicitationHistory();
+      await this.preloadReadOnlyTabs();
       await this.renderSidebar(row);
     } catch (error) {
       console.error('[solicitationDetail] Error loading solicitation:', error);
@@ -316,29 +349,96 @@ const solicitationDetailController = {
   },
 
   renderSolicitationHistory: async function () {
-    const target = this.getContainer().find('[data-component="solicitation-detail-content"]').first();
-    const components = this.getApprovalTabComponents();
-    const component = components && components.solicitationHistory;
+    await this.loadReadOnlyTab('solicitacao');
+  },
 
+  getReadOnlyTabConfigMap: function () {
+    return {
+      solicitacao: { key: 'solicitationHistory', mount: 'tab-solicitacao-history' },
+      'analise-ti': { key: 'tiAnalysisHistory', mount: 'tab-analise-ti-history' },
+      impacto: { key: 'areaImpactHistory', mount: 'tab-impacto-history' },
+      'triagem-ti': { key: 'tiTriageHistory', mount: 'tab-triagem-ti-history' },
+      'proposta-fornecedor': { key: 'supplierProposal', mount: 'tab-proposta-fornecedor' },
+      'business-case': { key: 'committeeBusinessCase', mount: 'tab-business-case' },
+      'risk-compliance': { key: 'committeeRiskCompliance', mount: 'tab-risk-compliance' },
+      'custo-orcamento': { key: 'committeeCostBudget', mount: 'tab-custo-orcamento' },
+      documents: { key: 'committeeDocuments', mount: 'tab-documents' }
+    };
+  },
+
+  getReadOnlyTabConfig: function (tabName) {
+    const configMap = this.getReadOnlyTabConfigMap();
+
+    return configMap[tabName] || null;
+  },
+
+  preloadReadOnlyTabs: async function () {
+    const configMap = this.getReadOnlyTabConfigMap();
+    const tabNames = Object.keys(configMap);
+
+    await Promise.all(tabNames.map((tabName) => this.loadReadOnlyTab(tabName)));
+  },
+
+  loadReadOnlyTab: async function (tabName) {
+    const config = this.getReadOnlyTabConfig(tabName);
+    if (!config || !this._state.documentId) return;
+
+    if (this._state.tabPromises[tabName]) {
+      return this._state.tabPromises[tabName];
+    }
+
+    const target = this.getContainer().find(`[data-component="${config.mount}"]`).first();
     if (!target.length) return;
 
+    const components = this.getApprovalTabComponents();
+    const component = components && components[config.key];
+    const componentOptions = {
+      documentId: this._state.documentId,
+      row: this._state.row || null
+    };
+
+    if (this._state.historyCache[tabName]) {
+      target.html(this._state.historyCache[tabName]);
+      this.mountAttachmentsInTab(target, component, componentOptions);
+      return;
+    }
+
     if (!component || typeof component.render !== 'function') {
-      target.html('<div class="text-sm text-red-600">Componente de detalhamento indisponível.</div>');
+      target.html('<div class="text-sm text-red-600">Componente da aba indisponível.</div>');
       return;
     }
 
     target.html('<div class="text-sm text-gray-500">Carregando conteúdo...</div>');
 
-    if (typeof component.renderInto === 'function') {
-      await component.renderInto(target, { documentId: this._state.documentId });
-      return;
-    }
+    const loadPromise = (async () => {
+      const html = typeof component.renderInto === 'function'
+        ? await component.renderInto(target, componentOptions)
+        : await component.render(componentOptions);
 
-    const html = await component.render({ documentId: this._state.documentId });
-    target.html(html);
+      this._state.historyCache[tabName] = html;
 
-    if (typeof component.mountAttachments === 'function') {
-      component.mountAttachments(target, { documentId: this._state.documentId });
+      if (typeof component.renderInto !== 'function') {
+        target.html(html);
+      }
+
+      this.mountAttachmentsInTab(target, component, componentOptions);
+    })()
+      .catch((error) => {
+        console.error(`[solicitationDetail] Error loading tab ${tabName}:`, error);
+        target.html('<div class="text-sm text-red-600">Não foi possível carregar esta aba.</div>');
+      });
+
+    this._state.tabPromises[tabName] = loadPromise;
+    return loadPromise;
+  },
+
+  mountAttachmentsInTab: function (tabRootEl, component, options) {
+    if (!component || typeof component.mountAttachments !== 'function') return;
+
+    try {
+      component.mountAttachments(tabRootEl, Object.assign({ documentId: this._state.documentId }, options || {}));
+    } catch (error) {
+      // silencioso
     }
   },
 

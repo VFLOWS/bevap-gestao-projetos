@@ -28,14 +28,18 @@ function servicetask55(attempt, message) {
 				"idGLPI",
 				"codigoglpi",
 				"payloadJsonGLPI",
+				"forcarErroGLPI",
 				"decisaoAvaliarProjeto",
 				"timelineNS",
 				"titulodoprojetoNS",
 				"ColigadaNS",
 				"areaUnidadeNS",
 				"centrodecustoNS",
+				"centrodecustoNomeNS",
 				"patrocinadorNS",
 				"solicitanteNomeNS",
+				"solicitanteColleagueIdNS",
+				"aprovadorSuperiorImedNS",
 				"objetivodoprojetoNS",
 				"problemaOportunidadeNS",
 				"beneficiosesperadosNS",
@@ -396,7 +400,7 @@ function servicetask55(attempt, message) {
 		log.info("### servicetask55 - TOTAL CONSTRAINTS: " + constraints.length);
 
 		var fields = [
-			"14cdc0c0-a710-4412-81dd-d94fe3abe00a",
+			"e6cfab79-5cf3-4350-a789-bdfb89ebc741",
 			"ProcessEntregaProjetos",
 			"0",
 			getValue("WKCompany") + "",

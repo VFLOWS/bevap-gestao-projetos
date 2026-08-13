@@ -11,6 +11,8 @@ function servicetask29(attempt, message) {
     }
 
     try {
+        assertForcedGlpiTestError(FIELD_STATUS, FIELD_ERROR);
+
         var existingIdGlpi = asText(hAPI.getCardValue(FIELD_ID_GLPI));
         
         // Removemos a 2ª Trava. Se chegou aqui de novo e tem ID, ele VAI fazer o Update (PUT).
@@ -267,6 +269,30 @@ function getCardValueSafe(fieldName) {
         return asText(hAPI.getCardValue(fieldName));
     } catch (e) {
         return '';
+    }
+}
+
+function assertForcedGlpiTestError(statusField, errorField, responseField) {
+    var forceError = '';
+    try {
+        forceError = asText(hAPI.getCardValue('forcarErroGLPI'));
+    } catch (e) {
+        forceError = '';
+    }
+
+    if (forceError === '1') {
+        var message = 'Erro GLPI forcado para teste (forcarErroGLPI=1).';
+        if (statusField) {
+            setCardValueSafe(statusField, 'ERROR');
+        }
+        if (errorField) {
+            setCardValueSafe(errorField, message);
+        }
+        if (responseField) {
+            setCardValueSafe(responseField, message);
+        }
+        log.warn(message);
+        throw message;
     }
 }
 

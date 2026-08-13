@@ -1095,6 +1095,7 @@
     if (!normalized) return '';
     if (normalized.indexOf('conclu') !== -1 || normalized === '2') return 'concluido';
     if (normalized.indexOf('cancel') !== -1 || normalized === '1') return 'cancelado';
+    if (normalized.indexOf('planejad') !== -1) return 'planejado';
     if (normalized.indexOf('aguardando') !== -1) return 'aguardando_execucao';
     if (normalized.indexOf('validacao') !== -1 && normalized.indexOf('solicitante') !== -1) return 'validacao_solicitante';
     if (normalized.indexOf('validacao') !== -1 && normalized.indexOf('ti') !== -1) return 'validacao_ti';
@@ -1392,19 +1393,75 @@
     })();
   },
 
+  createSubmitLoading: function (title, message) {
+    if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
+      return modalLoadingService.show({
+        title: title || 'Enviando execucao',
+        message: message || 'Aguarde enquanto a execucao e validada...'
+      });
+    }
+
+    if (typeof FLUIGC !== 'undefined' && FLUIGC.loading) {
+      var legacyLoading = FLUIGC.loading($('#page-container'));
+      legacyLoading.show();
+
+      return {
+        hide: function () {
+          legacyLoading.hide();
+        },
+        updateMessage: function () {}
+      };
+    }
+
+    return {
+      hide: function () {},
+      updateMessage: function () {}
+    };
+  },
+
+  waitForUiPaint: function () {
+    return new Promise(function (resolve) {
+      if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+        window.requestAnimationFrame(function () {
+          setTimeout(resolve, 0);
+        });
+        return;
+      }
+
+      setTimeout(resolve, 0);
+    });
+  },
+
   submitExecutionDecision: async function (config) {
     var documentId = this.asText(this._state.documentId);
     if (!documentId) {
       throw new Error('documentId nao informado.');
     }
 
-    var processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
-    var taskFields = this.collectExecutionTaskFields(config && config.decisionValue, config && config.justificationValue);
-    var legacyLoading = typeof FLUIGC !== 'undefined' ? FLUIGC.loading($('#page-container')) : null;
-
-    if (legacyLoading) legacyLoading.show();
+    var shouldValidateActivities = this.shouldValidateExecutionActivitiesBeforeSubmit(config);
+    var loading = this.createSubmitLoading(
+      shouldValidateActivities ? 'Validando execução' : 'Movendo execução',
+      shouldValidateActivities
+        ? 'Verificando se todas as atividades foram resolvidas...'
+        : 'Preparando movimentacao da execucao...'
+    );
 
     try {
+      await this.waitForUiPaint();
+
+      if (shouldValidateActivities) {
+        await this.assertExecutionActivitiesResolvedForSubmit();
+      }
+
+      loading.updateMessage('Preparando movimentacao da execucao...');
+      await this.waitForUiPaint();
+
+      var processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
+      var taskFields = this.collectExecutionTaskFields(config && config.decisionValue, config && config.justificationValue);
+
+      loading.updateMessage('Enviando movimentacao para o Fluig...');
+      await this.waitForUiPaint();
+
       await fluigService.saveAndSendTask({
         id: processInstanceId,
         numState: this.asText(config && config.nextState),
@@ -1419,8 +1476,77 @@
         location.hash = '#dashboard';
       }, 800);
     } finally {
-      if (legacyLoading) legacyLoading.hide();
+      loading.hide();
     }
+  },
+
+  shouldValidateExecutionActivitiesBeforeSubmit: function (config) {
+    return this.asText(config && config.decisionValue) === 'concluido';
+  },
+
+  assertExecutionActivitiesResolvedForSubmit: async function () {
+    await this.syncMilestoneTaskStatuses();
+    this.renderExecutionBoard();
+    this.updateProjectSummary();
+    this.renderMacroProgress();
+
+    var blockingTasks = this.getBlockingExecutionTasksForSubmit();
+    if (!blockingTasks.length) {
+      return true;
+    }
+
+    var taskList = blockingTasks.slice(0, 5).map(function (task) {
+      return task.label + ' (' + task.statusLabel + ')';
+    }).join(', ');
+    var suffix = blockingTasks.length > 5
+      ? ' e mais ' + (blockingTasks.length - 5) + ' atividade(s)'
+      : '';
+
+    throw new Error(
+      'Nao e possivel enviar a execucao enquanto houver atividades em aberto. ' +
+      'Deixe todas como Concluido, Cancelado ou Planejado. Pendentes: ' +
+      taskList + suffix + '.'
+    );
+  },
+
+  getBlockingExecutionTasksForSubmit: function () {
+    var self = this;
+    var blocking = [];
+
+    (this._state.milestones || []).forEach(function (milestone) {
+      (milestone.tasks || []).forEach(function (task) {
+        if (self.isTaskResolvedForExecutionSubmit(task)) {
+          return;
+        }
+
+        var statusMeta = self.getTaskExecutionStatusMeta(task && task.status);
+        blocking.push({
+          task: task,
+          milestone: milestone,
+          label: self.getExecutionTaskValidationLabel(task, milestone),
+          statusLabel: statusMeta.label
+        });
+      });
+    });
+
+    return blocking;
+  },
+
+  isTaskResolvedForExecutionSubmit: function (task) {
+    var normalized = this.normalizeTaskExecutionStatus(task && task.status);
+    return !normalized
+      || normalized === 'planejado'
+      || normalized === 'concluido'
+      || normalized === 'cancelado';
+  },
+
+  getExecutionTaskValidationLabel: function (task, milestone) {
+    var parts = [
+      this.asText(milestone && milestone.name),
+      this.asText(task && task.taskName)
+    ].filter(Boolean);
+
+    return parts.length ? parts.join(' - ') : 'Atividade sem nome';
   },
 
   persistExecutionDecision: async function (config) {

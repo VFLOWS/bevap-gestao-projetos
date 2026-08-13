@@ -6,39 +6,55 @@ const dpStartDeliveryErrorTreatmentController = {
     'erroIniciarEntregaMsg',
     'erroIniciarEntregaProc',
     'erroIniciarExecucaoMsg',
-    'erroIniciarExecucaoIdx'
+    'erroIniciarExecucaoIdx',
+    'forcarErroGLPI'
   ],
   _headerBackup: null,
   _toastTimer: null,
   _state: {
     documentId: null,
     processInstanceId: null,
+    contextController: null,
     isSubmitting: false
   },
 
-  load: function (params = {}) {
-    const container = this.getContainer();
+  load: async function (params = {}) {
     this.destroy();
 
     this._state.documentId = params && params.documentId ? String(params.documentId) : null;
     this._state.processInstanceId = params && params.processInstanceId ? String(params.processInstanceId) : null;
 
-    return $.get(this.getTemplateUrl())
-      .done((html) => {
-        container.html(html);
-        this.backupAndSetHeader();
-        this.bindEvents();
-        this.loadBaseContext();
-      })
-      .fail((error) => {
-        console.error('Start delivery error treatment template load error:', error);
-        container.html('<div class="p-6 text-red-600">Failed to load start delivery error treatment page.</div>');
+    try {
+      this._state.contextController = await gpGlpiErrorContext.render({
+        params: params,
+        contextController: projectFinalController,
+        contextActivity: 38,
+        contextLabel: 'Execucao de Projeto Finalizada',
+        errorTemplateUrl: this.getTemplateUrl()
       });
+
+      this.backupAndSetHeader();
+      this.bindEvents();
+      await this.loadBaseContext();
+    } catch (error) {
+      console.error('Start delivery error treatment page load error:', error);
+      this.getContainer().html('<div class="p-6 text-red-600">Failed to load start delivery error treatment page.</div>');
+    }
   },
 
   destroy: function () {
+    const contextController = this._state.contextController;
+
     this.unbindEvents();
     this.restoreHeader();
+
+    if (contextController && typeof contextController.destroy === 'function') {
+      try {
+        contextController.destroy();
+      } catch (error) {
+        console.error('[dpStartDeliveryErrorTreatment] Context destroy error:', error);
+      }
+    }
 
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
@@ -47,6 +63,7 @@ const dpStartDeliveryErrorTreatmentController = {
 
     this._state.documentId = null;
     this._state.processInstanceId = null;
+    this._state.contextController = null;
     this._state.isSubmitting = false;
   },
 
@@ -150,14 +167,15 @@ const dpStartDeliveryErrorTreatmentController = {
   },
 
   fillFormFromRow: function (row) {
-    const processReturn = this.firstFilledValue([
+    const isForcedGlpiTest = gpGlpiErrorContext.isForcedGlpiTestRow(row);
+    let processReturn = this.firstFilledValue([
       row.erroIniciarEntregaProc,
       row.erroiniciarentregaproc,
       row.erroIniciarExecucaoIdx,
       row.erroiniciarexecucaoidx
     ]);
 
-    const message = this.firstFilledValue([
+    let message = this.firstFilledValue([
       row.erroIniciarEntregaMsg,
       row.erroiniciarentregamsg,
       row.erroIniciarExecucaoMsg,
@@ -165,6 +183,11 @@ const dpStartDeliveryErrorTreatmentController = {
       row.erroMsg,
       row.erro
     ]);
+
+    if (isForcedGlpiTest) {
+      processReturn = processReturn || 'forcarErroGLPI=1';
+      message = message || gpGlpiErrorContext.getForcedGlpiTestMessage();
+    }
 
     this.getContainer().find('#start-delivery-error-proc').val(processReturn);
     this.getContainer().find('#start-delivery-error-msg').val(message);

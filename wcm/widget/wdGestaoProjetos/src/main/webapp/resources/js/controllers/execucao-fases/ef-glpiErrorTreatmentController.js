@@ -1,8 +1,12 @@
-const glpiErrorTreatmentController = {
-  _eventNamespace: '.glpiErrorTreatment',
-  _datasetId: 'dsGetSolicitacaoProjetos',
+const efGlpiErrorTreatmentController = {
+  _eventNamespace: '.efGlpiErrorTreatment',
+  _datasetId: 'dsGetExecucaoAtividade',
+  _datasetName: 'formExecucaoAtividade',
   _baseFields: [
     'documentid',
+    'statusIntegracaoGLPIAtividade',
+    'mensagemErroGLPIAtividade',
+    'retornoIntegracaoGLPIAtividade',
     'statusIntegracaoGLPI',
     'mensagemErroGLPI',
     'forcarErroGLPI'
@@ -12,6 +16,7 @@ const glpiErrorTreatmentController = {
   _state: {
     documentId: null,
     processInstanceId: null,
+    currentActivity: null,
     contextController: null,
     isSubmitting: false
   },
@@ -21,13 +26,15 @@ const glpiErrorTreatmentController = {
 
     this._state.documentId = params && params.documentId ? String(params.documentId) : null;
     this._state.processInstanceId = params && params.processInstanceId ? String(params.processInstanceId) : null;
+    this._state.currentActivity = gpGlpiErrorContext.resolveCurrentActivity(params);
+    const context = this.getContextConfig();
 
     try {
       this._state.contextController = await gpGlpiErrorContext.render({
         params: params,
-        contextController: technicalTriageController,
-        contextActivity: 26,
-        contextLabel: 'Triagem Tecnica TI',
+        contextController: context.controller,
+        contextActivity: context.activity,
+        contextLabel: context.label,
         errorTemplateUrl: this.getTemplateUrl()
       });
 
@@ -35,8 +42,8 @@ const glpiErrorTreatmentController = {
       this.bindEvents();
       await this.loadBaseContext();
     } catch (error) {
-      console.error('GLPI error treatment page load error:', error);
-      this.getContainer().html('<div class="p-6 text-red-600">Failed to load GLPI error treatment page.</div>');
+      console.error('Execution activity GLPI error treatment page load error:', error);
+      this.getContainer().html('<div class="p-6 text-red-600">Failed to load execution activity GLPI error treatment page.</div>');
     }
   },
 
@@ -50,7 +57,7 @@ const glpiErrorTreatmentController = {
       try {
         contextController.destroy();
       } catch (error) {
-        console.error('[glpiErrorTreatment] Context destroy error:', error);
+        console.error('[efGlpiErrorTreatment] Context destroy error:', error);
       }
     }
 
@@ -61,12 +68,13 @@ const glpiErrorTreatmentController = {
 
     this._state.documentId = null;
     this._state.processInstanceId = null;
+    this._state.currentActivity = null;
     this._state.contextController = null;
     this._state.isSubmitting = false;
   },
 
   getTemplateUrl: function () {
-    return `${WCMAPI.getServerURL()}/wdGestaoProjetos/resources/js/templates/solicitacao-projetos/ps-glpi-error-treatment.html`;
+    return `${WCMAPI.getServerURL()}/wdGestaoProjetos/resources/js/templates/execucao-fases/ef-glpi-error-treatment.html`;
   },
 
   getContainer: function () {
@@ -88,7 +96,7 @@ const glpiErrorTreatmentController = {
     }
 
     if (titleEl.length) {
-      titleEl.text('TI - Tratar Erro Integração GLPI');
+      titleEl.text('Execucao de Fases - Tratar Erro Integracao GLPI');
     }
 
     if (breadcrumbEl.length) {
@@ -136,9 +144,25 @@ const glpiErrorTreatmentController = {
     this.getContainer().off(this._eventNamespace);
   },
 
+  getContextConfig: function () {
+    if (this._state.currentActivity === 52) {
+      return {
+        controller: executionActivityTiValidationController,
+        activity: 32,
+        label: 'Validacao TI da Atividade'
+      };
+    }
+
+    return {
+      controller: executionActivityWaitingController,
+      activity: 14,
+      label: 'Aguardando Execucao da Atividade'
+    };
+  },
+
   loadBaseContext: async function () {
     if (!this._state.documentId) {
-      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para está rota.', 'warning');
+      this.showToast('Sem atividade', 'Nenhum documentId foi informado para esta rota.', 'warning');
       return;
     }
 
@@ -146,27 +170,30 @@ const glpiErrorTreatmentController = {
       const rows = await fluigService.getDatasetRows(this._datasetId, {
         fields: this._baseFields,
         filters: {
-          documentid: this._state.documentId
+          documentid: this._state.documentId,
+          sqlLimit: 1
         }
       });
 
       const row = rows && rows.length ? rows[0] : null;
 
       if (!row) {
-        this.showToast('Não encontrado', 'Não foi possível localizar os dados desta solicitação.', 'warning');
+        this.showToast('Nao encontrado', 'Nao foi possivel localizar os dados desta atividade.', 'warning');
         return;
       }
 
       this.fillFormFromRow(row);
     } catch (error) {
-      console.error('[glpiErrorTreatment] Error loading base context:', error);
-      this.showToast('Erro ao carregar', 'Não foi possível carregar os dados da etapa de erro GLPI.', 'error');
+      console.error('[efGlpiErrorTreatment] Error loading base context:', error);
+      this.showToast('Erro ao carregar', 'Nao foi possivel carregar os dados da etapa de erro GLPI.', 'error');
     }
   },
 
   fillFormFromRow: function (row) {
     const isForcedGlpiTest = gpGlpiErrorContext.isForcedGlpiTestRow(row);
     let status = this.firstFilledValue([
+      row.statusIntegracaoGLPIAtividade,
+      row.statusintegracaoglpiatividade,
       row.statusIntegracaoGLPI,
       row.statusintegracaoglpi,
       row.statusGLPI,
@@ -175,6 +202,8 @@ const glpiErrorTreatmentController = {
     ]);
 
     let message = this.firstFilledValue([
+      row.mensagemErroGLPIAtividade,
+      row.mensagemerroglpiatividade,
       row.mensagemErroGLPI,
       row.mensagemerroglpi,
       row.mensagemErroGlpi,
@@ -182,13 +211,22 @@ const glpiErrorTreatmentController = {
       row.msgRetornoGLPI
     ]);
 
+    let response = this.firstFilledValue([
+      row.retornoIntegracaoGLPIAtividade,
+      row.retornointegracaoglpiatividade,
+      row.retornoIntegracaoGLPI,
+      row.retornointegracaoglpi
+    ]);
+
     if (isForcedGlpiTest) {
       status = status || 'ERROR';
       message = message || gpGlpiErrorContext.getForcedGlpiTestMessage();
+      response = response || message;
     }
 
     this.getContainer().find('#glpi-status-input').val(status);
     this.getContainer().find('#glpi-error-message-input').val(message);
+    this.getContainer().find('#glpi-response-input').val(response);
   },
 
   firstFilledValue: function (values) {
@@ -208,7 +246,7 @@ const glpiErrorTreatmentController = {
     }
 
     if (!this._state.documentId) {
-      throw new Error('Não foi possível identificar a solicitação atual');
+      throw new Error('Nao foi possivel identificar a atividade atual');
     }
 
     const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._state.documentId);
@@ -216,15 +254,23 @@ const glpiErrorTreatmentController = {
     return this._state.processInstanceId;
   },
 
+  getNextState: function () {
+    return this._state.currentActivity === 52 ? 36 : 12;
+  },
+
   collectTaskFields: function () {
     return [
       {
-        name: 'statusIntegracaoGLPI',
+        name: 'statusIntegracaoGLPIAtividade',
         value: this.asText(this.getContainer().find('#glpi-status-input').val())
       },
       {
-        name: 'mensagemErroGLPI',
+        name: 'mensagemErroGLPIAtividade',
         value: this.asText(this.getContainer().find('#glpi-error-message-input').val())
+      },
+      {
+        name: 'retornoIntegracaoGLPIAtividade',
+        value: this.asText(this.getContainer().find('#glpi-response-input').val())
       }
     ];
   },
@@ -232,7 +278,7 @@ const glpiErrorTreatmentController = {
   createActionLoading: function () {
     if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
       return modalLoadingService.show({
-        title: 'Movendo Solicitação',
+        title: 'Movendo atividade',
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
@@ -274,31 +320,24 @@ const glpiErrorTreatmentController = {
       await this.waitForUiPaint();
       const processInstanceId = await this.resolveProcessInstanceId();
       const taskFields = this.collectTaskFields();
+      const nextState = this.getNextState();
 
-      loading.updateMessage('Enviando para a próxima atividade...');
+      loading.updateMessage('Enviando para a atividade ' + nextState + '...');
       await this.waitForUiPaint();
       await fluigService.saveAndSendTask({
         id: processInstanceId,
-        numState: 29,
+        numState: nextState,
         documentId: this._state.documentId,
-        datasetName: 'DSFormSolicitacaoProjetos'
+        datasetName: this._datasetName
       }, taskFields);
 
-      if (window.gpActionFeedback && typeof window.gpActionFeedback.showSuccess === 'function') {
-        window.gpActionFeedback.showSuccess({
-          controller: this,
-          processInstanceId: processInstanceId,
-          documentId: this._state.documentId,
-          title: 'Acao concluida!',
-          message: 'Solicitacao enviada para Integracao GLPI.',
-          nextStep: 'Integracao GLPI'
-        });
-      } else {
-        this.showToast('Sucesso', 'Solicitação enviada para Integração GLPI.', 'success');
-      }
+      this.showToast('Sucesso', 'Atividade enviada para Integracao GLPI.', 'success');
+      setTimeout(() => {
+        location.hash = '#dashboard';
+      }, 600);
     } catch (error) {
-      console.error('[glpiErrorTreatment] Error moving task:', error);
-      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
+      console.error('[efGlpiErrorTreatment] Error moving task:', error);
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel movimentar a atividade.', 'error');
     } finally {
       this._state.isSubmitting = false;
       sendButton.prop('disabled', false).removeClass('opacity-60 cursor-not-allowed');
@@ -307,12 +346,6 @@ const glpiErrorTreatmentController = {
   },
 
   showToast: function (title, message, type) {
-    const normalizedType = type || 'info';
-    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
-      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
-      return;
-    }
-
     const toast = this.getContainer().find('#toast');
     const icon = this.getContainer().find('#toast-icon');
     const toastTitle = this.getContainer().find('#toast-title');
@@ -348,3 +381,5 @@ const glpiErrorTreatmentController = {
     return String(value).trim();
   }
 };
+
+window.efGlpiErrorTreatmentController = efGlpiErrorTreatmentController;

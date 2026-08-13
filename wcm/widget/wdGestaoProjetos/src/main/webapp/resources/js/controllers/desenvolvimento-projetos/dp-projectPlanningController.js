@@ -29,7 +29,18 @@
     'tblRiscosIdentificadosTITT.planoBRiscoTITT',
     'tblRiscosIdentificadosTITT.nivelRiscoTITT',
     'tblRiscosIdentificadosTITT.impactoRiscoTITT',
-    'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT'
+    'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT',
+    'tblDependenciasTITT.tituloDependenciaTITT',
+    'tblDependenciasTITT.statusDependenciaTITT',
+    'tblDependenciasTITT.responsavelDependenciaTITT',
+    'tblDependenciasTITT.mitigacaoDependenciaTITT',
+    'tblDependenciasTITT.planoBDependenciaTITT',
+    'tblPreRequisitosTIPC.tituloPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.statusPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.responsavelPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.mitigacaoPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.planoBPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.preRequisitoTIPC'
   ],
 
   // Próxima atividade do processo Desenvolvimento Projetos quando o planejamento é concluído.
@@ -915,7 +926,18 @@
           'tblRiscosIdentificadosTITT.planoBRiscoTITT',
           'tblRiscosIdentificadosTITT.nivelRiscoTITT',
           'tblRiscosIdentificadosTITT.impactoRiscoTITT',
-          'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT'
+          'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT',
+          'tblDependenciasTITT.tituloDependenciaTITT',
+          'tblDependenciasTITT.statusDependenciaTITT',
+          'tblDependenciasTITT.responsavelDependenciaTITT',
+          'tblDependenciasTITT.mitigacaoDependenciaTITT',
+          'tblDependenciasTITT.planoBDependenciaTITT',
+          'tblPreRequisitosTIPC.tituloPreRequisitoTIPC',
+          'tblPreRequisitosTIPC.statusPreRequisitoTIPC',
+          'tblPreRequisitosTIPC.responsavelPreRequisitoTIPC',
+          'tblPreRequisitosTIPC.mitigacaoPreRequisitoTIPC',
+          'tblPreRequisitosTIPC.planoBPreRequisitoTIPC',
+          'tblPreRequisitosTIPC.preRequisitoTIPC'
         ],
         filters: {
           documentid: documentId,
@@ -980,7 +1002,10 @@
         payload.checklist.risks = true;
       }
     }
-    const storedDependencies = this.buildStoredDependenciesPayload(dependencyRows, payload.externalDependencies);
+    let storedDependencies = this.buildStoredDependenciesPayload(dependencyRows, payload.externalDependencies);
+    if (!storedDependencies || !Array.isArray(storedDependencies.items) || !storedDependencies.items.length) {
+      storedDependencies = this.buildInitialDependenciesPlanningPayload(row);
+    }
     const storedCommunication = this.buildStoredCommunicationPayload(communicationRows, payload.communicationPlan);
     const storedAllocation = this.buildStoredAllocationPayload(allocationRows, payload.teamAllocation);
     const storedRaci = this.buildStoredRaciPayload(raciJson, payload.raci);
@@ -1276,6 +1301,74 @@
         level: level
       };
     }).filter((risk) => risk.title || risk.description || risk.mitigation || risk.planB) : [];
+
+    return { items };
+  },
+
+  // Quando ainda não há dependências no planejamento, escolhe a origem inicial:
+  // projetos externos usam os pré-requisitos revisados na proposta; internos usam a triagem.
+  buildInitialDependenciesPlanningPayload: function (row) {
+    const executionType = this.asText(row && row.execucaoProjetoTITT);
+
+    if (this.isExternalExecutionType(executionType)) {
+      const proposalDependencies = this.buildProposalPrerequisitesPlanningPayload(row && (row.tblPreRequisitosTIPC || row['tblPreRequisitosTIPC']));
+      if (proposalDependencies.items.length) {
+        return proposalDependencies;
+      }
+    }
+
+    return this.buildTriageDependenciesPlanningPayload(row && (row.tblDependenciasTITT || row['tblDependenciasTITT']));
+  },
+
+  // Converte pré-requisitos da proposta comercial para dependências externas do planejamento.
+  buildProposalPrerequisitesPlanningPayload: function (tblValue) {
+    const rows = this.parseJson(tblValue);
+    const items = Array.isArray(rows) ? rows.map((item, index) => {
+      const legacy = this.asText(item && item.preRequisitoTIPC);
+      const title = this.asText(item && item.tituloPreRequisitoTIPC) || legacy;
+      const status = this.asText(item && item.statusPreRequisitoTIPC) || 'Pendente';
+      const owner = this.asText(item && item.responsavelPreRequisitoTIPC);
+      const mitigation = this.asText(item && item.mitigacaoPreRequisitoTIPC);
+      const fallback = this.asText(item && item.planoBPreRequisitoTIPC);
+
+      return {
+        id: `proposal-prerequisite-${index + 1}`,
+        title: title,
+        description: title,
+        status: status,
+        owner: owner,
+        responsible: owner,
+        mitigation: mitigation,
+        fallback: fallback,
+        planB: fallback
+      };
+    }).filter((item) => item.title || item.owner || item.mitigation || item.fallback) : [];
+
+    return { items };
+  },
+
+  // Converte dependências da triagem técnica para o formato do planejamento.
+  buildTriageDependenciesPlanningPayload: function (tblValue) {
+    const rows = this.parseJson(tblValue);
+    const items = Array.isArray(rows) ? rows.map((item, index) => {
+      const title = this.asText(item && item.tituloDependenciaTITT);
+      const status = this.asText(item && item.statusDependenciaTITT) || 'Pendente';
+      const owner = this.asText(item && item.responsavelDependenciaTITT);
+      const mitigation = this.asText(item && item.mitigacaoDependenciaTITT);
+      const fallback = this.asText(item && item.planoBDependenciaTITT);
+
+      return {
+        id: `triage-dependency-${index + 1}`,
+        title: title,
+        description: title,
+        status: status,
+        owner: owner,
+        responsible: owner,
+        mitigation: mitigation,
+        fallback: fallback,
+        planB: fallback
+      };
+    }).filter((item) => item.title || item.owner || item.mitigation || item.fallback) : [];
 
     return { items };
   },

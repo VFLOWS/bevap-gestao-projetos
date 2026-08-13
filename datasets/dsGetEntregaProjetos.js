@@ -11,6 +11,8 @@ function createDataset(fields, constraints, sortFields) {
     var shouldGroups = {};
     var selectFields = "";
     var shouldReturnState = false
+    var shouldReturnProcessInstance = false;
+    var shouldReturnLastMovement = false;
 
     var baseTable = resolveBaseTableByDatasetName(["FormEntregaProjetos", "DSFormEntregaProjetos"]);
     if (!baseTable) {
@@ -41,6 +43,18 @@ function createDataset(fields, constraints, sortFields) {
             if (fieldName == "estadoProcesso")
             {
                 shouldReturnState = true;
+                continue
+            }
+
+            if (fieldName == "NUM_PROCES")
+            {
+                shouldReturnProcessInstance = true;
+                continue
+            }
+
+            if (fieldName == "ultimaAlteracaoProcesso")
+            {
+                shouldReturnLastMovement = true;
                 continue
             }
     
@@ -212,6 +226,22 @@ function createDataset(fields, constraints, sortFields) {
         "AND EP.NUM_VERS = PWS.NUM_VERS " +
         "AND HP.LOG_ATIV = 1 " +
         ") AS estadoProcesso " 
+    }
+
+    if(shouldReturnProcessInstance)
+    {
+        dynamicJsonSelect +=
+        " , PWS.NUM_PROCES AS NUM_PROCES "
+    }
+
+    if(shouldReturnLastMovement)
+    {
+        dynamicJsonSelect +=
+        " ,( SELECT TOP 1 CONCAT(CONVERT(VARCHAR(10), HP.DAT_MOVTO, 103), ' ', HP.HRA_MOVTO) " +
+        "FROM HISTOR_PROCES AS HP " +
+        "WHERE HP.NUM_PROCES = PWS.NUM_PROCES " +
+        "ORDER BY HP.NUM_SEQ_MOVTO DESC " +
+        ") AS ultimaAlteracaoProcesso "
     }
 
    var myQuery = 

@@ -9,7 +9,7 @@
 
 #page-container .risk-item textarea,
 #page-container .risk-item select,
-#page-container .risk-item input[type="text"] {
+#page-container .risk-item input[type="text"]:not(.tag-input-search) {
   border: 1px solid #cbd5e1 !important;
   border-color: #cbd5e1 !important;
 }
@@ -34,4 +34,231 @@
 #page-container #riscos-list [data-field="riscos"]:focus {
   border-color: #1C8C5D !important;
   box-shadow: 0 0 0 2px rgba(28, 140, 93, 0.18) !important;
+}
+
+#page-container .dependency-item,
+#page-container .titt-dependency-item,
+#page-container #dependencies-list .dependency-item,
+#page-container #external-dependencies-list .dependency-item,
+#page-container .delivery-dependency-row,
+#page-container .dependency-list > div {
+  border-color: #cbd5e1 !important;
+}
+
+#page-container .dependency-item textarea,
+#page-container .dependency-item select,
+#page-container .dependency-item input[type="text"]:not(.tag-input-search),
+#page-container .delivery-dependency-row input[type="text"]:not(.tag-input-search),
+#page-container .dependency-list .field-input {
+  border: 1px solid #cbd5e1 !important;
+  border-color: #cbd5e1 !important;
+  background-color: #ffffff !important;
+}
+
+#page-container .dependency-item select {
+  min-height: 36px !important;
+  background-color: #ffffff !important;
+}
+
+#page-container .dependency-item [data-field="dependency-title"],
+#page-container .delivery-dependency-input,
+#page-container .dependency-list .field-input {
+  min-height: 44px !important;
+  padding: 0 12px !important;
+  border: 1px solid #b6c2d2 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 1px rgba(15, 23, 42, 0.04) !important;
+  font-weight: 600 !important;
+}
+
+#page-container .dependency-item textarea,
+#page-container .dependency-item [data-field="dependency-mitigation"],
+#page-container .dependency-item [data-field="dependency-fallback"] {
+  min-height: 88px !important;
+  border: 1px solid #b6c2d2 !important;
+  border-radius: 8px !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 1px rgba(15, 23, 42, 0.04) !important;
+}
+
+#page-container .dependency-item [data-field="dependency-title"]:focus,
+#page-container .dependency-item textarea:focus,
+#page-container .delivery-dependency-input:focus,
+#page-container .dependency-list .field-input:focus {
+  border-color: #1C8C5D !important;
+  box-shadow: 0 0 0 2px rgba(28, 140, 93, 0.18) !important;
+}
+
+#page-container .risk-item .tag-input-search,
+#page-container .titt-risk-item .tag-input-search,
+#page-container .tipc-risk-item .tag-input-search,
+#page-container .dependency-item .tag-input-search,
+#page-container .titt-dependency-item .tag-input-search,
+#page-container .delivery-dependency-row .tag-input-search,
+#page-container .dependency-list .tag-input-search {
+  min-height: 0 !important;
+  height: auto !important;
+  padding: 0.25rem !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font-weight: 400 !important;
+}
+
+#page-container .risk-item .tag-input-area,
+#page-container .titt-risk-item .tag-input-area,
+#page-container .tipc-risk-item .tag-input-area,
+#page-container .dependency-item .tag-input-area,
+#page-container .titt-dependency-item .tag-input-area,
+#page-container .delivery-dependency-row .tag-input-area,
+#page-container .dependency-list .tag-input-area {
+  border-color: #cbd5e1 !important;
+}
+
+#page-container .dashboard-pipeline-board {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding-bottom: 0.75rem;
+  scroll-snap-type: x proximity;
+  scrollbar-color: #94a3b8 #e2e8f0;
+  scrollbar-width: thin;
+}
+
+#page-container .dashboard-pipeline-board::-webkit-scrollbar {
+  display: block !important;
+  height: 0.625rem;
+}
+
+#page-container .dashboard-pipeline-board::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 999px;
+}
+
+#page-container .dashboard-pipeline-board::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border: 2px solid #e2e8f0;
+  border-radius: 999px;
+}
+
+#page-container .dashboard-pipeline-board::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+#page-container .dashboard-pipeline-column {
+  flex: 0 0 15.75rem;
+  min-width: 15.75rem;
+  scroll-snap-align: start;
+}
+
+@media (max-width: 640px) {
+  #page-container .dashboard-pipeline-column {
+    flex-basis: min(82vw, 15.75rem);
+    min-width: min(82vw, 15.75rem);
+  }
+}
+
+#page-container .dashboard-pipeline-list {
+  max-height: calc((12.25rem * 3) + (0.75rem * 2));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 0.25rem;
+  scrollbar-gutter: stable;
+  scrollbar-color: #94a3b8 #e2e8f0;
+  scrollbar-width: thin;
+}
+
+#page-container .dashboard-pipeline-list::-webkit-scrollbar {
+  display: block !important;
+  width: 0.625rem;
+}
+
+#page-container .dashboard-pipeline-list::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 999px;
+}
+
+#page-container .dashboard-pipeline-list::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border: 2px solid #e2e8f0;
+  border-radius: 999px;
+}
+
+#page-container .dashboard-pipeline-list::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+#page-container .dashboard-pipeline-list .pipeline-card {
+  height: 12.25rem;
+  overflow: hidden;
+}
+
+#page-container .dashboard-pipeline-card-title {
+  display: -webkit-box;
+  min-height: 2.5rem;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+#page-container .dashboard-pipeline-card-state {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#page-container .dashboard-pipeline-card-responsible {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+#page-container .dashboard-table-scroll {
+  max-height: 32rem;
+  overflow: auto;
+  scrollbar-color: #94a3b8 #e2e8f0;
+  scrollbar-width: thin;
+}
+
+#page-container .dashboard-table-scroll::-webkit-scrollbar {
+  display: block !important;
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+#page-container .dashboard-table-scroll::-webkit-scrollbar-track {
+  background: #e2e8f0;
+  border-radius: 999px;
+}
+
+#page-container .dashboard-table-scroll::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border: 2px solid #e2e8f0;
+  border-radius: 999px;
+}
+
+#page-container .dashboard-table-scroll::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+#page-container .dashboard-table-scroll thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #ffffff;
+  box-shadow: 0 1px 0 #e2e8f0;
+}
+
+#page-container .dashboard-chart-card {
+  min-height: 18rem;
+}
+
+#page-container .dashboard-chart-canvas {
+  width: 100% !important;
+  max-height: 15.5rem;
 }

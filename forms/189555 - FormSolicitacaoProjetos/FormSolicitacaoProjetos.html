@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="/portal/resources/js/mustache/mustache-min.js"></script>
 	<script type="text/javascript" src="/style-guide/js/fluig-style-guide.min.js" charset="utf-8"></script>
+	<script type="text/javascript" src="validate.js"></script>
 </head>
 
 <body>
@@ -13,17 +14,13 @@
 		<form name="form" role="form">
 
 			<input type="hidden" name="urlServidor" id="urlServidor">
+			<input type="hidden" name="forcarErroGLPI" id="forcarErroGLPI">
 
 			<!-- NOVA SOLICITACAO - NS -->
 
 
 			<label>timeline</label>
 			<input type="text" name="decisaoSuperiorImediato" id="decisaoSuperiorImediato">
-
-			<input type="hidden" name="idGLPI" id="idGLPI">
-			<input type="hidden" name="codigoglpi" id="codigoglpi">
-
-			<input type="hidden" name="payloadJsonGLPI" id="payloadJsonGLPI">
 
 
 			<label>timeline</label>
@@ -39,11 +36,17 @@
 			<label>Coligada</label>
 			<input type="text" name="ColigadaNS" id="ColigadaNS">
 
-			<label>Área/unidade</label>
+			<label>�rea/unidade</label>
 			<input type="text" name="areaUnidadeNS" id="areaUnidadeNS">
 
 			<label>centrodecusto</label>
 			<input type="text" name="centrodecustoNS" id="centrodecustoNS">
+
+			<label>centrodecusto nome</label>
+			<input type="text" name="centrodecustoNomeNS" id="centrodecustoNomeNS">
+
+			<label>aprovador superior imediato</label>
+			<input type="text" name="aprovadorSuperiorImedNS" id="aprovadorSuperiorImedNS">
 
 			<label>patrocinador</label>
 			<input type="text" name="patrocinadorNS" id="patrocinadorNS">
@@ -51,10 +54,11 @@
 			<label>solicitante nome</label>
 			<input type="text" name="solicitanteNomeNS" id="solicitanteNomeNS">
 
+			<label>solicitante colleague id</label>
+			<input type="text" name="solicitanteColleagueIdNS" id="solicitanteColleagueIdNS">
+
 			<label>objetivodoprojeto</label>
 			<input type="text" name="objetivodoprojetoNS" id="objetivodoprojetoNS">
-
-
 
 			<label>problema/oportunidade</label>
 			<input type="text" name="problemaOportunidadeNS" id="problemaOportunidadeNS">
@@ -80,12 +84,12 @@
 			<label>alinhadobevap</label>
 			<input type="text" name="alinhadobevapNS" id="alinhadobevapNS">
 
-			<label>objetivos estratégicos</label>
+			<label>objetivos estratÃ©gicos</label>
 			<table class="table table-bordered" id="tblObjetivosEstrategicosNS" tablename="tblObjetivosEstrategicosNS"
 				noaddbutton="true" nodeletebutton="true">
 				<thead>
 					<tr>
-						<th>Descrição do objetivo</th>
+						<th>DescriÃ§Ã£o do objetivo</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -106,7 +110,7 @@
 			<label>foradeescopo</label>
 			<input type="text" name="foradeescopoNS" id="foradeescopoNS">
 
-			<label>dependências</label>
+			<label>dependÃªncias</label>
 			<input type="text" name="dependenciasNS" id="dependenciasNS">
 
 			<label>riscosiniciais</label>
@@ -163,8 +167,8 @@
 				noaddbutton="true" nodeletebutton="true">
 				<thead>
 					<tr>
-						<th>Nível de risco</th>
-						<th>Descrição do risco</th>
+						<th>NÃ­vel de risco</th>
+						<th>DescriÃ§Ã£o do risco</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -187,16 +191,16 @@
 			<label>Escopo bem delimitado</label>
 			<input type="text" name="escopoBemDelimitadoAPTI" id="escopoBemDelimitadoAPTI">
 
-			<label>Documentaçãotecnicaadequada</label>
+			<label>DocumentaÃ§Ã£otecnicaadequada</label>
 			<input type="text" name="documentacaoTecnicaAdeqAPTI" id="documentacaoTecnicaAdeqAPTI">
 
 			<label>Patrocinadoridentificado</label>
 			<input type="text" name="patrocinadoridentificadoAPTI" id="patrocinadoridentificadoAPTI">
 
-			<label>Alinhamentoestratégicoconfirmado</label>
+			<label>AlinhamentoestratÃ©gicoconfirmado</label>
 			<input type="text" name="alinhEstratConfAPTI" id="alinhEstratConfAPTI">
 
-			<label>Recursostécnicosdisponíveis</label>
+			<label>RecursostÃ©cnicosdisponÃ­veis</label>
 			<input type="text" name="recursosTecDispAPTI" id="recursosTecDispAPTI">
 
 			<label>Anexosessenciaispresentes</label>
@@ -206,44 +210,44 @@
 			<label>DisponibilidadedaEquipe</label>
 			<input type="text" name="disponibilidadedaEquipeSI" id="disponibilidadedaEquipeSI">
 
-			<label>RecursosNecessáriosdaÁrea</label>
+			<label>RecursosNecessÃ¡riosdaÃ�rea</label>
 			<input type="text" name="recursosNecessariosAreaSI" id="recursosNecessariosAreaSI">
 
 			<label>ConflitosdeAgenda</label>
 			<input type="text" name="conflitosdeAgendaSI" id="conflitosdeAgendaSI">
 
-			<label>PrioridadeparaaÁrea</label>
+			<label>PrioridadeparaaÃ�rea</label>
 			<input type="text" name="prioridadeparaaAreaSI" id="prioridadeparaaAreaSI">
 
-			<label>ObservaçõesdoGestor</label>
+			<label>ObservaÃ§ÃµesdoGestor</label>
 			<input type="text" name="observacoesdoGestorSI" id="observacoesdoGestorSI">
 
 			<label>Equipepossuidisponibilidade</label>
 			<input type="text" name="equipepossuiDisponibilidadeSI" id="equipepossuiDisponibilidadeSI">
 
-			<label>Recursosnecessáriosidentificados</label>
+			<label>RecursosnecessÃ¡riosidentificados</label>
 			<input type="text" name="recursosNecessIdentSI" id="recursosNecessIdentSI">
 
-			<label>Nãoháconflitoscríticos</label>
+			<label>NÃ£ohÃ¡conflitoscrÃ­ticos</label>
 			<input type="text" name="naoHaConflitosCriticosSI" id="naoHaConflitosCriticosSI">
 
 			<label>Projetoalinhadoprioridades</label>
 			<input type="text" name="projetoAlinhadoPrioridadesSI" id="projetoAlinhadoPrioridadesSI">
 
 			<!-- TI TRIAGEM TECNICA - TITT -->
-			<label>ExecuçãodoProjeto</label>
+			<label>ExecuÃ§Ã£odoProjeto</label>
 			<input type="text" name="execucaoProjetoTITT" id="execucaoProjetoTITT">
 
-			<label>MotivoDecisãocategoria</label>
+			<label>MotivoDecisÃ£ocategoria</label>
 			<input type="text" name="motivoDecisaoCategoriaTITT" id="motivoDecisaoCategoriaTITT">
 
-			<label>MotivoDecisãodescricao</label>
+			<label>MotivoDecisÃ£odescricao</label>
 			<input type="text" name="motivoDecisaoDescricaoTITT" id="motivoDecisaoDescricaoTITT">
 
 			<label>DisponibilidadedaEquipe</label>
 			<input type="text" name="disponibilidadedaEquipeTITT" id="disponibilidadedaEquipeTITT">
 
-			<label>DataDesejadadeInício</label>
+			<label>DataDesejadadeInÃ­cio</label>
 			<input type="text" name="dataDesejadaInicioTITT" id="dataDesejadaInicioTITT">
 
 			<label>Riscos Identificados</label>
@@ -251,11 +255,11 @@
 				noaddbutton="true" nodeletebutton="true">
 				<thead>
 					<tr>
-						<th>Título</th>
-						<th>Descrição</th>
-						<th>Mitigação</th>
+						<th>TÃ­tulo</th>
+						<th>DescriÃ§Ã£o</th>
+						<th>MitigaÃ§Ã£o</th>
 						<th>Plano B</th>
-						<th>Nível do Risco</th>
+						<th>NÃ­vel do Risco</th>
 						<th>Impacto</th>
 						<th>Probabilidade</th>
 					</tr>
@@ -273,15 +277,15 @@
 				</tbody>
 			</table>
 
-			<label>Dependências Internas/Externas</label>
+			<label>DependÃªncias Internas/Externas</label>
 			<table class="table table-bordered" id="tblDependenciasTITT" tablename="tblDependenciasTITT"
 				noaddbutton="true" nodeletebutton="true">
 				<thead>
 					<tr>
-						<th>Título</th>
+						<th>TÃ­tulo</th>
 						<th>Status</th>
-						<th>Responsável</th>
-						<th>Mitigação</th>
+						<th>ResponsÃ¡vel</th>
+						<th>MitigaÃ§Ã£o</th>
 						<th>Plano B</th>
 					</tr>
 				</thead>
@@ -300,28 +304,28 @@
 			<input type="text" name="fornecedorRecomendadoTITT" id="fornecedorRecomendadoTITT">
 			<input type="hidden" name="codfornTITT" id="codfornTITT">
 
-			<label>Tipo de Contratação</label>
+			<label>Tipo de ContrataÃ§Ã£o</label>
 			<input type="text" name="tipoContratacaoTITT" id="tipoContratacaoTITT">
 
-			<label>Justificativa Execução Externa</label>
+			<label>Justificativa ExecuÃ§Ã£o Externa</label>
 			<input type="text" name="justifExecucaoExtTITT" id="justifExecucaoExtTITT">
 
 			<label>Anexos de Apoio</label>
 			<input type="text" name="anexosApoioTITT" id="anexosApoioTITT">
 
-			<label>Escopo do projeto está claro e detalhado</label>
+			<label>Escopo do projeto estÃ¡ claro e detalhado</label>
 			<input type="text" name="escopoProjClaroDetTITT" id="escopoProjClaroDetTITT">
 
 			<label>Estimativas de custo e prazo registradas</label>
 			<input type="text" name="estimativasCustoPrazoRegTITT" id="estimativasCustoPrazoRegTITT">
 
-			<label>Anexos essenciais estão presentes</label>
+			<label>Anexos essenciais estÃ£o presentes</label>
 			<input type="text" name="anexosEssenciaisPresentesTITT" id="anexosEssenciaisPresentesTITT">
 
-			<label>Decisão de execução documentada</label>
+			<label>DecisÃ£o de execuÃ§Ã£o documentada</label>
 			<input type="text" name="decisaoExecucaoDocumentadaTITT" id="decisaoExecucaoDocumentadaTITT">
 
-			<label>Riscos e dependências mapeados</label>
+			<label>Riscos e dependÃªncias mapeados</label>
 			<input type="text" name="riscosDependenciasMapeadosTITT" id="riscosDependenciasMapeadosTITT">
 
 			<!-- COMITE - APROVAR PROJETO - CAP -->
@@ -343,7 +347,7 @@
 				</tbody>
 			</table>
 
-			<label>Anotações</label>
+			<label>AnotaÃ§Ãµes</label>
 			<input type="text" name="anotacoesCAP" id="anotacoesCAP">
 
 			<label>anexaratadareuniao</label>
@@ -386,10 +390,10 @@
 			<label>Telefone 2</label>
 			<input type="text" name="telefone2TIPC" id="telefone2TIPC">
 
-			<label>Nº/Ref. da Proposta</label>
+			<label>NÂº/Ref. da Proposta</label>
 			<input type="text" name="numeroRefPropostaTIPC" id="numeroRefPropostaTIPC">
 
-			<label>Vigência de Dias</label>
+			<label>VigÃªncia de Dias</label>
 			<input type="text" name="vigenciaDiasTIPC" id="vigenciaDiasTIPC">
 
 			<label>Valor Total</label>
@@ -403,7 +407,7 @@
 			<label>Prazo Estimado</label>
 			<input type="text" name="prazoEstimadoTIPC" id="prazoEstimadoTIPC">
 
-			<label>Condição de Pagamento</label>
+			<label>CondiÃ§Ã£o de Pagamento</label>
 			<input type="text" name="condicaoPagamentoTIPC" id="condicaoPagamentoTIPC">
 			<label>Código da Condição de Pagamento</label>
 			<input type="text" name="codigoCondicaoPagamentoTIPC" id="codigoCondicaoPagamentoTIPC">
@@ -411,14 +415,14 @@
 			<label>Escopo Resumido</label>
 			<input type="text" name="escopoResumidoTIPC" id="escopoResumidoTIPC">
 
-			<label>Itens / Serviços</label>
+			<label>Itens / ServiÃ§os</label>
 			<table class="table table-bordered" id="tblItensServicosTIPC" tablename="tblItensServicosTIPC"
 				noaddbutton="true" nodeletebutton="true">
 				<thead>
 					<tr>
-						<th>Descrição</th>
+						<th>DescriÃ§Ã£o</th>
 						<th>Quantidade</th>
-						<th>Valor unitário</th>
+						<th>Valor unitÃ¡rio</th>
 						<th>Total</th>
 					</tr>
 				</thead>
@@ -437,11 +441,11 @@
 				noaddbutton="true" nodeletebutton="true">
 				<thead>
 					<tr>
-						<th>Título do risco</th>
-						<th>Descrição</th>
-						<th>Mitigação</th>
+						<th>TÃ­tulo do risco</th>
+						<th>DescriÃ§Ã£o</th>
+						<th>MitigaÃ§Ã£o</th>
 						<th>Plano B</th>
-						<th>Nível</th>
+						<th>NÃ­vel</th>
 						<th>Impacto</th>
 						<th>Probabilidade</th>
 						<th>Risco potencial (legado)</th>
@@ -461,17 +465,17 @@
 				</tbody>
 			</table>
 
-			<label>Pré-requisitos</label>
+			<label>PrÃ©-requisitos</label>
 			<table class="table table-bordered" id="tblPreRequisitosTIPC" tablename="tblPreRequisitosTIPC"
 				noaddbutton="true" nodeletebutton="true">
 				<thead>
 					<tr>
-						<th>Título</th>
+						<th>TÃ­tulo</th>
 						<th>Status</th>
-						<th>Responsável</th>
-						<th>Mitigação</th>
+						<th>ResponsÃ¡vel</th>
+						<th>MitigaÃ§Ã£o</th>
 						<th>Plano B</th>
-						<th>Pré-requisito (legado)</th>
+						<th>PrÃ©-requisito (legado)</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -489,10 +493,10 @@
 			<label>Anexos da Proposta</label>
 			<input type="text" name="anexosPropostaTIPC" id="anexosPropostaTIPC">
 
-			<label>Escopo está claro e detalhado</label>
+			<label>Escopo estÃ¡ claro e detalhado</label>
 			<input type="text" name="escopoClaroDetalhadoTIPC" id="escopoClaroDetalhadoTIPC">
 
-			<label>Impostos e taxas estão inclusos no valor</label>
+			<label>Impostos e taxas estÃ£o inclusos no valor</label>
 			<input type="text" name="impostosTaxasInclusosTIPC" id="impostosTaxasInclusosTIPC">
 
 			<label>Prazos de entrega definidos</label>
@@ -501,7 +505,7 @@
 			<label>Garantias e SLA especificados</label>
 			<input type="text" name="garantiasSlaEspecificadosTIPC" id="garantiasSlaEspecificadosTIPC">
 
-			<label>Vigência da proposta confirmada</label>
+			<label>VigÃªncia da proposta confirmada</label>
 			<input type="text" name="vigenciaPropostaConfirmadaTIPC" id="vigenciaPropostaConfirmadaTIPC">
 
 			<label>Documentos anexados e completos</label>
@@ -517,7 +521,7 @@
 			<input type="text" name="categoriajustiTIPC" id="categoriajustiTIPC">
 
 			<!-- SOLICITANTE APROVAR PROPOSTA - SAP -->
-			<label>Observações / Negociação</label>
+			<label>ObservaÃ§Ãµes / NegociaÃ§Ã£o</label>
 			<input type="text" name="observacoesNegociacaoSAP" id="observacoesNegociacaoSAP">
 
 			<label>Li e concordo com a proposta comercial</label>
@@ -543,10 +547,10 @@
 				<thead>
 					<tr>
 						<th>Centro de custo</th>
-						<th>Conta contábil</th>
+						<th>Conta contÃ¡bil</th>
 						<th>Porcentagem</th>
 						<th>Saldo</th>
-						<th>Saldo após compromisso</th>
+						<th>Saldo apÃ³s compromisso</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -571,10 +575,10 @@
 				<thead>
 					<tr>
 						<th>Centro de custo</th>
-						<th>Conta contábil</th>
+						<th>Conta contÃ¡bil</th>
 						<th>Porcentagem</th>
 						<th>Saldo</th>
-						<th>Saldo após compromisso</th>
+						<th>Saldo apÃ³s compromisso</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -588,10 +592,10 @@
 				</tbody>
 			</table>
 
-			<label>Competência</label>
+			<label>CompetÃªncia</label>
 			<input type="text" name="competenciaGCC" id="competenciaGCC">
 
-			<label>Observações / Negociação</label>
+			<label>ObservaÃ§Ãµes / NegociaÃ§Ã£o</label>
 			<input type="text" name="observacoesNegociacaoGCC" id="observacoesNegociacaoGCC">
 
 			<label>decisaoGCC</label>
@@ -622,7 +626,7 @@
 				</tbody>
 			</table>
 
-			<label>Anotações</label>
+			<label>AnotaÃ§Ãµes</label>
 			<input type="text" name="anotacoesACP" id="anotacoesACP">
 
 			<label>anexaratadareuniao</label>
@@ -638,28 +642,28 @@
 			<input type="text" name="categoriajusticomite2" id="categoriajusticomite2">
 
 			<!-- COMPRAS - REALIZAR CONTRATACAO - CRC -->
-			<label>Tipo de Contratação</label>
+			<label>Tipo de ContrataÃ§Ã£o</label>
 			<input type="text" name="tipoContratacaoCRC" id="tipoContratacaoCRC">
 
-			<label>Nº do Pedido/Contrato</label>
+			<label>NÂº do Pedido/Contrato</label>
 			<input type="text" name="numeroPedidoContratoCRC" id="numeroPedidoContratoCRC">
 
-			<label>Data de Emissão</label>
+			<label>Data de EmissÃ£o</label>
 			<input type="text" name="dataEmissaoCRC" id="dataEmissaoCRC">
 
-			<label>Início da Vigência</label>
+			<label>InÃ­cio da VigÃªncia</label>
 			<input type="text" name="inicioVigenciaCRC" id="inicioVigenciaCRC">
 
-			<label>Fim da Vigência</label>
+			<label>Fim da VigÃªncia</label>
 			<input type="text" name="fimVigenciaCRC" id="fimVigenciaCRC">
 
-			<label>Condição de Pagamento</label>
+			<label>CondiÃ§Ã£o de Pagamento</label>
 			<input type="text" name="condicaoPagamentoCRC" id="condicaoPagamentoCRC">
 
 			<label>Centro de Custo</label>
 			<input type="text" name="centroCustoCRC" id="centroCustoCRC">
 
-			<label>Conta Contábil</label>
+			<label>Conta ContÃ¡bil</label>
 			<input type="text" name="contaContabilCRC" id="contaContabilCRC">
 
 			<label>Escopo Acordado</label>
@@ -668,19 +672,19 @@
 			<label>SLA/Garantia</label>
 			<input type="text" name="slaGarantiaCRC" id="slaGarantiaCRC">
 
-			<label>Multas/Rescisão</label>
+			<label>Multas/RescisÃ£o</label>
 			<input type="text" name="multasRescisaoCRC" id="multasRescisaoCRC">
 
-			<label>Pessoa Jurídica Regular</label>
+			<label>Pessoa JurÃ­dica Regular</label>
 			<input type="text" name="pessoaJuridicaRegularCRC" id="pessoaJuridicaRegularCRC">
 
-			<label>Certidões Negativas</label>
+			<label>CertidÃµes Negativas</label>
 			<input type="text" name="certidoesNegativasCRC" id="certidoesNegativasCRC">
 
-			<label>LGPD - Proteção de Dados</label>
+			<label>LGPD - Prote��o de Dados</label>
 			<input type="text" name="lgpdCRC" id="lgpdCRC">
 
-			<label>Análise de Segurança</label>
+			<label>An�lise de Seguran�a</label>
 			<input type="text" name="analiseSegurancaCRC" id="analiseSegurancaCRC">
 
 			<label>Seguro de Responsabilidade</label>
@@ -689,7 +693,7 @@
 			<label>Anexos CRC</label>
 			<input type="text" name="anexosCRC" id="anexosCRC">
 
-			<label>Escolher condição de pagamento</label>
+			<label>Escolher condi��o de pagamento</label>
 			<input type="text" name="escolhercondicaopagamentoCRC" id="escolhercondicaopagamentoCRC">
 
 			<label>Quantidade de parcelas da condicao</label>
@@ -722,423 +726,29 @@
 			<label>categoriajustiCRC</label>
 			<input type="text" name="categoriajustiCRC" id="categoriajustiCRC">
 
+			<label>decisaoCorrecao</label>
+			<input type="text" name="decisaoCorrecao" id="decisaoCorrecao">
+
+			<label>justificativaCorrecao</label>
+			<input type="text" name="justificativaCorrecao" id="justificativaCorrecao">
+
+			<label>categoriajustiCorrecao</label>
+			<input type="text" name="categoriajustiCorrecao" id="categoriajustiCorrecao">
+
+			<input type="hidden" name="idGLPI" id="idGLPI">
+			
+			<input type="hidden" name="codigoglpi" id="codigoglpi">
+
 			<label>Status Integracao GLPI</label>
 			<input type="text" name="statusIntegracaoGLPI" id="statusIntegracaoGLPI">
 
 			<label>Mensagem Erro GLPI</label>
 			<input type="text" name="mensagemErroGLPI" id="mensagemErroGLPI">
 
-			<!-- PROJECT PLANNING - DP (Planejamento do Projeto / Widget) -->
-			<hr>
-			<label><strong>PROJECT PLANNING - DP</strong></label>
-
-			<label>projectPlanningJsonDP</label>
-			<textarea name="projectPlanningJsonDP" id="projectPlanningJsonDP" class="form-control" rows="6"></textarea>
-
-			<label>WBS Phases</label>
-			<table class="table table-bordered" id="tblWbsPhasesDP" tablename="tblWbsPhasesDP" noaddbutton="true"
-				nodeletebutton="true">
-				<thead>
-					<tr>
-						<th>Phase Id</th>
-						<th>Phase Order</th>
-						<th>Phase Name</th>
-						<th>Responsible</th>
-						<th>Effort Hours</th>
-						<th>Duration Days</th>
-						<th>Notes</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><input type="text" name="wbsPhaseIdDP" class="form-control"></td>
-						<td><input type="text" name="wbsPhaseOrderDP" class="form-control"></td>
-						<td><input type="text" name="wbsPhaseNameDP" class="form-control"></td>
-						<td><input type="text" name="wbsPhaseResponsibleDP" class="form-control"></td>
-						<td><input type="text" name="wbsPhaseEffortHoursDP" class="form-control"></td>
-						<td><input type="text" name="wbsPhaseDurationDaysDP" class="form-control"></td>
-						<td><input type="text" name="wbsPhaseNotesDP" class="form-control"></td>
-					</tr>
-				</tbody>
-			</table>
-
-			<label>WBS Tasks</label>
-			<table class="table table-bordered" id="tblWbsTasksDP" tablename="tblWbsTasksDP" noaddbutton="true"
-				nodeletebutton="true">
-				<thead>
-					<tr>
-						<th>Task Id</th>
-						<th>Phase Id</th>
-						<th>Task Order</th>
-						<th>Task Name</th>
-						<th>Responsible</th>
-						<th>Effort Hours</th>
-						<th>Duration Days</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><input type="text" name="wbsTaskIdDP" class="form-control"></td>
-						<td><input type="text" name="wbsTaskPhaseIdDP" class="form-control"></td>
-						<td><input type="text" name="wbsTaskOrderDP" class="form-control"></td>
-						<td><input type="text" name="wbsTaskNameDP" class="form-control"></td>
-						<td><input type="text" name="wbsTaskResponsibleDP" class="form-control"></td>
-						<td><input type="text" name="wbsTaskEffortHoursDP" class="form-control"></td>
-						<td><input type="text" name="wbsTaskDurationDaysDP" class="form-control"></td>
-					</tr>
-				</tbody>
-			</table>
-
-			<label>Milestones</label>
-			<table class="table table-bordered" id="tblMilestonesDP" tablename="tblMilestonesDP" noaddbutton="true"
-				nodeletebutton="true">
-				<thead>
-					<tr>
-						<th>Milestone Id</th>
-						<th>Name</th>
-						<th>Start Date</th>
-						<th>End Date</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><input type="text" name="milestoneIdDP" class="form-control"></td>
-						<td><input type="text" name="milestoneNameDP" class="form-control"></td>
-						<td><input type="text" name="milestoneStartDateDP" class="form-control"></td>
-						<td><input type="text" name="milestoneEndDateDP" class="form-control"></td>
-					</tr>
-				</tbody>
-			</table>
-
-			<label>Milestone Criteria</label>
-			<table class="table table-bordered" id="tblMilestoneCriteriaDP" tablename="tblMilestoneCriteriaDP"
-				noaddbutton="true" nodeletebutton="true">
-				<thead>
-					<tr>
-						<th>Milestone Id</th>
-						<th>Criteria</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><input type="text" name="milestoneCriteriaMilestoneIdDP" class="form-control"></td>
-						<td><input type="text" name="milestoneCriteriaTextDP" class="form-control"></td>
-					</tr>
-				</tbody>
-			</table>
-
-			<label>Milestone Tasks</label>
-			<input type="text" name="milestoneTaskSeqCtrlDP" class="form-control" value="0">
-			<input type="text" name="milestoneTaskProcCtrlDP" class="form-control" value="0">
-			<table class="table table-bordered" id="tblMilestoneTasksDP" tablename="tblMilestoneTasksDP"
-				noaddbutton="true" nodeletebutton="true">
-				<thead>
-					<tr>
-						<th>Task Seq Id</th>
-						<th>Milestone Id</th>
-						<th>Task</th>
-						<th>Due Date</th>
-						<th>process</th>
-						<th>documentId</th>
-						<th>status</th>
-						<th>Started</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><input type="text" name="milestoneTaskIdDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskMilestoneIdDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskTextDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskDueDateDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskProcessDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskDocIdDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskStatusDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskStartedDP" class="form-control" value="false"></td>
-					</tr>
-				</tbody>
-			</table>
-
-			<label>Milestone Tasks Summary</label>
-			<table class="table table-bordered" id="tblMilestoneTasksSummaryDP" tablename="tblMilestoneTasksSummaryDP"
-				noaddbutton="true" nodeletebutton="true">
-				<thead>
-					<tr>
-						<th>Task Seq Id</th>
-						<th>Task</th>
-						<th>Due Date</th>
-						<th>Phase</th>
-						<th>Milestone</th>
-						<th>process</th>
-						<th>documentId</th>
-						<th>estadoProcesso</th>
-						<th>status</th>
-						<th>Started</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><input type="text" name="milestoneTaskSummaryIdDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskSummaryTextDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskSummaryDueDateDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskSummaryPhaseDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskSummaryMarcoDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskSummaryProcessDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskSummaryDocIdDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskSummaryEstProcDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskSummaryStatusDP" class="form-control"></td>
-						<td><input type="text" name="milestoneTaskSummaryStartedDP" class="form-control" value="false"></td>
-					</tr>
-				</tbody>
-			</table>
-
-			<label>Risks</label>
-			<table class="table table-bordered" id="tblRisksDP" tablename="tblRisksDP" noaddbutton="true"
-				nodeletebutton="true">
-				<thead>
-					<tr>
-						<th>Risk Id</th>
-						<th>Description</th>
-						<th>Probability</th>
-						<th>Impact</th>
-						<th>Mitigation</th>
-						<th>Plan B</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><input type="text" name="riskIdDP" class="form-control"></td>
-						<td><input type="text" name="riskDescriptionDP" class="form-control"></td>
-						<td><input type="text" name="riskProbabilityDP" class="form-control"></td>
-						<td><input type="text" name="riskImpactDP" class="form-control"></td>
-						<td><input type="text" name="riskMitigationDP" class="form-control"></td>
-						<td><input type="text" name="riskPlanBDP" class="form-control"></td>
-					</tr>
-				</tbody>
-			</table>
-
-			<label>External Dependencies</label>
-			
-            <table class="table table-bordered" id="tblExternalDependenciesDP" tablename="tblExternalDependenciesDP" noaddbutton="true" nodeletebutton="true">
-                <thead>
-                    <tr>
-                        <th>Dependency Id</th>
-                        <th>Description</th>
-                        <th>Status</th> <!-- COLUNA ADICIONADA -->
-                        <th>Responsible</th>
-                        <th>Mitigation</th>
-                        <th>Plan B</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="text" name="externalDependencyIdDP" class="form-control"></td>
-                        <td><input type="text" name="externalDependencyDescriDP" class="form-control"></td>
-                        <td><input type="text" name="externalDependencyStatusDP" class="form-control"></td> <!-- CAMPO ADICIONADO -->
-                        <td><input type="text" name="externalDependencyResponDP" class="form-control"></td>
-                        <td><input type="text" name="externalDependencyMitiDP" class="form-control"></td>
-                        <td><input type="text" name="externalDependencyPlanBDP" class="form-control"></td>
-                    </tr>
-                </tbody>
-            </table>
-
-			<label>RACI Json</label>
-			<textarea name="raciJsonDP" id="raciJsonDP" class="form-control" rows="4"></textarea>
-
-			<label>Alocação de Equipe</label>
-            <table class="table table-bordered" id="tblTeamAllocationDP" tablename="tblTeamAllocationDP" noaddbutton="true" nodeletebutton="true">
-                <thead>
-                    <tr>
-                        <th>Membro (Member)</th>
-                        <th>Perfil (Profile)</th>
-                        <th>Dedicação % (Dedication)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="text" name="allocMemberDP" class="form-control"></td>
-                        <td><input type="text" name="allocProfileDP" class="form-control"></td>
-                        <td><input type="text" name="allocDedicationDP" class="form-control"></td>
-                    </tr>
-                </tbody>
-            </table>
-
-			<label>Plano de Comunicação</label>
-            <table class="table table-bordered" id="tblCommunicationPlanDP" tablename="tblCommunicationPlanDP" noaddbutton="true" nodeletebutton="true">
-                <thead>
-                    <tr>
-                        <th>Público (Audience)</th>
-                        <th>Canal (Channel)</th>
-                        <th>Periodicidade (Frequency)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="text" name="commAudienceDP" class="form-control"></td>
-                        <td><input type="text" name="commChannelDP" class="form-control"></td>
-                        <td><input type="text" name="commFrequencyDP" class="form-control"></td>
-                    </tr>
-                </tbody>
-            </table>
-
-			<label>Documents Json</label>
-			<textarea name="documentsJsonDP" id="documentsJsonDP" class="form-control" rows="4"></textarea>
-
-			<label>Checklist de Completude</label>
-			<input type="text" name="chkEapWbsDP" id="chkEapWbsDP">
-			<input type="text" name="chkMilestonesDP" id="chkMilestonesDP">
-			<input type="text" name="chkRisksDP" id="chkRisksDP">
-			<input type="text" name="chkRaciDP" id="chkRaciDP">
-			<input type="text" name="chkDocsDP" id="chkDocsDP">
-
-			<label><strong>EXECU&Ccedil;&Atilde;O E VALIDA&Ccedil;&Otilde;ES - DP</strong></label>
-
-			<label>DecisaoExecucaoProjetoDP</label>
-			<input type="text" name="decisaoExecucaoProjetoDP" id="decisaoExecucaoProjetoDP">
-			<label>JustificativaExecucaoProjetoDP</label>
-			<input type="text" name="justificativaExecucaoProjetoDP" id="justificativaExecucaoProjetoDP">
-			<label>execFasesAtividadesCorrecao</label>
-			<input type="text" name="execFasesAtividadesCorrecao" id="execFasesAtividadesCorrecao" value="false">
-			<label>milestoneTaskCancelProcDP</label>
-			<input type="text" name="milestoneTaskCancelProcDP" id="milestoneTaskCancelProcDP" value="[]">
-			<label>milestoneTaskSyncSnapDP</label>
-			<input type="text" name="milestoneTaskSyncSnapDP" id="milestoneTaskSyncSnapDP" value="[]">
-
-			<label>ValidacaoSolicitanteDecisao</label>
-			<input type="text" name="ValidacaoSolicitanteDecisao" id="ValidacaoSolicitanteDecisao">
-			<label>valSolicComentarioDP</label>
-			<input type="text" name="valSolicComentarioDP" id="valSolicComentarioDP">
-			<label>valSolicDescricaoDP</label>
-			<input type="text" name="valSolicDescricaoDP" id="valSolicDescricaoDP">
-			<label>valSolicCategoriaDP</label>
-			<input type="text" name="valSolicCategoriaDP" id="valSolicCategoriaDP">
-			<label>valSolicChecklistDP</label>
-			<input type="text" name="valSolicChecklistDP" id="valSolicChecklistDP">
-			<label>valSolicLiConcordoDP</label>
-			<input type="text" name="valSolicLiConcordoDP" id="valSolicLiConcordoDP" value="false">
-			<label>valSolicHistJsonDP</label>
-			<input type="text" name="valSolicHistJsonDP" id="valSolicHistJsonDP" value="[]">
-
-			<label>ValidacaoTIDecisao</label>
-			<input type="text" name="ValidacaoTIDecisao" id="ValidacaoTIDecisao">
-			<label>valTIComentarioDP</label>
-			<input type="text" name="valTIComentarioDP" id="valTIComentarioDP">
-			<label>valTIDescricaoDP</label>
-			<input type="text" name="valTIDescricaoDP" id="valTIDescricaoDP">
-			<label>valTICategoriaDP</label>
-			<input type="text" name="valTICategoriaDP" id="valTICategoriaDP">
-			<label>valTIChecklistDP</label>
-			<input type="text" name="valTIChecklistDP" id="valTIChecklistDP">
-			<label>valTILiConcordoDP</label>
-			<input type="text" name="valTILiConcordoDP" id="valTILiConcordoDP" value="false">
-			<label>valTIHistJsonDP</label>
-			<input type="text" name="valTIHistJsonDP" id="valTIHistJsonDP" value="[]">
-
-			<hr>
-			<label><strong>Tratar Erro - Iniciar Execução Atividades do Projeto</strong></label>
-			<label>Mensagem de Erro</label>
-			<input type="text" name="erroIniciarExecucaoMsg" id="erroIniciarExecucaoMsg" class="form-control">
-			<label>Índice da Tarefa com Erro</label>
-			<input type="text" name="erroIniciarExecucaoIdx" id="erroIniciarExecucaoIdx" class="form-control">
-			<p>Depois de revisar a mensagem, conclua a atividade para retornar à atividade 16 e tentar abrir somente os itens não iniciados.</p>
-			<!-- ENTREGA PROJETOS - EP -->
-			<label><strong>ENTREGA PROJETOS - EP</strong></label>
-			<!-- Adicione abaixo os novos campos especificos do processo de entrega. -->
-			<input type="hidden" name="decisaoPlanejamentoEntregaEP" id="decisaoPlanejamentoEntregaEP">
-			<input type="hidden" name="justifPlanEntregaEP" id="justifPlanEntregaEP">
-			<input type="text" name="anexosEntregaEP" id="anexosEntregaEP">
-			<input type="text" name="anexosTreinamentoEP" id="anexosTreinamentoEP">
-			<input type="text" name="temTreinamentoEP" id="temTreinamentoEP">
-			<input type="text" name="decisaoTreinamentoEP" id="decisaoTreinamentoEP">
-			<textarea name="justifTreinamentoEP" id="justifTreinamentoEP" class="form-control" rows="3"></textarea>
-			<input type="text" name="treinamentoCorrecaoEP" id="treinamentoCorrecaoEP">
-			<input type="text" name="decisaoValFinalEP" id="decisaoValFinalEP">
-			<textarea name="comentValFinalEP" id="comentValFinalEP" class="form-control" rows="3"></textarea>
-			<input type="text" name="confirmaValFinalEP" id="confirmaValFinalEP">
-			<textarea name="justifValFinalEP" id="justifValFinalEP" class="form-control" rows="3"></textarea>
-			<input type="text" name="categoriaCancelValFinalEP" id="categoriaCancelValFinalEP">
-			<input type="text" name="anexosValFinalEP" id="anexosValFinalEP">
-			<input type="text" name="histValFinalEP" id="histValFinalEP" value="[]">
-			<input type="text" name="decisaoGoLiveTiEP" id="decisaoGoLiveTiEP">
-			<textarea name="comentGoLiveTiEP" id="comentGoLiveTiEP" class="form-control" rows="3"></textarea>
-			<input type="text" name="confirmaGoLiveTiEP" id="confirmaGoLiveTiEP">
-			<textarea name="justifGoLiveTiEP" id="justifGoLiveTiEP" class="form-control" rows="3"></textarea>
-			<input type="text" name="catCancelGoLiveTiEP" id="catCancelGoLiveTiEP">
-			<input type="text" name="anexosGoLiveTiEP" id="anexosGoLiveTiEP">
-			<input type="text" name="histGoLiveTiEP" id="histGoLiveTiEP" value="[]">
-			<input type="text" name="decisaoSolicGoLiveEP" id="decisaoSolicGoLiveEP">
-			<textarea name="comentSolicGoLiveEP" id="comentSolicGoLiveEP" class="form-control" rows="3"></textarea>
-			<input type="text" name="confirmaSolicGoLiveEP" id="confirmaSolicGoLiveEP">
-			<textarea name="justifSolicGoLiveEP" id="justifSolicGoLiveEP" class="form-control" rows="3"></textarea>
-			<input type="text" name="catCancelSolicGoLiveEP" id="catCancelSolicGoLiveEP">
-			<input type="text" name="anexosSolicGoLiveEP" id="anexosSolicGoLiveEP">
-			<input type="text" name="histSolicGoLiveEP" id="histSolicGoLiveEP" value="[]">
-			<input type="text" name="decisaoEncerramentoEP" id="decisaoEncerramentoEP">
-			<textarea name="comentEncerramentoEP" id="comentEncerramentoEP" class="form-control" rows="3"></textarea>
-			<input type="text" name="confirmaEncerramentoEP" id="confirmaEncerramentoEP">
-			<textarea name="justifEncerramentoEP" id="justifEncerramentoEP" class="form-control" rows="3"></textarea>
-			<input type="text" name="catCancelEncerrEP" id="catCancelEncerrEP">
-			<input type="text" name="anexosEncerramentoEP" id="anexosEncerramentoEP">
-			<input type="text" name="histEncerramentoEP" id="histEncerramentoEP" value="[]">
-
-			<label>Planejamentos da Entrega</label>
-			<table class="table table-bordered" id="tblDeliveryPlanningEP" tablename="tblDeliveryPlanningEP" noaddbutton="true" nodeletebutton="true">
-				<thead>
-					<tr>
-						<th>ID</th>
-						<th>Tipo</th>
-						<th>T&iacute;tulo</th>
-						<th>Respons&aacute;vel</th>
-						<th>Data Execu&ccedil;&atilde;o</th>
-						<th>Est&aacute;gio GO Live</th>
-						<th>Status GO Live</th>
-						<th>Horas Treinamento</th>
-						<th>Descri&ccedil;&atilde;o</th>
-						<th>Participantes</th>
-						<th>Status Treinamento</th>
-						<th>Data Treinamento</th>
-						<th>Obs Treinamento</th>
-						<th>Justif Treinamento</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><input type="text" name="deliveryPlanIdEP" class="form-control"></td>
-						<td><input type="text" name="deliveryPlanTypeEP" class="form-control"></td>
-						<td><input type="text" name="deliveryPlanTitleEP" class="form-control"></td>
-						<td><input type="text" name="deliveryPlanResponsibleEP" class="form-control"></td>
-						<td><input type="text" name="deliveryPlanExecutionDateEP" class="form-control"></td>
-						<td><input type="text" name="deliveryPlanStageEP" class="form-control"></td>
-						<td><input type="text" name="deliveryGoLiveStatusEP" class="form-control"></td>
-						<td><input type="text" name="deliveryPlanTrainingHoursEP" class="form-control"></td>
-						<td><input type="text" name="deliveryPlanDescriptionEP" class="form-control"></td>
-						<td><input type="text" name="deliveryPlanParticipantsEP" class="form-control"></td>
-						<td><input type="text" name="deliveryTrainStatusEP" class="form-control"></td>
-						<td><input type="text" name="deliveryTrainDateEP" class="form-control"></td>
-						<td><input type="text" name="deliveryTrainNotesEP" class="form-control"></td>
-						<td><input type="text" name="deliveryTrainJustifEP" class="form-control"></td>
-					</tr>
-				</tbody>
-			</table>
-
-			<label>Depend&ecirc;ncias do Planejamento da Entrega</label>
-			<table class="table table-bordered" id="tblDeliveryPlanDependenciesEP" tablename="tblDeliveryPlanDependenciesEP" noaddbutton="true" nodeletebutton="true">
-				<thead>
-					<tr>
-						<th>ID Planejamento</th>
-						<th>Descri&ccedil;&atilde;o</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td><input type="text" name="deliveryDependencyPlanIdEP" class="form-control"></td>
-						<td><input type="text" name="deliveryDependencyTextEP" class="form-control"></td>
-					</tr>
-				</tbody>
-			</table>
+			<input type="hidden" name="payloadJsonGLPI" id="payloadJsonGLPI">
 
 		</form>
 	</div>
 </body>
 
 </html>
-

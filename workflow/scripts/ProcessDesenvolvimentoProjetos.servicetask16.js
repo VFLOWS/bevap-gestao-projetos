@@ -29,6 +29,7 @@ function servicetask16(attempt, message) {
 				"decisaoSuperiorImediato",
 				"decisaoAvaliarProjeto",
 				"payloadJsonGLPI",
+				"forcarErroGLPI",
 				"titulodoprojetoNS",
 				"ColigadaNS",
 				"areaUnidadeNS",
@@ -693,7 +694,7 @@ function servicetask16(attempt, message) {
 			log.info("### servicetask16 - INICIANDO PROCESSO execucaoFasesAtividades PARA LINHA " + idx + " summaryId=" + summaryTaskId + " controleAnterior=" + processedControlId);
 
 			var fields = [
-				"14cdc0c0-a710-4412-81dd-d94fe3abe00a",
+				"e6cfab79-5cf3-4350-a789-bdfb89ebc741",
 				"execucaoFasesAtividades",
 				"0",
 				getValue("WKCompany") + "",

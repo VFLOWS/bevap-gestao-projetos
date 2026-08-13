@@ -1,4 +1,4 @@
-﻿<html>
+<html>
 
 <head>
 	<link type="text/css" rel="stylesheet" href="/style-guide/css/fluig-style-guide-flat.min.css" />
@@ -13,6 +13,7 @@
 		<form name="form" role="form">
 
 			<input type="hidden" name="urlServidor" id="urlServidor">
+			<input type="hidden" name="forcarErroGLPI" id="forcarErroGLPI">
 
 			<!-- NOVA SOLICITACAO - NS -->
 
@@ -44,21 +45,15 @@
 
 			<label>centrodecusto</label>
 			<input type="text" name="centrodecustoNS" id="centrodecustoNS">
-
-			<label>centrodecusto nome</label>
-			<input type="text" name="centrodecustoNomeNS" id="centrodecustoNomeNS">
-
-			<label>aprovador superior imediato</label>
-			<input type="text" name="aprovadorSuperiorImedNS" id="aprovadorSuperiorImedNS">
+			<input type="hidden" name="centrodecustoNomeNS" id="centrodecustoNomeNS">
 
 			<label>patrocinador</label>
 			<input type="text" name="patrocinadorNS" id="patrocinadorNS">
 
 			<label>solicitante nome</label>
 			<input type="text" name="solicitanteNomeNS" id="solicitanteNomeNS">
-
-			<label>solicitante colleague id</label>
-			<input type="text" name="solicitanteColleagueIdNS" id="solicitanteColleagueIdNS">
+			<input type="hidden" name="solicitanteColleagueIdNS" id="solicitanteColleagueIdNS">
+			<input type="hidden" name="aprovadorSuperiorImedNS" id="aprovadorSuperiorImedNS">
 
 			<label>objetivodoprojeto</label>
 			<input type="text" name="objetivodoprojetoNS" id="objetivodoprojetoNS">
@@ -999,7 +994,7 @@
 			<input type="text" name="chkRaciDP" id="chkRaciDP">
 			<input type="text" name="chkDocsDP" id="chkDocsDP">
 
-			<label><strong>EXECUÇÃO E VALIDAÇÕES - DP</strong></label>
+			<label><strong>EXECU&Ccedil;&Atilde;O E VALIDA&Ccedil;&Otilde;ES - DP</strong></label>
 
 			<label>DecisaoExecucaoProjetoDP</label>
 			<input type="text" name="decisaoExecucaoProjetoDP" id="decisaoExecucaoProjetoDP">
@@ -1049,14 +1044,101 @@
 			<label>Índice da Tarefa com Erro</label>
 			<input type="text" name="erroIniciarExecucaoIdx" id="erroIniciarExecucaoIdx" class="form-control">
 			<p>Depois de revisar a mensagem, conclua a atividade para retornar à atividade 16 e tentar abrir somente os itens não iniciados.</p>
+			<!-- ENTREGA PROJETOS - EP -->
+			<label><strong>ENTREGA PROJETOS - EP</strong></label>
+			<!-- Adicione abaixo os novos campos especificos do processo de entrega. -->
+			<input type="hidden" name="decisaoPlanejamentoEntregaEP" id="decisaoPlanejamentoEntregaEP">
+			<input type="hidden" name="justifPlanEntregaEP" id="justifPlanEntregaEP">
+			<input type="text" name="anexosEntregaEP" id="anexosEntregaEP">
+			<input type="text" name="anexosTreinamentoEP" id="anexosTreinamentoEP">
+			<input type="text" name="temTreinamentoEP" id="temTreinamentoEP">
+			<input type="text" name="decisaoTreinamentoEP" id="decisaoTreinamentoEP">
+			<textarea name="justifTreinamentoEP" id="justifTreinamentoEP" class="form-control" rows="3"></textarea>
+			<input type="text" name="treinamentoCorrecaoEP" id="treinamentoCorrecaoEP">
+			<input type="text" name="decisaoValFinalEP" id="decisaoValFinalEP">
+			<textarea name="comentValFinalEP" id="comentValFinalEP" class="form-control" rows="3"></textarea>
+			<input type="text" name="confirmaValFinalEP" id="confirmaValFinalEP">
+			<textarea name="justifValFinalEP" id="justifValFinalEP" class="form-control" rows="3"></textarea>
+			<input type="text" name="categoriaCancelValFinalEP" id="categoriaCancelValFinalEP">
+			<input type="text" name="anexosValFinalEP" id="anexosValFinalEP">
+			<input type="text" name="histValFinalEP" id="histValFinalEP" value="[]">
+			<input type="text" name="decisaoGoLiveTiEP" id="decisaoGoLiveTiEP">
+			<textarea name="comentGoLiveTiEP" id="comentGoLiveTiEP" class="form-control" rows="3"></textarea>
+			<input type="text" name="confirmaGoLiveTiEP" id="confirmaGoLiveTiEP">
+			<textarea name="justifGoLiveTiEP" id="justifGoLiveTiEP" class="form-control" rows="3"></textarea>
+			<input type="text" name="catCancelGoLiveTiEP" id="catCancelGoLiveTiEP">
+			<input type="text" name="anexosGoLiveTiEP" id="anexosGoLiveTiEP">
+			<input type="text" name="histGoLiveTiEP" id="histGoLiveTiEP" value="[]">
+			<input type="text" name="decisaoSolicGoLiveEP" id="decisaoSolicGoLiveEP">
+			<textarea name="comentSolicGoLiveEP" id="comentSolicGoLiveEP" class="form-control" rows="3"></textarea>
+			<input type="text" name="confirmaSolicGoLiveEP" id="confirmaSolicGoLiveEP">
+			<textarea name="justifSolicGoLiveEP" id="justifSolicGoLiveEP" class="form-control" rows="3"></textarea>
+			<input type="text" name="catCancelSolicGoLiveEP" id="catCancelSolicGoLiveEP">
+			<input type="text" name="anexosSolicGoLiveEP" id="anexosSolicGoLiveEP">
+			<input type="text" name="histSolicGoLiveEP" id="histSolicGoLiveEP" value="[]">
+			<input type="text" name="decisaoEncerramentoEP" id="decisaoEncerramentoEP">
+			<textarea name="comentEncerramentoEP" id="comentEncerramentoEP" class="form-control" rows="3"></textarea>
+			<input type="text" name="confirmaEncerramentoEP" id="confirmaEncerramentoEP">
+			<textarea name="justifEncerramentoEP" id="justifEncerramentoEP" class="form-control" rows="3"></textarea>
+			<input type="text" name="catCancelEncerrEP" id="catCancelEncerrEP">
+			<input type="text" name="anexosEncerramentoEP" id="anexosEncerramentoEP">
+			<input type="text" name="histEncerramentoEP" id="histEncerramentoEP" value="[]">
 
-			<hr>
-			<label><strong>Tratar Erro - Iniciar Entrega Projeto</strong></label>
-			<label>Mensagem de Erro</label>
-			<input type="text" name="erroIniciarEntregaMsg" id="erroIniciarEntregaMsg" class="form-control">
-			<label>Processo de Entrega</label>
-			<input type="text" name="erroIniciarEntregaProc" id="erroIniciarEntregaProc" class="form-control">
-			<p>Depois de revisar a mensagem, conclua a atividade para retornar à atividade 55 e tentar abrir o processo de entrega novamente.</p>
+			<label>Planejamentos da Entrega</label>
+			<table class="table table-bordered" id="tblDeliveryPlanningEP" tablename="tblDeliveryPlanningEP" noaddbutton="true" nodeletebutton="true">
+				<thead>
+					<tr>
+						<th>ID</th>
+						<th>Tipo</th>
+						<th>T&iacute;tulo</th>
+						<th>Respons&aacute;vel</th>
+						<th>Data Execu&ccedil;&atilde;o</th>
+						<th>Est&aacute;gio GO Live</th>
+						<th>Status GO Live</th>
+						<th>Horas Treinamento</th>
+						<th>Descri&ccedil;&atilde;o</th>
+						<th>Participantes</th>
+						<th>Status Treinamento</th>
+						<th>Data Treinamento</th>
+						<th>Obs Treinamento</th>
+						<th>Justif Treinamento</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" name="deliveryPlanIdEP" class="form-control"></td>
+						<td><input type="text" name="deliveryPlanTypeEP" class="form-control"></td>
+						<td><input type="text" name="deliveryPlanTitleEP" class="form-control"></td>
+						<td><input type="text" name="deliveryPlanResponsibleEP" class="form-control"></td>
+						<td><input type="text" name="deliveryPlanExecutionDateEP" class="form-control"></td>
+						<td><input type="text" name="deliveryPlanStageEP" class="form-control"></td>
+						<td><input type="text" name="deliveryGoLiveStatusEP" class="form-control"></td>
+						<td><input type="text" name="deliveryPlanTrainingHoursEP" class="form-control"></td>
+						<td><input type="text" name="deliveryPlanDescriptionEP" class="form-control"></td>
+						<td><input type="text" name="deliveryPlanParticipantsEP" class="form-control"></td>
+						<td><input type="text" name="deliveryTrainStatusEP" class="form-control"></td>
+						<td><input type="text" name="deliveryTrainDateEP" class="form-control"></td>
+						<td><input type="text" name="deliveryTrainNotesEP" class="form-control"></td>
+						<td><input type="text" name="deliveryTrainJustifEP" class="form-control"></td>
+					</tr>
+				</tbody>
+			</table>
+
+			<label>Depend&ecirc;ncias do Planejamento da Entrega</label>
+			<table class="table table-bordered" id="tblDeliveryPlanDependenciesEP" tablename="tblDeliveryPlanDependenciesEP" noaddbutton="true" nodeletebutton="true">
+				<thead>
+					<tr>
+						<th>ID Planejamento</th>
+						<th>Descri&ccedil;&atilde;o</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><input type="text" name="deliveryDependencyPlanIdEP" class="form-control"></td>
+						<td><input type="text" name="deliveryDependencyTextEP" class="form-control"></td>
+					</tr>
+				</tbody>
+			</table>
 
 		</form>
 	</div>

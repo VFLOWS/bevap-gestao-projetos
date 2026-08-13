@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII" standalone="no"?><xmi:XMI xmlns:xmi="http://www.omg.org/XMI" xmlns:al="http://eclipse.org/graphiti/mm/algorithms" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL-XMI" xmlns:pi="http://eclipse.org/graphiti/mm/pictograms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmi:version="2.0">
-  <pi:Diagram diagramTypeId="BPMNdiagram" gridUnit="10" name="ProcessDesenvolvimentoProjetos" pictogramLinks="/0/@children.0/@link /0/@children.0/@children.4/@link /0/@children.0/@children.3/@link /0/@children.0/@children.2/@link /0/@children.0/@children.1/@link /0/@children.0/@children.0/@link /0/@children.1/@link /0/@children.2/@link /0/@children.3/@link /0/@children.4/@link /0/@children.5/@link /0/@children.6/@link /0/@children.7/@link /0/@children.8/@link /0/@children.9/@link /0/@children.10/@link /0/@children.11/@link /0/@children.12/@link /0/@children.13/@link /0/@children.14/@link /0/@children.15/@link /0/@children.16/@link /0/@children.17/@link /0/@children.18/@link /0/@children.19/@link /0/@children.20/@link /0/@connections.0/@link /0/@connections.1/@link /0/@connections.2/@link /0/@connections.3/@link /0/@connections.4/@link /0/@connections.5/@link /0/@connections.6/@link /0/@connections.7/@link /0/@connections.8/@link /0/@connections.9/@link /0/@connections.10/@link /0/@connections.11/@link /0/@connections.12/@link /0/@connections.13/@link /0/@connections.14/@link /0/@connections.15/@link /0/@connections.16/@link /0/@connections.17/@link /0/@connections.18/@link /0/@connections.19/@link /0/@connections.20/@link /0/@children.21/@link /0/@children.22/@link /0/@children.23/@link /0/@connections.21/@link /0/@connections.22/@link /0/@connections.23/@link /0/@connections.24/@link" snapToGrid="true" version="0.16.0" visible="true">
+  <pi:Diagram diagramTypeId="BPMNdiagram" gridUnit="10" name="ProcessDesenvolvimentoProjetos" pictogramLinks="/0/@children.0/@link /0/@children.0/@children.4/@link /0/@children.0/@children.3/@link /0/@children.0/@children.2/@link /0/@children.0/@children.1/@link /0/@children.0/@children.0/@link /0/@children.1/@link /0/@children.2/@link /0/@children.3/@link /0/@children.4/@link /0/@children.5/@link /0/@children.6/@link /0/@children.7/@link /0/@children.8/@link /0/@children.9/@link /0/@children.10/@link /0/@children.11/@link /0/@children.12/@link /0/@children.13/@link /0/@children.14/@link /0/@children.15/@link /0/@children.16/@link /0/@children.17/@link /0/@children.18/@link /0/@children.19/@link /0/@children.20/@link /0/@children.21/@link /0/@children.22/@link /0/@children.23/@link /0/@connections.0/@link /0/@connections.1/@link /0/@connections.2/@link /0/@connections.3/@link /0/@connections.4/@link /0/@connections.5/@link /0/@connections.6/@link /0/@connections.7/@link /0/@connections.8/@link /0/@connections.9/@link /0/@connections.10/@link /0/@connections.11/@link /0/@connections.12/@link /0/@connections.13/@link /0/@connections.14/@link /0/@connections.15/@link /0/@connections.16/@link /0/@connections.17/@link /0/@connections.18/@link /0/@connections.19/@link /0/@connections.20/@link /0/@connections.21/@link /0/@connections.22/@link /0/@connections.23/@link /0/@connections.24/@link" snapToGrid="true" version="0.16.0" visible="true">
     <graphicsAlgorithm background="/0/@styles.13/@renderingStyle/@adaptedGradientColoredAreas/@adaptedGradientColoredAreas.0/@gradientColor.2/@end/@color" foreground="/0/@colors.0" height="1000" lineWidth="1" transparency="0.0" width="1000" xsi:type="al:Rectangle"/>
     <children active="true" visible="true" xsi:type="pi:ContainerShape">
       <graphicsAlgorithm background="/0/@styles.13/@renderingStyle/@adaptedGradientColoredAreas/@adaptedGradientColoredAreas.0/@gradientColor.2/@end/@color" foreground="/0/@colors.3" height="770" lineWidth="1" style="/0/@styles.0" transparency="0.0" width="2711" x="10" xsi:type="al:Rectangle" y="10"/>
@@ -34,7 +34,7 @@
         </children>
       </children>
       <children active="true" visible="true" xsi:type="pi:ContainerShape">
-        <graphicsAlgorithm background="/0/@colors.7" foreground="/0/@colors.3" height="154" lineWidth="1" style="/0/@styles.7" transparency="0.0" width="2681" x="30" xsi:type="al:Rectangle" y="308"/>
+        <graphicsAlgorithm background="/0/@colors.7" foreground="/0/@colors.3" height="154" lineWidth="1" style="/0/@styles.7" transparency="0.0" width="2681" x="30" xsi:type="al:Rectangle" y="154"/>
         <link businessObjects="bpmnswimlane4"/>
         <anchors xsi:type="pi:ChopboxAnchor"/>
         <anchors xsi:type="pi:ChopboxAnchor"/>
@@ -46,7 +46,7 @@
         </children>
       </children>
       <children active="true" visible="true" xsi:type="pi:ContainerShape">
-        <graphicsAlgorithm background="/0/@colors.6" foreground="/0/@colors.3" height="154" lineWidth="1" style="/0/@styles.5" transparency="0.0" width="2681" x="30" xsi:type="al:Rectangle" y="154"/>
+        <graphicsAlgorithm background="/0/@colors.6" foreground="/0/@colors.3" height="154" lineWidth="1" style="/0/@styles.5" transparency="0.0" width="2681" x="30" xsi:type="al:Rectangle" y="308"/>
         <link businessObjects="bpmnswimlane3"/>
         <anchors xsi:type="pi:ChopboxAnchor"/>
         <anchors xsi:type="pi:ChopboxAnchor"/>
@@ -434,10 +434,10 @@
         <graphicsAlgorithm filled="false" lineVisible="false" xsi:type="al:Ellipse"/>
       </anchors>
       <children visible="true">
-        <graphicsAlgorithm cornerHeight="5" cornerWidth="5" height="70" lineWidth="1" style="/0/@styles.69" transparency="0.0" width="106" xsi:type="al:RoundedRectangle"/>
+        <graphicsAlgorithm cornerHeight="5" cornerWidth="5" height="70" lineWidth="1" style="/0/@styles.46" transparency="0.0" width="106" xsi:type="al:RoundedRectangle"/>
       </children>
       <children visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.1" height="60" horizontalAlignment="ALIGNMENT_CENTER" lineVisible="true" lineWidth="1" style="/0/@styles.70" transparency="0.0" value="Iniciar Entrega Projeto" width="96" x="5" xsi:type="al:MultiText" y="5"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.1" height="60" horizontalAlignment="ALIGNMENT_CENTER" lineVisible="true" lineWidth="1" style="/0/@styles.47" transparency="0.0" value="Iniciar Entrega Projeto" width="96" x="5" xsi:type="al:MultiText" y="5"/>
       </children>
       <children visible="true">
         <graphicsAlgorithm height="16" id="com.totvs.tds.ecm.designer.task.service" lineWidth="1" proportional="false" stretchH="false" stretchV="false" transparency="0.0" width="16" x="5" xsi:type="al:Image" y="5"/>
@@ -451,15 +451,15 @@
         <graphicsAlgorithm filled="false" lineVisible="false" xsi:type="al:Ellipse"/>
       </anchors>
       <children visible="true">
-        <graphicsAlgorithm cornerHeight="5" cornerWidth="5" height="84" lineWidth="1" style="/0/@styles.71" transparency="0.0" width="106" xsi:type="al:RoundedRectangle"/>
+        <graphicsAlgorithm cornerHeight="5" cornerWidth="5" height="84" lineWidth="1" style="/0/@styles.48" transparency="0.0" width="106" xsi:type="al:RoundedRectangle"/>
       </children>
       <children visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.1" height="74" horizontalAlignment="ALIGNMENT_CENTER" lineVisible="true" lineWidth="1" style="/0/@styles.72" transparency="0.0" value="Tratar Erro - Iniciar Entrega Projeto" width="96" x="5" xsi:type="al:MultiText" y="5"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.1" height="74" horizontalAlignment="ALIGNMENT_CENTER" lineVisible="true" lineWidth="1" style="/0/@styles.49" transparency="0.0" value="Tratar Erro - Iniciar Entrega Projeto" width="96" x="5" xsi:type="al:MultiText" y="5"/>
       </children>
     </children>
     <children active="true" visible="true" xsi:type="pi:ContainerShape">
       <graphicsAlgorithm filled="false" height="30" lineVisible="false" lineWidth="1" transparency="0.0" width="30" x="2170" xsi:type="al:Ellipse" y="584">
-        <graphicsAlgorithmChildren height="30" lineWidth="1" style="/0/@styles.73" transparency="0.0" width="30" xsi:type="al:Ellipse"/>
+        <graphicsAlgorithmChildren height="30" lineWidth="1" style="/0/@styles.50" transparency="0.0" width="30" xsi:type="al:Ellipse"/>
       </graphicsAlgorithm>
       <link businessObjects="intermediateerror57"/>
       <anchors outgoingConnections="/0/@connections.21" xsi:type="pi:ChopboxAnchor"/>
@@ -2446,29 +2446,6 @@
       </renderingStyle>
     </styles>
     <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles background="/0/@colors.3" foreground="/0/@colors.3" id="BPMN-POLYGON-ARROW" lineWidth="1"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
-    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
     <styles foreground="/0/@colors.1" id="TASK">
       <renderingStyle>
         <adaptedGradientColoredAreas definedStyleId="blue-white-gloss" gradientType="0">
@@ -2808,6 +2785,28 @@
       </renderingStyle>
     </styles>
     <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles background="/0/@colors.3" foreground="/0/@colors.3" id="BPMN-POLYGON-ARROW" lineWidth="1"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
+    <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
     <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
     <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
     <styles foreground="/0/@colors.11" id="BPMNCLASS-TEXT"/>
@@ -2815,10 +2814,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow13"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.46" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.51" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2831,10 +2830,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow15"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.48" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.53" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2848,10 +2847,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow17"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.49" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.54" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2865,10 +2864,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow19"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.50" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.55" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2882,10 +2881,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow21"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.51" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.56" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2897,10 +2896,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow22"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.52" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.57" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2914,10 +2913,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow24"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.53" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.58" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2930,10 +2929,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow26"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.54" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.59" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2945,10 +2944,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow27"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.55" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.60" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2962,10 +2961,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow31"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.56" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.61" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2977,10 +2976,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow33"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.57" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.62" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -2994,10 +2993,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow35"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.58" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.63" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3011,10 +3010,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow37"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.59" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.64" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3027,10 +3026,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow39"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.60" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.65" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3042,10 +3041,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow40"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.61" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.66" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3059,10 +3058,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow48"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.63" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.67" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3075,10 +3074,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow49"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.64" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.68" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3091,10 +3090,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow50"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.65" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.69" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3107,10 +3106,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow51"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.66" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.70" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3123,10 +3122,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow53"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.67" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.71" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3139,10 +3138,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow54"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.68" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.72" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3155,10 +3154,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow58"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.74" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.73" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3171,10 +3170,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow59"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.75" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.74" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3187,10 +3186,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow60"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.76" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.75" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3202,10 +3201,10 @@
       <graphicsAlgorithm filled="false" foreground="/0/@colors.3" lineWidth="1" transparency="0.0" xsi:type="al:Polyline"/>
       <link businessObjects="flow61"/>
       <connectionDecorators active="true" location="0.5" locationRelative="true" visible="true">
-        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.77" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
+        <graphicsAlgorithm filled="false" font="/0/@fonts.0" lineWidth="1" style="/0/@styles.76" transparency="0.0" value="" x="10" xsi:type="al:Text"/>
       </connectionDecorators>
       <connectionDecorators location="1.0" locationRelative="true" visible="true">
-        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.47" transparency="0.0" xsi:type="al:Polygon">
+        <graphicsAlgorithm background="/0/@colors.3" filled="true" foreground="/0/@colors.3" lineWidth="1" style="/0/@styles.52" transparency="0.0" xsi:type="al:Polygon">
           <points after="3" before="3" x="-10" y="-5"/>
           <points/>
           <points after="3" before="3" x="-10" y="5"/>
@@ -3238,14 +3237,14 @@
   <bpmn2:BpmnSwimLane cores="E1E7A0" id="bpmnswimlane6" name="Integra&#231;&#227;o"/>
   <bpmn2:BpmnStartEvent esforcoCalculo="0" expediente="" extendedFields="&lt;list/&gt;" id="startevent4" name="In&#237;cio" outgoing="flow13" selecionaColaboradores="1" signalId="0" type="10"/>
   <bpmn2:BpmnTask attachedEvents="intermediateerror43" authNotify="true" esforcoCalculo="0" executionAttempts="0" executionSucessfulMessage="Integration performed successfully" executionType="1" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="servicetask12" incoming="flow13 flow49" loopType="0" name="Integrar GLPI - Projetos" outgoing="flow15" scriptFileName="ProcessDesenvolvimentoProjetos.servicetask12.js" selecionaColaboradores="1" serviceName="" type="82"/>
-  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task14" incoming="flow15 flow22 flow27 flow40" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;14cdc0c0-a710-4412-81dd-d94fe3abe00a&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Realizar Planejamento do Projeto" outgoing="flow17" selecionaColaboradores="1" type="80"/>
+  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task14" incoming="flow15 flow22 flow27 flow40" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;e6cfab79-5cf3-4350-a789-bdfb89ebc741&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Realizar Planejamento do Projeto" outgoing="flow17" selecionaColaboradores="1" type="80"/>
   <bpmn2:BpmnTask attachedEvents="intermediateerror44" authNotify="true" esforcoCalculo="0" executionAttempts="0" executionSucessfulMessage="Integration performed successfully" executionType="1" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="servicetask16" incoming="flow17 flow51" loopType="0" name="Iniciar Execu&#231;&#227;o Atividades do Projeto" outgoing="flow19" scriptFileName="ProcessDesenvolvimentoProjetos.servicetask16.js" selecionaColaboradores="1" serviceName="" type="82"/>
-  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task18" incoming="flow19" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;14cdc0c0-a710-4412-81dd-d94fe3abe00a&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Execu&#231;&#227;o do Projeto" outgoing="flow21" selecionaColaboradores="1" type="80"/>
+  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task18" incoming="flow19" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;e6cfab79-5cf3-4350-a789-bdfb89ebc741&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Execu&#231;&#227;o do Projeto" outgoing="flow21" selecionaColaboradores="1" type="80"/>
   <bpmn2:BpmnGateway condition="&lt;list&gt;&#10;  &lt;org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;    &lt;order&gt;1&lt;/order&gt;&#10;    &lt;expression&gt;hAPI.getCardValue(&amp;quot;execFasesAtividadesCorrecao&amp;quot;) == &amp;quot;true&amp;quot;&lt;/expression&gt;&#10;    &lt;targetTask&gt;task14&lt;/targetTask&gt;&#10;    &lt;conditionType&gt;0&lt;/conditionType&gt;&#10;  &lt;/org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;  &lt;org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;    &lt;order&gt;2&lt;/order&gt;&#10;    &lt;expression&gt;hAPI.getCardValue(&amp;quot;execFasesAtividadesCorrecao&amp;quot;) == &amp;quot;false&amp;quot;&lt;/expression&gt;&#10;    &lt;targetTask&gt;task23&lt;/targetTask&gt;&#10;    &lt;conditionType&gt;0&lt;/conditionType&gt;&#10;  &lt;/org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;&lt;/list&gt;" extendedFields="&lt;list/&gt;" id="exclusivegateway20" incoming="flow21" name="Exclusive" outgoing="flow22 flow24" type="120"/>
-  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task23" incoming="flow24" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;14cdc0c0-a710-4412-81dd-d94fe3abe00a&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Solicitante - Valida&#231;&#227;o do Projeto - Ambiente QA" outgoing="flow26" selecionaColaboradores="1" type="80"/>
+  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task23" incoming="flow24" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;e6cfab79-5cf3-4350-a789-bdfb89ebc741&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Solicitante - Valida&#231;&#227;o do Projeto - Ambiente QA" outgoing="flow26" selecionaColaboradores="1" type="80"/>
   <bpmn2:BpmnGateway condition="&lt;list&gt;&#10;  &lt;org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;    &lt;order&gt;1&lt;/order&gt;&#10;    &lt;expression&gt;hAPI.getCardValue(&amp;quot;ValidacaoSolicitanteDecisao&amp;quot;) == &amp;quot;cancelar&amp;quot;&lt;/expression&gt;&#10;    &lt;targetTask&gt;endcancel30&lt;/targetTask&gt;&#10;    &lt;conditionType&gt;0&lt;/conditionType&gt;&#10;  &lt;/org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;  &lt;org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;    &lt;order&gt;2&lt;/order&gt;&#10;    &lt;expression&gt;hAPI.getCardValue(&amp;quot;ValidacaoSolicitanteDecisao&amp;quot;) == &amp;quot;correcao&amp;quot;&lt;/expression&gt;&#10;    &lt;targetTask&gt;task14&lt;/targetTask&gt;&#10;    &lt;conditionType&gt;0&lt;/conditionType&gt;&#10;  &lt;/org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;  &lt;org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;    &lt;order&gt;3&lt;/order&gt;&#10;    &lt;expression&gt;hAPI.getCardValue(&amp;quot;ValidacaoSolicitanteDecisao&amp;quot;) == &amp;quot;aprovado&amp;quot;&lt;/expression&gt;&#10;    &lt;targetTask&gt;task32&lt;/targetTask&gt;&#10;    &lt;conditionType&gt;0&lt;/conditionType&gt;&#10;  &lt;/org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;&lt;/list&gt;" extendedFields="&lt;list/&gt;" id="exclusivegateway25" incoming="flow26" name="Exclusive" outgoing="flow27 flow31 flow33" type="120"/>
   <bpmn2:BpmnEndEvent extendedFields="&lt;list/&gt;" id="endcancel30" incoming="flow31" name="End with process cancellation" signalId="0" type="65"/>
-  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task32" incoming="flow33" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;14cdc0c0-a710-4412-81dd-d94fe3abe00a&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="TI - Valida&#231;&#227;o do Projeto - Ambiente QA" outgoing="flow35" selecionaColaboradores="1" type="80"/>
+  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task32" incoming="flow33" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;e6cfab79-5cf3-4350-a789-bdfb89ebc741&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="TI - Valida&#231;&#227;o do Projeto - Ambiente QA" outgoing="flow35" selecionaColaboradores="1" type="80"/>
   <bpmn2:BpmnGateway condition="&lt;list&gt;&#10;  &lt;org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;    &lt;order&gt;1&lt;/order&gt;&#10;    &lt;expression&gt;hAPI.getCardValue(&amp;quot;ValidacaoTIDecisao&amp;quot;) == &amp;quot;correcao&amp;quot;&lt;/expression&gt;&#10;    &lt;targetTask&gt;task14&lt;/targetTask&gt;&#10;    &lt;conditionType&gt;0&lt;/conditionType&gt;&#10;  &lt;/org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;  &lt;org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;    &lt;order&gt;2&lt;/order&gt;&#10;    &lt;expression&gt;hAPI.getCardValue(&amp;quot;ValidacaoTIDecisao&amp;quot;) == &amp;quot;cancelar&amp;quot;&lt;/expression&gt;&#10;    &lt;targetTask&gt;endcancel38&lt;/targetTask&gt;&#10;    &lt;conditionType&gt;0&lt;/conditionType&gt;&#10;  &lt;/org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;  &lt;org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;    &lt;order&gt;3&lt;/order&gt;&#10;    &lt;expression&gt;hAPI.getCardValue(&amp;quot;ValidacaoTIDecisao&amp;quot;) == &amp;quot;aprovado&amp;quot;&lt;/expression&gt;&#10;    &lt;targetTask&gt;servicetask36&lt;/targetTask&gt;&#10;    &lt;conditionType&gt;0&lt;/conditionType&gt;&#10;  &lt;/org.eclipse.bpmn2.impl.ConditionImpl&gt;&#10;&lt;/list&gt;" extendedFields="&lt;list/&gt;" id="exclusivegateway34" incoming="flow35" name="Exclusive" outgoing="flow37 flow39 flow40" type="120"/>
   <bpmn2:BpmnTask attachedEvents="intermediateerror45" authNotify="true" esforcoCalculo="0" executionAttempts="0" executionSucessfulMessage="Integration performed successfully" executionType="1" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="servicetask36" incoming="flow37 flow54" loopType="0" name="Integrar GLPI - Projetos" outgoing="flow60" scriptFileName="ProcessDesenvolvimentoProjetos.servicetask36.js" selecionaColaboradores="1" serviceName="" type="82"/>
   <bpmn2:BpmnEndEvent extendedFields="&lt;list/&gt;" id="endcancel38" incoming="flow39" name="End with process cancellation" signalId="0" type="65"/>
@@ -3253,10 +3252,13 @@
   <bpmn2:BpmnIntermediateEvent extendedFields="&lt;list/&gt;" id="intermediateerror43" linkId="servicetask12" name="Intermediate" outgoing="flow48" parentTask="servicetask12" sequenceAttached="12" signalId="0" type="43"/>
   <bpmn2:BpmnIntermediateEvent extendedFields="&lt;list/&gt;" id="intermediateerror44" linkId="servicetask16" name="Intermediate" outgoing="flow50" parentTask="servicetask16" sequenceAttached="16" signalId="0" type="43"/>
   <bpmn2:BpmnIntermediateEvent extendedFields="&lt;list/&gt;" id="intermediateerror45" linkId="servicetask36" name="Intermediate" outgoing="flow53" parentTask="servicetask36" sequenceAttached="36" signalId="0" type="43"/>
-  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task46" incoming="flow48" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;14cdc0c0-a710-4412-81dd-d94fe3abe00a&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Tratar Erro - Integrar GLPI - Projetos" outgoing="flow49" selecionaColaboradores="1" type="80"/>
-  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task47" incoming="flow50" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;14cdc0c0-a710-4412-81dd-d94fe3abe00a&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Tratar Erro - Iniciar Execu&#231;&#227;o Atividades do Projeto" outgoing="flow51" selecionaColaboradores="1" type="80"/>
-  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task52" incoming="flow53" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;14cdc0c0-a710-4412-81dd-d94fe3abe00a&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Tratar Erro - Integrar GLPI - Projetos" outgoing="flow54" selecionaColaboradores="1" type="80"/>
-  <bpmn2:BpmnProcess author="" cardIndex="113578" category="" complementsLevel="1" expedient="Default" extendedFields="&lt;list/&gt;" formSource="server" formType="ECM_FORM_BUILDER" id="ProcessDesenvolvimentoProjetos" instruction="" keyWord="" managerAssignmentController="&lt;org.eclipse.bpmn2.impl.AssignmentControllerRole&gt;&#10;  &lt;roleId&gt;admin&lt;/roleId&gt;&#10;  &lt;mechanismName&gt;Papel&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerRole&gt;" managerMechanism="Papel" name="ProcessDesenvolvimentoProjetos" notifyRequisitionerComplements="true" notifyResponsibleComplements="true" serverId="bevap homo" version="49" volume="Default"/>
+  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task46" incoming="flow48" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;e6cfab79-5cf3-4350-a789-bdfb89ebc741&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Tratar Erro - Integrar GLPI - Projetos" outgoing="flow49" selecionaColaboradores="1" type="80"/>
+  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task47" incoming="flow50" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;e6cfab79-5cf3-4350-a789-bdfb89ebc741&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Tratar Erro - Iniciar Execu&#231;&#227;o Atividades do Projeto" outgoing="flow51" selecionaColaboradores="1" type="80"/>
+  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task52" incoming="flow53" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;e6cfab79-5cf3-4350-a789-bdfb89ebc741&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Tratar Erro - Integrar GLPI - Projetos" outgoing="flow54" selecionaColaboradores="1" type="80"/>
+  <bpmn2:BpmnTask attachedEvents="intermediateerror57" authNotify="true" esforcoCalculo="0" executionAttempts="0" executionSucessfulMessage="Integration performed successfully" executionType="1" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="servicetask55" incoming="flow59 flow60" loopType="0" name="Iniciar Entrega Projeto" outgoing="flow61" scriptFileName="ProcessDesenvolvimentoProjetos.servicetask55.js" selecionaColaboradores="1" serviceName="" type="82"/>
+  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task56" incoming="flow58" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;e6cfab79-5cf3-4350-a789-bdfb89ebc741&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Tratar Erro - Iniciar Entrega Projeto" outgoing="flow59" selecionaColaboradores="1" type="80"/>
+  <bpmn2:BpmnIntermediateEvent extendedFields="&lt;list/&gt;" id="intermediateerror57" linkId="servicetask55" name="Intermediate" outgoing="flow58" parentTask="servicetask55" sequenceAttached="55" signalId="0" type="43"/>
+  <bpmn2:BpmnProcess author="" cardIndex="189557" category="" complementsLevel="1" expedient="Default" extendedFields="&lt;list/&gt;" formSource="server" formType="ECM_FORM_BUILDER" id="ProcessDesenvolvimentoProjetos" instruction="" managerAssignmentController="&lt;org.eclipse.bpmn2.impl.AssignmentControllerRole&gt;&#10;  &lt;roleId&gt;admin&lt;/roleId&gt;&#10;  &lt;mechanismName&gt;Papel&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerRole&gt;" managerMechanism="Papel" name="ProcessDesenvolvimentoProjetos" notifyRequisitionerComplements="true" notifyResponsibleComplements="true" serverId="bevap prod" version="2" volume="Default"/>
   <bpmn2:SequenceFlow atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/&gt;" id="flow13" name="" sourceRef="startevent4" targetRef="servicetask12"/>
   <bpmn2:SequenceFlow atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/&gt;" id="flow15" name="" sourceRef="servicetask12" targetRef="task14"/>
   <bpmn2:SequenceFlow atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/&gt;" id="flow17" name="" sourceRef="task14" targetRef="servicetask16"/>
@@ -3278,11 +3280,8 @@
   <bpmn2:SequenceFlow atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/&gt;" id="flow51" name="" sourceRef="task47" targetRef="servicetask16"/>
   <bpmn2:SequenceFlow atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/&gt;" id="flow53" name="" sourceRef="intermediateerror45" targetRef="task52"/>
   <bpmn2:SequenceFlow atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/&gt;" id="flow54" name="" sourceRef="task52" targetRef="servicetask36"/>
-  <bpmn2:BpmnTask attachedEvents="intermediateerror57" authNotify="true" esforcoCalculo="0" executionAttempts="0" executionSucessfulMessage="Integration performed successfully" executionType="1" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="servicetask55" incoming="flow59 flow60" loopType="0" name="Iniciar Entrega Projeto" outgoing="flow61" scriptFileName="ProcessDesenvolvimentoProjetos.servicetask55.js" selecionaColaboradores="1" serviceName="" type="82"/>
-  <bpmn2:BpmnTask authNotify="true" esforcoCalculo="0" executionAttempts="0" expediente="" extendedFields="&lt;list/&gt;" frequency="0" id="task56" incoming="flow58" loopType="0" managerAssignmentControllerString="&lt;org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;&#10;  &lt;colleagueId&gt;14cdc0c0-a710-4412-81dd-d94fe3abe00a&lt;/colleagueId&gt;&#10;  &lt;mechanismName&gt;Usu&#225;rio&lt;/mechanismName&gt;&#10;&lt;/org.eclipse.bpmn2.impl.AssignmentControllerColleague&gt;" managerMechanism="Usu&#225;rio" name="Tratar Erro - Iniciar Entrega Projeto" outgoing="flow59" selecionaColaboradores="1" type="80"/>
-  <bpmn2:BpmnIntermediateEvent id="intermediateerror57" name="Intermediate" outgoing="flow58" parentTask="servicetask55" sequenceAttached="55" signalId="0" type="43"/>
-  <bpmn2:SequenceFlow atividadeFluxo="" id="flow58" name="" sourceRef="intermediateerror57" targetRef="task56"/>
-  <bpmn2:SequenceFlow atividadeFluxo="" id="flow59" name="" sourceRef="task56" targetRef="servicetask55"/>
-  <bpmn2:SequenceFlow atividadeFluxo="" id="flow60" name="" sourceRef="servicetask36" targetRef="servicetask55"/>
-  <bpmn2:SequenceFlow atividadeFluxo="" id="flow61" name="" sourceRef="servicetask55" targetRef="endevent41"/>
+  <bpmn2:SequenceFlow atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/&gt;" id="flow58" name="" sourceRef="intermediateerror57" targetRef="task56"/>
+  <bpmn2:SequenceFlow atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/&gt;" id="flow59" name="" sourceRef="task56" targetRef="servicetask55"/>
+  <bpmn2:SequenceFlow atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/&gt;" id="flow60" name="" sourceRef="servicetask36" targetRef="servicetask55"/>
+  <bpmn2:SequenceFlow atividadeFluxo="" atividadeRetorno="" extendedFields="&lt;list/&gt;" id="flow61" name="" sourceRef="servicetask55" targetRef="endevent41"/>
 </xmi:XMI>

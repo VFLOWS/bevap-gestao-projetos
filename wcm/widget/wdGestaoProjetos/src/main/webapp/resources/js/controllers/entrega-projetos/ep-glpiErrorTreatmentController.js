@@ -4,7 +4,8 @@ const epGlpiErrorTreatmentController = {
   _baseFields: [
     'documentid',
     'statusIntegracaoGLPI',
-    'mensagemErroGLPI'
+    'mensagemErroGLPI',
+    'forcarErroGLPI'
   ],
   _headerBackup: null,
   _toastTimer: null,
@@ -12,33 +13,49 @@ const epGlpiErrorTreatmentController = {
     documentId: null,
     processInstanceId: null,
     currentActivity: null,
+    contextController: null,
     isSubmitting: false
   },
 
-  load: function (params = {}) {
-    const container = this.getContainer();
+  load: async function (params = {}) {
     this.destroy();
 
     this._state.documentId = params && params.documentId ? String(params.documentId) : null;
     this._state.processInstanceId = params && params.processInstanceId ? String(params.processInstanceId) : null;
     this._state.currentActivity = this.resolveCurrentActivity(params);
+    const context = this.getContextConfig();
 
-    return $.get(this.getTemplateUrl())
-      .done((html) => {
-        container.html(html);
-        this.backupAndSetHeader();
-        this.bindEvents();
-        this.loadBaseContext();
-      })
-      .fail((error) => {
-        console.error('GLPI error treatment template load error:', error);
-        container.html('<div class="p-6 text-red-600">Failed to load GLPI error treatment page.</div>');
+    try {
+      this._state.contextController = await gpGlpiErrorContext.render({
+        params: params,
+        contextController: context.controller,
+        contextActivity: context.activity,
+        contextLabel: context.label,
+        errorTemplateUrl: this.getTemplateUrl()
       });
+
+      this.backupAndSetHeader();
+      this.bindEvents();
+      await this.loadBaseContext();
+    } catch (error) {
+      console.error('GLPI error treatment page load error:', error);
+      this.getContainer().html('<div class="p-6 text-red-600">Failed to load GLPI error treatment page.</div>');
+    }
   },
 
   destroy: function () {
+    const contextController = this._state.contextController;
+
     this.unbindEvents();
     this.restoreHeader();
+
+    if (contextController && typeof contextController.destroy === 'function') {
+      try {
+        contextController.destroy();
+      } catch (error) {
+        console.error('[epGlpiErrorTreatment] Context destroy error:', error);
+      }
+    }
 
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
@@ -48,6 +65,7 @@ const epGlpiErrorTreatmentController = {
     this._state.documentId = null;
     this._state.processInstanceId = null;
     this._state.currentActivity = null;
+    this._state.contextController = null;
     this._state.isSubmitting = false;
   },
 
@@ -122,6 +140,22 @@ const epGlpiErrorTreatmentController = {
     this.getContainer().off(this._eventNamespace);
   },
 
+  getContextConfig: function () {
+    if (this._state.currentActivity === 50) {
+      return {
+        controller: epProjectClosureDocumentationController,
+        activity: 46,
+        label: 'Documentacao de Encerramento'
+      };
+    }
+
+    return {
+      controller: epDeliveryPlanningController,
+      activity: 18,
+      label: 'Planejamento da Entrega'
+    };
+  },
+
   loadBaseContext: async function () {
     if (!this._state.documentId) {
       this.showToast('Sem projeto', 'Nenhum documentId foi informado para esta rota.', 'warning');
@@ -151,7 +185,8 @@ const epGlpiErrorTreatmentController = {
   },
 
   fillFormFromRow: function (row) {
-    const status = this.firstFilledValue([
+    const isForcedGlpiTest = gpGlpiErrorContext.isForcedGlpiTestRow(row);
+    let status = this.firstFilledValue([
       row.statusIntegracaoGLPI,
       row.statusintegracaoglpi,
       row.statusGLPI,
@@ -159,13 +194,18 @@ const epGlpiErrorTreatmentController = {
       row.status
     ]);
 
-    const message = this.firstFilledValue([
+    let message = this.firstFilledValue([
       row.mensagemErroGLPI,
       row.mensagemerroglpi,
       row.mensagemErroGlpi,
       row.mensagem,
       row.msgRetornoGLPI
     ]);
+
+    if (isForcedGlpiTest) {
+      status = status || 'ERROR';
+      message = message || gpGlpiErrorContext.getForcedGlpiTestMessage();
+    }
 
     this.getContainer().find('#glpi-status-input').val(status);
     this.getContainer().find('#glpi-error-message-input').val(message);

@@ -58,6 +58,12 @@ const router = {
           title: 'Dashboard',
           handler: () => dashboardController.load(params)
         },
+        projectReadonlyView: {
+          controller: projectReadonlyViewController,
+          title: 'Visualização do Projeto',
+          breadcrumb: ['Projetos', 'Visualização'],
+          handler: () => projectReadonlyViewController.load(params)
+        },
         projectPlanning: {
           controller: projectPlanningController,
           title: 'Desenvolvimento - Planejamento do Projeto',
@@ -196,6 +202,12 @@ const router = {
           breadcrumb: ['Entrega', 'Encerramento'],
           handler: () => epProjectClosureDocumentationController.load(params)
         },
+        efGlpiErrorTreatment: {
+          controller: efGlpiErrorTreatmentController,
+          title: 'Execucao de Fases - Tratar Erro Integracao GLPI',
+          breadcrumb: ['Execucao de Fases', 'Erro Integracao GLPI'],
+          handler: () => efGlpiErrorTreatmentController.load(params)
+        },
         executionActivityWaiting: {
           controller: executionActivityWaitingController,
           title: 'Aguardando Execução da Atividade',
@@ -313,6 +325,22 @@ const router = {
   bindHeaderEvents: function () {
     const ns = this._headerEventNamespace;
     $(document)
+      .off(`click${ns}`, '[data-action="gp-open-fluig-home-modal"]')
+      .on(`click${ns}`, '[data-action="gp-open-fluig-home-modal"]', (event) => {
+        event.preventDefault();
+        this.openFluigHomeModal();
+      });
+
+    $(document)
+      .off(`keydown${ns}`, '[data-action="gp-open-fluig-home-modal"]')
+      .on(`keydown${ns}`, '[data-action="gp-open-fluig-home-modal"]', (event) => {
+        const key = event.key || event.which;
+        if (key !== 'Enter' && key !== ' ' && key !== 13 && key !== 32) return;
+        event.preventDefault();
+        this.openFluigHomeModal();
+      });
+
+    $(document)
       .off(`click${ns}`, '[data-action="gp-back-dashboard"]')
       .on(`click${ns}`, '[data-action="gp-back-dashboard"]', (event) => {
         event.preventDefault();
@@ -338,6 +366,27 @@ const router = {
       .on(`click${ns}`, '[data-component="gp-back-dashboard-modal"]', (event) => {
         if (event.target !== event.currentTarget) return;
         this.closeBackDashboardModal();
+      });
+
+    $(document)
+      .off(`click${ns}`, '[data-action="gp-cancel-fluig-home"]')
+      .on(`click${ns}`, '[data-action="gp-cancel-fluig-home"]', (event) => {
+        event.preventDefault();
+        this.closeFluigHomeModal();
+      });
+
+    $(document)
+      .off(`click${ns}`, '[data-action="gp-confirm-fluig-home"]')
+      .on(`click${ns}`, '[data-action="gp-confirm-fluig-home"]', (event) => {
+        event.preventDefault();
+        this.confirmFluigHome();
+      });
+
+    $(document)
+      .off(`click${ns}`, '[data-component="gp-fluig-home-modal"]')
+      .on(`click${ns}`, '[data-component="gp-fluig-home-modal"]', (event) => {
+        if (event.target !== event.currentTarget) return;
+        this.closeFluigHomeModal();
       });
   },
 
@@ -368,6 +417,30 @@ const router = {
       return;
     }
     window.location.hash = '#dashboard';
+  },
+
+  getFluigHomeModal: function () {
+    return $('[data-component="gp-fluig-home-modal"]').first();
+  },
+
+  openFluigHomeModal: function () {
+    const modal = this.getFluigHomeModal();
+    const isDashboard = (window.location.hash || '#dashboard').replace('#', '').split('?')[0] === 'dashboard';
+    const message = isDashboard
+      ? 'Você será redirecionado para a tela inicial do Fluig.'
+      : 'Você será redirecionado para a tela inicial do Fluig. Alterações não salvas nesta tela serão perdidas.';
+
+    modal.find('[data-role="gp-fluig-home-message"]').text(message);
+    modal.removeClass('hidden');
+  },
+
+  closeFluigHomeModal: function () {
+    this.getFluigHomeModal().addClass('hidden');
+  },
+
+  confirmFluigHome: function () {
+    this.closeFluigHomeModal();
+    window.location.href = '/portal/p/1/home';
   },
 
   escapeHtml: function (value) {

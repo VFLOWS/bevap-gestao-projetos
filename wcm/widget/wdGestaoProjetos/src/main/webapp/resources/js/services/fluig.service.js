@@ -559,6 +559,16 @@ var fluigService = {
                     enabled: true,
                     route: 'executionActivityTiValidation',
                     label: 'Validar Atividade TI'
+                },
+                46: {
+                    enabled: true,
+                    route: 'efGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
+                52: {
+                    enabled: true,
+                    route: 'efGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
                 }
             };
         }
@@ -1059,6 +1069,39 @@ var fluigService = {
         return cardData;
     },
 
+    appendForcedGlpiTestField: function (taskFields) {
+        if (!Array.isArray(taskFields)) {
+            return taskFields;
+        }
+
+        var input = $('#forcarErroGLPI').first();
+        if (!input.length) {
+            return taskFields;
+        }
+
+        var value = String(input.val() === null || input.val() === undefined ? '' : input.val()).trim();
+        if (value === '') {
+            return taskFields;
+        }
+
+        var updated = false;
+        taskFields.forEach(function (field) {
+            if (field && String(field.name || '') === 'forcarErroGLPI') {
+                field.value = value;
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            taskFields.push({
+                name: 'forcarErroGLPI',
+                value: value
+            });
+        }
+
+        return taskFields;
+    },
+
     buildProjectSolicitationCardData: function (formData) {
         var self = this;
         var cardData = {};
@@ -1275,6 +1318,8 @@ var fluigService = {
                 const documentId = taskData.documentId === null || taskData.documentId === undefined
                     ? ''
                     : String(taskData.documentId).trim();
+
+                this.appendForcedGlpiTestField(finalTaskFields);
 
                 try {
                     console.group('[fluigService.saveAndSendTask] pre-update');

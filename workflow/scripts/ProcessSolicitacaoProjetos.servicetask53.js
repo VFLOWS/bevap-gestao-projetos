@@ -35,6 +35,7 @@ function servicetask53(attempt, message) {
             "decisaoSuperiorImediato",
             "decisaoAvaliarProjeto",
             "payloadJsonGLPI",
+            "forcarErroGLPI",
            
             "titulodoprojetoNS",
             "ColigadaNS",
@@ -347,7 +348,7 @@ function servicetask53(attempt, message) {
         // =====================================================
 
         var fields = [
-            "14cdc0c0-a710-4412-81dd-d94fe3abe00a",
+            "e6cfab79-5cf3-4350-a789-bdfb89ebc741",
             "ProcessDesenvolvimentoProjetos",
             "0",
             getValue("WKCompany") + "",
