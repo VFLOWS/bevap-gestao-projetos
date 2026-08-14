@@ -10,6 +10,7 @@
     'esforcoestimadopontosAPTI',
     'dependenciastecnicasAPTI',
     'observacoesdaanaliseAPTI',
+    'projetoPrivadoAPTI',
     'objetivoClaramenteDefinidoAPTI',
     'escopoBemDelimitadoAPTI',
     'documentacaoTecnicaAdeqAPTI',
@@ -148,6 +149,7 @@
 
     const risks = parseTableJson(row.tblRiscosIdentificadosAPTI);
     const checklistRows = [
+      { label: 'Projeto privado', value: row.projetoPrivadoAPTI },
       { label: 'Objetivo claramente definido', value: row.objetivoClaramenteDefinidoAPTI },
       { label: 'Escopo bem delimitado', value: row.escopoBemDelimitadoAPTI },
       { label: 'Documentação técnica adequada', value: row.documentacaoTecnicaAdeqAPTI },

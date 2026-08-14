@@ -27,6 +27,7 @@ function servicetask51(attempt, message) {
         setCardValueSafe(FIELD_ERROR, '');
 
         var projectInput = JSON.parse(payloadStr);
+        projectInput.entities_id = 1;
         projectInput.projectstates_id = 1;
 
         var sessionToken = getGlpiNovoSessionToken();

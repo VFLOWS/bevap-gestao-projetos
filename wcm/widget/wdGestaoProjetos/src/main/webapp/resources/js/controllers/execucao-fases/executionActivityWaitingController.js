@@ -12,10 +12,16 @@ const executionActivityWaitingController = {
   },
 
   async load(params = {}) {
+    const finalParams = this.hydrateRouteParams(params);
+
+    if (!(await this.ensureActionAccess(finalParams))) {
+      return;
+    }
+
     this.destroy();
     this._state = {
-      documentId: this.normalizeId(params.documentId),
-      processInstanceId: this.normalizeId(params.processInstanceId),
+      documentId: this.normalizeId(finalParams.documentId),
+      processInstanceId: this.normalizeId(finalParams.processInstanceId),
       card: null,
       isSubmitting: false
     };
@@ -26,6 +32,67 @@ const executionActivityWaitingController = {
 
     this.bindEvents();
     await this.loadCard();
+  },
+
+  hydrateRouteParams(params = {}) {
+    const finalParams = Object.assign({}, params || {});
+
+    if (typeof fluigService === 'undefined' || !fluigService.resolveProjectRouteContext || !fluigService.getProjectProcessDefinition) {
+      return finalParams;
+    }
+
+    const context = fluigService.resolveProjectRouteContext('executionActivityWaiting');
+    const definition = context && context.processType
+      ? fluigService.getProjectProcessDefinition(context.processType)
+      : null;
+
+    finalParams.processType = finalParams.processType || (context && context.processType) || 'execucaoFases';
+    finalParams.processName = finalParams.processName || (context && context.processName) || 'execucaoFasesAtividades';
+    finalParams.activity = finalParams.activity || String((context && context.activity) || 14);
+    finalParams.datasetId = finalParams.datasetId || (definition && definition.datasetId) || this._datasetId;
+    finalParams.formName = finalParams.formName || (definition && definition.formName) || this._datasetName;
+
+    return finalParams;
+  },
+
+  async ensureActionAccess(params = {}) {
+    const isReadonlyView = Boolean(params && params.projectReadonlyView === true);
+    const accessResolver = isReadonlyView ? 'resolveProjectViewAccess' : 'resolveProjectActionAccess';
+
+    if (typeof fluigService === 'undefined' || typeof fluigService[accessResolver] !== 'function') {
+      console.warn('[GP][executionActivityWaitingAccess] fluigService indisponivel');
+      if (typeof router !== 'undefined' && router.showActionAccessDeniedModal) {
+        router.showActionAccessDeniedModal(isReadonlyView
+          ? 'Não foi possível validar seu acesso a este projeto.'
+          : 'Não foi possível validar seu acesso a esta solicitação.');
+      }
+      return false;
+    }
+
+    console.log('[GP][executionActivityWaitingAccess] validando acesso:', {
+      mode: isReadonlyView ? 'view' : 'action',
+      params: params
+    });
+
+    const access = await fluigService[accessResolver]('executionActivityWaiting', params || {});
+    console.log('[GP][executionActivityWaitingAccess] resultado:', access);
+
+    if (access && access.allowed) {
+      return true;
+    }
+
+    const message = access && access.message
+      ? access.message
+      : (isReadonlyView
+        ? 'Você não tem permissão para visualizar este projeto.'
+        : 'Você não tem permissão para atuar nessa solicitação.');
+    if (typeof router !== 'undefined' && router.showActionAccessDeniedModal) {
+      router.showActionAccessDeniedModal(message);
+    } else {
+      $('#page-container').html(`<div class="p-6 text-red-600">${this.escapeHtml(message)}</div>`);
+    }
+
+    return false;
   },
 
   destroy() {

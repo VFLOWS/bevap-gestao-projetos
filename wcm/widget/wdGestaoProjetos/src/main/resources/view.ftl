@@ -15,7 +15,10 @@
                         <i class="fa-solid fa-arrow-left text-xs"></i>
                         <span>Voltar</span>
                     </button>
-                    <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="User avatar" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
+                    <span id="gp-user-avatar_${instanceId}" data-role="gp-user-avatar" class="inline-flex w-9 h-9 items-center justify-center overflow-hidden rounded-full border-2 border-bevap-gold bg-white text-xs font-semibold text-bevap-navy">
+                        <img data-role="gp-user-avatar-img" src="" alt="User avatar" class="hidden h-full w-full object-cover">
+                        <span data-role="gp-user-avatar-fallback">US</span>
+                    </span>
                 </div>
             </div>
         </div>

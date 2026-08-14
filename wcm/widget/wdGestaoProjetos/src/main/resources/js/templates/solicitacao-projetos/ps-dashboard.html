@@ -1,0 +1,310 @@
+<div class="pt-32 lg:pt-28 px-4 lg:px-6 pb-6">
+    <div class="flex flex-col lg:flex-row gap-6">
+        <main class="flex-1 min-w-0">
+            <section id="welcome-section" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+                <p class="text-sm text-slate-500">Bem Vindo(a)</p>
+                <h2 id="dashboard-welcome-user" class="text-xl font-montserrat font-semibold text-bevap-navy">Carregando...</h2>
+            </section>
+
+            <section id="filters-section" class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-lg font-montserrat font-semibold text-bevap-navy flex items-center">
+                        <i class="fa-solid fa-filter mr-2 text-bevap-green"></i>Filtros
+                    </h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Status</label>
+                        <select id="filterStatus" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+	                            <option value="">Todos</option>
+	                            <option value="backlog">Backlog</option>
+	                            <option value="approval">Em An&aacute;lise</option>
+                            <option value="execution">Em Execu&ccedil;&atilde;o</option>
+                            <option value="golive">Em Go-Live</option>
+                            <option value="completed">Conclu&iacute;do</option>
+                            <option value="cancelled">Cancelado</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Prioridade</label>
+                        <select id="filterPriority" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option value="">Todas</option>
+                            <option value="Critico">Cr&iacute;tico</option>
+                            <option value="Estrategico">Estrat&eacute;gico</option>
+                            <option value="Operacional">Operacional</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Tipo</label>
+                        <select id="filterType" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option value="">Todos</option>
+                            <option value="Interno">Interno</option>
+                            <option value="Externo">Externo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Per&iacute;odo</label>
+                        <select id="filterPeriod" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-bevap-green">
+                            <option value="">Todos</option>
+                            <option value="month">&Uacute;ltimo m&ecirc;s</option>
+                            <option value="quarter">&Uacute;ltimo trimestre</option>
+                            <option value="year">&Uacute;ltimo ano</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap gap-2 mt-4">
+                    <button id="applyFilters" class="bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Aplicar Filtros
+                    </button>
+                    <button id="clearFilters" class="border border-slate-300 hover:bg-slate-50 text-slate-700 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+                        Limpar
+                    </button>
+                </div>
+            </section>
+
+            <section id="kpis-section" class="mb-6">
+	                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-7 gap-4">
+	                    <div class="kpi-card text-left bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+	                        <div class="flex items-start justify-between mb-2">
+	                            <div class="w-10 h-10 bg-bevap-navy/10 rounded-lg flex items-center justify-center">
+	                                <i class="fa-solid fa-folder-open text-bevap-navy text-lg"></i>
+                            </div>
+                            <span id="kpi-total-caption" class="text-slate-500 text-xs font-medium">Todos</span>
+                        </div>
+	                        <p id="kpi-total-projects" class="text-3xl font-montserrat font-bold text-bevap-navy">--</p>
+	                        <p class="text-sm text-slate-600 mt-1">Total Projetos</p>
+	                    </div>
+
+	                    <div class="kpi-card text-left bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+	                        <div class="flex items-start justify-between mb-2">
+	                            <div class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+	                                <i class="fa-solid fa-inbox text-slate-600 text-lg"></i>
+	                            </div>
+	                            <span id="kpi-backlog-caption" class="text-slate-500 text-xs font-medium">Atual</span>
+	                        </div>
+	                        <p id="kpi-backlog" class="text-3xl font-montserrat font-bold text-bevap-navy">--</p>
+	                        <p class="text-sm text-slate-600 mt-1">Backlog</p>
+	                    </div>
+
+	                    <div class="kpi-card text-left bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-bevap-gold/10 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-clock text-bevap-gold text-lg"></i>
+                            </div>
+                            <span id="kpi-approval-caption" class="text-slate-500 text-xs font-medium">Atual</span>
+                        </div>
+                        <p id="kpi-approval" class="text-3xl font-montserrat font-bold text-bevap-navy">--</p>
+                        <p class="text-sm text-slate-600 mt-1">Em An&aacute;lise</p>
+                    </div>
+
+                    <div class="kpi-card text-left bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-bevap-navy/10 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-spinner text-bevap-navy text-lg"></i>
+                            </div>
+                            <span id="kpi-execution-caption" class="text-slate-500 text-xs font-medium">Atual</span>
+                        </div>
+                        <p id="kpi-execution" class="text-3xl font-montserrat font-bold text-bevap-navy">--</p>
+                        <p class="text-sm text-slate-600 mt-1">Em Execu&ccedil;&atilde;o</p>
+                    </div>
+
+                    <div class="kpi-card text-left bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-rocket text-purple-600 text-lg"></i>
+                            </div>
+                            <span id="kpi-golive-caption" class="text-slate-500 text-xs font-medium">Atual</span>
+                        </div>
+                        <p id="kpi-golive" class="text-3xl font-montserrat font-bold text-bevap-navy">--</p>
+                        <p class="text-sm text-slate-600 mt-1">Em Go-Live</p>
+                    </div>
+
+                    <div class="kpi-card text-left bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-check-circle text-emerald-600 text-lg"></i>
+                            </div>
+                        </div>
+                        <p id="kpi-completed" class="text-3xl font-montserrat font-bold text-bevap-navy">--</p>
+                        <p class="text-sm text-slate-600 mt-1">Conclu&iacute;dos</p>
+                    </div>
+
+                    <div class="kpi-card text-left bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                        <div class="flex items-start justify-between mb-2">
+                            <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center">
+                                <i class="fa-solid fa-times-circle text-red-600 text-lg"></i>
+                            </div>
+                        </div>
+                        <p id="kpi-cancelled" class="text-3xl font-montserrat font-bold text-bevap-navy">--</p>
+                        <p class="text-sm text-slate-600 mt-1">Cancelados</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="content-tabs" class="bg-white rounded-xl shadow-sm border border-slate-200">
+                <div class="border-b border-slate-200 px-4">
+                    <nav class="flex space-x-6 overflow-x-auto">
+                        <button id="tab-pipeline" class="tab-button py-4 px-2 border-b-2 border-bevap-green text-bevap-green font-medium text-sm whitespace-nowrap transition-colors" data-tab="pipeline-view">
+                            <i class="fa-solid fa-table-columns mr-2"></i>Pipeline
+                        </button>
+                        <button id="tab-table" class="tab-button py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap transition-colors" data-tab="table-view">
+                            <i class="fa-solid fa-list mr-2"></i>Tabela
+                        </button>
+                        <button id="tab-graphics" class="tab-button py-4 px-2 border-b-2 border-transparent text-slate-600 hover:text-bevap-navy font-medium text-sm whitespace-nowrap transition-colors" data-tab="graphics-view">
+                            <i class="fa-solid fa-chart-bar mr-2"></i>Gr&aacute;ficos
+                        </button>
+                    </nav>
+                </div>
+
+                <div id="pipeline-view" class="min-w-0 overflow-hidden p-4 lg:p-5">
+		                    <div class="dashboard-pipeline-board">
+		                        <div class="dashboard-pipeline-column bg-slate-50 rounded-lg p-3">
+	                            <div class="flex items-center justify-between mb-4">
+	                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Backlog</h3>
+	                                <span id="pipeline-count-backlog" class="bg-slate-500 text-white text-xs font-bold px-2 py-1 rounded-full">0</span>
+	                            </div>
+	                            <div id="pipeline-list-backlog" class="dashboard-pipeline-list space-y-3 min-h-16"></div>
+	                        </div>
+
+		                        <div class="dashboard-pipeline-column bg-slate-50 rounded-lg p-3">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Em An&aacute;lise</h3>
+                                <span id="pipeline-count-approval" class="bg-bevap-gold text-white text-xs font-bold px-2 py-1 rounded-full">0</span>
+                            </div>
+                            <div id="pipeline-list-approval" class="dashboard-pipeline-list space-y-3 min-h-16"></div>
+                        </div>
+
+                        <div class="dashboard-pipeline-column bg-slate-50 rounded-lg p-3">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Em Execu&ccedil;&atilde;o</h3>
+                                <span id="pipeline-count-execution" class="bg-bevap-navy text-white text-xs font-bold px-2 py-1 rounded-full">0</span>
+                            </div>
+                            <div id="pipeline-list-execution" class="dashboard-pipeline-list space-y-3 min-h-16"></div>
+                        </div>
+
+                        <div class="dashboard-pipeline-column bg-slate-50 rounded-lg p-3">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Em Go-Live</h3>
+                                <span id="pipeline-count-golive" class="bg-purple-600 text-white text-xs font-bold px-2 py-1 rounded-full">0</span>
+                            </div>
+                            <div id="pipeline-list-golive" class="dashboard-pipeline-list space-y-3 min-h-16"></div>
+                        </div>
+
+                        <div class="dashboard-pipeline-column bg-slate-50 rounded-lg p-3">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Conclu&iacute;dos</h3>
+                                <span id="pipeline-count-completed" class="bg-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-full">0</span>
+                            </div>
+                            <div id="pipeline-list-completed" class="dashboard-pipeline-list space-y-3 min-h-16"></div>
+                        </div>
+
+                        <div class="dashboard-pipeline-column bg-slate-50 rounded-lg p-3">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="font-montserrat font-semibold text-bevap-navy text-sm">Cancelados</h3>
+                                <span id="pipeline-count-cancelled" class="bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">0</span>
+                            </div>
+                            <div id="pipeline-list-cancelled" class="dashboard-pipeline-list space-y-3 min-h-16"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="graphics-view" class="p-4 lg:p-6 hidden">
+                    <div id="dashboard-chart-summary" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="dashboard-chart-card bg-white rounded-lg p-3 border border-slate-200">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3">Status</h4>
+                            <canvas id="statusChart" class="dashboard-chart-canvas"></canvas>
+                        </div>
+                        <div class="dashboard-chart-card bg-white rounded-lg p-3 border border-slate-200">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3">Prioridade</h4>
+                            <canvas id="priorityChart" class="dashboard-chart-canvas"></canvas>
+                        </div>
+                        <div class="dashboard-chart-card bg-white rounded-lg p-3 border border-slate-200">
+                            <h4 class="text-sm font-semibold text-bevap-navy mb-3">Tipo</h4>
+                            <canvas id="typeChart" class="dashboard-chart-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="table-view" class="p-4 lg:p-6 hidden">
+                    <div class="dashboard-table-scroll overflow-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-200">
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">ID Projeto</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Projeto</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Status</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Prioridade</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Tipo</th>
+                                    <th class="text-left py-3 px-4 font-semibold text-bevap-navy">Progresso</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dashboard-table-body">
+                                <tr>
+                                    <td colspan="6" class="py-6 px-4 text-center text-slate-500">Carregando projetos...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <section id="timeline-section" class="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                    <i class="fa-solid fa-clock-rotate-left mr-2 text-bevap-green"></i>Linha do Tempo
+                </h2>
+                <div id="dashboard-timeline-list" class="space-y-4">
+                    <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-500">Carregando linha do tempo...</div>
+                </div>
+            </section>
+        </main>
+
+        <aside id="pendencies-sidebar" class="lg:w-80 shrink-0">
+            <a href="#newSolicitation" class="block w-full bg-bevap-green hover:bg-bevap-green/90 text-white px-4 py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center mb-4">
+                <i class="fa-solid fa-plus mr-2"></i>Nova Solicita&ccedil;&atilde;o
+            </a>
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sticky top-32">
+                <h2 class="text-lg font-montserrat font-semibold text-bevap-navy mb-4 flex items-center">
+                    <i class="fa-solid fa-bell mr-2 text-bevap-gold"></i>Minhas Pend&ecirc;ncias
+                </h2>
+
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-semibold text-bevap-navy">An&aacute;lises Pendentes</h3>
+                            <span id="pending-approvals-count" class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">0</span>
+                        </div>
+                        <div id="pending-approvals-list" class="space-y-2 max-h-80 overflow-y-auto pr-1">
+                            <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-500">Carregando pend&ecirc;ncias...</div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-semibold text-bevap-navy">Minhas Atividades</h3>
+                            <span id="my-activities-count" class="bg-bevap-green/20 text-bevap-green text-xs font-bold px-2 py-1 rounded-full">0</span>
+                        </div>
+                        <div id="my-activities-list" class="space-y-2">
+                            <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-500">Carregando atividades...</div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <h3 class="text-sm font-semibold text-bevap-navy">Corre&ccedil;&otilde;es Requeridas</h3>
+                            <span id="required-corrections-count" class="bg-red-100 text-red-700 text-xs font-bold px-2 py-1 rounded-full">0</span>
+                        </div>
+                        <div id="required-corrections-list" class="space-y-2">
+                            <div class="bg-slate-50 rounded-lg p-3 text-sm text-slate-500">Carregando corre&ccedil;&otilde;es...</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" data-action="show-all-pendencies" class="w-full mt-4 border border-bevap-green text-bevap-green hover:bg-bevap-green hover:text-white text-sm py-2.5 rounded-lg font-medium transition-all">
+                    Ver Todas Pend&ecirc;ncias
+                </button>
+            </div>
+        </aside>
+    </div>
+</div>

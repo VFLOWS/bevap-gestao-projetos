@@ -93,13 +93,19 @@
   // busca dados do processo e aplica eventual rascunho já salvo no formulário.
   load: async function (params = {}) {
     const container = $('#page-container');
+    const finalParams = this.hydrateRouteParams(params);
 
-    this._state.documentId = this.asText(params.documentId);
-    this._state.estadoProcesso = this.asText(params.estadoProcesso);
-    this._state.processType = this.asText(params.processType);
-    this._state.processName = this.asText(params.processName);
-    this._state.datasetId = this.asText(params.datasetId);
-    this._state.formName = this.asText(params.formName);
+    if (!(await this.ensureActionAccess(finalParams))) {
+      return;
+    }
+
+    this._state.documentId = this.asText(finalParams.documentId);
+    this._state.processInstanceId = this.asText(finalParams.processInstanceId);
+    this._state.estadoProcesso = this.asText(finalParams.estadoProcesso || finalParams.activity);
+    this._state.processType = this.asText(finalParams.processType);
+    this._state.processName = this.asText(finalParams.processName);
+    this._state.datasetId = this.asText(finalParams.datasetId);
+    this._state.formName = this.asText(finalParams.formName);
     this._state.currentStep = 1;
 
     try {
@@ -122,6 +128,67 @@
       console.error('Project planning template load error:', error);
       container.html('<div class="p-6 text-red-600">Falha ao carregar a tela de Planejamento do Projeto.</div>');
     }
+  },
+
+  hydrateRouteParams: function (params) {
+    const finalParams = Object.assign({}, params || {});
+
+    if (typeof fluigService === 'undefined' || !fluigService.resolveProjectRouteContext || !fluigService.getProjectProcessDefinition) {
+      return finalParams;
+    }
+
+    const context = fluigService.resolveProjectRouteContext('projectPlanning');
+    const definition = context && context.processType
+      ? fluigService.getProjectProcessDefinition(context.processType)
+      : null;
+
+    finalParams.processType = finalParams.processType || (context && context.processType) || 'desenvolvimento';
+    finalParams.processName = finalParams.processName || (context && context.processName) || 'ProcessDesenvolvimentoProjetos';
+    finalParams.activity = finalParams.activity || String((context && context.activity) || 14);
+    finalParams.datasetId = finalParams.datasetId || (definition && definition.datasetId) || 'dsGetDesenvolvimentoProjetos';
+    finalParams.formName = finalParams.formName || (definition && definition.formName) || 'FormDesenvolvimentoProjetos';
+
+    return finalParams;
+  },
+
+  ensureActionAccess: async function (params) {
+    const isReadonlyView = Boolean(params && params.projectReadonlyView === true);
+    const accessResolver = isReadonlyView ? 'resolveProjectViewAccess' : 'resolveProjectActionAccess';
+
+    if (typeof fluigService === 'undefined' || typeof fluigService[accessResolver] !== 'function') {
+      console.warn('[GP][projectPlanningAccess] fluigService indisponivel');
+      if (typeof router !== 'undefined' && router.showActionAccessDeniedModal) {
+        router.showActionAccessDeniedModal(isReadonlyView
+          ? 'Não foi possível validar seu acesso a este projeto.'
+          : 'Não foi possível validar seu acesso a esta solicitação.');
+      }
+      return false;
+    }
+
+    console.log('[GP][projectPlanningAccess] validando acesso:', {
+      mode: isReadonlyView ? 'view' : 'action',
+      params: params
+    });
+
+    const access = await fluigService[accessResolver]('projectPlanning', params || {});
+    console.log('[GP][projectPlanningAccess] resultado:', access);
+
+    if (access && access.allowed) {
+      return true;
+    }
+
+    const message = access && access.message
+      ? access.message
+      : (isReadonlyView
+        ? 'Você não tem permissão para visualizar este projeto.'
+        : 'Você não tem permissão para atuar nessa solicitação.');
+    if (typeof router !== 'undefined' && router.showActionAccessDeniedModal) {
+      router.showActionAccessDeniedModal(message);
+    } else {
+      $('#page-container').html('<div class="p-6 text-red-600">' + this.escapeHtml(message) + '</div>');
+    }
+
+    return false;
   },
 
   destroy: function () {
@@ -765,9 +832,17 @@
   // Resolve o contexto do processo/documento e renderiza o resumo lateral do projeto.
   // Também prepara o card de progresso que acompanha as etapas do planejamento.
   loadProjectSummary: async function () {
-    const documentId = this.asText(this._state.documentId);
+    let documentId = this.asText(this._state.documentId);
+    const processInstanceId = this.asText(this._state.processInstanceId);
 
-    if (!documentId) {
+    if (!documentId && processInstanceId) {
+      try {
+        documentId = this.asText(await fluigService.resolveDocumentIdByProcessInstanceId(processInstanceId));
+        this._state.documentId = documentId;
+      } catch (error) {}
+    }
+
+    if (!documentId && !processInstanceId) {
       this.showToast('documentId não informado na rota.', 'warning');
       return;
     }
@@ -775,8 +850,16 @@
     let processContext = null;
 
     try {
+      console.log('[GP][projectPlanningLoad] resolvendo contexto:', {
+        documentId: documentId,
+        processInstanceId: processInstanceId,
+        processType: this._state.processType,
+        processName: this._state.processName
+      });
+
       processContext = await fluigService.resolveProjectProcessContext({
         documentId: documentId,
+        processInstanceId: processInstanceId,
         processType: this._state.processType,
         processName: this._state.processName,
         fields: this._projectFields,
@@ -792,6 +875,17 @@
       this._state.formName = this.asText(processContext.formName);
       this._state.estadoProcesso = this.asText(processContext.estadoProcesso || this._state.estadoProcesso);
     }
+
+    console.log('[GP][projectPlanningLoad] contexto resolvido:', {
+      found: !!processContext,
+      documentId: this._state.documentId,
+      processInstanceId: this._state.processInstanceId,
+      processType: this._state.processType,
+      processName: this._state.processName,
+      datasetId: this._state.datasetId,
+      activity: processContext && processContext.activity,
+      estadoProcesso: this._state.estadoProcesso
+    });
 
     let projectCode = this.asText(processContext && processContext.codigoglpi);
     if (!projectCode) {
@@ -898,6 +992,12 @@
     const datasetId = this.asText(this._state.datasetId) || 'dsGetDesenvolvimentoProjetos';
 
     try {
+      console.log('[GP][projectPlanningLoad] carregando planejamento:', {
+        datasetId: datasetId,
+        documentId: documentId,
+        processInstanceId: this._state.processInstanceId
+      });
+
       const rows = await fluigService.getDatasetRows(datasetId, {
         fields: [
           'documentid',
@@ -946,6 +1046,14 @@
       });
 
       const row = rows && rows.length ? rows[0] : null;
+      console.log('[GP][projectPlanningLoad] retorno planejamento:', {
+        rows: rows ? rows.length : 0,
+        hasRow: !!row,
+        hasPlanningJson: !!(row && row.projectPlanningJsonDP),
+        hasDocumentsJson: !!(row && row.documentsJsonDP),
+        hasRaciJson: !!(row && row.raciJsonDP)
+      });
+
       if (!row) {
         return;
       }

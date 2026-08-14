@@ -35,11 +35,14 @@ function servicetask55(attempt, message) {
 				"ColigadaNS",
 				"areaUnidadeNS",
 				"centrodecustoNS",
-				"centrodecustoNomeNS",
+				"aprovadorSuperiorImedNS",
 				"patrocinadorNS",
+				"projetoPrivadoNS",
+				"projetoPrivadoAPTI",
+				"projetoPrivadoAtualGP",
+				"participantesProjetoNS",
 				"solicitanteNomeNS",
 				"solicitanteColleagueIdNS",
-				"aprovadorSuperiorImedNS",
 				"objetivodoprojetoNS",
 				"problemaOportunidadeNS",
 				"beneficiosesperadosNS",
@@ -399,8 +402,10 @@ function servicetask55(attempt, message) {
 
 		log.info("### servicetask55 - TOTAL CONSTRAINTS: " + constraints.length);
 
+		var startProcessUser = "14cdc0c0-a710-4412-81dd-d94fe3abe00a";
+
 		var fields = [
-			"e6cfab79-5cf3-4350-a789-bdfb89ebc741",
+			startProcessUser,
 			"ProcessEntregaProjetos",
 			"0",
 			getValue("WKCompany") + "",

@@ -29,6 +29,9 @@ const newSolicitationController = {
     'centrodecustoNomeNS',
     'aprovadorSuperiorImedNS',
     'patrocinadorNS',
+    'projetoPrivadoNS',
+    'projetoPrivadoAtualGP',
+    'participantesProjetoNS',
     'solicitanteNomeNS',
     'solicitanteColleagueIdNS',
     'objetivodoprojetoNS',
@@ -274,6 +277,20 @@ const newSolicitationController = {
           { header: 'Funcao', field: 'NOMEFUNCAO', width: 'w-1/5' },
           { header: 'Secao', field: 'NOMESECAO', width: 'w-1/5' }
         ]
+      },
+      {
+        key: 'project-participant',
+        containerSelector: '#project-participant-tag-filter',
+        datasetId: 'colleague',
+        valueField: 'COLLEAGUE_ID',
+        labelField: 'COLLEAGUE_NAME',
+        fields: ['colleaguePK.colleagueId', 'colleagueName', 'mail', 'active'],
+        placeholder: 'Selecione um participante...',
+        normalizeRows: 'colleague',
+        columns: [
+          { header: 'Nome', field: 'COLLEAGUE_NAME', width: 'w-3/5' },
+          { header: 'E-mail', field: 'MAIL', width: 'w-2/5' }
+        ]
       }
     ];
 
@@ -429,6 +446,9 @@ const newSolicitationController = {
     if (cfg && cfg.normalizeRows === 'employee') {
       return this.normalizeEmployeeRows(finalRows);
     }
+    if (cfg && cfg.normalizeRows === 'colleague') {
+      return this.normalizeColleagueRows(finalRows);
+    }
     if (cfg && cfg.normalizeRows === 'user-coligada') {
       return this.normalizeUserColigadaRows(finalRows);
     }
@@ -509,6 +529,35 @@ const newSolicitationController = {
         NOMESECAO: this.asText(row && (row.NOMESECAO || row.nomesecao)),
         NOMECOLIGADA: this.asText(row && (row.NOMECOLIGADA || row.nomecoligada)),
         NOMEFILIAL: this.asText(row && (row.NOMEFILIAL || row.nomefilial))
+      };
+    }).filter(Boolean);
+  },
+
+  normalizeColleagueRows: function (rows) {
+    const seen = {};
+    return (Array.isArray(rows) ? rows : []).map((row) => {
+      const colleagueId = this.asText(this.getFirstValue(row, [
+        'colleaguePK.colleagueId',
+        'colleagueId',
+        'COLLEAGUEID'
+      ]));
+      const name = this.asText(this.getFirstValue(row, [
+        'colleagueName',
+        'COLLEAGUENAME',
+        'name'
+      ]));
+      const active = this.asText(this.getFirstValue(row, ['active', 'ACTIVE'])).toLowerCase();
+      const key = colleagueId.toLowerCase();
+
+      if (!colleagueId || !name || seen[key] || active === 'false' || active === '0') {
+        return null;
+      }
+
+      seen[key] = true;
+      return {
+        COLLEAGUE_ID: colleagueId,
+        COLLEAGUE_NAME: name,
+        MAIL: this.asText(this.getFirstValue(row, ['mail', 'MAIL', 'email']))
       };
     }).filter(Boolean);
   },
@@ -734,7 +783,7 @@ const newSolicitationController = {
   },
 
   applyTagFilterSelection: function (cfg, item) {
-    if (cfg && cfg.key === 'stakeholder') {
+    if (cfg && (cfg.key === 'stakeholder' || cfg.key === 'project-participant')) {
       return;
     }
 
@@ -761,7 +810,7 @@ const newSolicitationController = {
   },
 
   clearTagFilterSelection: function (cfg) {
-    if (cfg && cfg.key === 'stakeholder') {
+    if (cfg && (cfg.key === 'stakeholder' || cfg.key === 'project-participant')) {
       return;
     }
 
@@ -890,6 +939,16 @@ const newSolicitationController = {
       $(event.currentTarget).closest('span.inline-flex').remove();
       this.updateChecklist();
       this.updateSummaryDetails();
+    });
+
+    container.on(`click${ns}`, '[data-action="add-project-participant"]', (event) => {
+      event.preventDefault();
+      this.addProjectParticipant();
+    });
+
+    container.on(`click${ns}`, '[data-action="remove-project-participant"]', (event) => {
+      event.preventDefault();
+      $(event.currentTarget).closest('[data-project-participant-id]').remove();
     });
 
     container.on(`click${ns}`, '#dropzone', (event) => {
@@ -1369,6 +1428,66 @@ const newSolicitationController = {
     this.updateSummaryDetails();
   },
 
+  addProjectParticipant: function () {
+    const filter = this._state.tagFilters && this._state.tagFilters['project-participant'];
+    const selected = filter && typeof filter.getSelectedItems === 'function'
+      ? filter.getSelectedItems()
+      : [];
+    const participant = selected && selected[0] ? selected[0] : null;
+    const participantId = this.asText(participant && participant.value);
+    const participantName = this.asText(participant && participant.label);
+
+    if (!participantId || !participantName) {
+      this.showNotification({
+        borderClass: 'border-yellow-500',
+        iconClass: 'fa-circle-exclamation text-yellow-500',
+        title: 'Participante obrigatório',
+        message: 'Selecione um usuário antes de adicionar.'
+      });
+      return;
+    }
+
+    const normalizedId = this.normalizeLookupText(participantId);
+    const alreadyExists = this.getContainer()
+      .find('#project-participants-list [data-project-participant-id]')
+      .toArray()
+      .some((item) => this.normalizeLookupText($(item).attr('data-project-participant-id')) === normalizedId);
+
+    if (alreadyExists) {
+      this.showNotification({
+        borderClass: 'border-yellow-500',
+        iconClass: 'fa-circle-exclamation text-yellow-500',
+        title: 'Participante duplicado',
+        message: 'Este participante já foi adicionado.'
+      });
+      if (filter && typeof filter.removeAll === 'function') filter.removeAll();
+      return;
+    }
+
+    this.getContainer().find('#project-participants-list').append(
+      this.getProjectParticipantMarkup({ id: participantId, name: participantName })
+    );
+
+    if (filter && typeof filter.removeAll === 'function') filter.removeAll();
+  },
+
+  getProjectParticipantMarkup: function (participant) {
+    const participantId = this.asText(participant && participant.id);
+    const participantName = this.asText(participant && participant.name) || participantId;
+    if (!participantId) return '';
+
+    return `
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-bevap-navy text-white"
+        data-project-participant-id="${this.escapeHtml(participantId)}"
+        data-project-participant-name="${this.escapeHtml(participantName)}">
+        ${this.escapeHtml(participantName)}
+        <button type="button" data-action="remove-project-participant" class="ml-2 hover:text-red-300" title="Remover participante">
+          <i class="fa-solid fa-times text-xs"></i>
+        </button>
+      </span>
+    `;
+  },
+
   addAttachments: function (filesList) {
     const files = Array.from(filesList || []);
     if (!files.length) return;
@@ -1511,6 +1630,16 @@ const newSolicitationController = {
     }).filter(Boolean).join(''));
   },
 
+  renderProjectParticipantList: function (items) {
+    const list = this.getContainer().find('#project-participants-list');
+    if (!list.length) return;
+
+    list.html((items || [])
+      .map((participant) => this.getProjectParticipantMarkup(participant))
+      .filter(Boolean)
+      .join(''));
+  },
+
   restorePersistedAttachments: function (items) {
     this._state.attachments = (items || []).map((item, index) => {
       const documentId = this.asText(item && (item.documentId || item.documentID || item.id));
@@ -1555,6 +1684,7 @@ const newSolicitationController = {
       window.localStorage.setItem(cacheKey, JSON.stringify({
         "centro-custo": this.asText(payload && payload.centroCustoNome),
         stakeholders: Array.isArray(payload && payload.stakeholders) ? payload.stakeholders : [],
+        participants: Array.isArray(payload && payload.participants) ? payload.participants : [],
         declaracao: !!(payload && payload.declaracao)
       }));
     } catch (error) {}
@@ -1575,6 +1705,29 @@ const newSolicitationController = {
     return (Array.isArray(items) ? items : [])
       .map((item) => this.asText(item))
       .filter(Boolean);
+  },
+
+  parseProjectParticipants: function (value) {
+    const text = this.asText(value);
+    if (!text) return [];
+
+    try {
+      const parsed = JSON.parse(text);
+      if (!Array.isArray(parsed)) return [];
+
+      return parsed.map((item) => {
+        if (typeof item === 'string') {
+          return { id: this.asText(item), name: this.asText(item) };
+        }
+
+        return {
+          id: this.asText(item && (item.id || item.colleagueId || item.userId || item.value)),
+          name: this.asText(item && (item.name || item.colleagueName || item.label))
+        };
+      }).filter((item) => item.id);
+    } catch (error) {
+      return [];
+    }
   },
 
   normalizeExpectedBenefitsFromLegacyField: function (value) {
@@ -1657,6 +1810,10 @@ const newSolicitationController = {
     const stakeholders = stakeholdersFromDataset.length
       ? stakeholdersFromDataset
       : this.normalizeStringArray(cachedUiState.stakeholders);
+    const participantsFromDataset = this.parseProjectParticipants(row.participantesProjetoNS);
+    const participants = participantsFromDataset.length
+      ? participantsFromDataset
+      : (Array.isArray(cachedUiState.participants) ? cachedUiState.participants : []);
     const expectedBenefits = expectedBenefitsFromDataset.length
       ? expectedBenefitsFromDataset
       : this.normalizeExpectedBenefitsFromLegacyField(row.beneficiosesperadosNS);
@@ -1675,6 +1832,7 @@ const newSolicitationController = {
     this.setFieldValue('#area', '');
     this.setFieldValue('#centro-custo', centroCustoNome);
     this.setFieldValue('#patrocinador', this.normalizeEmployeeName(row.patrocinadorNS) || this.asText(row.patrocinadorNS));
+    this.getContainer().find('#projeto-privado').prop('checked', this.asText(row.projetoPrivadoNS).toLowerCase() === 'true');
     this.setFieldValue('#objetivo', row.objetivodoprojetoNS);
     this.setFieldValue('#problema', row.problemaOportunidadeNS);
     this.getContainer().find('#alinhamento').prop('checked', this.asText(row.alinhadobevapNS) === 'true');
@@ -1691,6 +1849,7 @@ const newSolicitationController = {
     this.renderExpectedBenefits(expectedBenefits);
     this.renderInitialRisks(risks);
     this.renderStakeholderList(stakeholders);
+    this.renderProjectParticipantList(participants);
     this.restorePersistedAttachments(attachments);
     this.toggleStrategicObjectives();
     this.renderAttachments();
@@ -1860,6 +2019,16 @@ const newSolicitationController = {
       })
       .get()
       .filter(value => value !== "");
+    const participants = container
+      .find('#project-participants-list [data-project-participant-id]')
+      .map(function () {
+        return {
+          id: String($(this).attr('data-project-participant-id') || '').trim(),
+          name: String($(this).attr('data-project-participant-name') || '').trim()
+        };
+      })
+      .get()
+      .filter((participant) => participant.id !== '');
     const beneficiosEsperados = this.collectExpectedBenefits();
 
     const attachments = await this.collectAttachmentsPayload();
@@ -1881,6 +2050,7 @@ const newSolicitationController = {
       objetivo: getValue("#objetivo"),
       problema: getValue("#problema"),
       beneficiosEsperados: beneficiosEsperados,
+      projetoPrivado: getChecked('#projeto-privado'),
       alinhamento: getChecked("#alinhamento"),
       prioridade: String(container.find('input[name="prioridade"]:checked').val() || "").trim(),
       "escopo-inicial": getValue("#escopo-inicial"),
@@ -1891,6 +2061,7 @@ const newSolicitationController = {
       objetivosEstrategicos: objetivosEstrategicos,
       riscosIniciais: riscosIniciais,
       stakeholders: stakeholders,
+      participants: participants,
       attachments: attachments,
       attachmentsMetadata: attachmentsMetadata
     };
@@ -1899,7 +2070,7 @@ const newSolicitationController = {
   createSubmitLoading: function (title, message) {
     if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
       return modalLoadingService.show({
-        title: title || 'Enviando solicitacao',
+        title: title || 'Enviando solicitação',
         message: message || 'Aguarde enquanto a solicitação é criada no Fluig...'
       });
     }

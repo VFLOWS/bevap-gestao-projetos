@@ -32,7 +32,8 @@ function servicetask12(attempt, message) {
         // Transforma o texto salvo de volta em um Objeto JSON
         var projectInput = JSON.parse(payloadStr);
 
-        // A MÁGICA AQUI: Alteramos APENAS a propriedade de status para 2 (em andamento)
+        projectInput.entities_id = 1;
+        // Atualiza o status para 2 (em andamento).
         projectInput.projectstates_id = 2;
 
         var sessionToken = getGlpiNovoSessionToken();

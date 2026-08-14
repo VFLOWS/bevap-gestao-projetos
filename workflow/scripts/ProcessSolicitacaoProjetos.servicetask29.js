@@ -168,7 +168,7 @@ function buildGlpiProjectInput(isUpdate, glpiUserId, glpiGroupId) {
         name: title || "Projeto sem Titulo",
         code: projectCode,
         priority: mappedPriority,
-        entities_id: 0,
+        entities_id: 1,
         is_recursive: 0,
         projects_id: 0,
         projectstates_id: 0,
@@ -358,6 +358,10 @@ function buildProjectCode(processInstanceId, referenceDate) {
     var endYY = String(endYear).slice(-2);
     var safraCode = startYY + endYY;
 
-    var paddedProcessId = String(pid || '0').replace(/^0+/, '').padStart(4, '0');
+    var paddedProcessId = String(pid || '0').replace(/^0+/, '');
+    while (paddedProcessId.length < 4) {
+        paddedProcessId = '0' + paddedProcessId;
+    }
+
     return 'PRJ-' + safraCode + '-' + paddedProcessId;
 }

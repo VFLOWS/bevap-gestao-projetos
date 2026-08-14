@@ -553,7 +553,8 @@ var gpGlpiErrorContext = {
 
     finalContainer.find('[data-component="tabs"]').each(function () {
       var root = $(this);
-      if (uiApi && uiApi.tabs && typeof uiApi.tabs.init === 'function') {
+      var alreadyInitialized = Boolean(root.data('gpTabsNs'));
+      if (!alreadyInitialized && uiApi && uiApi.tabs && typeof uiApi.tabs.init === 'function') {
         uiApi.tabs.init(root, { hideNoticeOnOpen: false });
       }
     });
@@ -1724,7 +1725,7 @@ var projectReadonlyViewController = {
         14: { controller: epDeliveryPlanningController, activity: 18, label: 'Planejamento da Entrega', showAllSteps: true, showAllDeliveryPanels: true },
         18: { controller: epDeliveryPlanningController, activity: 18, label: 'Planejamento da Entrega', showAllSteps: true, showAllDeliveryPanels: true },
         22: { controller: epUserTrainingController, activity: 22, label: 'Treinamento dos Usuarios' },
-        27: { controller: epFinalGoLiveValidationController, activity: 27, label: 'Validacao Final GO Live', hiddenBlocks: ['#ep-final-opinion'] },
+        27: { controller: epFinalGoLiveValidationController, activity: 27, label: 'Validação Final GO Live', hiddenBlocks: ['#ep-final-opinion'] },
         35: { controller: epGoLiveExecutionController, activity: 35, label: 'GO Live em Producao', hiddenTabs: ['documents'], hiddenBlocks: ['#ep-golive-opinion'] },
         42: { controller: epRequesterGoLiveValidationController, activity: 42, label: 'Validacao do GO Live', hiddenBlocks: ['#ep-solic-opinion'] },
         46: { controller: epProjectClosureDocumentationController, activity: 46, label: 'Documentacao de Encerramento', hiddenBlocks: ['#ep-closure-opinion'] },

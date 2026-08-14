@@ -2,10 +2,13 @@ const dashboardController = {
   _eventNamespace: '.dashboard',
   _viniciusColleagueId: '14cdc0c0-a710-4412-81dd-d94fe3abe00a',
   // Para testes: informe aqui o colleagueId que o usuario Vinicius deve simular.
-  //_viniciusTestColleagueId: '14cdc0c0-a710-4412-81dd-d94fe3abe00a',
-  _viniciusTestColleagueId: '81f76887-1ace-47f7-b47d-acb1466925a5',
+  _viniciusTestColleagueId: '14cdc0c0-a710-4412-81dd-d94fe3abe00a',
+  //_viniciusTestColleagueId: '81f76887-1ace-47f7-b47d-acb1466925a5',
+  //_viniciusTestColleagueId: '42400656-6027-43c6-b539-579ef85d023c', //usuario aleatorio
   _dashboardProcessTypes: ['solicitacao', 'desenvolvimento', 'execucaoFases', 'entrega'],
   _dashboardMainProcessTypes: ['solicitacao', 'desenvolvimento', 'entrega'],
+  _privateProjectGroups: ['TI', 'COMITE_GP', 'COMPRAS'],
+  _projectManagerGroups: ['GESTOR_GPROJETOS', 'GESTOR_GESTAO_PROJETO'],
   _dashboardFields: [
     'documentid',
     'NUM_PROCES',
@@ -16,6 +19,10 @@ const dashboardController = {
     'STATUS',
     'solicitanteColleagueIdNS',
     'aprovadorSuperiorImedNS',
+    'projetoPrivadoNS',
+    'projetoPrivadoAPTI',
+    'projetoPrivadoAtualGP',
+    'participantesProjetoNS',
     'execucaoProjetoTITT',
     'fornecedorRecomendadoTITT',
     'tipoContratacaoTITT',
@@ -31,6 +38,10 @@ const dashboardController = {
     'STATUS',
     'solicitanteColleagueIdNS',
     'aprovadorSuperiorImedNS',
+    'projetoPrivadoNS',
+    'projetoPrivadoAPTI',
+    'projetoPrivadoAtualGP',
+    'participantesProjetoNS',
     'execucaoProjetoTITT',
     'fornecedorRecomendadoTITT',
     'tipoContratacaoTITT',
@@ -195,7 +206,7 @@ const dashboardController = {
 
       this.renderWelcomeUser(accessContext);
       this.applyFiltersAndRender();
-      this.renderTimeline(projects);
+      this.renderTimeline(projects.filter((project) => project.canView !== false));
       this.renderSidebar(projects, accessContext);
     } catch (error) {
       console.error('Dashboard load error:', error);
@@ -306,6 +317,7 @@ const dashboardController = {
     ]);
     const lastChangedAt = this.parseDashboardDate(lastChangedRaw);
     const progress = this.resolveProjectProgress(processType, activity, category);
+    const privacy = this.resolveProjectPrivacy(row);
 
     return {
       raw: row,
@@ -331,6 +343,9 @@ const dashboardController = {
       progress: progress,
       requesterId: requesterId,
       superiorId: superiorId,
+      isPrivate: privacy.isPrivate,
+      participantIds: privacy.participantIds,
+      participants: privacy.participants,
       currentResponsible: this.resolveResponsibleByActivity(
         processType,
         activity,
@@ -347,6 +362,57 @@ const dashboardController = {
     };
   },
 
+  resolveProjectPrivacy: function (row) {
+    const source = row || {};
+    const effective = this.parseBooleanLike(source.projetoPrivadoAtualGP);
+    const tiDecision = this.parseBooleanLike(source.projetoPrivadoAPTI);
+    const openingDecision = this.parseBooleanLike(source.projetoPrivadoNS);
+    const participants = this.parseProjectParticipants(source.participantesProjetoNS);
+    const participantIds = participants.map((participant) => participant.id).filter(Boolean);
+
+    return {
+      isPrivate: effective !== null
+        ? effective
+        : (tiDecision !== null ? tiDecision : openingDecision === true),
+      participants: participants,
+      participantIds: participantIds
+    };
+  },
+
+  parseProjectParticipants: function (value) {
+    const text = this.asText(value);
+    if (!text || this.normalizeAccessText(text) === 'null') return [];
+
+    try {
+      const parsed = JSON.parse(text);
+      if (!Array.isArray(parsed)) return [];
+
+      return parsed.map((item) => {
+        if (typeof item === 'string') {
+          return { id: this.asText(item), name: this.asText(item) };
+        }
+
+        return {
+          id: this.asText(item && (item.id || item.colleagueId || item.userId || item.value)),
+          name: this.asText(item && (item.name || item.colleagueName || item.label))
+        };
+      }).filter((participant) => participant.id);
+    } catch (error) {
+      return [];
+    }
+  },
+
+  parseBooleanLike: function (value) {
+    if (value === true) return true;
+    if (value === false) return false;
+
+    const normalized = this.normalizeForCompare(value);
+    if (!normalized || normalized === 'null') return null;
+    if (['true', '1', 'sim', 's', 'yes', 'on'].indexOf(normalized) !== -1) return true;
+    if (['false', '0', 'nao', 'n', 'no', 'off'].indexOf(normalized) !== -1) return false;
+    return null;
+  },
+
   shouldListDashboardProject: function (project) {
     const processType = this.asText(project && project.processType);
     return this._dashboardMainProcessTypes.indexOf(processType) !== -1;
@@ -358,12 +424,13 @@ const dashboardController = {
 
   applyFiltersAndRender: function () {
     const filters = this.readFiltersFromDom();
-    const projects = this.filterProjects(this.getDashboardMainProjects(this._state.allProjects), filters);
+    const kpiProjects = this.filterProjects(this.getDashboardMainProjects(this._state.allProjects), filters);
+    const projects = kpiProjects.filter((project) => project.canView !== false);
 
     this._state.filters = filters;
     this._state.filteredProjects = projects;
 
-    this.renderKpis(projects);
+    this.renderKpis(kpiProjects);
     this.renderPipeline(projects);
     this.renderDashboardTable(projects);
     this.renderGraphSummary(projects);
@@ -1285,7 +1352,7 @@ const dashboardController = {
       return {
         category: 'execution',
         iconClass: 'fa-solid fa-plus',
-        title: 'Nova solicitacao',
+        title: 'Nova solicitação',
         message: `${code} - ${projectTitle} criado`
       };
     }
@@ -1355,7 +1422,9 @@ const dashboardController = {
   },
 
   renderSidebar: function (projects, accessContext) {
-    const visible = (projects || []).filter((project) => this.canCurrentUserSeePendency(project, accessContext || {}));
+    const visible = (projects || []).filter((project) => {
+      return project.canView !== false && this.canCurrentUserSeePendency(project, accessContext || {});
+    });
     const activeVisible = visible.filter((project) => !project.isTerminal);
     const corrections = activeVisible.filter((project) => project.processType === 'solicitacao' && parseInt(project.activity, 10) === 15);
     const pendingApprovals = activeVisible.filter((project) => {
@@ -1377,7 +1446,7 @@ const dashboardController = {
       selector: '#required-corrections-list',
       countSelector: '#required-corrections-count',
       projects: corrections,
-      emptyText: 'Nenhuma correcao requerida.',
+      emptyText: 'Nenhuma correção requerida.',
       mode: 'correction'
     });
   },
@@ -1479,9 +1548,10 @@ const dashboardController = {
     const currentUserId = this.getCurrentUserId();
     const testUserId = this.asText(this._viniciusTestColleagueId);
 
-    if (currentUserId === this._viniciusColleagueId && testUserId) {
-      return testUserId;
-    }
+    
+     if (currentUserId === this._viniciusColleagueId && testUserId) {
+       return testUserId;
+     }
 
     return currentUserId;
   },
@@ -1697,7 +1767,9 @@ const dashboardController = {
   },
 
   isProjectManager: function (accessContext) {
-    return this.isUserInGroup('GESTOR_GPROJETOS', accessContext && accessContext.groups);
+    return (this._projectManagerGroups || ['GESTOR_GPROJETOS']).some((groupId) => {
+      return this.isUserInGroup(groupId, accessContext && accessContext.groups);
+    });
   },
 
   parseResponsibleGroupId: function (responsible) {
@@ -1707,6 +1779,10 @@ const dashboardController = {
   },
 
   canCurrentUserSeePendency: function (project, accessContext) {
+    if (!this.canCurrentUserViewProject(project, accessContext)) {
+      return false;
+    }
+
     if (this.isProjectManager(accessContext)) {
       return true;
     }
@@ -1777,8 +1853,10 @@ const dashboardController = {
   },
 
   isCurrentTiUser: function (accessContext) {
-    return this.isUserInGroup('TI', accessContext && accessContext.groups)
-      || this.isCurrentCoringaUser(accessContext);
+    return this.isUserInGroup('TI', accessContext && accessContext.groups);
+    // Acesso coringa do Vinicius desativado para respeitar grupos reais.
+    // return this.isUserInGroup('TI', accessContext && accessContext.groups)
+    //   || this.isCurrentCoringaUser(accessContext);
   },
 
   canSeeDevelopmentPendency: function (project, accessContext) {
@@ -1854,9 +1932,48 @@ const dashboardController = {
     );
   },
 
+  canCurrentUserViewProject: function (project, accessContext) {
+    if (!project || project.isPrivate !== true) {
+      return true;
+    }
+
+    return this.isPrivateProjectMember(project, accessContext || {});
+  },
+
+  isPrivateProjectMember: function (project, accessContext) {
+    if (this.isProjectManager(accessContext)) {
+      return true;
+    }
+
+    const currentIds = [
+      accessContext && accessContext.userId,
+      accessContext && accessContext.originalUserId
+    ].map((value) => this.normalizeAccessText(value)).filter(Boolean);
+    const projectUserIds = [
+      project && project.requesterId,
+      project && project.superiorId
+    ].concat(project && Array.isArray(project.participantIds) ? project.participantIds : [])
+      .map((value) => this.normalizeAccessText(value))
+      .filter(Boolean);
+
+    if (currentIds.some((userId) => projectUserIds.indexOf(userId) !== -1)) {
+      return true;
+    }
+
+    const belongsToProjectGroup = (this._privateProjectGroups || []).some((groupId) => {
+      return this.isUserInGroup(groupId, accessContext && accessContext.groups);
+    });
+    if (belongsToProjectGroup) {
+      return true;
+    }
+
+    return this.canCurrentUserActOnPendency(project, accessContext);
+  },
+
   applyActionPermission: function (projects, accessContext) {
     return (projects || []).map((project) => Object.assign({}, project, {
-      canAct: this.canCurrentUserActOnPendency(project, accessContext || {})
+      canAct: this.canCurrentUserActOnPendency(project, accessContext || {}),
+      canView: this.canCurrentUserViewProject(project, accessContext || {})
     }));
   },
 

@@ -28,11 +28,19 @@
   },
 
   load: async function (params) {
-    params = params || {};
-    this._state.documentId = this.asText(params.documentId);
-    this._state.estadoProcesso = this.asText(params.estadoProcesso);
-    this._state.datasetId = this.asText(params.datasetId) || 'dsGetDesenvolvimentoProjetos';
-    this._state.formName = this.asText(params.formName);
+    var finalParams = this.hydrateRouteParams(params);
+
+    if (!(await this.ensureActionAccess(finalParams))) {
+      return;
+    }
+
+    this._state.documentId = this.asText(finalParams.documentId);
+    this._state.processInstanceId = this.asText(finalParams.processInstanceId);
+    this._state.estadoProcesso = this.asText(finalParams.estadoProcesso || finalParams.activity);
+    this._state.processType = this.asText(finalParams.processType);
+    this._state.processName = this.asText(finalParams.processName);
+    this._state.datasetId = this.asText(finalParams.datasetId) || 'dsGetDesenvolvimentoProjetos';
+    this._state.formName = this.asText(finalParams.formName);
 
     try {
       var html = await $.get(this.getTemplateUrl());
@@ -49,6 +57,67 @@
       console.error('Project execution template load error:', error);
       $('#page-container').html('<div class="p-6 text-red-600">Falha ao carregar a tela de execu\u00e7\u00e3o do projeto.</div>');
     }
+  },
+
+  hydrateRouteParams: function (params) {
+    var finalParams = Object.assign({}, params || {});
+
+    if (typeof fluigService === 'undefined' || !fluigService.resolveProjectRouteContext || !fluigService.getProjectProcessDefinition) {
+      return finalParams;
+    }
+
+    var context = fluigService.resolveProjectRouteContext('projectExecution');
+    var definition = context && context.processType
+      ? fluigService.getProjectProcessDefinition(context.processType)
+      : null;
+
+    finalParams.processType = finalParams.processType || (context && context.processType) || 'desenvolvimento';
+    finalParams.processName = finalParams.processName || (context && context.processName) || 'ProcessDesenvolvimentoProjetos';
+    finalParams.activity = finalParams.activity || String((context && context.activity) || 18);
+    finalParams.datasetId = finalParams.datasetId || (definition && definition.datasetId) || 'dsGetDesenvolvimentoProjetos';
+    finalParams.formName = finalParams.formName || (definition && definition.formName) || 'FormDesenvolvimentoProjetos';
+
+    return finalParams;
+  },
+
+  ensureActionAccess: async function (params) {
+    var isReadonlyView = Boolean(params && params.projectReadonlyView === true);
+    var accessResolver = isReadonlyView ? 'resolveProjectViewAccess' : 'resolveProjectActionAccess';
+
+    if (typeof fluigService === 'undefined' || typeof fluigService[accessResolver] !== 'function') {
+      console.warn('[GP][projectExecutionAccess] fluigService indisponivel');
+      if (typeof router !== 'undefined' && router.showActionAccessDeniedModal) {
+        router.showActionAccessDeniedModal(isReadonlyView
+          ? 'Não foi possível validar seu acesso a este projeto.'
+          : 'Não foi possível validar seu acesso a esta solicitação.');
+      }
+      return false;
+    }
+
+    console.log('[GP][projectExecutionAccess] validando acesso:', {
+      mode: isReadonlyView ? 'view' : 'action',
+      params: params
+    });
+
+    var access = await fluigService[accessResolver]('projectExecution', params || {});
+    console.log('[GP][projectExecutionAccess] resultado:', access);
+
+    if (access && access.allowed) {
+      return true;
+    }
+
+    var message = access && access.message
+      ? access.message
+      : (isReadonlyView
+        ? 'Você não tem permissão para visualizar este projeto.'
+        : 'Você não tem permissão para atuar nessa solicitação.');
+    if (typeof router !== 'undefined' && router.showActionAccessDeniedModal) {
+      router.showActionAccessDeniedModal(message);
+    } else {
+      $('#page-container').html('<div class="p-6 text-red-600">' + this.escapeHtml(message) + '</div>');
+    }
+
+    return false;
   },
 
   destroy: function () {

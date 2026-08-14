@@ -44,6 +44,10 @@ function servicetask53(attempt, message) {
             "centrodecustoNomeNS",
             "aprovadorSuperiorImedNS",
             "patrocinadorNS",
+            "projetoPrivadoNS",
+            "projetoPrivadoAPTI",
+            "projetoPrivadoAtualGP",
+            "participantesProjetoNS",
             "solicitanteNomeNS",
             "solicitanteColleagueIdNS",
             "objetivodoprojetoNS",
@@ -347,8 +351,10 @@ function servicetask53(attempt, message) {
         // START PROCESS
         // =====================================================
 
+        var startProcessUser = "14cdc0c0-a710-4412-81dd-d94fe3abe00a";
+
         var fields = [
-            "e6cfab79-5cf3-4350-a789-bdfb89ebc741",
+            startProcessUser,
             "ProcessDesenvolvimentoProjetos",
             "0",
             getValue("WKCompany") + "",

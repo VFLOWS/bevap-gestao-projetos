@@ -9,6 +9,8 @@
     'areaUnidadeNS',
     'centrodecustoNS',
     'patrocinadorNS',
+    'projetoPrivadoNS',
+    'participantesProjetoNS',
     'objetivodoprojetoNS',
     'problemaOportunidadeNS',
     'beneficiosesperadosNS',
@@ -78,6 +80,23 @@
     if (['true', '1', 'sim', 'yes', 'on'].indexOf(normalized) >= 0) return true;
     if (['false', '0', 'nao', 'no', 'off'].indexOf(normalized) >= 0) return false;
     return null;
+  }
+
+  function parseProjectParticipants(value) {
+    const text = asText(value);
+    if (!text) return [];
+
+    try {
+      const parsed = JSON.parse(text);
+      if (!Array.isArray(parsed)) return [];
+
+      return parsed.map((item) => {
+        if (typeof item === 'string') return asText(item);
+        return asText(item && (item.name || item.colleagueName || item.label || item.id || item.colleagueId));
+      }).filter(Boolean);
+    } catch (error) {
+      return [];
+    }
   }
 
   function getPriorityInfo(priority) {
@@ -210,11 +229,13 @@
     const stakeholders = parseTableJson(row.tblStakeholdersNS)
       .map((item) => asText(item && item.valorstakeholdersNS))
       .filter(Boolean);
+    const participants = parseProjectParticipants(row.participantesProjetoNS);
     const expectedBenefits = expectedBenefitsFromTable.length
       ? expectedBenefitsFromTable
       : parseLegacyExpectedBenefits(row.beneficiosesperadosNS);
     const priority = getPriorityInfo(row.prioridadeNS);
     const isAligned = parseBooleanLike(row.alinhadobevapNS) === true;
+    const isPrivate = parseBooleanLike(row.projetoPrivadoNS) === true;
 
     return {
       row,
@@ -222,8 +243,10 @@
       expectedBenefits,
       risks,
       stakeholders,
+      participants,
       priority,
-      isAligned
+      isAligned,
+      isPrivate
     };
   }
 
@@ -233,8 +256,10 @@
     const expectedBenefits = model.expectedBenefits;
     const risks = model.risks;
     const stakeholders = model.stakeholders;
+    const participants = model.participants;
     const priority = model.priority;
     const isAligned = model.isAligned;
+    const isPrivate = model.isPrivate;
 
     return `
       <div class="space-y-6">
@@ -261,6 +286,16 @@
             <div class="md:col-span-2">
               <label class="block text-sm font-medium text-gray-500 mb-1">Patrocinador</label>
               <p class="text-gray-800">${escapeHtml(row.patrocinadorNS || 'Não informado')}</p>
+            </div>
+            <div class="md:col-span-2">
+              <label class="block text-sm font-medium text-gray-500 mb-2">Participantes do Projeto</label>
+              <div class="flex flex-wrap gap-2">${renderTagList(participants)}</div>
+            </div>
+            <div class="md:col-span-2 flex items-center justify-between gap-4 pt-3 border-t border-gray-100">
+              <span class="text-sm font-medium text-gray-500">Visibilidade informada na abertura</span>
+              <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${isPrivate ? 'bg-blue-50 text-bevap-navy' : 'bg-green-50 text-green-700'}">
+                <i class="fa-solid ${isPrivate ? 'fa-lock' : 'fa-globe'} mr-1"></i>${isPrivate ? 'Privado' : 'Público'}
+              </span>
             </div>
           </div>
         </div>
