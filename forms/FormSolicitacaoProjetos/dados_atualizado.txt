@@ -1,0 +1,163 @@
+*NOVA SOLICITACAO - NS
+titulodoprojetoNS
+areaUnidadeNS
+centrodecustoNS
+patrocinadorNS
+objetivodoprojetoNS
+problemaOportunidadeNS
+beneficiosesperadosNS
+alinhadobevapNS
+-tblObjetivosEstrategicosNS (PAI x FILHO)
+ - descricaoobjetivoNS (CAMPO PAIxFILHO)
+prioridadeNS
+escopoinicialNS
+foradeescopoNS
+-tblRiscosIniciaisNS (PAI x FILHO)
+ - riscoPotencialNS (CAMPO PAIxFILHO)
+dependenciasNS
+-tblRiscosIniciaisNS (PAI x FILHO)
+ - riscoPotencialNS (CAMPO PAIxFILHO)
+-tblstakeholdersNS (PAI x FILHO)
+ - valorstakeholdersNS (CAMPO PAIxFILHO)
+anexosNS
+observacoesadicionaisNS
+
+*AVALIAR PROJETO TI - APTI
+visibilidadetecnicaAPTI
+alternativasconsideradasAPTI
+esforcoestimadohorasAPTI
+esforcoestimadopontosAPTI
+-tblRiscosIdentificadosAPTI (PAI x FILHO)
+ - nivelRiscoAPTI (CAMPO PAIxFILHO)
+ - descricaoRiscoAPTI (CAMPO PAIxFILHO)
+dependenciastecnicasAPTI
+observacoesdaanaliseAPTI
+objetivoClaramenteDefinidoAPTI
+escopoBemDelimitadoAPTI
+documentacaoTecnicaAdeqAPTI
+patrocinadoridentificadoAPTI
+alinhEstratConfAPTI
+recursosTecDispAPTI
+anexosessenciaispresentesAPTI
+
+*SUPERIOR IMEDIATO - SI
+disponibilidadedaEquipeSI
+recursosNecessariosAreaSI
+conflitosdeAgendaSI
+prioridadeparaaAreaSI
+observacoesdoGestorSI
+equipepossuiDisponibilidadeSI
+recursosNecessIdentSI
+naoHaConflitosCriticosSI
+projetoAlinhadoPrioridadesSI
+
+*TI TRIAGEM TECNICA - TITT
+execucaoProjetoTITT
+motivoDecisaoCategoriaTITT
+motivoDecisaoDescricaoTITT
+disponibilidadedaEquipeTITT
+dataDesejadaInicioTITT
+-tblRiscosDependenciasTITT (PAI x FILHO)
+ - riscoPotencialTITT (CAMPO PAIxFILHO)
+fornecedorRecomendadoTITT
+tipoContratacaoTITT
+justifExecucaoExtTITT
+anexosApoioTITT
+escopoProjClaroDetTITT
+estimativasCustoPrazoRegTITT
+anexosEssenciaisPresentesTITT
+decisaoExecucaoDocumentadaTITT
+riscosDependenciasMapeadosTITT
+
+*COMITE - APROVAR PROJETO - CAP
+dataHoraCAP
+-tblParticipantesCAP (PAI x FILHO)
+ - nomeParticipanteCAP (CAMPO PAIxFILHO)
+anotacoesCAP
+anexarAtaReuniaoCAP
+
+*TI PROPOSTA COMERCIAL - TIPC
+nomeFornecedorTIPC
+cnpjTIPC
+nomeContatoTIPC
+emailTIPC
+telefoneTIPC
+nomeContato2TIPC
+email2TIPC
+telefone2TIPC
+numeroRefPropostaTIPC
+vigenciaDiasTIPC
+valortotalTIPC
+moedaTIPC
+prazoEstimadoTIPC
+condicaoPagamentoTIPC
+escopoResumidoTIPC
+-tblItensServicosTIPC (PAI x FILHO)
+ - descricaoItemServicoTIPC (CAMPO PAIxFILHO)
+ - quantidadeItemServicoTIPC (CAMPO PAIxFILHO)
+ - valorUnitarioItemServicoTIPC (CAMPO PAIxFILHO)
+ - totalItemServicoTIPC (CAMPO PAIxFILHO)
+-tblRiscosIniciaisTIPC (PAI x FILHO)
+ - riscoPotencialTIPC (CAMPO PAIxFILHO)
+-tblPreRequisitosTIPC (PAI x FILHO)
+ - preRequisitoTIPC (CAMPO PAIxFILHO)
+anexosPropostaTIPC
+escopoClaroDetalhadoTIPC
+impostosTaxasInclusosTIPC
+prazosEntregaDefinidosTIPC
+garantiasSlaEspecificadosTIPC
+vigenciaPropostaConfirmadaTIPC
+documentosAnexCompTIPC
+
+*SOLICITANTE APROVAR PROPOSTA - SAP
+observacoesNegociacaoSAP
+liConcordoPropostaComercialSAP
+
+*GCC - APROVAR CUSTO - GCC
+capexGCC
+-tblNaturezaCustoCapexGCC (PAI x FILHO)
+ - centroCustoCapexGCC (CAMPO PAIxFILHO)
+ - contaContabilCapexGCC (CAMPO PAIxFILHO)
+ - porcentagemCapexGCC (CAMPO PAIxFILHO)
+ - saldoCapexGCC (CAMPO PAIxFILHO)
+ - saldoAposCompromissoCapexGCC (CAMPO PAIxFILHO)
+opexGCC
+-tblNaturezaCustoOpexGCC (PAI x FILHO)
+ - centroCustoOpexGCC (CAMPO PAIxFILHO)
+ - contaContabilOpexGCC (CAMPO PAIxFILHO)
+ - porcentagemOpexGCC (CAMPO PAIxFILHO)
+ - saldoOpexGCC (CAMPO PAIxFILHO)
+ - saldoAposCompromissoOpexGCC (CAMPO PAIxFILHO)
+competenciaGCC
+observacoesNegociacaoGCC
+
+*COMITE - APROVAR CUSTO PROJETO - ACP
+dataHoraACP
+-tblParticipantesACP (PAI x FILHO)
+ - nomeParticipanteACP (CAMPO PAIxFILHO)
+anotacoesACP
+anexarAtaReuniaoACP
+
+*COMPRAS - REALIZAR CONTRATACAO - CRC
+tipoContratacaoCRC
+numeroPedidoContratoCRC
+dataEmissaoCRC
+inicioVigenciaCRC
+fimVigenciaCRC
+condicaoPagamentoCRC
+centroCustoCRC
+contaContabilCRC
+escopoAcordadoCRC
+slaGarantiaCRC
+multasRescisaoCRC
+pessoaJuridicaRegularCRC
+certidoesNegativasCRC
+lgpdCRC
+analiseSegurancaCRC
+seguroResponsabilidadeCRC
+anexosCRC                         
+valorFinalCRC
+impostosEncargosCRC
+anexosCRC
+escolhercondicaopagamentoCRC
+escolherparcelasCRC
