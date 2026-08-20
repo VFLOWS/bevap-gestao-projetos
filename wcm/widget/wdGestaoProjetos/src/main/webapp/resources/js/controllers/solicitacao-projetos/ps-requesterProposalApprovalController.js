@@ -804,8 +804,8 @@ const requesterProposalApprovalController = {
           controller: this,
           processInstanceId: processInstanceId,
           documentId: this._state.documentId,
-          title: 'Correcao solicitada!',
-          message: 'Devolvido para correcao.',
+          title: 'Correção solicitada!',
+          message: 'Devolvido para correção.',
           nextStep: 'TI - Triagem Tecnica'
         });
       } else {

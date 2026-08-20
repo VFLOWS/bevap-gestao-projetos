@@ -431,6 +431,8 @@
       const customRowsHtml = customRows.map((row) => {
         const variant = row && row.variant ? String(row.variant) : 'inline';
         const label = row && row.label ? String(row.label) : '—';
+        const rowKey = row && row.key ? String(row.key) : '';
+        const rowAttribute = rowKey ? ` data-gp-summary-row="${this._escape(rowKey)}"` : '';
 
         if (variant === 'badge') {
           const value = row && row.value !== undefined ? String(row.value) : '—';
@@ -438,7 +440,7 @@
           const badgeClasses = row && row.badgeClasses ? String(row.badgeClasses) : 'bg-gray-100 text-gray-800';
 
           return `
-            <div class="flex items-center justify-between pb-2 border-b">
+            <div${rowAttribute} class="flex items-center justify-between pb-2 border-b">
               <span class="text-gray-600">${this._escape(label)}</span>
               <span class="inline-flex items-center px-2 py-1 rounded-full text-xs ${this._escape(badgeClasses)} font-medium">
                 ${iconClass ? `<i class="${this._escape(iconClass)} mr-1"></i>` : ''}${this._escape(value)}
@@ -450,7 +452,7 @@
         if (variant === 'block') {
           const value = row && row.value !== undefined ? String(row.value) : '—';
           return `
-            <div class="pb-2 border-b">
+            <div${rowAttribute} class="pb-2 border-b">
               <span class="text-gray-600">${this._escape(label)}</span>
               <p class="font-medium text-gray-900 mt-1">${this._escape(value)}</p>
             </div>
@@ -471,7 +473,7 @@
           }).join('');
 
           return `
-            <div class="pb-2 border-b">
+            <div${rowAttribute} class="pb-2 border-b">
               <span class="text-gray-600">${this._escape(label)}</span>
               <div class="mt-2 space-y-1">
                 ${itemsHtml || '<div class="text-xs text-gray-500">—</div>'}
@@ -482,7 +484,7 @@
 
         const value = row && row.value !== undefined ? String(row.value) : '—';
         return `
-          <div class="flex items-center justify-between pb-2 border-b">
+          <div${rowAttribute} class="flex items-center justify-between pb-2 border-b">
             <span class="text-gray-600">${this._escape(label)}</span>
             <span class="font-medium text-gray-900">${this._escape(value)}</span>
           </div>

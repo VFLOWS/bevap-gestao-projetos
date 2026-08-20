@@ -28,11 +28,19 @@
   },
 
   load: async function (params) {
-    params = params || {};
-    this._state.documentId = this.asText(params.documentId);
-    this._state.estadoProcesso = this.asText(params.estadoProcesso);
-    this._state.datasetId = this.asText(params.datasetId) || 'dsGetDesenvolvimentoProjetos';
-    this._state.formName = this.asText(params.formName);
+    var finalParams = this.hydrateRouteParams(params);
+
+    if (!(await this.ensureActionAccess(finalParams))) {
+      return;
+    }
+
+    this._state.documentId = this.asText(finalParams.documentId);
+    this._state.processInstanceId = this.asText(finalParams.processInstanceId);
+    this._state.estadoProcesso = this.asText(finalParams.estadoProcesso || finalParams.activity);
+    this._state.processType = this.asText(finalParams.processType);
+    this._state.processName = this.asText(finalParams.processName);
+    this._state.datasetId = this.asText(finalParams.datasetId) || 'dsGetDesenvolvimentoProjetos';
+    this._state.formName = this.asText(finalParams.formName);
 
     try {
       var html = await $.get(this.getTemplateUrl());
@@ -49,6 +57,67 @@
       console.error('Project execution template load error:', error);
       $('#page-container').html('<div class="p-6 text-red-600">Falha ao carregar a tela de execu\u00e7\u00e3o do projeto.</div>');
     }
+  },
+
+  hydrateRouteParams: function (params) {
+    var finalParams = Object.assign({}, params || {});
+
+    if (typeof fluigService === 'undefined' || !fluigService.resolveProjectRouteContext || !fluigService.getProjectProcessDefinition) {
+      return finalParams;
+    }
+
+    var context = fluigService.resolveProjectRouteContext('projectExecution');
+    var definition = context && context.processType
+      ? fluigService.getProjectProcessDefinition(context.processType)
+      : null;
+
+    finalParams.processType = finalParams.processType || (context && context.processType) || 'desenvolvimento';
+    finalParams.processName = finalParams.processName || (context && context.processName) || 'ProcessDesenvolvimentoProjetos';
+    finalParams.activity = finalParams.activity || String((context && context.activity) || 18);
+    finalParams.datasetId = finalParams.datasetId || (definition && definition.datasetId) || 'dsGetDesenvolvimentoProjetos';
+    finalParams.formName = finalParams.formName || (definition && definition.formName) || 'FormDesenvolvimentoProjetos';
+
+    return finalParams;
+  },
+
+  ensureActionAccess: async function (params) {
+    var isReadonlyView = Boolean(params && params.projectReadonlyView === true);
+    var accessResolver = isReadonlyView ? 'resolveProjectViewAccess' : 'resolveProjectActionAccess';
+
+    if (typeof fluigService === 'undefined' || typeof fluigService[accessResolver] !== 'function') {
+      console.warn('[GP][projectExecutionAccess] fluigService indisponivel');
+      if (typeof router !== 'undefined' && router.showActionAccessDeniedModal) {
+        router.showActionAccessDeniedModal(isReadonlyView
+          ? 'Não foi possível validar seu acesso a este projeto.'
+          : 'Não foi possível validar seu acesso a esta solicitação.');
+      }
+      return false;
+    }
+
+    console.log('[GP][projectExecutionAccess] validando acesso:', {
+      mode: isReadonlyView ? 'view' : 'action',
+      params: params
+    });
+
+    var access = await fluigService[accessResolver]('projectExecution', params || {});
+    console.log('[GP][projectExecutionAccess] resultado:', access);
+
+    if (access && access.allowed) {
+      return true;
+    }
+
+    var message = access && access.message
+      ? access.message
+      : (isReadonlyView
+        ? 'Você não tem permissão para visualizar este projeto.'
+        : 'Você não tem permissão para atuar nessa solicitação.');
+    if (typeof router !== 'undefined' && router.showActionAccessDeniedModal) {
+      router.showActionAccessDeniedModal(message);
+    } else {
+      $('#page-container').html('<div class="p-6 text-red-600">' + this.escapeHtml(message) + '</div>');
+    }
+
+    return false;
   },
 
   destroy: function () {
@@ -1095,6 +1164,7 @@
     if (!normalized) return '';
     if (normalized.indexOf('conclu') !== -1 || normalized === '2') return 'concluido';
     if (normalized.indexOf('cancel') !== -1 || normalized === '1') return 'cancelado';
+    if (normalized.indexOf('planejad') !== -1) return 'planejado';
     if (normalized.indexOf('aguardando') !== -1) return 'aguardando_execucao';
     if (normalized.indexOf('validacao') !== -1 && normalized.indexOf('solicitante') !== -1) return 'validacao_solicitante';
     if (normalized.indexOf('validacao') !== -1 && normalized.indexOf('ti') !== -1) return 'validacao_ti';
@@ -1392,24 +1462,75 @@
     })();
   },
 
+  createSubmitLoading: function (title, message) {
+    if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
+      return modalLoadingService.show({
+        title: title || 'Enviando execucao',
+        message: message || 'Aguarde enquanto a execucao e validada...'
+      });
+    }
+
+    if (typeof FLUIGC !== 'undefined' && FLUIGC.loading) {
+      var legacyLoading = FLUIGC.loading($('#page-container'));
+      legacyLoading.show();
+
+      return {
+        hide: function () {
+          legacyLoading.hide();
+        },
+        updateMessage: function () {}
+      };
+    }
+
+    return {
+      hide: function () {},
+      updateMessage: function () {}
+    };
+  },
+
+  waitForUiPaint: function () {
+    return new Promise(function (resolve) {
+      if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+        window.requestAnimationFrame(function () {
+          setTimeout(resolve, 0);
+        });
+        return;
+      }
+
+      setTimeout(resolve, 0);
+    });
+  },
+
   submitExecutionDecision: async function (config) {
     var documentId = this.asText(this._state.documentId);
     if (!documentId) {
       throw new Error('documentId nao informado.');
     }
 
-    var loading = modalLoadingService.show({
-      title: 'Movendo execucao',
-      message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
-    });
+    var shouldValidateActivities = this.shouldValidateExecutionActivitiesBeforeSubmit(config);
+    var loading = this.createSubmitLoading(
+      shouldValidateActivities ? 'Validando execução' : 'Movendo execução',
+      shouldValidateActivities
+        ? 'Verificando se todas as atividades foram resolvidas...'
+        : 'Preparando movimentacao da execucao...'
+    );
 
     try {
-      await loading.waitForPaint();
-      loading.updateMessage('Localizando processo do desenvolvimento...');
+      await this.waitForUiPaint();
+
+      if (shouldValidateActivities) {
+        await this.assertExecutionActivitiesResolvedForSubmit();
+      }
+
+      loading.updateMessage('Preparando movimentacao da execucao...');
+      await this.waitForUiPaint();
+
       var processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
-      loading.updateMessage('Preparando dados da execucao...');
       var taskFields = this.collectExecutionTaskFields(config && config.decisionValue, config && config.justificationValue);
+
       loading.updateMessage('Enviando movimentacao para o Fluig...');
+      await this.waitForUiPaint();
+
       await fluigService.saveAndSendTask({
         id: processInstanceId,
         numState: this.asText(config && config.nextState),
@@ -1435,6 +1556,75 @@
     } finally {
       loading.hide();
     }
+  },
+
+  shouldValidateExecutionActivitiesBeforeSubmit: function (config) {
+    return this.asText(config && config.decisionValue) === 'concluido';
+  },
+
+  assertExecutionActivitiesResolvedForSubmit: async function () {
+    await this.syncMilestoneTaskStatuses();
+    this.renderExecutionBoard();
+    this.updateProjectSummary();
+    this.renderMacroProgress();
+
+    var blockingTasks = this.getBlockingExecutionTasksForSubmit();
+    if (!blockingTasks.length) {
+      return true;
+    }
+
+    var taskList = blockingTasks.slice(0, 5).map(function (task) {
+      return task.label + ' (' + task.statusLabel + ')';
+    }).join(', ');
+    var suffix = blockingTasks.length > 5
+      ? ' e mais ' + (blockingTasks.length - 5) + ' atividade(s)'
+      : '';
+
+    throw new Error(
+      'Nao e possivel enviar a execucao enquanto houver atividades em aberto. ' +
+      'Deixe todas como Concluido, Cancelado ou Planejado. Pendentes: ' +
+      taskList + suffix + '.'
+    );
+  },
+
+  getBlockingExecutionTasksForSubmit: function () {
+    var self = this;
+    var blocking = [];
+
+    (this._state.milestones || []).forEach(function (milestone) {
+      (milestone.tasks || []).forEach(function (task) {
+        if (self.isTaskResolvedForExecutionSubmit(task)) {
+          return;
+        }
+
+        var statusMeta = self.getTaskExecutionStatusMeta(task && task.status);
+        blocking.push({
+          task: task,
+          milestone: milestone,
+          label: self.getExecutionTaskValidationLabel(task, milestone),
+          statusLabel: statusMeta.label
+        });
+      });
+    });
+
+    return blocking;
+  },
+
+  isTaskResolvedForExecutionSubmit: function (task) {
+    var normalized = this.normalizeTaskExecutionStatus(task && task.status);
+    return !normalized
+      || normalized === 'planejado'
+      || normalized === 'concluido'
+      || normalized === 'cancelado';
+  },
+
+  getExecutionTaskValidationLabel: function (task, milestone) {
+    var parts = [
+      this.asText(milestone && milestone.name),
+      this.asText(task && task.taskName)
+    ].filter(Boolean);
+
+    return parts.length ? parts.join(' - ') : 'Atividade sem nome';
   },
 
   persistExecutionDecision: async function (config) {

@@ -29,6 +29,7 @@ function servicetask16(attempt, message) {
 				"decisaoSuperiorImediato",
 				"decisaoAvaliarProjeto",
 				"payloadJsonGLPI",
+				"forcarErroGLPI",
 				"titulodoprojetoNS",
 				"ColigadaNS",
 				"areaUnidadeNS",
@@ -36,6 +37,10 @@ function servicetask16(attempt, message) {
 				"centrodecustoNomeNS",
 				"aprovadorSuperiorImedNS",
 				"patrocinadorNS",
+				"projetoPrivadoNS",
+				"projetoPrivadoAPTI",
+				"projetoPrivadoAtualGP",
+				"participantesProjetoNS",
 				"solicitanteNomeNS",
 				"solicitanteColleagueIdNS",
 				"objetivodoprojetoNS",
@@ -692,8 +697,10 @@ function servicetask16(attempt, message) {
 
 			log.info("### servicetask16 - INICIANDO PROCESSO execucaoFasesAtividades PARA LINHA " + idx + " summaryId=" + summaryTaskId + " controleAnterior=" + processedControlId);
 
+			var startProcessUser = "14cdc0c0-a710-4412-81dd-d94fe3abe00a";
+
 			var fields = [
-				"14cdc0c0-a710-4412-81dd-d94fe3abe00a",
+				startProcessUser,
 				"execucaoFasesAtividades",
 				"0",
 				getValue("WKCompany") + "",

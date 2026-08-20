@@ -1,3 +1,5 @@
+var GP_WORKFLOW_USER = "14cdc0c0-a710-4412-81dd-d94fe3abe00a";
+
 var fluigService = {
     getDataset: function (datasetId, filters = null) {
         return new Promise((resolve, reject) => {
@@ -436,6 +438,25 @@ var fluigService = {
         return finalFields;
     },
 
+    getProjectAccessValidationFields: function () {
+        return [
+            'documentid',
+            'NUM_PROCES',
+            'estadoProcesso',
+            'STATUS',
+            'titulodoprojetoNS',
+            'codigoglpi',
+            'prioridadeNS',
+            'solicitanteNomeNS',
+            'solicitanteColleagueIdNS',
+            'aprovadorSuperiorImedNS',
+            'projetoPrivadoNS',
+            'projetoPrivadoAPTI',
+            'projetoPrivadoAtualGP',
+            'participantesProjetoNS'
+        ];
+    },
+
     buildProjectProcessContext: function (processType, row, extras) {
         var definition = this.getProjectProcessDefinition(processType);
         var finalRow = row && typeof row === 'object' ? row : {};
@@ -578,6 +599,73 @@ var fluigService = {
                     enabled: true,
                     route: 'executionActivityTiValidation',
                     label: 'Validar Atividade TI'
+                },
+                46: {
+                    enabled: true,
+                    route: 'efGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
+                52: {
+                    enabled: true,
+                    route: 'efGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                }
+            };
+        }
+
+        if (normalizedType === 'entrega') {
+            return {
+                14: {
+                    enabled: true,
+                    route: 'epGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
+                18: {
+                    enabled: true,
+                    route: 'epDeliveryPlanning',
+                    label: 'Planejar Entrega'
+                },
+                22: {
+                    enabled: true,
+                    route: 'epUserTraining',
+                    label: 'Treinamento dos Usuarios'
+                },
+                27: {
+                    enabled: true,
+                    route: 'epFinalGoLiveValidation',
+                    label: 'Validação Final GO Live'
+                },
+                35: {
+                    enabled: true,
+                    route: 'epGoLiveExecution',
+                    label: 'Realizar GO Live'
+                },
+                42: {
+                    enabled: true,
+                    route: 'epRequesterGoLiveValidation',
+                    label: 'Validar GO Live'
+                },
+                46: {
+                    enabled: true,
+                    route: 'epProjectClosureDocumentation',
+                    label: 'Anexar Documentacao de Encerramento'
+                },
+                50: {
+                    enabled: true,
+                    route: 'epGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
+                51: {
+                    enabled: false,
+                    route: '',
+                    label: 'Integrando GLPI',
+                    hideButton: true
+                },
+                56: {
+                    enabled: false,
+                    route: '',
+                    label: 'Finalizado',
+                    hideButton: true
                 }
             };
         }
@@ -754,7 +842,7 @@ var fluigService = {
                 14: 'Erro de Integracao GLPI',
                 18: 'Planejamento da Entrega do Projeto',
                 22: 'Treinamento dos Usuarios - QA',
-                27: 'Validacao Final para GO Live',
+                27: 'Validação Final para GO Live',
                 35: 'GO Live em Producao',
                 42: 'Validacao do GO Live',
                 46: 'Documentacao de Encerramento',
@@ -837,6 +925,32 @@ var fluigService = {
         };
     },
 
+    resolveProjectRouteContext: function (routeName) {
+        var route = this.asTrimmedString(routeName);
+        var definitions = this.getProjectProcessDefinitions();
+        var processTypes = Object.keys(definitions);
+
+        for (var i = 0; i < processTypes.length; i++) {
+            var type = processTypes[i];
+            var actionMap = this.getProjectProcessActionMap(type);
+            var activities = Object.keys(actionMap || {});
+
+            for (var j = 0; j < activities.length; j++) {
+                var activity = activities[j];
+                var action = actionMap[activity];
+                if (action && action.route === route) {
+                    return {
+                        processType: type,
+                        processName: definitions[type].processName,
+                        activity: parseInt(activity, 10)
+                    };
+                }
+            }
+        }
+
+        return {};
+    },
+
     getProjectProcessStateLabel: function (processTypeOrContext, estadoProcesso) {
         var context = processTypeOrContext && typeof processTypeOrContext === 'object'
             ? processTypeOrContext
@@ -913,7 +1027,15 @@ var fluigService = {
     resolveProjectProcessContext: async function (filters) {
         var finalFilters = filters && typeof filters === 'object' ? filters : {};
         var documentId = this.asTrimmedString(finalFilters.documentId);
+        var processInstanceId = this.asTrimmedString(finalFilters.processInstanceId);
         var preferredType = this.detectProjectProcessType(finalFilters.processType || finalFilters.processName || finalFilters.type);
+
+        if (!documentId && processInstanceId) {
+            try {
+                documentId = this.asTrimmedString(await this.resolveDocumentIdByProcessInstanceId(processInstanceId));
+            } catch (error) {}
+        }
+
         var queryOptions = {
             fields: Array.isArray(finalFilters.fields) ? finalFilters.fields : null,
             sortFields: Array.isArray(finalFilters.sortFields) ? finalFilters.sortFields : null,
@@ -1017,6 +1139,23 @@ var fluigService = {
             .filter(function (value) { return value !== ""; });
     },
 
+    normalizeProjectParticipants: function (participants) {
+        var self = this;
+        var seen = {};
+
+        return self.toArray(participants).map(function (participant) {
+            var id = self.asTrimmedString(participant && (participant.id || participant.colleagueId || participant.userId || participant.value));
+            var name = self.asTrimmedString(participant && (participant.name || participant.colleagueName || participant.label));
+            var key = id.toLowerCase();
+
+            if (!id || seen[key]) return null;
+            seen[key] = true;
+            return { id: id, name: name || id };
+        }).filter(function (participant) {
+            return participant !== null;
+        });
+    },
+
     normalizeProcessAttachments: function (attachments) {
         var self = this;
         return self.toArray(attachments)
@@ -1075,6 +1214,39 @@ var fluigService = {
         return cardData;
     },
 
+    appendForcedGlpiTestField: function (taskFields) {
+        if (!Array.isArray(taskFields)) {
+            return taskFields;
+        }
+
+        var input = $('#forcarErroGLPI').first();
+        if (!input.length) {
+            return taskFields;
+        }
+
+        var value = String(input.val() === null || input.val() === undefined ? '' : input.val()).trim();
+        if (value === '') {
+            return taskFields;
+        }
+
+        var updated = false;
+        taskFields.forEach(function (field) {
+            if (field && String(field.name || '') === 'forcarErroGLPI') {
+                field.value = value;
+                updated = true;
+            }
+        });
+
+        if (!updated) {
+            taskFields.push({
+                name: 'forcarErroGLPI',
+                value: value
+            });
+        }
+
+        return taskFields;
+    },
+
     buildProjectSolicitationCardData: function (formData) {
         var self = this;
         var cardData = {};
@@ -1104,6 +1276,11 @@ var fluigService = {
         cardData.solicitanteNomeNS = requesterName;
         cardData.solicitanteColleagueIdNS = requesterColleagueId;
 
+        cardData.projetoPrivadoNS = self.asBooleanString(formData.projetoPrivado);
+        cardData.projetoPrivadoAtualGP = self.asBooleanString(formData.projetoPrivado);
+        cardData.participantesProjetoNS = JSON.stringify(
+            self.normalizeProjectParticipants(formData.participants)
+        );
         cardData.alinhadobevapNS = self.asBooleanString(formData.alinhamento);
         cardData.beneficiosesperadosNS = self.normalizeRows(formData.beneficiosEsperados).join("\n");
         cardData.anexosNS = JSON.stringify(
@@ -1136,7 +1313,7 @@ var fluigService = {
         var completeTask = finalOptions.completeTask === false ? "false" : "true";
 
         return [
-            "14cdc0c0-a710-4412-81dd-d94fe3abe00a",
+            GP_WORKFLOW_USER,
             "ProcessSolicitacaoProjetos",
             "0",
             "1",
@@ -1165,7 +1342,11 @@ var fluigService = {
             var numSolicitacao = result.numSolicitacao || result.NUMSOLICITACAO || "";
 
             if (status !== "OK") {
-                throw new Error(result.message || result.MESSAGE || "Erro ao iniciar solicitacao no Fluig");
+                var errorMessage = result.message || result.MESSAGE || result.error || result.ERROR || "";
+                if (!errorMessage && numSolicitacao && status !== "OK") {
+                    errorMessage = numSolicitacao;
+                }
+                throw new Error(errorMessage || "Erro ao iniciar solicitacao no Fluig");
             }
 
             // Monta o código do projeto e salva no card recém-criado
@@ -1252,17 +1433,188 @@ var fluigService = {
         });
     },
 
-    getUserSubstitutes: function (userId) {
-        return new Promise((resolve, reject) => {
-            fluigService.getDataset("dsGetSubstitutosUsuario", {
-                colleagueId: userId
-            }).then(data => {
-                let content = data.descReturn || data;
-                resolve(content);
-            }).catch(error => {
-                reject(error);
-            });
+    resolveProjectViewAccess: async function (routeName, params) {
+        var route = this.asTrimmedString(routeName);
+        var p = params && typeof params === 'object' ? params : {};
+        var documentId = this.asTrimmedString(p.documentId || p.documentid);
+        var processInstanceId = this.asTrimmedString(p.processInstanceId || p.processinstanceid);
+        var routeContext = this.resolveProjectRouteContext(route);
+        var deny = function (message) {
+            return {
+                allowed: false,
+                message: message || 'Você não tem permissão para visualizar este projeto.'
+            };
+        };
+
+        if (!documentId && !processInstanceId) {
+            return deny('Não foi possível identificar o projeto informado.');
+        }
+
+        if (!documentId && processInstanceId) {
+            try {
+                documentId = this.asTrimmedString(await this.resolveDocumentIdByProcessInstanceId(processInstanceId));
+            } catch (error) {}
+        }
+
+        var project = await this.resolveProjectProcessContext({
+            documentId: documentId,
+            processInstanceId: processInstanceId,
+            processType: p.processType || p.processName || routeContext.processType,
+            processName: p.processName || routeContext.processName,
+            fields: this.getProjectAccessValidationFields()
         });
+
+        if (!project) {
+            return deny('Não foi possível localizar os dados do projeto.');
+        }
+
+        if (
+            typeof dashboardController === 'undefined'
+            || !dashboardController.normalizeDashboardProject
+            || !dashboardController.resolveCurrentUserAccessContext
+            || !dashboardController.hydrateSubstituteAccessContext
+            || !dashboardController.canCurrentUserViewProject
+        ) {
+            return deny('Não foi possível validar seu acesso a este projeto.');
+        }
+
+        var dashboardProject = dashboardController.normalizeDashboardProject(project, 0);
+        var accessContext = await dashboardController.resolveCurrentUserAccessContext();
+        await dashboardController.hydrateSubstituteAccessContext([dashboardProject], accessContext);
+
+        if (dashboardController.canCurrentUserViewProject(dashboardProject, accessContext)) {
+            return { allowed: true, project: project };
+        }
+
+        return deny();
+    },
+
+    resolveProjectActionAccess: async function (routeName, params) {
+        var route = this.asTrimmedString(routeName);
+        var p = params && typeof params === 'object' ? params : {};
+        var documentId = this.asTrimmedString(p.documentId || p.documentid);
+        var processInstanceId = this.asTrimmedString(p.processInstanceId || p.processinstanceid);
+        var routeContext = this.resolveProjectRouteContext(route);
+        var debug = {
+            route: route,
+            documentId: documentId,
+            processInstanceId: processInstanceId,
+            params: p,
+            project: null,
+            userId: '',
+            groups: [],
+            responsible: '',
+            substituteOfByProcess: {}
+        };
+        var deny = function (message) {
+            var finalMessage = message || 'Você não tem permissão para atuar nessa solicitação.';
+            console.warn('[GP][accessGuard] negado:', finalMessage, debug);
+            return { allowed: false, message: finalMessage };
+        };
+
+        console.log('[GP][accessGuard] inicio:', {
+            route: route,
+            params: p,
+            documentId: documentId,
+            processInstanceId: processInstanceId
+        });
+
+        if (route === 'newSolicitation' && !documentId && !processInstanceId) return { allowed: true };
+        if (!documentId && !processInstanceId) return deny('Não foi possível identificar a solicitação informada.');
+
+        if (!documentId && processInstanceId) {
+            try {
+                documentId = this.asTrimmedString(await this.resolveDocumentIdByProcessInstanceId(processInstanceId));
+                debug.documentId = documentId;
+            } catch (error) {}
+        }
+
+        var project = await this.resolveProjectProcessContext({
+            documentId: documentId,
+            processInstanceId: processInstanceId,
+            processType: p.processType || p.processName || routeContext.processType,
+            processName: p.processName || routeContext.processName,
+            fields: this.getProjectAccessValidationFields()
+        });
+
+        if (!project) return deny('Não foi possível localizar os dados da solicitação.');
+
+        project.processType = this.detectProjectProcessType(project.processType || project.processName);
+        project.processName = this.asTrimmedString(project.processName);
+        project.estadoProcesso = this.asTrimmedString(project.estadoProcesso);
+        project.activity = project.activity !== null && project.activity !== undefined
+            ? project.activity
+            : this.parseProjectProcessActivity(project.estadoProcesso);
+        project.documentId = this.asTrimmedString(project.documentid || project.documentId || documentId);
+        project.processInstanceId = this.asTrimmedString(project.NUM_PROCES || project.processInstanceId || processInstanceId);
+
+        debug.project = {
+            documentId: project.documentId,
+            processInstanceId: project.processInstanceId,
+            processType: project.processType,
+            processName: project.processName,
+            activity: project.activity,
+            solicitanteColleagueIdNS: project.solicitanteColleagueIdNS,
+            aprovadorSuperiorImedNS: project.aprovadorSuperiorImedNS
+        };
+        console.log('[GP][accessGuard] projeto:', {
+            documentId: project.documentId,
+            processInstanceId: project.processInstanceId,
+            processType: project.processType,
+            processName: project.processName,
+            activity: project.activity,
+            solicitanteColleagueIdNS: project.solicitanteColleagueIdNS,
+            aprovadorSuperiorImedNS: project.aprovadorSuperiorImedNS
+        });
+
+        var actualAction = this.getProjectProcessActionConfig(project);
+        if (!actualAction || actualAction.enabled === false || actualAction.route !== route) {
+            return deny('Esta solicitação não está mais na etapa correspondente ao endereço informado.');
+        }
+
+        if (
+            typeof dashboardController === 'undefined'
+            || !dashboardController.normalizeDashboardProject
+            || !dashboardController.resolveCurrentUserAccessContext
+            || !dashboardController.hydrateSubstituteAccessContext
+            || !dashboardController.canCurrentUserViewProject
+            || !dashboardController.canCurrentUserActOnPendency
+        ) {
+            return deny('Não foi possível validar seu acesso a esta solicitação.');
+        }
+
+        var dashboardProject = dashboardController.normalizeDashboardProject(project, 0);
+        var accessContext = await dashboardController.resolveCurrentUserAccessContext();
+        await dashboardController.hydrateSubstituteAccessContext([dashboardProject], accessContext);
+        debug.userId = accessContext && accessContext.userId;
+        debug.groups = accessContext && accessContext.groups;
+        debug.responsible = dashboardProject && dashboardProject.currentResponsible;
+        debug.substituteOfByProcess = accessContext && accessContext.substituteOfByProcess;
+
+        var canView = dashboardController.canCurrentUserViewProject(dashboardProject, accessContext);
+        var canAct = canView && dashboardController.canCurrentUserActOnPendency(dashboardProject, accessContext);
+        var groupId = dashboardController.parseResponsibleGroupId
+            ? dashboardController.parseResponsibleGroupId(dashboardProject && dashboardProject.currentResponsible)
+            : '';
+        console.log('[GP][accessGuard] controle:', {
+            route: route,
+            userId: accessContext && accessContext.userId,
+            groups: accessContext && accessContext.groups,
+            responsible: dashboardProject && dashboardProject.currentResponsible,
+            responsibleGroup: groupId,
+            isProjectManager: dashboardController.isProjectManager ? dashboardController.isProjectManager(accessContext) : false,
+            isTiUser: dashboardController.isCurrentTiUser ? dashboardController.isCurrentTiUser(accessContext) : false,
+            substituteOfByProcess: accessContext && accessContext.substituteOfByProcess,
+            canView: canView,
+            allowed: canAct
+        });
+
+        if (canAct) {
+            console.log('[GP][accessGuard] permitido');
+            return { allowed: true, project: project };
+        }
+
+        return deny();
     },
 
          saveAndSendTask(taskData, taskFields = [])
@@ -1287,6 +1639,8 @@ var fluigService = {
                 const documentId = taskData.documentId === null || taskData.documentId === undefined
                     ? ''
                     : String(taskData.documentId).trim();
+
+                this.appendForcedGlpiTestField(finalTaskFields);
 
                 try {
                     console.group('[fluigService.saveAndSendTask] pre-update');
@@ -1325,9 +1679,9 @@ var fluigService = {
                 var fields = [
                     taskId,
                     numState,
-                    '14cdc0c0-a710-4412-81dd-d94fe3abe00a',
+                    GP_WORKFLOW_USER,
                     taskData && taskData.comments !== null && taskData.comments !== undefined ? String(taskData.comments) : '',
-                    '14cdc0c0-a710-4412-81dd-d94fe3abe00a',
+                    GP_WORKFLOW_USER,
                     'true',
                     'true'
                 ];

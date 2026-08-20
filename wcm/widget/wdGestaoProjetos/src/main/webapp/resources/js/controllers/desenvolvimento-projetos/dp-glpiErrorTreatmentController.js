@@ -4,39 +4,58 @@ const dpGlpiErrorTreatmentController = {
   _baseFields: [
     'documentid',
     'statusIntegracaoGLPI',
-    'mensagemErroGLPI'
+    'mensagemErroGLPI',
+    'forcarErroGLPI'
   ],
   _headerBackup: null,
   _toastTimer: null,
   _state: {
     documentId: null,
     processInstanceId: null,
+    currentActivity: null,
+    contextController: null,
     isSubmitting: false
   },
 
-  load: function (params = {}) {
-    const container = this.getContainer();
+  load: async function (params = {}) {
     this.destroy();
 
     this._state.documentId = params && params.documentId ? String(params.documentId) : null;
     this._state.processInstanceId = params && params.processInstanceId ? String(params.processInstanceId) : null;
+    this._state.currentActivity = gpGlpiErrorContext.resolveCurrentActivity(params);
+    const context = this.getContextConfig();
 
-    return $.get(this.getTemplateUrl())
-      .done((html) => {
-        container.html(html);
-        this.backupAndSetHeader();
-        this.bindEvents();
-        this.loadBaseContext();
-      })
-      .fail((error) => {
-        console.error('GLPI error treatment template load error:', error);
-        container.html('<div class="p-6 text-red-600">Failed to load GLPI error treatment page.</div>');
+    try {
+      this._state.contextController = await gpGlpiErrorContext.render({
+        params: params,
+        contextController: context.controller,
+        contextActivity: context.activity,
+        contextLabel: context.label,
+        errorTemplateUrl: this.getTemplateUrl()
       });
+
+      this.backupAndSetHeader();
+      this.bindEvents();
+      await this.loadBaseContext();
+    } catch (error) {
+      console.error('GLPI error treatment page load error:', error);
+      this.getContainer().html('<div class="p-6 text-red-600">Failed to load GLPI error treatment page.</div>');
+    }
   },
 
   destroy: function () {
+    const contextController = this._state.contextController;
+
     this.unbindEvents();
     this.restoreHeader();
+
+    if (contextController && typeof contextController.destroy === 'function') {
+      try {
+        contextController.destroy();
+      } catch (error) {
+        console.error('[dpGlpiErrorTreatment] Context destroy error:', error);
+      }
+    }
 
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
@@ -45,6 +64,8 @@ const dpGlpiErrorTreatmentController = {
 
     this._state.documentId = null;
     this._state.processInstanceId = null;
+    this._state.currentActivity = null;
+    this._state.contextController = null;
     this._state.isSubmitting = false;
   },
 
@@ -119,6 +140,22 @@ const dpGlpiErrorTreatmentController = {
     this.getContainer().off(this._eventNamespace);
   },
 
+  getContextConfig: function () {
+    if (this._state.currentActivity === 52) {
+      return {
+        controller: projectTiValidationController,
+        activity: 32,
+        label: 'Validacao do Projeto Ambiente QA - TI'
+      };
+    }
+
+    return {
+      controller: projectPlanningController,
+      activity: 14,
+      label: 'Planejamento do Projeto'
+    };
+  },
+
   loadBaseContext: async function () {
     if (!this._state.documentId) {
       this.showToast('Sem projeto', 'Nenhum documentId foi informado para esta rota.', 'warning');
@@ -148,7 +185,8 @@ const dpGlpiErrorTreatmentController = {
   },
 
   fillFormFromRow: function (row) {
-    const status = this.firstFilledValue([
+    const isForcedGlpiTest = gpGlpiErrorContext.isForcedGlpiTestRow(row);
+    let status = this.firstFilledValue([
       row.statusIntegracaoGLPI,
       row.statusintegracaoglpi,
       row.statusGLPI,
@@ -156,13 +194,18 @@ const dpGlpiErrorTreatmentController = {
       row.status
     ]);
 
-    const message = this.firstFilledValue([
+    let message = this.firstFilledValue([
       row.mensagemErroGLPI,
       row.mensagemerroglpi,
       row.mensagemErroGlpi,
       row.mensagem,
       row.msgRetornoGLPI
     ]);
+
+    if (isForcedGlpiTest) {
+      status = status || 'ERROR';
+      message = message || gpGlpiErrorContext.getForcedGlpiTestMessage();
+    }
 
     this.getContainer().find('#glpi-status-input').val(status);
     this.getContainer().find('#glpi-error-message-input').val(message);
@@ -206,6 +249,10 @@ const dpGlpiErrorTreatmentController = {
     ];
   },
 
+  getNextState: function () {
+    return this._state.currentActivity === 52 ? 36 : 12;
+  },
+
   createActionLoading: function () {
     if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
       return modalLoadingService.show({
@@ -246,7 +293,7 @@ const dpGlpiErrorTreatmentController = {
       await this.waitForUiPaint();
       await fluigService.saveAndSendTask({
         id: processInstanceId,
-        numState: 12,
+        numState: this.getNextState(),
         documentId: this._state.documentId,
         datasetName: 'DSFormDesenvolvimentoProjetos'
       }, taskFields);

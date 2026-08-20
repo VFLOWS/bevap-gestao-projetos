@@ -11,6 +11,8 @@ function servicetask29(attempt, message) {
     }
 
     try {
+        assertForcedGlpiTestError(FIELD_STATUS, FIELD_ERROR);
+
         var existingIdGlpi = asText(hAPI.getCardValue(FIELD_ID_GLPI));
         
         // Removemos a 2ª Trava. Se chegou aqui de novo e tem ID, ele VAI fazer o Update (PUT).
@@ -166,7 +168,7 @@ function buildGlpiProjectInput(isUpdate, glpiUserId, glpiGroupId) {
         name: title || "Projeto sem Titulo",
         code: projectCode,
         priority: mappedPriority,
-        entities_id: 0,
+        entities_id: 1,
         is_recursive: 0,
         projects_id: 0,
         projectstates_id: 0,
@@ -270,6 +272,30 @@ function getCardValueSafe(fieldName) {
     }
 }
 
+function assertForcedGlpiTestError(statusField, errorField, responseField) {
+    var forceError = '';
+    try {
+        forceError = asText(hAPI.getCardValue('forcarErroGLPI'));
+    } catch (e) {
+        forceError = '';
+    }
+
+    if (forceError === '1') {
+        var message = 'Erro GLPI forcado para teste (forcarErroGLPI=1).';
+        if (statusField) {
+            setCardValueSafe(statusField, 'ERROR');
+        }
+        if (errorField) {
+            setCardValueSafe(errorField, message);
+        }
+        if (responseField) {
+            setCardValueSafe(responseField, message);
+        }
+        log.warn(message);
+        throw message;
+    }
+}
+
 function setCardValueSafe(fieldName, value) {
     try {
         hAPI.setCardValue(fieldName, String(value == null ? '' : value));
@@ -332,6 +358,10 @@ function buildProjectCode(processInstanceId, referenceDate) {
     var endYY = String(endYear).slice(-2);
     var safraCode = startYY + endYY;
 
-    var paddedProcessId = String(pid || '0').replace(/^0+/, '').padStart(4, '0');
+    var paddedProcessId = String(pid || '0').replace(/^0+/, '');
+    while (paddedProcessId.length < 4) {
+        paddedProcessId = '0' + paddedProcessId;
+    }
+
     return 'PRJ-' + safraCode + '-' + paddedProcessId;
 }

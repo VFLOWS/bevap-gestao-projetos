@@ -85,6 +85,18 @@
                     </div>
 
                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Participantes do Projeto</label>
+                        <div class="flex flex-wrap gap-2 mb-3" id="project-participants-list"></div>
+                        <div class="flex gap-2">
+                            <div id="project-participant-tag-filter" class="flex-1"></div>
+                            <button type="button" data-action="add-project-participant" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-all" title="Adicionar participante">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </div>
+                        <p class="text-gray-500 text-xs mt-2">Participantes informados poderão visualizar o projeto quando ele for privado.</p>
+                    </div>
+
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">
                             Objetivo do Projeto <span class="text-red-500">*</span>
                         </label>
@@ -113,6 +125,14 @@
                         <button data-action="add-expected-benefit" class="text-sm text-bevap-green hover:text-green-700 font-medium">
                             <i class="fa-solid fa-plus mr-1"></i> Adicionar Benefício
                         </button>
+                    </div>
+
+                    <div class="flex items-start">
+                        <input type="checkbox" id="projeto-privado" class="field-input mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green" data-field="projeto-privado">
+                        <label for="projeto-privado" class="ml-3 text-sm text-gray-700">
+                            <span class="font-medium">Projeto Privado</span>
+                            <p class="text-gray-500 text-xs mt-1">Este projeto possui características necessárias para ser privado</p>
+                        </label>
                     </div>
 
                     <div class="flex items-start">

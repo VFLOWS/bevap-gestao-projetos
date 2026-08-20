@@ -4,7 +4,8 @@ const dpStartExecErrorTreatmentController = {
   _baseFields: [
     'documentid',
     'erroIniciarExecucaoMsg',
-    'erroIniciarExecucaoIdx'
+    'erroIniciarExecucaoIdx',
+    'forcarErroGLPI'
   ],
   _headerBackup: null,
   _toastTimer: null,
@@ -12,34 +13,50 @@ const dpStartExecErrorTreatmentController = {
     documentId: null,
     processInstanceId: null,
     currentActivity: null,
+    contextController: null,
     isSubmitting: false
   },
 
-  load: function (params = {}) {
-    const container = this.getContainer();
+  load: async function (params = {}) {
     this.destroy();
 
     this._state.documentId = params && params.documentId ? String(params.documentId) : null;
     this._state.processInstanceId = params && params.processInstanceId ? String(params.processInstanceId) : null;
     this._state.currentActivity = this.resolveCurrentActivity(params);
+    const context = this.getContextConfig();
 
-    return $.get(this.getTemplateUrl())
-      .done((html) => {
-        container.html(html);
-        this.backupAndSetHeader();
-        this.applyPageCopy();
-        this.bindEvents();
-        this.loadBaseContext();
-      })
-      .fail((error) => {
-        console.error('Start process error treatment template load error:', error);
-        container.html('<div class="p-6 text-red-600">Failed to load start process error treatment page.</div>');
+    try {
+      this._state.contextController = await gpGlpiErrorContext.render({
+        params: params,
+        contextController: context.controller,
+        contextActivity: context.activity,
+        contextLabel: context.label,
+        errorTemplateUrl: this.getTemplateUrl()
       });
+
+      this.backupAndSetHeader();
+      this.applyPageCopy();
+      this.bindEvents();
+      await this.loadBaseContext();
+    } catch (error) {
+      console.error('Start process error treatment page load error:', error);
+      this.getContainer().html('<div class="p-6 text-red-600">Failed to load start process error treatment page.</div>');
+    }
   },
 
   destroy: function () {
+    const contextController = this._state.contextController;
+
     this.unbindEvents();
     this.restoreHeader();
+
+    if (contextController && typeof contextController.destroy === 'function') {
+      try {
+        contextController.destroy();
+      } catch (error) {
+        console.error('[dpStartExecErrorTreatment] Context destroy error:', error);
+      }
+    }
 
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
@@ -49,6 +66,7 @@ const dpStartExecErrorTreatmentController = {
     this._state.documentId = null;
     this._state.processInstanceId = null;
     this._state.currentActivity = null;
+    this._state.contextController = null;
     this._state.isSubmitting = false;
   },
 
@@ -135,6 +153,22 @@ const dpStartExecErrorTreatmentController = {
     container.find('#start-error-action-label').text(copy.buttonLabel);
   },
 
+  getContextConfig: function () {
+    if (this.isDeliveryStartError()) {
+      return {
+        controller: projectFinalController,
+        activity: 38,
+        label: 'Execucao de Projeto Finalizada'
+      };
+    }
+
+    return {
+      controller: projectPlanningController,
+      activity: 14,
+      label: 'Planejamento do Projeto'
+    };
+  },
+
   getPageCopy: function () {
     if (this.isDeliveryStartError()) {
       return {
@@ -192,18 +226,24 @@ const dpStartExecErrorTreatmentController = {
   },
 
   fillFormFromRow: function (row) {
-    const idx = this.firstFilledValue([
+    const isForcedGlpiTest = gpGlpiErrorContext.isForcedGlpiTestRow(row);
+    let idx = this.firstFilledValue([
       row.erroIniciarExecucaoIdx,
       row.erroiniciarexecucaoidx,
       row.erroIdx
     ]);
 
-    const message = this.firstFilledValue([
+    let message = this.firstFilledValue([
       row.erroIniciarExecucaoMsg,
       row.erroiniciarexecucaomsg,
       row.erroMsg,
       row.erro
     ]);
+
+    if (isForcedGlpiTest) {
+      idx = idx || 'forcarErroGLPI=1';
+      message = message || gpGlpiErrorContext.getForcedGlpiTestMessage();
+    }
 
     this.getContainer().find('#start-exec-error-idx').val(idx);
     this.getContainer().find('#start-exec-error-msg').val(message);
@@ -337,20 +377,10 @@ const dpStartExecErrorTreatmentController = {
         datasetName: 'DSFormDesenvolvimentoProjetos'
       }, taskFields);
 
-      const successMessage = this.isDeliveryStartError() ? 'Projeto enviado para Iniciar Entrega.' : 'Projeto enviado para Iniciar Execucao.';
-      loading.hide();
-      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
-        window.gpActionFeedback.showProcessSuccess({
-          controller: this,
-          processInstanceId: processInstanceId,
-          documentId: this._state.documentId,
-          title: 'Acao concluida!',
-          message: successMessage,
-          nextStep: 'Acompanhe a proxima etapa pelo dashboard.'
-        });
-      } else {
-        this.showToast('Sucesso', successMessage, 'success');
-      }
+      this.showToast('Sucesso', this.isDeliveryStartError() ? 'Projeto enviado para Iniciar Entrega.' : 'Projeto enviado para Iniciar Execucao.', 'success');
+      setTimeout(() => {
+        location.hash = '#dashboard';
+      }, 600);
     } catch (error) {
       console.error('[dpStartExecErrorTreatment] Error moving task:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel movimentar o projeto.', 'error');

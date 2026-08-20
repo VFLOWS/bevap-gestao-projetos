@@ -8,6 +8,10 @@ const evaluateProjectController = {
     'areaUnidadeNS',
     'centrodecustoNS',
     'patrocinadorNS',
+    'projetoPrivadoNS',
+    'projetoPrivadoAPTI',
+    'projetoPrivadoAtualGP',
+    'participantesProjetoNS',
     'solicitanteNomeNS',
     'solicitanteColleagueIdNS',
     'objetivodoprojetoNS',
@@ -48,6 +52,7 @@ const evaluateProjectController = {
   _currentDocumentId: null,
   _currentEstadoProcesso: null,
   _currentProcessInstanceId: null,
+  _currentSolicitationRow: null,
   _isSubmitting: false,
 
   load: function (params = {}) {
@@ -93,6 +98,7 @@ const evaluateProjectController = {
     this._currentDocumentId = null;
     this._currentEstadoProcesso = null;
     this._currentProcessInstanceId = null;
+    this._currentSolicitationRow = null;
     this._isSubmitting = false;
   },
 
@@ -179,6 +185,7 @@ const evaluateProjectController = {
 
     container.on(`change${ns}`, '#tab-content-checklist input[type="checkbox"]', () => {
       this.updateChecklistProgress();
+      this.updateProjectVisibilitySummary();
     });
 
     container.on(`click${ns}`, '[data-action="open-return-modal"]', (event) => {
@@ -605,6 +612,7 @@ const evaluateProjectController = {
         return;
       }
 
+      this._currentSolicitationRow = row;
       this.fillNsFieldsFromRow(row);
       this.fillEvaluateFieldsFromRow(row);
       await this.renderSidebarFromRow(row);
@@ -669,6 +677,8 @@ const evaluateProjectController = {
     setVal('areaUnidadeNS', row.areaUnidadeNS);
     setVal('centrodecustoNS', row.centrodecustoNS);
     setVal('patrocinadorNS', row.patrocinadorNS);
+    setVal('projetoPrivadoNS', row.projetoPrivadoNS);
+    setVal('participantesProjetoNS', row.participantesProjetoNS);
     setVal('objetivodoprojetoNS', row.objetivodoprojetoNS);
     setVal('problemaOportunidadeNS', row.problemaOportunidadeNS);
     setVal('beneficiosesperadosNS', beneficiosEsperados.join('\n'));
@@ -736,6 +746,13 @@ const evaluateProjectController = {
     this.setChecklistFieldValue('#strategic-alignment-check', row.alinhEstratConfAPTI, 4);
     this.setChecklistFieldValue('#technical-resources-check', row.recursosTecDispAPTI, 5);
     this.setChecklistFieldValue('#essential-attachments-check', row.anexosessenciaispresentesAPTI, 6);
+    const tiPrivacy = this.parseBooleanLike(row.projetoPrivadoAPTI);
+    const effectivePrivacy = this.parseBooleanLike(row.projetoPrivadoAtualGP);
+    const openingPrivacy = this.parseBooleanLike(row.projetoPrivadoNS);
+    root.find('#project-private-ti-check').prop(
+      'checked',
+      tiPrivacy !== null ? tiPrivacy : (effectivePrivacy !== null ? effectivePrivacy : openingPrivacy === true)
+    );
     this.renderIdentifiedRisks(row.tblRiscosIdentificadosAPTI);
     this.updateChecklistProgress();
   },
@@ -859,12 +876,39 @@ const evaluateProjectController = {
         iconClass: 'fa-solid fa-star',
         badgeClasses: this.getPriorityBadgeClasses(row.prioridadeNS) || 'bg-gray-100 text-gray-800'
       },
+      customRows: [this.getVisibilitySummaryRow(
+        this.getContainer().find('#project-private-ti-check').is(':checked')
+      )],
       status: {
         label: this.getEstadoProcessoLabel(row.estadoProcesso) || '-',
         iconClass: 'fa-solid fa-clock',
         badgeClasses: 'bg-yellow-100 text-yellow-800'
       }
     });
+  },
+
+  getVisibilitySummaryRow: function (isPrivate) {
+    return {
+      key: 'visibility',
+      variant: 'badge',
+      label: 'Visibilidade',
+      value: isPrivate ? 'Privado' : 'Público',
+      iconClass: isPrivate ? 'fa-solid fa-lock' : 'fa-solid fa-globe',
+      badgeClasses: isPrivate
+        ? 'bg-blue-50 text-bevap-navy'
+        : 'bg-green-50 text-green-700'
+    };
+  },
+
+  updateProjectVisibilitySummary: function () {
+    const isPrivate = this.getContainer().find('#project-private-ti-check').is(':checked');
+    const row = this.getContainer().find('[data-gp-summary-row="visibility"]').first();
+    if (!row.length) return;
+
+    const config = this.getVisibilitySummaryRow(isPrivate);
+    const badge = row.find('span.inline-flex').first();
+    badge.attr('class', `inline-flex items-center px-2 py-1 rounded-full text-xs ${config.badgeClasses} font-medium`);
+    badge.html(`<i class="${config.iconClass} mr-1"></i>${this.escapeHtml(config.value)}`);
   },
 
   updateApproveModalProject: function (row) {
@@ -973,7 +1017,7 @@ const evaluateProjectController = {
   createActionLoading: function () {
     if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
       return modalLoadingService.show({
-        title: 'Movendo solicitacao',
+        title: 'Movendo Solicitação',
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
@@ -1111,7 +1155,9 @@ const evaluateProjectController = {
     }).get().filter((item) => item.level || item.description);
   },
 
-  collectEvaluateTaskFields: function (decisionField, decisionValue) {
+  collectEvaluateTaskFields: function (decisionField, decisionValue, options) {
+    const privateDecision = this.getChecklistBooleanValue('#project-private-ti-check', -1);
+    const finalOptions = options || {};
     const fieldMap = {
       visibilidadetecnicaAPTI: this.getAnalysisFieldValue({
         selector: 'input[name="technical-visibility"]:checked',
@@ -1152,10 +1198,17 @@ const evaluateProjectController = {
       patrocinadoridentificadoAPTI: this.getChecklistBooleanValue('#sponsor-identified-check', 3),
       alinhEstratConfAPTI: this.getChecklistBooleanValue('#strategic-alignment-check', 4),
       recursosTecDispAPTI: this.getChecklistBooleanValue('#technical-resources-check', 5),
-      anexosessenciaispresentesAPTI: this.getChecklistBooleanValue('#essential-attachments-check', 6)
+      anexosessenciaispresentesAPTI: this.getChecklistBooleanValue('#essential-attachments-check', 6),
+      projetoPrivadoAPTI: privateDecision
     };
 
-    fieldMap[decisionField] = decisionValue;
+    if (finalOptions.promoteVisibility === true) {
+      fieldMap.projetoPrivadoAtualGP = privateDecision;
+    }
+
+    if (decisionField) {
+      fieldMap[decisionField] = decisionValue;
+    }
 
     this.collectRiskRows().forEach((risk, index) => {
       const rowIndex = index + 1;
@@ -1237,7 +1290,9 @@ const evaluateProjectController = {
       }
 
       const processInstanceId = await this.resolveProcessInstanceId();
-      const taskFields = this.collectEvaluateTaskFields(config.decisionField, config.decisionValue);
+      const taskFields = this.collectEvaluateTaskFields(config.decisionField, config.decisionValue, {
+        promoteVisibility: true
+      });
 
       loading.updateMessage('Enviando movimentacao para o Fluig...');
       await this.waitForUiPaint();

@@ -2164,7 +2164,7 @@ const purchaseContractingController = {
   createActionLoading: function () {
     if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
       return modalLoadingService.show({
-        title: 'Movendo solicitacao',
+        title: 'Movendo Solicitação',
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }

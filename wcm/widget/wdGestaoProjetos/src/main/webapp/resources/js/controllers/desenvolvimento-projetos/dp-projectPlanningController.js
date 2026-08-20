@@ -29,7 +29,18 @@
     'tblRiscosIdentificadosTITT.planoBRiscoTITT',
     'tblRiscosIdentificadosTITT.nivelRiscoTITT',
     'tblRiscosIdentificadosTITT.impactoRiscoTITT',
-    'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT'
+    'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT',
+    'tblDependenciasTITT.tituloDependenciaTITT',
+    'tblDependenciasTITT.statusDependenciaTITT',
+    'tblDependenciasTITT.responsavelDependenciaTITT',
+    'tblDependenciasTITT.mitigacaoDependenciaTITT',
+    'tblDependenciasTITT.planoBDependenciaTITT',
+    'tblPreRequisitosTIPC.tituloPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.statusPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.responsavelPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.mitigacaoPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.planoBPreRequisitoTIPC',
+    'tblPreRequisitosTIPC.preRequisitoTIPC'
   ],
 
   // Próxima atividade do processo Desenvolvimento Projetos quando o planejamento é concluído.
@@ -82,13 +93,19 @@
   // busca dados do processo e aplica eventual rascunho já salvo no formulário.
   load: async function (params = {}) {
     const container = $('#page-container');
+    const finalParams = this.hydrateRouteParams(params);
 
-    this._state.documentId = this.asText(params.documentId);
-    this._state.estadoProcesso = this.asText(params.estadoProcesso);
-    this._state.processType = this.asText(params.processType);
-    this._state.processName = this.asText(params.processName);
-    this._state.datasetId = this.asText(params.datasetId);
-    this._state.formName = this.asText(params.formName);
+    if (!(await this.ensureActionAccess(finalParams))) {
+      return;
+    }
+
+    this._state.documentId = this.asText(finalParams.documentId);
+    this._state.processInstanceId = this.asText(finalParams.processInstanceId);
+    this._state.estadoProcesso = this.asText(finalParams.estadoProcesso || finalParams.activity);
+    this._state.processType = this.asText(finalParams.processType);
+    this._state.processName = this.asText(finalParams.processName);
+    this._state.datasetId = this.asText(finalParams.datasetId);
+    this._state.formName = this.asText(finalParams.formName);
     this._state.currentStep = 1;
 
     try {
@@ -111,6 +128,67 @@
       console.error('Project planning template load error:', error);
       container.html('<div class="p-6 text-red-600">Falha ao carregar a tela de Planejamento do Projeto.</div>');
     }
+  },
+
+  hydrateRouteParams: function (params) {
+    const finalParams = Object.assign({}, params || {});
+
+    if (typeof fluigService === 'undefined' || !fluigService.resolveProjectRouteContext || !fluigService.getProjectProcessDefinition) {
+      return finalParams;
+    }
+
+    const context = fluigService.resolveProjectRouteContext('projectPlanning');
+    const definition = context && context.processType
+      ? fluigService.getProjectProcessDefinition(context.processType)
+      : null;
+
+    finalParams.processType = finalParams.processType || (context && context.processType) || 'desenvolvimento';
+    finalParams.processName = finalParams.processName || (context && context.processName) || 'ProcessDesenvolvimentoProjetos';
+    finalParams.activity = finalParams.activity || String((context && context.activity) || 14);
+    finalParams.datasetId = finalParams.datasetId || (definition && definition.datasetId) || 'dsGetDesenvolvimentoProjetos';
+    finalParams.formName = finalParams.formName || (definition && definition.formName) || 'FormDesenvolvimentoProjetos';
+
+    return finalParams;
+  },
+
+  ensureActionAccess: async function (params) {
+    const isReadonlyView = Boolean(params && params.projectReadonlyView === true);
+    const accessResolver = isReadonlyView ? 'resolveProjectViewAccess' : 'resolveProjectActionAccess';
+
+    if (typeof fluigService === 'undefined' || typeof fluigService[accessResolver] !== 'function') {
+      console.warn('[GP][projectPlanningAccess] fluigService indisponivel');
+      if (typeof router !== 'undefined' && router.showActionAccessDeniedModal) {
+        router.showActionAccessDeniedModal(isReadonlyView
+          ? 'Não foi possível validar seu acesso a este projeto.'
+          : 'Não foi possível validar seu acesso a esta solicitação.');
+      }
+      return false;
+    }
+
+    console.log('[GP][projectPlanningAccess] validando acesso:', {
+      mode: isReadonlyView ? 'view' : 'action',
+      params: params
+    });
+
+    const access = await fluigService[accessResolver]('projectPlanning', params || {});
+    console.log('[GP][projectPlanningAccess] resultado:', access);
+
+    if (access && access.allowed) {
+      return true;
+    }
+
+    const message = access && access.message
+      ? access.message
+      : (isReadonlyView
+        ? 'Você não tem permissão para visualizar este projeto.'
+        : 'Você não tem permissão para atuar nessa solicitação.');
+    if (typeof router !== 'undefined' && router.showActionAccessDeniedModal) {
+      router.showActionAccessDeniedModal(message);
+    } else {
+      $('#page-container').html('<div class="p-6 text-red-600">' + this.escapeHtml(message) + '</div>');
+    }
+
+    return false;
   },
 
   destroy: function () {
@@ -754,9 +832,17 @@
   // Resolve o contexto do processo/documento e renderiza o resumo lateral do projeto.
   // Também prepara o card de progresso que acompanha as etapas do planejamento.
   loadProjectSummary: async function () {
-    const documentId = this.asText(this._state.documentId);
+    let documentId = this.asText(this._state.documentId);
+    const processInstanceId = this.asText(this._state.processInstanceId);
 
-    if (!documentId) {
+    if (!documentId && processInstanceId) {
+      try {
+        documentId = this.asText(await fluigService.resolveDocumentIdByProcessInstanceId(processInstanceId));
+        this._state.documentId = documentId;
+      } catch (error) {}
+    }
+
+    if (!documentId && !processInstanceId) {
       this.showToast('documentId não informado na rota.', 'warning');
       return;
     }
@@ -764,8 +850,16 @@
     let processContext = null;
 
     try {
+      console.log('[GP][projectPlanningLoad] resolvendo contexto:', {
+        documentId: documentId,
+        processInstanceId: processInstanceId,
+        processType: this._state.processType,
+        processName: this._state.processName
+      });
+
       processContext = await fluigService.resolveProjectProcessContext({
         documentId: documentId,
+        processInstanceId: processInstanceId,
         processType: this._state.processType,
         processName: this._state.processName,
         fields: this._projectFields,
@@ -781,6 +875,17 @@
       this._state.formName = this.asText(processContext.formName);
       this._state.estadoProcesso = this.asText(processContext.estadoProcesso || this._state.estadoProcesso);
     }
+
+    console.log('[GP][projectPlanningLoad] contexto resolvido:', {
+      found: !!processContext,
+      documentId: this._state.documentId,
+      processInstanceId: this._state.processInstanceId,
+      processType: this._state.processType,
+      processName: this._state.processName,
+      datasetId: this._state.datasetId,
+      activity: processContext && processContext.activity,
+      estadoProcesso: this._state.estadoProcesso
+    });
 
     let projectCode = this.asText(processContext && processContext.codigoglpi);
     if (!projectCode) {
@@ -887,6 +992,12 @@
     const datasetId = this.asText(this._state.datasetId) || 'dsGetDesenvolvimentoProjetos';
 
     try {
+      console.log('[GP][projectPlanningLoad] carregando planejamento:', {
+        datasetId: datasetId,
+        documentId: documentId,
+        processInstanceId: this._state.processInstanceId
+      });
+
       const rows = await fluigService.getDatasetRows(datasetId, {
         fields: [
           'documentid',
@@ -915,7 +1026,18 @@
           'tblRiscosIdentificadosTITT.planoBRiscoTITT',
           'tblRiscosIdentificadosTITT.nivelRiscoTITT',
           'tblRiscosIdentificadosTITT.impactoRiscoTITT',
-          'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT'
+          'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT',
+          'tblDependenciasTITT.tituloDependenciaTITT',
+          'tblDependenciasTITT.statusDependenciaTITT',
+          'tblDependenciasTITT.responsavelDependenciaTITT',
+          'tblDependenciasTITT.mitigacaoDependenciaTITT',
+          'tblDependenciasTITT.planoBDependenciaTITT',
+          'tblPreRequisitosTIPC.tituloPreRequisitoTIPC',
+          'tblPreRequisitosTIPC.statusPreRequisitoTIPC',
+          'tblPreRequisitosTIPC.responsavelPreRequisitoTIPC',
+          'tblPreRequisitosTIPC.mitigacaoPreRequisitoTIPC',
+          'tblPreRequisitosTIPC.planoBPreRequisitoTIPC',
+          'tblPreRequisitosTIPC.preRequisitoTIPC'
         ],
         filters: {
           documentid: documentId,
@@ -924,6 +1046,14 @@
       });
 
       const row = rows && rows.length ? rows[0] : null;
+      console.log('[GP][projectPlanningLoad] retorno planejamento:', {
+        rows: rows ? rows.length : 0,
+        hasRow: !!row,
+        hasPlanningJson: !!(row && row.projectPlanningJsonDP),
+        hasDocumentsJson: !!(row && row.documentsJsonDP),
+        hasRaciJson: !!(row && row.raciJsonDP)
+      });
+
       if (!row) {
         return;
       }
@@ -980,7 +1110,10 @@
         payload.checklist.risks = true;
       }
     }
-    const storedDependencies = this.buildStoredDependenciesPayload(dependencyRows, payload.externalDependencies);
+    let storedDependencies = this.buildStoredDependenciesPayload(dependencyRows, payload.externalDependencies);
+    if (!storedDependencies || !Array.isArray(storedDependencies.items) || !storedDependencies.items.length) {
+      storedDependencies = this.buildInitialDependenciesPlanningPayload(row);
+    }
     const storedCommunication = this.buildStoredCommunicationPayload(communicationRows, payload.communicationPlan);
     const storedAllocation = this.buildStoredAllocationPayload(allocationRows, payload.teamAllocation);
     const storedRaci = this.buildStoredRaciPayload(raciJson, payload.raci);
@@ -1276,6 +1409,74 @@
         level: level
       };
     }).filter((risk) => risk.title || risk.description || risk.mitigation || risk.planB) : [];
+
+    return { items };
+  },
+
+  // Quando ainda não há dependências no planejamento, escolhe a origem inicial:
+  // projetos externos usam os pré-requisitos revisados na proposta; internos usam a triagem.
+  buildInitialDependenciesPlanningPayload: function (row) {
+    const executionType = this.asText(row && row.execucaoProjetoTITT);
+
+    if (this.isExternalExecutionType(executionType)) {
+      const proposalDependencies = this.buildProposalPrerequisitesPlanningPayload(row && (row.tblPreRequisitosTIPC || row['tblPreRequisitosTIPC']));
+      if (proposalDependencies.items.length) {
+        return proposalDependencies;
+      }
+    }
+
+    return this.buildTriageDependenciesPlanningPayload(row && (row.tblDependenciasTITT || row['tblDependenciasTITT']));
+  },
+
+  // Converte pré-requisitos da proposta comercial para dependências externas do planejamento.
+  buildProposalPrerequisitesPlanningPayload: function (tblValue) {
+    const rows = this.parseJson(tblValue);
+    const items = Array.isArray(rows) ? rows.map((item, index) => {
+      const legacy = this.asText(item && item.preRequisitoTIPC);
+      const title = this.asText(item && item.tituloPreRequisitoTIPC) || legacy;
+      const status = this.asText(item && item.statusPreRequisitoTIPC) || 'Pendente';
+      const owner = this.asText(item && item.responsavelPreRequisitoTIPC);
+      const mitigation = this.asText(item && item.mitigacaoPreRequisitoTIPC);
+      const fallback = this.asText(item && item.planoBPreRequisitoTIPC);
+
+      return {
+        id: `proposal-prerequisite-${index + 1}`,
+        title: title,
+        description: title,
+        status: status,
+        owner: owner,
+        responsible: owner,
+        mitigation: mitigation,
+        fallback: fallback,
+        planB: fallback
+      };
+    }).filter((item) => item.title || item.owner || item.mitigation || item.fallback) : [];
+
+    return { items };
+  },
+
+  // Converte dependências da triagem técnica para o formato do planejamento.
+  buildTriageDependenciesPlanningPayload: function (tblValue) {
+    const rows = this.parseJson(tblValue);
+    const items = Array.isArray(rows) ? rows.map((item, index) => {
+      const title = this.asText(item && item.tituloDependenciaTITT);
+      const status = this.asText(item && item.statusDependenciaTITT) || 'Pendente';
+      const owner = this.asText(item && item.responsavelDependenciaTITT);
+      const mitigation = this.asText(item && item.mitigacaoDependenciaTITT);
+      const fallback = this.asText(item && item.planoBDependenciaTITT);
+
+      return {
+        id: `triage-dependency-${index + 1}`,
+        title: title,
+        description: title,
+        status: status,
+        owner: owner,
+        responsible: owner,
+        mitigation: mitigation,
+        fallback: fallback,
+        planB: fallback
+      };
+    }).filter((item) => item.title || item.owner || item.mitigation || item.fallback) : [];
 
     return { items };
   },

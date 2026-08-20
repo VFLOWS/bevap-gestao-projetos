@@ -10,6 +10,8 @@ function servicetask51(attempt, message) {
     }
 
     try {
+        assertForcedGlpiTestError(FIELD_STATUS, FIELD_ERROR);
+
         var existingIdGlpi = asText(hAPI.getCardValue(FIELD_ID_GLPI));
 
         if (!existingIdGlpi || existingIdGlpi === "0" || existingIdGlpi === "") {
@@ -25,6 +27,7 @@ function servicetask51(attempt, message) {
         setCardValueSafe(FIELD_ERROR, '');
 
         var projectInput = JSON.parse(payloadStr);
+        projectInput.entities_id = 1;
         projectInput.projectstates_id = 1;
 
         var sessionToken = getGlpiNovoSessionToken();
@@ -80,6 +83,30 @@ function setCardValueSafe(fieldName, value) {
     try {
         hAPI.setCardValue(fieldName, String(value == null ? '' : value));
     } catch (e) {}
+}
+
+function assertForcedGlpiTestError(statusField, errorField, responseField) {
+    var forceError = '';
+    try {
+        forceError = asText(hAPI.getCardValue('forcarErroGLPI'));
+    } catch (e) {
+        forceError = '';
+    }
+
+    if (forceError === '1') {
+        var message = 'Erro GLPI forcado para teste (forcarErroGLPI=1).';
+        if (statusField) {
+            setCardValueSafe(statusField, 'ERROR');
+        }
+        if (errorField) {
+            setCardValueSafe(errorField, message);
+        }
+        if (responseField) {
+            setCardValueSafe(responseField, message);
+        }
+        log.warn(message);
+        throw message;
+    }
 }
 
 function ensureDatasetHasRow(ds, datasetName) {

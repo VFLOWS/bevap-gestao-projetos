@@ -644,19 +644,10 @@ const executionActivityController = {
       }, taskFields);
 
       this.markEntriesPersisted();
-      this.setLoading(false);
-      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
-        window.gpActionFeedback.showProcessSuccess({
-          controller: this,
-          processInstanceId: this._state.processInstanceId,
-          documentId: this._state.documentId,
-          title: 'Atividade enviada!',
-          message: 'A validacao do solicitante foi iniciada.',
-          nextStep: 'Acompanhe a validacao pelo dashboard.'
-        });
-      } else {
-        this.showToast('Atividade enviada', 'A validação do solicitante foi iniciada.', 'success');
-      }
+      this.showToast('Atividade enviada', 'A validação do solicitante foi iniciada.', 'success');
+      setTimeout(() => {
+        window.location.hash = '#dashboard';
+      }, 900);
     } catch (error) {
       console.error('Erro ao enviar execução da atividade:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível enviar a atividade.', 'error');
