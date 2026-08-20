@@ -624,6 +624,11 @@ const immediateApprovalController = {
   },
 
   showToast: function (title, message, type) {
+    const ui = $(document).data('gpUiComponents');
+    if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
+      if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;
+    }
+
     const toast = this.getContainer().find('#toast');
     const icon = this.getContainer().find('#toast-icon');
     const toastTitle = this.getContainer().find('#toast-title');

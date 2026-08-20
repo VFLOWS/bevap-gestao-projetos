@@ -425,6 +425,8 @@
       const status = d.status || { label: '—', iconClass: 'fa-solid fa-clock', badgeClasses: 'bg-gray-100 text-gray-800' };
 
       const customRows = Array.isArray(d.customRows) ? d.customRows : [];
+      const showStatus = d.showStatus !== false;
+      const showAttachmentsCount = d.showAttachmentsCount !== false;
 
       const customRowsHtml = customRows.map((row) => {
         const variant = row && row.variant ? String(row.variant) : 'inline';
@@ -487,6 +489,10 @@
         `;
       }).join('');
 
+      const attachmentsLabel = showAttachmentsCount
+        ? `Ver Anexos (${Number(d.attachmentsCount || 0)})`
+        : 'Ver Anexos';
+
       const html = `
         <div class="bg-white rounded-lg shadow-md p-5" data-gp-component="project-summary">
           <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
@@ -528,12 +534,14 @@
               </span>
             </div>
             ${customRowsHtml}
+            ${showStatus ? `
             <div class="flex items-center justify-between">
               <span class="text-gray-600">Status</span>
               <span class="inline-flex items-center px-2 py-1 rounded-full text-xs ${this._escape(status.badgeClasses || '')} font-medium">
                 <i class="${this._escape(status.iconClass || 'fa-solid fa-clock')} mr-1"></i> ${this._escape(status.label || '—')}
               </span>
             </div>
+            ` : ''}
           </div>
 
           <div class="mt-4 pt-4 border-t space-y-2">
@@ -541,7 +549,7 @@
               <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
             </button>
             <button data-action="show-attachments" class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
-              <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos (${Number(d.attachmentsCount || 0)})
+              <i class="fa-solid fa-paperclip mr-2"></i> ${this._escape(attachmentsLabel)}
             </button>
           </div>
         </div>
@@ -604,5 +612,217 @@
     }
   };
 
-  $doc.data(KEY, { tabs, sidebar });
+  const validation = {
+    ensureValidationModal: function (targetEl, options) {
+      const $target = $(targetEl);
+      if (!$target.length) return $();
+
+      let $modal = $target.find('#validation-modal').first();
+      if (!$modal.length) {
+        $target.append(`
+          <div id="validation-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+            <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8">
+              <div class="flex items-center mb-6">
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <i class="fa-solid fa-exclamation-circle text-red-600 text-xl"></i>
+                </div>
+                <h2 id="validation-modal-title" class="text-2xl font-montserrat font-bold text-bevap-navy ml-4">Campos Obrigatorios</h2>
+              </div>
+              <p id="validation-modal-message" class="text-gray-600 mb-4">Por favor, preencha todos os campos obrigatorios antes de continuar.</p>
+              <div id="missing-fields" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6"></div>
+              <button data-action="close-validation-modal" class="w-full px-6 py-3 bg-bevap-green text-white rounded-lg font-medium hover:bg-green-700 transition-all">
+                Entendi, vou corrigir
+              </button>
+            </div>
+          </div>
+        `);
+        $modal = $target.find('#validation-modal').first();
+      }
+
+      if (!$target.data('gpValidationModalBound')) {
+        $target.on('click.gpValidationModal', '[data-action="close-validation-modal"]', (event) => {
+          event.preventDefault();
+          this.closeValidationModal($target);
+        });
+
+        $target.on('click.gpValidationModal', '#validation-modal', (event) => {
+          if (event.target !== event.currentTarget) return;
+          this.closeValidationModal($target);
+        });
+
+        $target.data('gpValidationModalBound', true);
+      }
+
+      const finalOptions = options || {};
+      const title = finalOptions.title || 'Campos Obrigatorios';
+      const message = finalOptions.message || 'Por favor, preencha todos os campos obrigatorios antes de continuar.';
+      const confirmLabel = finalOptions.confirmLabel || 'Entendi, vou corrigir';
+
+      const $titleEl = $modal.find('#validation-modal-title').first().length
+        ? $modal.find('#validation-modal-title').first()
+        : $modal.find('h2').first();
+      if ($titleEl.length) {
+        $titleEl.text(title);
+      }
+      $modal.find('#validation-modal-message').first().html(message);
+      $modal.find('[data-action="close-validation-modal"]').first().text(confirmLabel);
+
+      return $modal;
+    },
+
+    showValidationModal: function (targetEl, options) {
+      const $target = $(targetEl);
+      if (!$target.length) return;
+
+      const finalOptions = options || {};
+      const missingFields = Array.isArray(finalOptions.missingFields) ? finalOptions.missingFields : [];
+      const $modal = this.ensureValidationModal($target, finalOptions);
+      if (!$modal.length) return;
+
+      const $modalContent = $modal.find('#missing-fields').first();
+      $modalContent.empty();
+
+      missingFields.forEach((field) => {
+        $modalContent.append(`
+          <div class="flex items-start mb-2 last:mb-0">
+            <i class="fa-solid fa-circle text-red-400 text-xs mt-1.5 mr-2 flex-shrink-0"></i>
+            <span class="text-sm text-red-800">${sidebar._escape(field)}</span>
+          </div>
+        `);
+      });
+
+      $modal.removeClass('hidden');
+    },
+
+    showValidationFromLegacy: function (targetEl, title, message) {
+      const payload = this._buildLegacyValidationPayload(title, message);
+      if (!payload) return false;
+      this.showValidationModal(targetEl, payload);
+      return true;
+    },
+
+    closeValidationModal: function (targetEl) {
+      const $target = $(targetEl);
+      if (!$target.length) return;
+      $target.find('#validation-modal').first().addClass('hidden');
+    },
+
+    _buildLegacyValidationPayload: function (title, message) {
+      const normalizedTitle = this._normalizeText(title);
+      const normalizedMessage = this._normalizeText(message);
+      if (!normalizedTitle && !normalizedMessage) return null;
+
+      const hasRequiredFieldTitle = normalizedTitle.indexOf('campo obrig') >= 0
+        || normalizedTitle.indexOf('campos obrig') >= 0;
+
+      const isValidationTitle = hasRequiredFieldTitle
+        || normalizedTitle === 'categoria'
+        || normalizedTitle === 'justificativa'
+        || normalizedTitle === 'motivo'
+        || normalizedTitle === 'participante'
+        || normalizedTitle === 'parcela';
+
+      const isValidationMessage = normalizedMessage.indexOf('preencha') >= 0
+        || normalizedMessage.indexOf('informe') >= 0
+        || normalizedMessage.indexOf('selecione') >= 0
+        || normalizedMessage.indexOf('marque o checkbox') >= 0;
+
+      if (!isValidationTitle && !isValidationMessage) return null;
+
+      let missingFields = this._extractMissingFieldsFromLegacyMessage(message);
+
+      if (!missingFields.length && hasRequiredFieldTitle) {
+        missingFields = this._extractMissingFieldsFromLegacyMessage(title);
+      }
+
+      if (!missingFields.length) {
+        const singleField = this._extractSingleFieldLabel(title, message);
+        if (singleField) {
+          missingFields = [singleField];
+        }
+      }
+
+      if (!missingFields.length) {
+        missingFields = [String(title || message || 'Campo obrigatorio').trim()];
+      }
+
+      return {
+        missingFields: missingFields,
+        title: 'Campos Obrigatorios',
+        message: this._buildLegacyValidationMessage(normalizedMessage)
+      };
+    },
+
+    _extractMissingFieldsFromLegacyMessage: function (message) {
+      const text = String(message || '').trim();
+      if (!text) return [];
+
+      let cleaned = text
+        .replace(/^Campos obrigat[oó]rios:\s*/i, '')
+        .replace(/^Campo obrigat[oó]rio:\s*/i, '')
+        .replace(/^Preencha:\s*/i, '')
+        .replace(/^Preencha\s*/i, '');
+
+      return cleaned
+        .split('|')
+        .map((item) => String(item || '').trim())
+        .filter(Boolean);
+    },
+
+    _extractSingleFieldLabel: function (title, message) {
+      const normalizedTitle = this._normalizeText(title);
+      const normalizedMessage = this._normalizeText(message);
+
+      if (normalizedTitle === 'categoria') {
+        if (normalizedMessage.indexOf('devolu') >= 0) return 'Categoria da devolucao';
+        if (normalizedMessage.indexOf('cancelamento') >= 0) return 'Categoria do cancelamento';
+        if (normalizedMessage.indexOf('nao continuidade') >= 0) return 'Categoria da nao continuidade';
+        return 'Categoria da reprovacao';
+      }
+
+      if (normalizedTitle === 'justificativa' || normalizedTitle === 'motivo') {
+        if (normalizedMessage.indexOf('devolu') >= 0) return 'Justificativa da devolucao';
+        if (normalizedMessage.indexOf('cancelamento') >= 0) return 'Justificativa do cancelamento';
+        if (normalizedMessage.indexOf('nao continuidade') >= 0) return 'Justificativa da nao continuidade';
+        return 'Justificativa da reprovacao';
+      }
+
+      if (normalizedTitle === 'participante') return 'Nome do participante';
+      if (normalizedTitle === 'parcela') {
+        if (normalizedMessage.indexOf('data programada') >= 0) return 'Data programada para vencimento';
+        if (normalizedMessage.indexOf('valor de parcela') >= 0) return 'Valor da parcela';
+      }
+
+      const match = String(message || '').match(/(?:Informe|Selecione|Marque)\s+(?:o|a|os|as)?\s*"?([^".]+?)"?\s*(?:antes|para|\.|$)/i);
+      if (match && match[1]) {
+        return String(match[1]).trim();
+      }
+
+      return String(title || '').trim();
+    },
+
+    _buildLegacyValidationMessage: function (normalizedMessage) {
+      if (normalizedMessage.indexOf('devolu') >= 0) {
+        return 'Por favor, preencha todos os campos obrigatorios antes de devolver a solicitacao.';
+      }
+      if (normalizedMessage.indexOf('reprova') >= 0 || normalizedMessage.indexOf('cancelamento') >= 0 || normalizedMessage.indexOf('nao continuidade') >= 0) {
+        return 'Por favor, preencha todos os campos obrigatorios antes de reprovar o projeto.';
+      }
+      if (normalizedMessage.indexOf('confirm') >= 0 || normalizedMessage.indexOf('risco') >= 0 || normalizedMessage.indexOf('pre-requisito') >= 0 || normalizedMessage.indexOf('prerequisito') >= 0 || normalizedMessage.indexOf('parcela') >= 0 || normalizedMessage.indexOf('participante') >= 0) {
+        return 'Por favor, preencha todos os campos obrigatorios antes de confirmar este item.';
+      }
+      return 'Por favor, preencha todos os campos obrigatorios antes de continuar.';
+    },
+
+    _normalizeText: function (value) {
+      return String(value || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+  };
+
+  $doc.data(KEY, { tabs, sidebar, validation });
 })();

@@ -60,7 +60,9 @@ const technicalTriageController = {
     executionMode: '',
     supplierFilter: null,
     supplierOptions: [],
-    pendingSupplierSync: null
+    pendingSupplierSync: null,
+    employeeOptions: [],
+    pendingRemoval: null
   },
 
   load: function (params = {}) {
@@ -80,6 +82,7 @@ const technicalTriageController = {
         this.bindEvents();
         this.ensureInitialRiskDependencyState();
         this.initializeSupplierTagFilter();
+        this.initializeEmployeeOptions();
         this.renderAttachmentsList();
         this.updateCapacityLabel();
         this.toggleExternalSection();
@@ -115,6 +118,8 @@ const technicalTriageController = {
     this._state.supplierFilter = null;
     this._state.supplierOptions = [];
     this._state.pendingSupplierSync = null;
+    this._state.employeeOptions = [];
+    this._state.pendingRemoval = null;
   },
 
   getTemplateUrl: function () {
@@ -331,6 +336,11 @@ const technicalTriageController = {
       this.closeModal(modalId);
     });
 
+    container.on(`click${ns}`, '[data-action="confirm-remove-item"]', (event) => {
+      event.preventDefault();
+      this.confirmPendingItemRemoval();
+    });
+
     container.on(`click${ns}`, '[data-action="confirm-approve"]', (event) => {
       event.preventDefault();
       this.handleTaskAction({
@@ -352,9 +362,12 @@ const technicalTriageController = {
       this.showToast('Ação não roteada', 'O fluxo atual não prevê cancelamento a partir da triagem técnica.', 'warning');
     });
 
-    container.on(`click${ns}`, '#approve-modal, #modal-return, #modal-reject', (event) => {
+    container.on(`click${ns}`, '#approve-modal, #modal-return, #modal-reject, #modal-remove-item', (event) => {
       if (event.target !== event.currentTarget) return;
       $(event.currentTarget).addClass('hidden');
+      if (event.currentTarget && event.currentTarget.id === 'modal-remove-item') {
+        this._state.pendingRemoval = null;
+      }
     });
   },
 
@@ -970,14 +983,26 @@ const technicalTriageController = {
     const card = $(btnEl).closest('.titt-risk-item');
     if (!card.length) return;
 
-    const title = this.asText(card.find('.risk-edit [data-field="risk-title"]').val());
-    if (!title) {
-      this.showToast('Campo obrigatorio', 'Preencha o titulo do risco antes de confirmar.', 'warning');
+    const validation = this.validateRiskCard(card);
+    if (validation.missing.length) {
+      const ui = this.getUiComponents();
+      if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+        ui.validation.showValidationModal(this.getContainer(), {
+          missingFields: validation.missing,
+          title: 'Campos Obrigatorios',
+          message: 'Por favor, preencha todos os campos obrigatorios antes de confirmar este item.'
+        });
+      } else {
+        this.showToast('Campos obrigatorios', `Preencha: ${validation.missing.join(' | ')}`, 'warning');
+      }
+      if (validation.firstInvalid && typeof validation.firstInvalid.focus === 'function') {
+        validation.firstInvalid.focus();
+      }
       return;
     }
 
     const data = {
-      title: title,
+      title: this.asText(card.find('.risk-edit [data-field="risk-title"]').val()),
       description: this.asText(card.find('.risk-edit [data-field="risk-description"]').val()),
       mitigation: this.asText(card.find('.risk-edit [data-field="risk-mitigation"]').val()),
       fallback: this.asText(card.find('.risk-edit [data-field="risk-fallback"]').val()),
@@ -1004,8 +1029,13 @@ const technicalTriageController = {
   removeRiskMatrixItem: function (target) {
     const item = $(target).closest('.titt-risk-item');
     if (!item.length) return;
-    item.remove();
+    this.promptItemRemoval('risk', item.get(0));
+  },
 
+  executeRiskMatrixRemoval: function (target) {
+    const item = $(target);
+    if (!item.length) return;
+    item.remove();
     this.reindexRiskCards();
     this.updateRiskEmptyState();
   },
@@ -1028,18 +1058,24 @@ const technicalTriageController = {
       fallback: this.asText(data && data.fallback)
     });
 
+    list.append(cardEl);
+
     if (confirmed) this.showDependencyReadOnly(cardEl);
     else this.showDependencyEdit(cardEl);
 
-    list.append(cardEl);
     this.updateDependencyEmptyState();
   },
 
   removeDependencyItem: function (target) {
     const item = $(target).closest('.titt-dependency-item');
     if (!item.length) return;
-    item.remove();
+    this.promptItemRemoval('dependency', item.get(0));
+  },
 
+  executeDependencyRemoval: function (target) {
+    const item = $(target);
+    if (!item.length) return;
+    item.remove();
     this.reindexDependencyCards();
     this.updateDependencyEmptyState();
   },
@@ -1200,7 +1236,8 @@ const technicalTriageController = {
         </div>
         <div class="space-y-1 text-gray-600">
           <span class="block">Responsavel:</span>
-          <input data-field="dependency-owner" type="text" value="${owner}" placeholder="Informe o responsável" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:outline-none">
+          <div data-field="dependency-owner-filter" class="w-full"></div>
+          <input data-field="dependency-owner" type="hidden" value="${owner}">
         </div>
         <div class="space-y-1 text-gray-700">
           <strong class="block">Mitigacao:</strong>
@@ -1215,6 +1252,8 @@ const technicalTriageController = {
         </button>
       </div>
     `;
+
+    this.initializeDependencyOwnerFilter(el);
   },
 
   showDependencyReadOnly: function (cardEl) {
@@ -1272,6 +1311,342 @@ const technicalTriageController = {
     card.attr('data-confirmed', '0');
     this.showDependencyEdit(card);
     this.updateDependencyEmptyState();
+  },
+
+  confirmDependencyItem: function (btnEl) {
+    const card = $(btnEl).closest('.titt-dependency-item');
+    if (!card.length) return;
+
+    const validation = this.validateDependencyCard(card);
+    if (validation.missing.length) {
+      const ui = this.getUiComponents();
+      if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+        ui.validation.showValidationModal(this.getContainer(), {
+          missingFields: validation.missing,
+          title: 'Campos Obrigatorios',
+          message: 'Por favor, preencha todos os campos obrigatorios antes de confirmar este item.'
+        });
+      } else {
+        this.showToast('Campos obrigatorios', `Preencha: ${validation.missing.join(' | ')}`, 'warning');
+      }
+      if (validation.firstInvalid && typeof validation.firstInvalid.focus === 'function') {
+        validation.firstInvalid.focus();
+      }
+      return;
+    }
+
+    const data = {
+      title: this.asText(card.find('.dependency-edit [data-field="dependency-title"]').val()),
+      status: this.asText(card.find('.dependency-edit [data-field="dependency-status"]').val()),
+      owner: this.asText(card.find('.dependency-edit [data-field="dependency-owner"]').val()),
+      mitigation: this.asText(card.find('.dependency-edit [data-field="dependency-mitigation"]').val()),
+      fallback: this.asText(card.find('.dependency-edit [data-field="dependency-fallback"]').val())
+    };
+
+    this.setDependencyCardData(card, data);
+    card.attr('data-confirmed', '1');
+    this.syncDependencyInputsFromDataset(card);
+    this.showDependencyReadOnly(card);
+    this.updateDependencyEmptyState();
+  },
+
+  promptItemRemoval: function (kind, target) {
+    const item = target && target.jquery ? target.get(0) : target;
+    if (!item) return;
+
+    const title = kind === 'risk' ? 'Confirmar remocao de risco' : 'Confirmar remocao de dependencia';
+    const message = kind === 'risk'
+      ? 'Deseja remover este item da matriz de riscos?'
+      : 'Deseja remover esta dependencia interna/externa?';
+
+    this._state.pendingRemoval = {
+      kind: kind,
+      target: item
+    };
+
+    const root = this.getContainer();
+    root.find('#remove-item-modal-title').text(title);
+    root.find('#remove-item-modal-message').text(message);
+    this.openModal('modal-remove-item');
+  },
+
+  confirmPendingItemRemoval: function () {
+    const pending = this._state.pendingRemoval;
+    this.closeModal('modal-remove-item');
+    this._state.pendingRemoval = null;
+    if (!pending || !pending.target) return;
+
+    if (pending.kind === 'risk') {
+      this.executeRiskMatrixRemoval(pending.target);
+      return;
+    }
+
+    if (pending.kind === 'dependency') {
+      this.executeDependencyRemoval(pending.target);
+    }
+  },
+
+  validateRiskCard: function (card) {
+    const root = $(card);
+    const fields = [
+      { label: 'Titulo do risco', selector: '.risk-edit [data-field="risk-title"]' },
+      { label: 'Nivel', selector: '.risk-edit [data-field="risk-level"]' },
+      { label: 'Probabilidade', selector: '.risk-edit [data-field="risk-probability"]' },
+      { label: 'Impacto', selector: '.risk-edit [data-field="risk-impact"]' },
+      { label: 'Descricao', selector: '.risk-edit [data-field="risk-description"]' },
+      { label: 'Mitigacao', selector: '.risk-edit [data-field="risk-mitigation"]' },
+      { label: 'Plano B', selector: '.risk-edit [data-field="risk-fallback"]' }
+    ];
+
+    const missing = [];
+    let firstInvalid = null;
+
+    fields.forEach((field) => {
+      const input = root.find(field.selector).first();
+      const value = this.asText(input.val());
+      if (value) return;
+      missing.push(field.label);
+      if (!firstInvalid && input.length) {
+        firstInvalid = input.get(0);
+      }
+    });
+
+    return { missing, firstInvalid };
+  },
+
+  validateDependencyCard: function (card) {
+    const root = $(card);
+    const fields = [
+      { label: 'Dependencia', selector: '.dependency-edit [data-field="dependency-title"]' },
+      { label: 'Status', selector: '.dependency-edit [data-field="dependency-status"]' },
+      {
+        label: 'Responsavel',
+        selector: '.dependency-edit [data-field="dependency-owner"]',
+        focusSelector: '.dependency-edit .tag-input-search'
+      },
+      { label: 'Mitigacao', selector: '.dependency-edit [data-field="dependency-mitigation"]' },
+      { label: 'Plano B', selector: '.dependency-edit [data-field="dependency-fallback"]' }
+    ];
+
+    const missing = [];
+    let firstInvalid = null;
+
+    fields.forEach((field) => {
+      const input = root.find(field.selector).first();
+      const value = this.asText(input.val());
+      if (value) return;
+      missing.push(field.label);
+      if (!firstInvalid) {
+        const focusTarget = field.focusSelector
+          ? root.find(field.focusSelector).first()
+          : input;
+        if (focusTarget.length) {
+          firstInvalid = focusTarget.get(0);
+        }
+      }
+    });
+
+    return { missing, firstInvalid };
+  },
+
+  initializeEmployeeOptions: function () {
+    this.loadEmployeeOptions()
+      .then((rows) => {
+        this._state.employeeOptions = rows;
+        this.refreshDependencyOwnerFilters();
+      })
+      .catch((error) => {
+        console.error('[technicalTriage] Erro carregando dsBuscaFunc:', error);
+      });
+  },
+
+  loadEmployeeOptions: async function () {
+    let rows = [];
+    try {
+      rows = await fluigService.getDatasetRows('dsBuscaFunc', {
+        fields: ['CHAPA', 'CHAPANOMEFUNCIONARIO', 'NOMEFUNCAO', 'NOMESECAO']
+      });
+    } catch (error) {
+      rows = await fluigService.getDataset('dsBuscaFunc');
+    }
+
+    return this.normalizeEmployeeRows(rows || []);
+  },
+
+  normalizeEmployeeRows: function (rows) {
+    return (Array.isArray(rows) ? rows : []).map((row) => {
+      const chapa = this.asText(row && (row.CHAPA || row.chapa));
+      const rawName = this.asText(row && (row.CHAPANOMEFUNCIONARIO || row.chapanomefuncionario || row.NOME || row.nome));
+      const normalizedName = this.normalizeEmployeeName(rawName);
+
+      if (!normalizedName) return null;
+
+      return {
+        CHAPA: chapa || normalizedName,
+        CHAPANOMEFUNCIONARIO: rawName,
+        NOME_NORMALIZADO: normalizedName,
+        NOMEFUNCAO: this.asText(row && (row.NOMEFUNCAO || row.nomefuncao)),
+        NOMESECAO: this.asText(row && (row.NOMESECAO || row.nomesecao))
+      };
+    }).filter(Boolean);
+  },
+
+  normalizeEmployeeName: function (value) {
+    let text = this.asText(value);
+    if (!text) return '';
+
+    const dashIndex = text.indexOf('-');
+    if (dashIndex >= 0) {
+      text = text.slice(dashIndex + 1);
+    }
+
+    text = text.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!text) return '';
+
+    return text.replace(/(^|\s)(\S)/g, function (match, separator, letter) {
+      return separator + letter.toUpperCase();
+    });
+  },
+
+  normalizeLookupText: function (value) {
+    return this.asText(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  },
+
+  getDependencyOwnerFilterOptions: function (currentOwner) {
+    const options = Array.isArray(this._state.employeeOptions) ? this._state.employeeOptions.slice() : [];
+    const ownerName = this.asText(currentOwner);
+    if (!ownerName) return options;
+
+    const normalizedOwner = this.normalizeLookupText(ownerName);
+    const exists = options.some((row) => this.normalizeLookupText(row && row.NOME_NORMALIZADO) === normalizedOwner);
+    if (exists) return options;
+
+    options.push({
+      CHAPA: `legacy:${ownerName}`,
+      NOME_NORMALIZADO: ownerName,
+      NOMEFUNCAO: '',
+      NOMESECAO: ''
+    });
+
+    return options;
+  },
+
+  findEmployeeOptionByName: function (name, options) {
+    const normalized = this.normalizeLookupText(name);
+    if (!normalized) return null;
+
+    return (Array.isArray(options) ? options : []).find((row) => {
+      return this.normalizeLookupText(row && row.NOME_NORMALIZADO) === normalized;
+    }) || null;
+  },
+
+  initializeDependencyOwnerFilter: function (cardEl) {
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el) return;
+
+    const editRoot = $(el).find('.dependency-edit').first();
+    const mount = editRoot.find('[data-field="dependency-owner-filter"]').get(0);
+    if (!mount || typeof TagInputFilter === 'undefined') return;
+
+    const index = this.asText(el.getAttribute('data-index')) || String(Date.now());
+    if (!mount.id) {
+      mount.id = `dependency-owner-tag-filter-${index}-${Date.now()}`;
+    }
+
+    const currentOwner = this.asText(editRoot.find('[data-field="dependency-owner"]').val()) || this.asText(el.dataset.dependencyOwner);
+    const options = this.getDependencyOwnerFilterOptions(currentOwner);
+
+    const filter = new TagInputFilter(`#${mount.id}`, {
+      placeholder: 'Selecione o responsavel...',
+      data: options,
+      labelField: 'NOME_NORMALIZADO',
+      valueField: 'CHAPA',
+      columns: [
+        { header: 'Chapa', field: 'CHAPA', width: 'w-1/5' },
+        { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'w-2/5' },
+        { header: 'Funcao', field: 'NOMEFUNCAO', width: 'w-1/5' },
+        { header: 'Secao', field: 'NOMESECAO', width: 'w-1/5' }
+      ],
+      singleSelection: true,
+      onItemAdded: (item) => {
+        this.applyDependencyOwnerSelection(el, item);
+      },
+      onItemRemoved: () => {
+        this.clearDependencyOwnerSelection(el);
+      }
+    });
+
+    el._dependencyOwnerFilter = filter;
+    this.syncDependencyOwnerFilter(el);
+  },
+
+  refreshDependencyOwnerFilters: function () {
+    this.getContainer().find('#dependencies-list .titt-dependency-item').each((_, cardEl) => {
+      const editRoot = $(cardEl).find('.dependency-edit').first();
+      if (editRoot.hasClass('hidden')) return;
+
+      const currentOwner = this.asText(editRoot.find('[data-field="dependency-owner"]').val()) || this.asText(cardEl.dataset && cardEl.dataset.dependencyOwner);
+      const options = this.getDependencyOwnerFilterOptions(currentOwner);
+
+      if (!cardEl._dependencyOwnerFilter) {
+        this.initializeDependencyOwnerFilter(cardEl);
+        return;
+      }
+
+      if (typeof cardEl._dependencyOwnerFilter.updateData === 'function') {
+        cardEl._dependencyOwnerFilter.updateData(options);
+      }
+      this.syncDependencyOwnerFilter(cardEl);
+    });
+  },
+
+  syncDependencyOwnerFilter: function (cardEl) {
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el || !el._dependencyOwnerFilter) return;
+
+    const editRoot = $(el).find('.dependency-edit').first();
+    const hidden = editRoot.find('[data-field="dependency-owner"]').first();
+    const currentOwner = this.asText(hidden.val()) || this.asText(el.dataset && el.dataset.dependencyOwner);
+    if (!currentOwner) {
+      if (typeof el._dependencyOwnerFilter.removeAll === 'function') {
+        el._dependencyOwnerFilter.removeAll();
+      }
+      return;
+    }
+
+    const options = this.getDependencyOwnerFilterOptions(currentOwner);
+    const found = this.findEmployeeOptionByName(currentOwner, options);
+    if (!found) return;
+
+    if (typeof el._dependencyOwnerFilter.setSelectedItems === 'function') {
+      el._dependencyOwnerFilter.setSelectedItems([{
+        value: this.asText(found.CHAPA),
+        label: this.asText(found.NOME_NORMALIZADO)
+      }]);
+    }
+  },
+
+  applyDependencyOwnerSelection: function (cardEl, item) {
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el) return;
+
+    const editRoot = $(el).find('.dependency-edit').first();
+    const hidden = editRoot.find('[data-field="dependency-owner"]').first();
+    const ownerName = this.asText(item && (item.NOME_NORMALIZADO || item.label));
+    hidden.val(ownerName);
+  },
+
+  clearDependencyOwnerSelection: function (cardEl) {
+    const el = cardEl && cardEl.jquery ? cardEl.get(0) : cardEl;
+    if (!el) return;
+
+    const editRoot = $(el).find('.dependency-edit').first();
+    editRoot.find('[data-field="dependency-owner"]').val('');
   },
 
   handleExecutionModeChange: function () {
@@ -1752,7 +2127,16 @@ const technicalTriageController = {
       const missing = this.validateTriage();
       if (missing && missing.length) {
         this.closeModal(config && config.modalId);
-        this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
+        const ui = this.getUiComponents();
+        if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+          ui.validation.showValidationModal(this.getContainer(), {
+            missingFields: missing,
+            title: 'Campos Obrigatorios',
+            message: 'Por favor, preencha todos os campos obrigatorios antes de continuar.'
+          });
+        } else {
+          this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
+        }
         const tabBtn = this.getContainer().find('#tab-decisao').first();
         if (tabBtn.length) tabBtn.trigger('click');
         return;
@@ -1805,9 +2189,17 @@ const technicalTriageController = {
     const modal = this.getContainer().find(`#${modalId}`);
     if (!modal.length) return;
     modal.addClass('hidden');
+    if (modalId === 'modal-remove-item') {
+      this._state.pendingRemoval = null;
+    }
   },
 
   showToast: function (title, message, type) {
+    const ui = $(document).data('gpUiComponents');
+    if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
+      if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;
+    }
+
     const toast = this.getContainer().find('#toast');
     const icon = this.getContainer().find('#toast-icon');
     const toastTitle = this.getContainer().find('#toast-title');

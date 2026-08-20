@@ -176,11 +176,6 @@ const evaluateProjectController = {
       this.openModal('modal-return');
     });
 
-    container.on(`click${ns}`, '[data-action="open-reject-modal"]', (event) => {
-      event.preventDefault();
-      this.openModal('modal-reject');
-    });
-
     container.on(`click${ns}`, '[data-action="open-approve-modal"]', (event) => {
       event.preventDefault();
       this.openModal('approve-modal');
@@ -308,7 +303,7 @@ const evaluateProjectController = {
       this.openAttachmentsFromSidebar();
     });
 
-    container.on(`click${ns}`, '#approve-modal, #modal-return, #modal-reject', (event) => {
+    container.on(`click${ns}`, '#approve-modal, #modal-return', (event) => {
       if (event.target !== event.currentTarget) return;
       $(event.currentTarget).addClass('hidden');
     });

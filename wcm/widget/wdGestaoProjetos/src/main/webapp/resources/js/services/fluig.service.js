@@ -40,22 +40,49 @@ var fluigService = {
 
                 if (options.filters) {
                     Object.keys(options.filters).forEach(function (key) {
-                        var value = options.filters[key];
+                        var rawFilter = options.filters[key];
+                        var isMetaObject = rawFilter
+                            && typeof rawFilter === 'object'
+                            && !Array.isArray(rawFilter);
+                        var value = isMetaObject ? rawFilter.value : rawFilter;
+                        var finalValue = isMetaObject
+                            ? (rawFilter.finalValue !== undefined ? rawFilter.finalValue : value)
+                            : value;
+                        var type = isMetaObject && rawFilter.type !== undefined
+                            ? rawFilter.type
+                            : ConstraintType.MUST;
 
                         if (value === null || value === undefined || value === '') {
                             return;
                         }
 
-                        constraints.push(
-                            DatasetFactory.createConstraint(key, String(value), String(value), ConstraintType.MUST)
+                        var constraint = DatasetFactory.createConstraint(
+                            key,
+                            String(value),
+                            finalValue === null || finalValue === undefined ? String(value) : String(finalValue),
+                            type
                         );
+
+                        if (isMetaObject && rawFilter.likeSearch === true) {
+                            constraint._likeSearch = true;
+                        }
+
+                        constraints.push(constraint);
                     });
                 }
 
                 console.group('[getDatasetRows] chamada dsGetSolicitacaoProjetos');
                 console.log('[getDatasetRows] datasetId :', datasetId);
                 console.log('[getDatasetRows] fields    :', JSON.stringify(fields));
-                console.log('[getDatasetRows] constraints:', JSON.stringify(constraints.map(function(c){ return { fieldName: c.fieldName, initialValue: c.initialValue }; })));
+                console.log('[getDatasetRows] constraints:', JSON.stringify(constraints.map(function(c){
+                    return {
+                        fieldName: c.fieldName,
+                        initialValue: c.initialValue,
+                        finalValue: c.finalValue,
+                        type: c.constraintType,
+                        likeSearch: c._likeSearch === true
+                    };
+                })));
                 console.groupEnd();
 
                 var dataset = DatasetFactory.getDataset(datasetId, fields, constraints, sortFields);
@@ -219,7 +246,7 @@ var fluigService = {
             response.forEach(function (item) {
                 var cardId = item.cardId;
                 var cardData = {};
-                item.values.forEach(function (field) {
+                (item.values || []).forEach(function (field) {
                     cardData[field.fieldId] = field.value;
                 });
                 data.push({
@@ -249,6 +276,475 @@ var fluigService = {
                 reject(err);
             });
         });
+    },
+
+    getProjectProcessDefinitions: function () {
+        return {
+            solicitacao: {
+                type: 'solicitacao',
+                processName: 'ProcessSolicitacaoProjetos',
+                datasetId: 'dsGetSolicitacaoProjetos',
+                formName: 'FormSolicitacaoProjetos',
+                label: 'Solicitação'
+            },
+            desenvolvimento: {
+                type: 'desenvolvimento',
+                processName: 'ProcessDesenvolvimentoProjetos',
+                datasetId: 'dsGetDesenvolvimentoProjetos',
+                formName: 'FormDesenvolvimentoProjetos',
+                label: 'Desenvolvimento'
+            }
+        };
+    },
+
+    normalizeProjectProcessType: function (value) {
+        var text = this.asTrimmedString(value).toLowerCase();
+        if (!text) {
+            return '';
+        }
+
+        if (text === 'solicitacao' || text === 'solicitação') {
+            return 'solicitacao';
+        }
+
+        if (text === 'desenvolvimento') {
+            return 'desenvolvimento';
+        }
+
+        return '';
+    },
+
+    detectProjectProcessType: function (value) {
+        var normalized = this.normalizeProjectProcessType(value);
+        if (normalized) {
+            return normalized;
+        }
+
+        var text = this.asTrimmedString(value).toLowerCase();
+        if (!text) {
+            return '';
+        }
+
+        if (text.indexOf('processsolicitacaoprojetos') !== -1 || text.indexOf('solicitacao') !== -1 || text.indexOf('solicitação') !== -1) {
+            return 'solicitacao';
+        }
+
+        if (text.indexOf('processdesenvolvimentoprojetos') !== -1 || text.indexOf('desenvolvimento') !== -1) {
+            return 'desenvolvimento';
+        }
+
+        return '';
+    },
+
+    getProjectProcessDefinition: function (value) {
+        var processType = this.detectProjectProcessType(value);
+        var definitions = this.getProjectProcessDefinitions();
+        return definitions[processType] || null;
+    },
+
+    parseProjectProcessActivity: function (value) {
+        var text = this.asTrimmedString(value);
+        if (!text) {
+            return null;
+        }
+
+        var matchDash = text.match(/^\s*(\d+)\s*-/);
+        var matchAny = matchDash || text.match(/(\d+)/);
+        if (!matchAny || !matchAny[1]) {
+            return null;
+        }
+
+        var parsed = parseInt(matchAny[1], 10);
+        return isNaN(parsed) ? null : parsed;
+    },
+
+    resolveProjectProcessActivity: function (processType, estadoProcesso, statusValue) {
+        var activity = this.parseProjectProcessActivity(estadoProcesso);
+        var normalizedType = this.detectProjectProcessType(processType);
+        var statusText = this.asTrimmedString(statusValue);
+
+        if (activity === null && normalizedType === 'desenvolvimento' && statusText === '2') {
+            return 38;
+        }
+
+        return activity;
+    },
+
+    ensureProjectProcessFields: function (processType, fields) {
+        if (!Array.isArray(fields) || !fields.length) {
+            return fields;
+        }
+
+        var normalizedType = this.detectProjectProcessType(processType);
+        if (normalizedType !== 'desenvolvimento') {
+            return fields;
+        }
+
+        var finalFields = fields.slice();
+        ['documentid', 'estadoProcesso', 'STATUS'].forEach(function (fieldName) {
+            if (finalFields.indexOf(fieldName) === -1) {
+                finalFields.push(fieldName);
+            }
+        });
+
+        return finalFields;
+    },
+
+    buildProjectProcessContext: function (processType, row, extras) {
+        var definition = this.getProjectProcessDefinition(processType);
+        var finalRow = row && typeof row === 'object' ? row : {};
+        var finalExtras = extras && typeof extras === 'object' ? extras : {};
+        var rawState = finalExtras.estadoProcesso !== undefined
+            ? finalExtras.estadoProcesso
+            : finalRow.estadoProcesso;
+        var rawStatus = finalExtras.STATUS !== undefined
+            ? finalExtras.STATUS
+            : (finalExtras.status !== undefined ? finalExtras.status : (finalRow.STATUS !== undefined ? finalRow.STATUS : finalRow.status));
+        var activity = finalExtras.activity !== undefined
+            ? finalExtras.activity
+            : this.resolveProjectProcessActivity(processType, rawState, rawStatus);
+
+        return Object.assign({}, finalRow, finalExtras, {
+            processType: definition ? definition.type : this.detectProjectProcessType(processType),
+            processName: definition ? definition.processName : '',
+            datasetId: definition ? definition.datasetId : '',
+            formName: definition ? definition.formName : '',
+            processLabel: definition ? definition.label : '',
+            estadoProcesso: this.asTrimmedString(rawState),
+            activity: activity
+        });
+    },
+
+    getProjectProcessLabel: function (value) {
+        var definition = this.getProjectProcessDefinition(value);
+        return definition ? definition.label : 'Processo';
+    },
+
+    getProjectCancelledActivities: function () {
+        return [24, 47, 59];
+    },
+
+    getProjectProcessActionMap: function (processType) {
+        var normalizedType = this.detectProjectProcessType(processType);
+
+        if (normalizedType === 'desenvolvimento') {
+            return {
+                14: {
+                    enabled: true,
+                    route: 'projectPlanning',
+                    label: 'Planejar Projeto'
+                },
+                46: {
+                    enabled: true,
+                    route: 'dpGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
+                52: {
+                    enabled: true,
+                    route: 'dpGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
+                47: {
+                 enabled: true,
+                 route: 'dpStartExecErrorTreatment',
+                 label: 'Tratar Erro Iniciar Execução'
+                 },
+                 
+                 18: {
+                 enabled: true,
+                 route: 'projectExecution', // Aponta para a chave criada no router
+                 label: 'Executar Projeto'
+                 },
+                 23: {
+                 enabled: true,
+                 route: 'projectRequesterValidation',
+                 label: 'Validar Projeto'
+                 },
+                 32: {
+                 enabled: true,
+                 route: 'projectTiValidation',
+                 label: 'Validar Projeto TI'
+                 },
+                 38: {
+                 enabled: true,
+                 route: 'projectFinal',
+                 label: 'Visualizar Encerramento'
+                 }
+            };
+        }
+
+        return {
+            0: {
+                enabled: true,
+                route: 'newSolicitation',
+                label: 'Continuar Rascunho'
+            },
+            4: {
+                enabled: true,
+                route: 'newSolicitation',
+                label: 'Continuar Rascunho'
+            },
+            5: {
+                enabled: true,
+                route: 'evaluateProject',
+                label: 'Avaliar Agora'
+            },
+            15: {
+                enabled: true,
+                route: 'correction',
+                label: 'Corrigir Agora'
+            },
+            19: {
+                enabled: true,
+                route: 'immediateApproval',
+                label: 'Abrir Aprovação'
+            },
+            26: {
+                enabled: true,
+                route: 'technicalTriage',
+                label: 'Abrir Triagem'
+            },
+            28: {
+                enabled: true,
+                route: 'glpiErrorTreatment',
+                label: 'Tratar Erro GLPI'
+            },
+            36: {
+                enabled: true,
+                route: 'committeeApproval',
+                label: 'Abrir Comitê'
+            },
+            38: {
+                enabled: true,
+                route: 'commercialProposal',
+                label: 'Abrir Proposta'
+            },
+            40: {
+                enabled: true,
+                route: 'requesterProposalApproval',
+                label: 'Abrir Proposta'
+            },
+            54: {
+                enabled: true,
+                route: 'gccCostApproval',
+                label: 'Abrir GCC'
+            },
+            61: {
+                enabled: true,
+                route: 'committeeCostApproval',
+                label: 'Abrir Comitê (Custo)'
+            },
+            66: {
+                enabled: true,
+                route: 'purchaseContracting',
+                label: 'Abrir Compras'
+            }
+        };
+    },
+
+    getProjectProcessStateLabelMap: function (processType) {
+        var normalizedType = this.detectProjectProcessType(processType);
+
+        if (normalizedType === 'desenvolvimento') {
+            return {
+                0: 'Planejamento do Projeto',
+                4: 'Planejamento do Projeto',
+                14: 'Aguardando Planejamento do Projeto',
+                18: 'Execução do Projeto',
+                23: 'Validacao do Solicitante',
+                25: 'Aguardando Encaminhamento da Validacao do Solicitante',
+                32: 'Validacao TI',
+                34: 'Aguardando Encaminhamento da Validacao TI',
+                38: 'Execucao de Projeto Finalizada',
+                46: 'Erro de Integracao GLPI',
+                52: 'Erro de Integracao GLPI',
+                72: 'Finalizado'
+            };
+        }
+
+        return {
+            0: 'Rascunho da Nova Solicitação',
+            4: 'Rascunho da Nova Solicitação',
+            5: 'Aguardando TI Avaliar Projeto',
+            15: 'Aguardando Correção do Solicitante',
+            19: 'Aguardando Aprovação do Superior Imediato',
+            26: 'Aguardando Triagem Técnica TI',
+            28: 'Erro de Integração GLPI',
+            29: 'Integração GLPI',
+            36: 'Aguardando Aprovação Comitê',
+            38: 'Aguardando TI Anexar Proposta Comercial',
+            40: 'Aguardando Solicitante Aprovar Proposta',
+            53: 'Integração Iniciar Projeto',
+            54: 'Aguardando Aprovação Gerente do Centro de Custo',
+            61: 'Aguardando Comitê Aprovar Custo do Projeto',
+            66: 'Aguardando Compras Realizar Contratação',
+            72: 'Finalizado',
+            74: 'Erro de Integração Iniciar Projeto'
+        };
+    },
+
+    isProjectPlanningActivity: function (processTypeOrContext, activity) {
+        var context = processTypeOrContext && typeof processTypeOrContext === 'object'
+            ? processTypeOrContext
+            : null;
+        var processType = context
+            ? this.detectProjectProcessType(context.processType || context.processName)
+            : this.detectProjectProcessType(processTypeOrContext);
+        var finalActivity = context
+            ? this.parseProjectProcessActivity(context.activity !== undefined ? context.activity : context.estadoProcesso)
+            : this.parseProjectProcessActivity(activity);
+
+        return processType === 'desenvolvimento' && (finalActivity === 0 || finalActivity === 4 || finalActivity === 14);
+    },
+
+    getProjectProcessActionConfig: function (processTypeOrContext, activity) {
+        var context = processTypeOrContext && typeof processTypeOrContext === 'object'
+            ? processTypeOrContext
+            : this.buildProjectProcessContext(processTypeOrContext, {
+                estadoProcesso: activity
+            });
+        var processType = this.detectProjectProcessType(context.processType || context.processName);
+        var currentActivity = this.parseProjectProcessActivity(context.activity !== undefined ? context.activity : context.estadoProcesso);
+        var actionMap = this.getProjectProcessActionMap(processType);
+
+        if (currentActivity !== null && actionMap[currentActivity]) {
+            return actionMap[currentActivity];
+        }
+
+        if (processType === 'desenvolvimento') {
+            return {
+                enabled: false,
+                route: '',
+                label: 'Etapa Não Suportada'
+            };
+        }
+
+        return {
+            enabled: false,
+            route: '',
+            label: 'Indisponível'
+        };
+    },
+
+    getProjectProcessStateLabel: function (processTypeOrContext, estadoProcesso) {
+        var context = processTypeOrContext && typeof processTypeOrContext === 'object'
+            ? processTypeOrContext
+            : this.buildProjectProcessContext(processTypeOrContext, {
+                estadoProcesso: estadoProcesso
+            });
+        var processType = this.detectProjectProcessType(context.processType || context.processName);
+        var raw = this.asTrimmedString(context.estadoProcesso);
+        var activity = this.parseProjectProcessActivity(context.activity !== undefined ? context.activity : raw);
+        var stateLabelMap = this.getProjectProcessStateLabelMap(processType);
+
+        if (this.getProjectCancelledActivities().indexOf(activity) !== -1) {
+            return 'Cancelado';
+        }
+
+        if (activity !== null && stateLabelMap[activity]) {
+            return stateLabelMap[activity];
+        }
+
+        if (processType === 'desenvolvimento') {
+            return raw || 'Pendência de Desenvolvimento';
+        }
+
+        return raw || 'Pendência disponível para avaliação';
+    },
+
+    fetchProjectProcessRows: function (processType, options) {
+        var self = this;
+        return new Promise(function (resolve, reject) {
+            var definition = self.getProjectProcessDefinition(processType);
+            if (!definition) {
+                resolve([]);
+                return;
+            }
+
+            var finalOptions = options && typeof options === 'object'
+                ? Object.assign({}, options)
+                : {};
+            finalOptions.fields = self.ensureProjectProcessFields(definition.type, finalOptions.fields);
+
+            self.getDatasetRows(definition.datasetId, finalOptions)
+                .then(function (rows) {
+                    resolve((rows || []).map(function (row) {
+                        return self.buildProjectProcessContext(definition.type, row);
+                    }));
+                })
+                .catch(reject);
+        });
+    },
+
+    fetchAllProjectProcessRows: async function (options) {
+        var definitions = this.getProjectProcessDefinitions();
+        var processTypes = Object.keys(definitions);
+        var results = await Promise.all(processTypes.map((processType) => {
+            return this.fetchProjectProcessRows(processType, options).catch(function () {
+                return [];
+            });
+        }));
+
+        return results.reduce(function (acc, rows) {
+            return acc.concat(rows || []);
+        }, []);
+    },
+
+    resolveProjectProcessContext: async function (filters) {
+        var finalFilters = filters && typeof filters === 'object' ? filters : {};
+        var documentId = this.asTrimmedString(finalFilters.documentId);
+        var preferredType = this.detectProjectProcessType(finalFilters.processType || finalFilters.processName || finalFilters.type);
+        var queryOptions = {
+            fields: Array.isArray(finalFilters.fields) ? finalFilters.fields : null,
+            sortFields: Array.isArray(finalFilters.sortFields) ? finalFilters.sortFields : null,
+            filters: Object.assign({}, finalFilters.filters || {})
+        };
+
+        if (documentId) {
+            queryOptions.filters.documentid = documentId;
+        }
+
+        var processTypes = [];
+        if (preferredType) {
+            processTypes.push(preferredType);
+        }
+
+        Object.keys(this.getProjectProcessDefinitions()).forEach(function (processType) {
+            if (processTypes.indexOf(processType) === -1) {
+                processTypes.push(processType);
+            }
+        });
+
+        var contexts = [];
+        for (var i = 0; i < processTypes.length; i++) {
+            var rows = await this.fetchProjectProcessRows(processTypes[i], queryOptions);
+            if (rows && rows.length) {
+                contexts = contexts.concat(rows);
+                if (preferredType && processTypes[i] === preferredType) {
+                    break;
+                }
+            }
+        }
+
+        if (!contexts.length) {
+            return null;
+        }
+
+        if (preferredType) {
+            for (var preferredIndex = 0; preferredIndex < contexts.length; preferredIndex++) {
+                if (contexts[preferredIndex].processType === preferredType) {
+                    return contexts[preferredIndex];
+                }
+            }
+        }
+
+        for (var contextIndex = 0; contextIndex < contexts.length; contextIndex++) {
+            if (contexts[contextIndex].processType === 'desenvolvimento') {
+                return contexts[contextIndex];
+            }
+        }
+
+        return contexts[0];
     },
 
     asTrimmedString: function (value) {
@@ -427,40 +923,65 @@ var fluigService = {
         ];
     },
 
-    createProjectSolicitation: function (formData = {}, options = {}) {
-        return new Promise((resolve, reject) => {
-            try {
-                if (!formData || typeof formData !== "object") {
-                    throw new Error("Dados do formulario invalidos");
-                }
-
-                var fields = this.buildProjectSolicitationStartFields(formData, options);
-                var cardData = this.buildProjectSolicitationCardData(formData);
-                var constraints = this.buildConstraintsFromCardData(cardData);
-                var dsStartProcess = DatasetFactory.getDataset("dsStartProcess", fields, constraints, null);
-
-                if (!dsStartProcess || !dsStartProcess.values || dsStartProcess.values.length === 0) {
-                    throw new Error("Nenhum retorno do dsStartProcess");
-                }
-
-                var result = dsStartProcess.values[0];
-                var status = result.status || result.STATUS || "";
-                var numSolicitacao = result.numSolicitacao || result.NUMSOLICITACAO || "";
-
-                if (status !== "OK") {
-                    throw new Error(result.message || result.MESSAGE || "Erro ao iniciar solicitacao no Fluig");
-                }
-
-                resolve({
-                    status: status,
-                    numSolicitacao: numSolicitacao,
-                    raw: result
-                });
-            } catch (error) {
-                console.error("Error creating project solicitation:", error);
-                reject(error);
+    createProjectSolicitation: async function (formData = {}, options = {}) {
+        try {
+            if (!formData || typeof formData !== "object") {
+                throw new Error("Dados do formulario invalidos");
             }
-        });
+
+            var fields = this.buildProjectSolicitationStartFields(formData, options);
+            var cardData = this.buildProjectSolicitationCardData(formData);
+            var constraints = this.buildConstraintsFromCardData(cardData);
+            var dsStartProcess = DatasetFactory.getDataset("dsStartProcess", fields, constraints, null);
+
+            if (!dsStartProcess || !dsStartProcess.values || dsStartProcess.values.length === 0) {
+                throw new Error("Nenhum retorno do dsStartProcess");
+            }
+
+            var result = dsStartProcess.values[0];
+            var status = result.status || result.STATUS || "";
+            var numSolicitacao = result.numSolicitacao || result.NUMSOLICITACAO || "";
+
+            if (status !== "OK") {
+                throw new Error(result.message || result.MESSAGE || "Erro ao iniciar solicitacao no Fluig");
+            }
+
+            // Monta o código do projeto e salva no card recém-criado
+            try {
+                var processInstanceId = String(numSolicitacao || "").trim();
+                var referenceDate = this.asTrimmedString((formData && formData.referenceDate) || new Date().toISOString());
+                var projectCode = this.buildProjectCode(processInstanceId, referenceDate);
+
+                // Tenta resolver documentId e atualizar o card com o campo `codigoglpi`
+                var documentId = '';
+                try {
+                    documentId = await this.resolveDocumentIdByProcessInstanceId(processInstanceId);
+                } catch (e) {
+                    // se não conseguiu resolver agora, ignora — código ainda estará gerado e poderá ser salvo depois
+                    documentId = '';
+                }
+
+                if (documentId) {
+                    try {
+                        await this.updateCard('', documentId, { codigoglpi: projectCode });
+                    } catch (e) {
+                        // Não falha o fluxo se a atualização do card der erro; registra para análise
+                        console.warn('Falha ao salvar codigoglpi no card:', e);
+                    }
+                }
+            } catch (e) {
+                console.warn('Erro ao montar/salvar projectCode:', e);
+            }
+
+            return {
+                status: status,
+                numSolicitacao: numSolicitacao,
+                raw: result
+            };
+        } catch (error) {
+            console.error("Error creating project solicitation:", error);
+            throw error;
+        }
     },
 
     saveDraft: function (config = {}) {

@@ -1034,6 +1034,69 @@ const gccCostApprovalController = {
       .toggleClass('text-red-300', afterTotal < 0);
   },
 
+  validateAllocationCompliance: function () {
+    const issues = [];
+    const tolerance = 0.009;
+    const proposalTotal = this.getProposalTotalAmount();
+    const root = this.getContainer();
+
+    const kinds = [
+      {
+        kind: 'capex',
+        enabled: Boolean(root.find('#gcc-cost-nature-capex').prop('checked')),
+        percent: this.getAllocationPercent('capex')
+      },
+      {
+        kind: 'opex',
+        enabled: Boolean(root.find('#gcc-cost-nature-opex').prop('checked')),
+        percent: this.getAllocationPercent('opex')
+      }
+    ];
+
+    kinds.forEach((entry) => {
+      if (!entry.enabled) return;
+
+      const kindLabel = entry.kind.toUpperCase();
+      const expectedTotal = proposalTotal * (entry.percent / 100);
+      const committedTotal = this.calculateCommittedAmount(entry.kind, proposalTotal);
+
+      if (Math.abs(committedTotal - expectedTotal) > tolerance) {
+        issues.push(`${kindLabel} - Total comprometido (${this.formatCurrency(committedTotal)}) deve ser igual ao valor total da natureza (${this.formatCurrency(expectedTotal)})`);
+      }
+
+      const rows = this.collectAllocationRows(entry.kind);
+      rows.forEach((row, index) => {
+        const rowLabel = `${kindLabel} linha ${index + 1}`;
+        const committed = this.parseCurrencyValue(row.committed);
+        const balance = this.parseCurrencyValue(row.balance);
+        let balanceAfter = this.parseCurrencyValue(row.balanceAfter);
+
+        if (balanceAfter === null && committed !== null && balance !== null) {
+          balanceAfter = balance - committed;
+        }
+
+        if (this.asText(row.committed) && (committed === null || committed <= 0)) {
+          issues.push(`${rowLabel} - Valor Comprometido deve ser maior que zero`);
+        }
+
+        if (balance === null) {
+          issues.push(`${rowLabel} - Saldo deve ser informado`);
+          return;
+        }
+
+        if (committed !== null && committed - balance > tolerance) {
+          issues.push(`${rowLabel} - Valor Comprometido nao pode ser maior que o Saldo`);
+        }
+
+        if (balanceAfter !== null && balanceAfter < -tolerance) {
+          issues.push(`${rowLabel} - Saldo apos compromisso nao pode ficar negativo`);
+        }
+      });
+    });
+
+    return issues;
+  },
+
   validateFinancePanel: function () {
     const missing = [];
     const root = this.getContainer();
@@ -1069,6 +1132,11 @@ const gccCostApprovalController = {
         if (!row.committed) missing.push(`${label} - Valor Comprometido`);
       });
     });
+
+    const complianceIssues = this.validateAllocationCompliance();
+    if (complianceIssues.length) {
+      missing.push.apply(missing, complianceIssues);
+    }
 
     return missing;
   },
@@ -1158,13 +1226,31 @@ const gccCostApprovalController = {
     const justification = this.asText(root.find('#gcc-justification-return').val());
 
     if (!category) {
-      this.showToast('Categoria', 'Selecione a categoria da devolucao.', 'warning');
+      const ui = this.getUiComponents();
+      if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+        ui.validation.showValidationModal(this.getContainer(), {
+          missingFields: ['Categoria da devolucao'],
+          title: 'Campos Obrigatorios',
+          message: 'Por favor, preencha todos os campos obrigatorios antes de devolver a solicitacao.'
+        });
+      } else {
+        this.showToast('Categoria', 'Selecione a categoria da devolucao.', 'warning');
+      }
       root.find('#gcc-return-category').trigger('focus');
       return;
     }
 
     if (!justification) {
-      this.showToast('Justificativa', 'Informe o motivo da devolucao.', 'warning');
+      const ui = this.getUiComponents();
+      if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+        ui.validation.showValidationModal(this.getContainer(), {
+          missingFields: ['Justificativa da devolucao'],
+          title: 'Campos Obrigatorios',
+          message: 'Por favor, preencha todos os campos obrigatorios antes de devolver a solicitacao.'
+        });
+      } else {
+        this.showToast('Justificativa', 'Informe o motivo da devolucao.', 'warning');
+      }
       root.find('#gcc-justification-return').trigger('focus');
       return;
     }
@@ -1185,13 +1271,31 @@ const gccCostApprovalController = {
     const justification = this.asText(root.find('#gcc-justification-reject').val());
 
     if (!category) {
-      this.showToast('Categoria', 'Selecione a categoria da reprovacao.', 'warning');
+      const ui = this.getUiComponents();
+      if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+        ui.validation.showValidationModal(this.getContainer(), {
+          missingFields: ['Categoria da reprovacao'],
+          title: 'Campos Obrigatorios',
+          message: 'Por favor, preencha todos os campos obrigatorios antes de reprovar o projeto.'
+        });
+      } else {
+        this.showToast('Categoria', 'Selecione a categoria da reprovacao.', 'warning');
+      }
       root.find('#gcc-reject-category').trigger('focus');
       return;
     }
 
     if (!justification) {
-      this.showToast('Justificativa', 'Informe a justificativa da reprovacao.', 'warning');
+      const ui = this.getUiComponents();
+      if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+        ui.validation.showValidationModal(this.getContainer(), {
+          missingFields: ['Justificativa da reprovacao'],
+          title: 'Campos Obrigatorios',
+          message: 'Por favor, preencha todos os campos obrigatorios antes de reprovar o projeto.'
+        });
+      } else {
+        this.showToast('Justificativa', 'Informe a justificativa da reprovacao.', 'warning');
+      }
       root.find('#gcc-justification-reject').trigger('focus');
       return;
     }
@@ -1216,7 +1320,16 @@ const gccCostApprovalController = {
       if (config && config.validateFinance) {
         const missing = this.validateFinancePanel();
         if (missing.length) {
-          this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          const ui = this.getUiComponents();
+          if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+            ui.validation.showValidationModal(this.getContainer(), {
+              missingFields: missing,
+              title: 'Campos Obrigatorios',
+              message: 'Por favor, preencha todos os campos obrigatorios antes de continuar.'
+            });
+          } else {
+            this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          }
           return;
         }
       }
@@ -1301,6 +1414,11 @@ const gccCostApprovalController = {
   },
 
   showToast: function (title, message, type) {
+    const ui = $(document).data('gpUiComponents');
+    if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
+      if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;
+    }
+
     const root = this.getContainer();
     const toast = root.find('#toast');
     const icon = root.find('#toast-icon');
