@@ -136,9 +136,33 @@ const dashboardController = {
       const style = priorityInfo.style;
       const priority = priorityInfo.label;
       const title = pendency.title || 'Projeto sem título';
-      const subtitle = this.getPendencySubtitle(pendency);
-      const actionConfig = this.getPendencyActionConfig(pendency);
-      const buttonLabel = actionConfig.label || 'Abrir';
+      const subtitle = this.getPendencySubtitle(pendency.processState);
+      const actionConfig = this.getPendencyActionConfig(pendency.processState);
+      const buttonLabel = actionConfig.route === 'immediateApproval'
+        ? 'Abrir Aprovacao'
+        : actionConfig.route === 'requesterProposalApproval'
+          ? 'Abrir Proposta'
+        : actionConfig.route === 'commercialProposal'
+          ? 'Abrir Proposta'
+        : actionConfig.route === 'purchaseContracting'
+          ? 'Abrir Compras'
+        : actionConfig.route === 'glpiErrorTreatment'
+          ? 'Tratar Erro GLPI'
+        : actionConfig.route === 'gccCostApproval'
+          ? 'Abrir GCC'
+        : actionConfig.route === 'committeeCostApproval'
+          ? 'Abrir Comitê (Custo)'
+        : actionConfig.route === 'technicalTriage'
+          ? 'Abrir Triagem'
+        : actionConfig.route === 'committeeApproval'
+          ? 'Abrir Comitê'
+        : actionConfig.route === 'correction'
+          ? 'Corrigir Agora'
+        : actionConfig.route === 'newSolicitation'
+          ? 'Continuar Rascunho'
+        : actionConfig.enabled
+          ? 'Avaliar Agora'
+          : 'Indisponivel';
       const borderStyleAttr = style.borderStyle ? ` style="${style.borderStyle}"` : '';
       const buttonClasses = actionConfig.enabled
         ? 'w-full bg-bevap-green hover:bg-bevap-green/90 text-white text-sm py-2 rounded-lg font-medium transition-colors'
@@ -184,13 +208,110 @@ const dashboardController = {
     });
   },
 
-  getPendencyActionConfig: function (pendency) {
-    return fluigService.getProjectProcessActionConfig({
-      processType: pendency.processType,
-      processName: pendency.processName,
-      estadoProcesso: pendency.processState,
-      activity: pendency.activity
-    });
+  getPendencyActionConfig: function (estadoProcesso) {
+    const activity = this.parseEstadoProcessoActivity(estadoProcesso);
+
+    if (activity === 0 || activity === 4) {
+      return {
+        enabled: true,
+        route: 'newSolicitation',
+        label: 'Continuar Rascunho'
+      };
+    }
+
+    if (activity === 5) {
+      return {
+        enabled: true,
+        route: 'evaluateProject',
+        label: 'Avaliar Agora'
+      };
+    }
+
+    if (activity === 15) {
+      return {
+        enabled: true,
+        route: 'correction',
+        label: 'Corrigir Agora'
+      };
+    }
+
+    if (activity === 19) {
+      return {
+        enabled: true,
+        route: 'immediateApproval',
+        label: 'Abrir AprovaÃ§Ã£o'
+      };
+    }
+
+    if (activity === 26) {
+      return {
+        enabled: true,
+        route: 'technicalTriage',
+        label: 'Abrir Triagem'
+      };
+    }
+
+    if (activity === 28) {
+      return {
+        enabled: true,
+        route: 'glpiErrorTreatment',
+        label: 'Tratar Erro GLPI'
+      };
+    }
+
+    if (activity === 36) {
+      return {
+        enabled: true,
+        route: 'committeeApproval',
+        label: 'Abrir Comitê'
+      };
+    }
+
+    if (activity === 38) {
+      return {
+        enabled: true,
+        route: 'commercialProposal',
+        label: 'Abrir Proposta'
+      };
+    }
+
+    if (activity === 40) {
+      return {
+        enabled: true,
+        route: 'requesterProposalApproval',
+        label: 'Abrir Proposta'
+      };
+    }
+
+    if (activity === 54) {
+      return {
+        enabled: true,
+        route: 'gccCostApproval',
+        label: 'Abrir GCC'
+      };
+    }
+
+    if (activity === 61) {
+      return {
+        enabled: true,
+        route: 'committeeCostApproval',
+        label: 'Abrir Comitê (Custo)'
+      };
+    }
+
+    if (activity === 66) {
+      return {
+        enabled: true,
+        route: 'purchaseContracting',
+        label: 'Abrir Compras'
+      };
+    }
+
+    return {
+      enabled: false,
+      route: '',
+      label: 'IndisponÃ­vel'
+    };
   },
 
   parseEstadoProcessoActivity: function (estadoProcesso) {

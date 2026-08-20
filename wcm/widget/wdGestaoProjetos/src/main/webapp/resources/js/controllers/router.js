@@ -70,8 +70,6 @@ const router = {
         },
         solicitationDetail: {
           controller: solicitationDetailController,
-          title: 'Minha Solicitacao',
-          breadcrumb: ['Solicitacoes', 'Minha Solicitacao'],
           handler: () => solicitationDetailController.load(params)
         },
         correction: {
@@ -124,39 +122,11 @@ const router = {
         },
         purchaseContracting: {
           controller: purchaseContractingController,
-          title: 'Compras - Realizar Contratacao',
-          breadcrumb: ['Compras', 'Realizar Contratacao'],
           handler: () => purchaseContractingController.load(params)
         },
         glpiErrorTreatment: {
           controller: glpiErrorTreatmentController,
-          title: 'TI - Tratar Erro Integracao GLPI',
-          breadcrumb: ['TI', 'Erro Integracao GLPI'],
           handler: () => glpiErrorTreatmentController.load(params)
-        },
-        dpGlpiErrorTreatment: {
-          controller: dpGlpiErrorTreatmentController,
-          title: 'TI - Tratar Erro Integracao GLPI',
-          breadcrumb: ['TI', 'Erro Integracao GLPI'],
-          handler: () => dpGlpiErrorTreatmentController.load(params)
-        },
-        dpStartExecErrorTreatment: {
-          controller: dpStartExecErrorTreatmentController,
-          title: 'TI - Tratar Erro Iniciar Execução',
-          breadcrumb: ['TI', 'Erro Iniciar Execução'],
-          handler: () => dpStartExecErrorTreatmentController.load(params)
-        },
-        executionActivityWaiting: {
-          controller: executionActivityWaitingController,
-          title: 'Aguardando Execucao da Atividade',
-          breadcrumb: ['Execucao de Fases', 'Aguardando Execucao'],
-          handler: () => executionActivityWaitingController.load(params)
-        },
-        executionActivity: {
-          controller: executionActivityController,
-          title: 'Execucao da Atividade',
-          breadcrumb: ['Execucao de Fases', 'Execucao da Atividade'],
-          handler: () => executionActivityController.load(params)
         },
         requesterProposalApproval: {
           controller: requesterProposalApprovalController,
