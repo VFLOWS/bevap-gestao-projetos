@@ -1,0 +1,4 @@
+user_GLPI: svc.totvs.fluig
+base_GLPI_NOVO: https://central.bevap.com.br
+psw_GLPI: 5ZsRsaj583zf
+session_token_GLPI: ashlotqs9n4slgdfha9bmkls9d

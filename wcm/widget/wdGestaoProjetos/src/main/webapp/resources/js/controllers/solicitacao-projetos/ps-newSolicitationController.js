@@ -75,7 +75,6 @@ const newSolicitationController = {
       'escopo-inicial',
       'out-of-scope',
       'dependencies',
-      'stakeholders',
       'declaracao'
     ],
     requiredFieldLabels: {

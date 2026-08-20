@@ -1936,11 +1936,6 @@ const purchaseContractingController = {
       missing.push(`Total das parcelas deve ser igual ao Valor Final (${this.formatCurrency(finalValue)}). Total atual: ${this.formatCurrency(installmentsTotal)}`);
     }
 
-    const complianceIssues = this.validateAllocationCompliance();
-    if (complianceIssues.length) {
-      missing.push.apply(missing, complianceIssues);
-    }
-
     return missing;
   },
 

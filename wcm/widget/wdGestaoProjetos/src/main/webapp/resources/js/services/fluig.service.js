@@ -997,29 +997,8 @@ var fluigService = {
             return "";
         }
 
-        // Safra logic: harvest starts 01/04 (April 1). If current/reference date
-        // is on or after April 1 of year Y then safra is Y-(Y+1), otherwise (Y-1)-Y.
-        var ref = referenceDate || new Date().toISOString();
-        var dt = new Date(ref);
-        if (isNaN(dt.getTime())) dt = new Date();
-        var year = dt.getFullYear();
-        var month = dt.getMonth() + 1; // 1..12
-
-        var startYear;
-        // if month >= 4 (April or later) safra starts this year, else starts previous year
-        if (month >= 4) {
-            startYear = year;
-        } else {
-            startYear = year - 1;
-        }
-        var endYear = startYear + 1;
-
-        var startYY = String(startYear).slice(-2);
-        var endYY = String(endYear).slice(-2);
-        var safraCode = startYY + endYY; // e.g. '2627'
-
-        var paddedProcessId = String(processId || '0').replace(/^0+/, '').padStart(4, '0');
-        return 'PRJ-' + safraCode + '-' + paddedProcessId;
+        var projectYear = this.extractYearFromDateLike(referenceDate) || String(new Date().getFullYear());
+        return "PRJ-" + projectYear + "-" + processId;
     },
 
     asBooleanString: function (value) {
