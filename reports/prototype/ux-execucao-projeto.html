@@ -1,1289 +1,873 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Execução do Projeto - Portal de Projetos BEVAP</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Execução do Projeto</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#3D567E',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434'
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bevap-navy: #3D567E;
-            --bevap-green: #4caf50;
-            --bevap-gold: #ffc107;
+        #execution-tabs-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
 
-        .font-inter {
-            font-family: 'Inter', sans-serif;
-        }
-
-        .font-montserrat {
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .bg-bevap-navy {
-            background-color: var(--bevap-navy);
-        }
-
-        .text-bevap-navy {
-            color: var(--bevap-navy);
-        }
-
-        .border-bevap-navy {
-            border-color: var(--bevap-navy);
-        }
-
-        .bg-bevap-green {
-            background-color: var(--bevap-green);
-        }
-
-        .text-bevap-green {
-            color: var(--bevap-green);
-        }
-
-        .border-bevap-green {
-            border-color: var(--bevap-green);
-        }
-
-        .bg-bevap-gold {
-            background-color: var(--bevap-gold);
-        }
-
-        .text-bevap-gold {
-            color: var(--bevap-gold);
-        }
-
-        .border-bevap-gold {
-            border-color: var(--bevap-gold);
-        }
-
-        .hover\:bg-bevap-green:hover {
-            background-color: #43a047;
-        }
-
-        .hover\:bg-bevap-gold:hover {
-            background-color: #ffb300;
-        }
-
-        .hover\:text-bevap-green:hover {
-            color: var(--bevap-green);
-        }
-
-        .task-status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: .35rem;
-            border: 1px solid;
-            border-radius: .5rem;
-            padding: .2rem .5rem;
-            font-size: 10px;
-            font-weight: 600;
-            letter-spacing: .02em;
-            text-transform: uppercase;
-            line-height: 1.2;
-        }
-
-        .task-status-dot {
-            display: inline-flex;
-            width: .45rem;
-            height: .45rem;
-            border-radius: 9999px;
-            background-color: currentColor;
-        }
-
-        .task-status-nao-iniciado {
-            border-color: #d1d5db;
-            color: #4b5563;
-            background-color: #f9fafb;
-        }
-
-        .task-status-desenvolvimento {
-            border-color: #bfdbfe;
-            color: #1d4ed8;
-            background-color: #eff6ff;
-        }
-
-        .task-status-pausado {
-            border-color: #fde68a;
-            color: #b45309;
-            background-color: #fffbeb;
-        }
-
-        .task-status-validacao {
-            border-color: #c7d2fe;
-            color: #4338ca;
-            background-color: #eef2ff;
-        }
-
-        .task-status-homolog {
-            border-color: #bbf7d0;
-            color: #166534;
-            background-color: #f0fdf4;
+        #execution-tabs-scroll::-webkit-scrollbar {
+            display: none;
         }
     </style>
 </head>
-
-<body class="bg-gray-50 font-inter">
-
-    <div id="root" class="flex flex-col min-h-screen">
-        <header id="header" class="fixed top-0 left-0 right-0 bg-bevap-navy shadow-lg z-50">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-2 bg-white px-4 py-1 rounded-lg">
-                            <img src="logoBevap.png" class="h-auto w-24" alt="BEVAP">
-                        </div>
-                        <div class="h-8 w-px bg-gray-400 hidden md:block"></div>
-                        <h1 class="text-white font-montserrat font-semibold text-lg hidden md:block">Desenvolvimento do Projeto
-                        </h1>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <button class="text-white hover:text-bevap-gold transition-colors" title="Notificações">
-                            <i class="fa-regular fa-bell text-xl"></i>
-                        </button>
-                        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg"
-                            alt="Usuário" class="w-9 h-9 rounded-full border-2 border-bevap-gold">
-                    </div>
+<body class="bg-gray-50 font-inter text-gray-900">
+    <header class="fixed left-0 right-0 top-0 z-50 bg-bevap-navy shadow-lg">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 rounded-lg bg-white px-4 py-1">
+                    <img src="../logoBevap.png" class="h-auto w-24" alt="BEVAP">
                 </div>
+                <div class="hidden h-8 w-px bg-gray-400 md:block"></div>
+                <h1 class="hidden font-montserrat text-lg font-semibold text-white md:block">Execução do Projeto</h1>
             </div>
-            <div>
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-10 flex items-center">
-                    <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
-                        <a href="ux-dashboard.html"
-                            class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-                            <i class="fa-solid fa-house text-xs"></i>
-                            <span>Início</span>
-                        </a>
-                        <span class="text-gray-400">/</span>
-                        <a href="ux-dashboard.html"
-                            class="text-gray-300 hover:text-white transition-colors">Portfólio</a>
-                        <span class="text-gray-400">/</span>
-                        <a href="#" class="text-gray-300 hover:text-white transition-colors">Solicitações</a>
-                        <span class="text-gray-400">/</span>
-                        <span class="text-bevap-gold font-medium">Execução do Projeto</span>
-                    </nav>
+            <div class="flex items-center space-x-3">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Usuário" class="h-9 w-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="mx-auto flex h-10 max-w-7xl items-center px-4 text-sm sm:px-6 lg:px-8">
+            <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                <a href="../ux-dashboard.html" class="inline-flex items-center gap-2 text-gray-300 transition-colors hover:text-white">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Início</span>
+                </a>
+                <span class="text-gray-400">/</span>
+                <a href="../ux-dashboard.html" class="text-gray-300 transition-colors hover:text-white">Portfólio</a>
+                <span class="text-gray-400">/</span>
+                <a href="../ux-planejamento.html" class="text-gray-300 transition-colors hover:text-white">Planejamento</a>
+                <span class="text-gray-400">/</span>
+                <span class="font-medium text-bevap-gold">Execução do Projeto</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-24">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                <div class="space-y-6 lg:col-span-2">
+                    <section class="rounded-lg bg-white shadow-md">
+                        <div class="border-b border-gray-200">
+                            <div class="relative">
+                                <div id="execution-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
+                                    <button type="button" id="tab-execution-phases" class="whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
+                                        <i class="fa-solid fa-layer-group mr-2"></i>Fases
+                                    </button>
+                                    <button type="button" id="tab-execution-milestones" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-flag-checkered mr-2"></i>Marcos
+                                    </button>
+                                    <button type="button" id="tab-execution-risks" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-triangle-exclamation mr-2"></i>Riscos
+                                    </button>
+                                    <button type="button" id="tab-execution-raci" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-users mr-2"></i>RACI
+                                    </button>
+                                </div>
+                                <button id="execution-tabs-left-arrow" type="button" class="pointer-events-none absolute left-0 top-0 bottom-0 flex w-24 items-center justify-start rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent pl-2 text-bevap-navy opacity-0 transition-opacity duration-300">
+                                    <span class="flex items-center gap-0 text-base leading-none">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </span>
+                                </button>
+                                <button id="execution-tabs-right-arrow" type="button" class="pointer-events-none absolute right-0 top-0 bottom-0 flex w-24 items-center justify-end rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent pr-2 text-bevap-navy opacity-0 transition-opacity duration-300">
+                                    <span class="flex items-center gap-0 text-base leading-none">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="tab-content-execution-phases" class="p-6">
+                            <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">Acompanhe a execução agrupada por fases planejadas na EAP, visualizando responsáveis, esforço previsto, duração e todas as tarefas previstas para cada fase do projeto.</p>
+                            </div>
+                            <div id="execution-phases-list" class="mt-6 space-y-5"></div>
+                        </div>
+
+                        <div id="tab-content-execution-milestones" class="hidden p-6">
+                            <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">Visualize o cronograma executivo por marcos, com período, status, critérios de aceite e as tarefas vinculadas de cada fase que compõem a entrega planejada.</p>
+                            </div>
+                            <div id="execution-milestones-list" class="mt-6 space-y-5"></div>
+                        </div>
+
+                        <div id="tab-content-execution-risks" class="hidden p-6">
+                            <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">Consolide os riscos do projeto com severidade, probabilidade, impacto, mitigação e plano de contingência para apoiar a execução e o acompanhamento dos marcos.</p>
+                            </div>
+                            <div id="execution-risks-list" class="mt-6 space-y-4"></div>
+                        </div>
+
+                        <div id="tab-content-execution-raci" class="hidden p-6">
+                            <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">A matriz RACI apresenta os papéis por marco do projeto, deixando claro quem executa, aprova, precisa ser consultado e quem deve ser informado ao longo da execução.</p>
+                            </div>
+                            <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 bg-white">
+                                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Marco</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Responsável (R)</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Aprovador (A)</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Consultado (C)</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Informado (I)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="execution-raci-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                                </table>
+                            </div>
+                            <div class="mt-6 rounded-xl border border-gray-200 bg-white p-4">
+                                <div class="mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-comments text-sm text-bevap-gold"></i>
+                                    <h4 class="text-sm font-montserrat font-semibold text-gray-900">Plano de Comunicação</h4>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Público</th>
+                                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Canal</th>
+                                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Periodicidade</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="execution-communication-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
                 </div>
-            </div>
-        </header>
 
-        <main id="main-content" class="pt-32 pb-24">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <div id="phases-section" class="lg:col-span-2 space-y-6">
-                        <div id="phase-1" data-phase-card
-                            class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                            <div class="px-5 py-4 bg-white">
-                                <div class="flex items-start justify-between gap-3">
-                                    <div class="min-w-0">
-                                        <h3
-                                            class="phase-title text-base sm:text-lg font-montserrat font-bold text-bevap-navy">
-                                            1. Concluir descoberta e baseline técnico</h3>
-                                        <div class="mt-2 flex flex-wrap items-center gap-2 text-gray-600"
-                                            style="font-size: 13px;">
-                                            <span
-                                                class="phase-owner inline-flex items-center px-2 py-1 rounded-full bg-bevap-navy border border-bevap-navy text-white"><i
-                                                    class="fa-solid fa-user-tie mr-1 text-blue-100"></i>Responsável: Ana
-                                                Costa</span>
-                                            <span
-                                                class="phase-dates inline-flex items-center px-2 py-1 rounded-full border text-white"
-                                                style="background-color: #838ABD; border-color: #838ABD;"><i
-                                                    class="fa-solid fa-calendar-alt mr-1 text-blue-100"></i>05/02/2026 -
-                                                10/02/2026</span>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="phase-status inline-flex items-center gap-1.5 px-3 py-1 border border-green-200 bg-green-50 text-green-700 text-xs font-semibold rounded-full shrink-0">
-                                        <i class="fa-solid fa-circle-check text-green-600"></i><span>Concluída</span>
-                                    </div>
-                                </div>
-                                <div class="mt-4">
-                                    <div class="flex items-center justify-between mb-1">
-                                        <label
-                                            class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Progresso</label>
-                                        <span class="phase-progress-value text-sm font-bold text-bevap-navy">100%</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                        <div class="phase-progress-bar bg-blue-500 h-2.5 rounded-full transition-all"
-                                            style="width: 100%"></div>
-                                    </div>
-                                </div>
-                                <div class="mt-3 border-b border-gray-200"></div>
+                <aside class="lg:col-span-1">
+                    <div class="sticky top-24 space-y-4">
+                        <div class="rounded-lg bg-white p-5 shadow-md">
+                            <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                                <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
+                                Resumo do Projeto
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Código</span><span class="font-mono font-semibold text-bevap-navy">PRJ-2026-014</span></div>
+                                <div class="border-b pb-2"><span class="text-gray-600">Título</span><p class="mt-1 font-medium text-gray-900">Implantar SSO corporativo</p></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Área</span><span class="font-medium text-gray-900">Tecnologia da Informação</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Patrocinador</span><span class="font-medium text-gray-900">Diretoria TI</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Previsão Final</span><span class="font-medium text-gray-900">20/03/2026</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span class="font-medium text-gray-900">João Vieira</span></div>
+                                <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800"><i class="fa-solid fa-clock mr-1"></i>Execução em andamento</span></div>
                             </div>
-                            <div class="p-5 space-y-4">
-                                <div class="phase-acceptance bg-blue-50 border border-blue-200 rounded-lg p-3"></div>
-                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <span class="text-sm font-semibold text-gray-600  tracking-wide">Tarefas</span>
-                                        <!-- <button type="button" onclick="setPhaseTaskPanelTab('phase-1', 'tasks')" class="px-2 py-1 rounded-md text-xs font-medium bg-bevap-navy text-white" data-phase-tab-button="tasks">Tarefas</button> -->
-                                    </div>
-                                    <div class="phase-milestones space-y-3" data-phase-key="phase-1"></div>
-                                </div>
-                                <div class="grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3 items-end">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Observação do
-                                            Marco</label>
-                                        <textarea
-                                            class="phase-notes w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                                            rows="2"
-                                            placeholder="Adicione uma observação sobre o andamento...">Integração em andamento, pequenos ajustes necessários na sincronização de grupos.</textarea>
-                                    </div>
-                                    <button onclick="completePhase('phase-1')"
-                                        class="px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed text-sm flex items-center justify-center phase-complete-button h-10"
-                                        disabled>
-                                        <i class="fa-solid fa-play mr-2"></i>Iniciar Marco
-                                    </button>
-                                </div>
+                            <div class="mt-4 space-y-2 border-t pt-4">
+                                <a href="../ux-planejamento.html" class="flex w-full items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy transition-colors hover:bg-gray-50">
+                                    <i class="fa-solid fa-timeline mr-2"></i>Linha do Tempo
+                                </a>
+                                <button type="button" class="flex w-full items-center justify-center rounded-lg border border-bevap-green px-4 py-2 text-sm font-medium text-bevap-green transition-colors hover:bg-green-50">
+                                    <i class="fa-solid fa-paperclip mr-2"></i>Ver Anexos
+                                </button>
                             </div>
                         </div>
 
-                        <div id="phase-2" data-phase-card
-                            class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                            <div class="px-5 py-4 bg-gradient-to-r from-slate-50 to-white">
-                                <div class="flex items-start justify-between gap-3">
-                                    <div class="min-w-0">
-                                        <h3
-                                            class="phase-title text-base sm:text-lg font-montserrat font-bold text-bevap-navy">
-                                            2. Go-live e estabilização inicial</h3>
-                                        <div class="mt-2 flex flex-wrap items-center gap-2 text-gray-600"
-                                            style="font-size: 13px;">
-                                            <span
-                                                class="phase-owner inline-flex items-center px-2 py-1 rounded-full bg-bevap-navy border border-bevap-navy text-white"><i
-                                                    class="fa-solid fa-user-tie mr-1 text-blue-100"></i>Responsável: PMO
-                                                Corporativo</span>
-                                            <span
-                                                class="phase-dates inline-flex items-center px-2 py-1 rounded-full border text-white"
-                                                style="background-color: #838ABD; border-color: #838ABD;"><i
-                                                    class="fa-solid fa-calendar-alt mr-1 text-blue-100"></i>14/03/2026 -
-                                                20/03/2026</span>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="phase-status inline-flex items-center gap-1.5 px-3 py-1 border border-yellow-200 bg-yellow-50 text-yellow-700 text-xs font-semibold rounded-full shrink-0">
-                                        <i class="fa-solid fa-hourglass-half text-yellow-600"></i><span>Em
-                                            Andamento</span>
-                                    </div>
-                                </div>
-                                <div class="mt-4">
-                                    <div class="flex items-center justify-between mb-1">
-                                        <label
-                                            class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Progresso</label>
-                                        <span class="phase-progress-value text-sm font-bold text-bevap-navy">25%</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                        <div class="phase-progress-bar bg-blue-500 h-2.5 rounded-full transition-all"
-                                            style="width: 25%"></div>
-                                    </div>
-                                </div>
-                                <div class="mt-3 border-b border-gray-200"></div>
-                            </div>
-                            <div class="p-5 space-y-4">
-                                <div class="phase-acceptance bg-blue-50 border border-blue-200 rounded-lg p-3"></div>
-                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <span class="text-sm font-semibold text-gray-600  tracking-wide">Tarefas</span>
-                                        <!-- <button type="button" onclick="setPhaseTaskPanelTab('phase-2', 'tasks')" class="px-2 py-1 rounded-md text-xs font-medium bg-bevap-navy text-white" data-phase-tab-button="tasks">Tarefas</button> -->
-                                    </div>
-                                    <div class="phase-milestones space-y-3" data-phase-key="phase-2"></div>
-                                </div>
-                                <div class="grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3 items-end">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Observação do
-                                            Marco</label>
-                                        <textarea
-                                            class="phase-notes w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                                            rows="2"
-                                            placeholder="Aguardando início do go-live...">Aguardando início do go-live...</textarea>
-                                    </div>
-                                    <button onclick="completePhase('phase-2')"
-                                        class="px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed text-sm flex items-center justify-center phase-complete-button h-10"
-                                        disabled>
-                                        <i class="fa-solid fa-play mr-2"></i>Iniciar Marco
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="phase-3" data-phase-card
-                            class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-                            <div class="px-5 py-4 bg-gradient-to-r from-yellow-50 to-white">
-                                <div class="flex items-start justify-between gap-3">
-                                    <div class="min-w-0">
-                                        <h3
-                                            class="phase-title text-base sm:text-lg font-montserrat font-bold text-bevap-navy">
-                                            3. Entrega da implementação SSO em homologação</h3>
-                                        <div class="mt-2 flex flex-wrap items-center gap-2 text-gray-600"
-                                            style="font-size: 13px;">
-                                            <span
-                                                class="phase-owner inline-flex items-center px-2 py-1 rounded-full bg-bevap-navy border border-bevap-navy text-white"><i
-                                                    class="fa-solid fa-user-tie mr-1 text-blue-100"></i>Responsável:
-                                                TechPartners</span>
-                                            <span
-                                                class="phase-dates inline-flex items-center px-2 py-1 rounded-full border text-white"
-                                                style="background-color: #838ABD; border-color: #838ABD;"><i
-                                                    class="fa-solid fa-calendar-alt mr-1 text-blue-100"></i>10/03/2026 -
-                                                18/03/2026</span>
-                                        </div>
-                                    </div>
-                                    <div
-                                        class="phase-status inline-flex items-center gap-1.5 px-3 py-1 border border-yellow-200 bg-yellow-50 text-yellow-700 text-xs font-semibold rounded-full shrink-0">
-                                        <i class="fa-solid fa-hourglass-half text-yellow-600"></i><span>Em
-                                            Andamento</span>
-                                    </div>
-                                </div>
-                                <div class="mt-4">
-                                    <div class="flex items-center justify-between mb-1">
-                                        <label
-                                            class="text-xs font-semibold text-gray-600 uppercase tracking-wide">Progresso</label>
-                                        <span class="phase-progress-value text-sm font-bold text-bevap-navy">50%</span>
-                                    </div>
-                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                        <div class="phase-progress-bar bg-blue-500 h-2.5 rounded-full transition-all"
-                                            style="width: 50%"></div>
-                                    </div>
-                                </div>
-                                <div class="mt-3 border-b border-gray-200"></div>
-                            </div>
-                            <div class="p-5 space-y-4">
-                                <div class="phase-acceptance bg-blue-50 border border-blue-200 rounded-lg p-3"></div>
-                                <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                                    <div class="flex items-center justify-between mb-3">
-                                        <span class="text-sm font-semibold text-gray-600  tracking-wide">Tarefas</span>
-                                        <!-- <button type="button" onclick="setPhaseTaskPanelTab('phase-3', 'tasks')" class="px-2 py-1 rounded-md text-xs font-medium bg-bevap-navy text-white" data-phase-tab-button="tasks">Tarefas</button> -->
-                                    </div>
-                                    <div class="phase-milestones space-y-3" data-phase-key="phase-3"></div>
-                                </div>
-                                <div class="grid grid-cols-1 xl:grid-cols-[1fr_auto] gap-3 items-end">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-2">Observação do
-                                            Marco</label>
-                                        <textarea
-                                            class="phase-notes w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
-                                            rows="2"
-                                            placeholder="Acompanhe o avanço e riscos desta fase...">Ajustes pendentes em segurança para concluir homologação.</textarea>
-                                    </div>
-                                    <button onclick="completePhase('phase-3')"
-                                        class="px-4 py-2 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed text-sm flex items-center justify-center phase-complete-button h-10"
-                                        disabled>
-                                        <i class="fa-solid fa-play mr-2"></i>Iniciar Marco
-                                    </button>
-                                </div>
+                        <div class="rounded-lg bg-white p-5 shadow-md">
+                            <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                                <i class="fa-solid fa-list-check mr-2 text-bevap-green"></i>
+                                Progresso
+                            </h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Solicitação aprovada</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Análise TI concluída</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Planejamento do projeto concluído</span></div>
+                                <div class="flex items-center text-bevap-gold"><i class="fa-solid fa-clock mr-2"></i><span>Execução do projeto em andamento</span></div>
                             </div>
                         </div>
                     </div>
-
-                    <aside id="summary-panel" class="lg:col-span-1">
-                        <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
-                            <div class="mb-6">
-                                <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
-                                    <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
-                                    Resumo do Projeto
-                                </h3>
-
-                                <div class="space-y-3 text-sm">
-                                    <div class="flex items-center justify-between pb-2 border-b">
-                                        <span class="text-gray-600">Código</span>
-                                        <span class="font-mono font-semibold text-bevap-navy">PRJ-2026-014</span>
-                                    </div>
-                                    <div class="pb-2 border-b">
-                                        <span class="text-gray-600">Título</span>
-                                        <p class="font-medium text-gray-900 mt-1">Implantar SSO corporativo</p>
-                                    </div>
-                                    <div class="flex items-center justify-between pb-2 border-b">
-                                        <span class="text-gray-600">Área</span>
-                                        <span class="font-medium text-gray-900">TI</span>
-                                    </div>
-                                    <div class="flex items-center justify-between pb-2 border-b">
-                                        <span class="text-gray-600">Patrocinador</span>
-                                        <span class="font-medium text-gray-900">Diretoria TI</span>
-                                    </div>
-                                    <div class="flex items-center justify-between pb-2 border-b">
-                                        <span class="text-gray-600">Previsão final</span>
-                                        <span class="font-medium text-gray-900">18/03/2026</span>
-                                    </div>
-                                    <div class="flex items-center justify-between pb-2 border-b">
-                                        <span class="text-gray-600">Prontas p/ QA</span>
-                                        <span id="qa-ready-count" class="font-medium text-gray-900">0 de 3 fases</span>
-                                    </div>
-                                </div>
-
-                                <div class="mt-4 pt-4 border-t space-y-2">
-                                    <button
-                                        class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-navy border border-bevap-navy rounded-lg hover:bg-gray-50 transition-colors">
-                                        <i class="fa-solid fa-timeline mr-2"></i> Linha do Tempo
-                                    </button>
-                                    <button
-                                        class="w-full flex items-center justify-center px-4 py-2 text-sm font-medium text-bevap-green border border-bevap-green rounded-lg hover:bg-green-50 transition-colors">
-                                        <i class="fa-solid fa-paperclip mr-2"></i> Ver Anexos
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="mb-6 pb-6 border-b border-gray-200">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="text-sm text-gray-600">Progresso da Execução</span>
-                                    <span id="execution-progress-text"
-                                        class="text-sm font-bold text-blue-700">24%</span>
-                                </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2 mb-4">
-                                    <div id="execution-progress-bar" class="bg-blue-500 h-2 rounded-full"
-                                        style="width: 24%"></div>
-                                </div>
-                                <div class="text-sm text-gray-700">
-                                    <strong>Fases concluídas:</strong> <span id="completed-phases-count">0 de 3</span>
-                                </div>
-                            </div>
-
-                            <div class="mb-6">
-                                <h3 class="font-montserrat font-bold text-lg text-bevap-navy mb-4 flex items-center">
-                                    <i class="fa-solid fa-list-check mr-2 text-bevap-green"></i>
-                                    Progresso
-                                </h3>
-                                <div class="space-y-2 text-sm">
-                                    <div class="flex items-center text-green-600">
-                                        <i class="fa-solid fa-check-circle mr-2"></i>
-                                        <span>Solicitação aprovada</span>
-                                    </div>
-                                    <div class="flex items-center text-green-600">
-                                        <i class="fa-solid fa-check-circle mr-2"></i>
-                                        <span>Análise TI concluída</span>
-                                    </div>
-                                    <div class="flex items-center text-green-600">
-                                        <i class="fa-solid fa-check-circle mr-2"></i>
-                                        <span>Impacto na área concluído</span>
-                                    </div>
-                                    <div class="flex items-center text-green-600">
-                                        <i class="fa-solid fa-check-circle mr-2"></i>
-                                        <span>Triagem técnica (Externo)</span>
-                                    </div>
-                                    <div class="flex items-center text-green-600">
-                                        <i class="fa-solid fa-check-circle mr-2"></i>
-                                        <span>Proposta Comercial Aprovada</span>
-                                    </div>
-                                    <div class="flex items-center text-green-600">
-                                        <i class="fa-solid fa-check-circle mr-2"></i>
-                                        <span>Realizar contratação concluído</span>
-                                    </div>
-                                    <div class="flex items-center text-green-600">
-                                        <i class="fa-solid fa-check-circle mr-2"></i>
-                                        <span>Planejamento do projeto concluído</span>
-                                    </div>
-                                    <div class="flex items-center text-bevap-gold">
-                                        <i class="fa-solid fa-clock mr-2"></i>
-                                        <span>Execução do projeto em andamento</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </aside>
-                </div>
+                </aside>
             </div>
-        </main>
-        <div id="start-milestone-modal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center z-50 hidden">
-            <div class="bg-white rounded-xl shadow-xl w-full max-w-lg mx-4">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-montserrat font-bold text-bevap-navy">Confirmar início do marco</h3>
-                </div>
-                <div class="px-6 py-5">
-                    <p id="start-milestone-modal-message" class="text-sm text-gray-700"></p>
-                </div>
-                <div class="px-6 py-4 border-t border-gray-200 flex justify-end gap-2">
-                    <button id="start-milestone-modal-cancel" type="button"
-                        class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50">Cancelar</button>
-                    <button id="start-milestone-modal-confirm" type="button"
-                        class="px-4 py-2 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700">Iniciar Marco</button>
+        </div>
+    </main>
+
+    <footer class="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white shadow-lg">
+        <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <button type="button" class="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50">
+                    <i class="fa-solid fa-save mr-2"></i>Salvar Rascunho
+                </button>
+                <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" data-action="return-planning" class="inline-flex items-center rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
+                        <i class="fa-solid fa-rotate-left mr-2"></i>Realizar Novo Planejamento
+                    </button>
+                    <button type="button" class="inline-flex items-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
+                        <i class="fa-solid fa-paper-plane mr-2"></i>Concluir Execução
+                    </button>
                 </div>
             </div>
         </div>
+    </footer>
 
-        <footer class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-40">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <button
-                        class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all inline-flex items-center justify-center">
-                        <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
-                    </button>
-                    <div class="flex flex-wrap items-center gap-2">
-                        <button
-                            class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all inline-flex items-center">
-                            <i class="fa-solid fa-rotate-left mr-2"></i> Realizar Novo Planejamento
-                        </button>
-                        <button
-                            class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md inline-flex items-center">
-                            <i class="fa-solid fa-paper-plane mr-2"></i> Concluir Execução
-                        </button>
-                    </div>
-                </div>
+    <div id="return-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
+        <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+            <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Realizar Novo Planejamento</h3>
+            <p class="mb-4 text-sm text-gray-600">Descreva os pontos que exigem um novo planejamento antes de retornar o projeto para essa etapa.</p>
+            <textarea id="return-reason" rows="4" placeholder="Motivo do novo planejamento..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5 focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+            <div class="flex justify-end space-x-3">
+                <button type="button" data-action="close-return-modal" class="rounded-lg px-4 py-2 text-sm text-gray-700 transition-all hover:bg-gray-100">Cancelar</button>
+                <button type="button" data-action="confirm-return-modal" class="rounded-lg bg-yellow-500 px-4 py-2 text-sm text-white transition-all hover:bg-yellow-600">Devolver</button>
             </div>
-        </footer>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <div id="toast" class="hidden fixed top-24 right-4 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+        <div class="flex items-start gap-3">
+            <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600"></i>
+            <div>
+                <div id="toast-title" class="font-semibold text-bevap-navy"></div>
+                <div id="toast-message" class="text-sm text-gray-600"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        const phaseMilestones = {
-            'phase-1': [
-                {
-                    nextMilestoneLabel: 'Concluir descoberta e baseline técnico - 05/02/2026 - 10/02/2026',
-                    notes: 'Garantir confirmação de escopo e alinhamento técnico com todas as áreas.',
-                    acceptanceCriteria: [
-                        'Escopo funcional validado com negócio e TI.',
-                        'Matriz de sistemas impactados aprovada.'
-                    ],
-                    tasks: [
-                        { name: 'Mapear sistemas impactados', responsible: 'Carlos Silva', phaseName: 'Descoberta e Análise', dueDate: '27/01/2026', weight: 34, totalHours: 40, usedHours: 40, activityStatus: 'desenvolvimento', done: true, blocked: false },
-                        { name: 'Provisionar ambiente de homologação', responsible: 'Equipe Infraestrutura', phaseName: 'Implementação SSO', dueDate: '31/01/2026', weight: 33, totalHours: 32, usedHours: 32, activityStatus: 'desenvolvimento', done: true, blocked: false },
-                        { name: 'Planejar roteiro de testes UAT', responsible: 'Ana Costa', phaseName: 'Validação e Go-Live', dueDate: '03/02/2026', weight: 33, totalHours: 24, usedHours: 24, activityStatus: 'desenvolvimento', done: true, blocked: false }
-                    ]
-                }
-            ],
-            'phase-2': [
-                {
-                    nextMilestoneLabel: 'Go-live e estabilização inicial - 14/03/2026 - 20/03/2026',
-                    notes: 'Concentrar esforços na estabilização e na remoção de bloqueios de produção.',
-                    acceptanceCriteria: [
-                        'UAT concluído sem pendências críticas abertas.',
-                        'Checklist de produção aprovado pelas áreas responsáveis.'
-                    ],
-                    tasks: [
-                        { name: 'Consolidar documentação inicial', responsible: 'Mariana Lima', phaseName: 'Descoberta e Análise', dueDate: '02/03/2026', weight: 25, totalHours: 20, usedHours: 20, activityStatus: 'homolog', done: true, blocked: false },
-                        { name: 'Implementar fluxo OAuth2/SAML', responsible: 'Rafael Souza', phaseName: 'Implementação SSO', dueDate: '08/03/2026', weight: 25, totalHours: 64, usedHours: 44, activityStatus: 'em_validacao', done: false, blocked: false },
-                        { name: 'Monitorar estabilização inicial', responsible: 'Rafael Souza', phaseName: 'Validação e Go-Live', dueDate: '14/03/2026', weight: 25, totalHours: 36, usedHours: 18, activityStatus: 'pausado', done: false, blocked: true },
-                        { name: 'Aprovar checklist de produção', responsible: 'Segurança da Informação', phaseName: 'Validação e Go-Live', dueDate: '12/03/2026', weight: 25, totalHours: 16, usedHours: 19, activityStatus: 'nao_iniciado', done: false, blocked: true }
-                    ]
-                }
-            ],
-            'phase-3': [
-                {
-                    nextMilestoneLabel: 'Entrega da implementação SSO em homologação - 10/03/2026 - 18/03/2026',
-                    notes: 'Finalizar homologação com foco em políticas e testes finais.',
-                    acceptanceCriteria: [
-                        'Federação com AD funcionando para usuários piloto.',
-                        'Políticas de segurança aplicadas e auditadas.'
-                    ],
-                    tasks: [
-                        { name: 'Configurar federação com AD', responsible: 'TechPartners', phaseName: 'Implementação SSO', dueDate: '12/02/2026', weight: 25, totalHours: 48, usedHours: 48, activityStatus: 'desenvolvimento', done: true, blocked: false },
-                        { name: 'Definir escopo funcional', responsible: 'PMO Corporativo', phaseName: 'Descoberta e Análise', dueDate: '15/02/2026', weight: 25, totalHours: 18, usedHours: 18, activityStatus: 'desenvolvimento', done: true, blocked: false },
-                        { name: 'Aplicar políticas de segurança', responsible: 'Segurança da Informação', phaseName: 'Implementação SSO', dueDate: '20/02/2026', weight: 25, totalHours: 28, usedHours: 34, activityStatus: 'pausado', done: false, blocked: true },
-                        { name: 'Executar bateria de testes UAT', responsible: 'Carlos Silva', phaseName: 'Validação e Go-Live', dueDate: '22/02/2026', weight: 25, totalHours: 32, usedHours: 20, activityStatus: 'desenvolvimento', done: false, blocked: false }
-                    ]
-                }
-            ]
+        var projectSummary = {
+            code: 'PRJ-2026-014',
+            title: 'Implantar SSO corporativo',
+            area: 'Tecnologia da Informação',
+            sponsor: 'Diretoria TI',
+            requester: 'João Vieira',
+            endDate: '20/03/2026'
         };
 
-        const phaseOperationalData = {
-            'phase-1': {
-                riskLevel: 'Baixo',
-                events: [
-                    { actor: 'Ana Costa', when: '05/02/2026 17:40', note: 'Critérios de aceite aprovados e fase liberada.' },
-                    { actor: 'Carlos Silva', when: '04/02/2026 11:15', note: 'Checklist técnico finalizado sem bloqueios.' }
+        var phasesData = [
+            {
+                name: 'Descoberta e Análise',
+                responsible: 'Ana Costa',
+                effort: 72,
+                duration: 10,
+                dependencies: [
+                    'Kickoff inicial validado com todas as áreas',
+                    'Aprovação formal do escopo funcional inicial'
+                ],
+                notes: 'Levantamento de requisitos, consolidação documental e preparação da base funcional para a execução.',
+                tasks: [
+                    { name: 'Mapear sistemas impactados', responsible: 'Carlos Silva', effort: 12, duration: 2, dependency: 'Kickoff inicial validado com todas as áreas' },
+                    { name: 'Entrevistar stakeholders', responsible: 'Ana Costa', effort: 16, duration: 2, dependency: 'Agenda executiva' },
+                    { name: 'Definir escopo funcional', responsible: 'PMO Corporativo', effort: 20, duration: 3, dependency: 'Inputs do negócio' },
+                    { name: 'Consolidar documentação inicial', responsible: 'Mariana Lima', effort: 24, duration: 3, dependency: 'Validação do escopo' }
                 ]
             },
-            'phase-2': {
-                riskLevel: 'Médio',
-                events: [
-                    { actor: 'PMO Corporativo', when: '16/03/2026 09:10', note: 'Go-live aguardando liberação de janela de mudança.' },
-                    { actor: 'Segurança da Informação', when: '15/03/2026 18:25', note: 'Checklist de produção com pendências de evidência.' }
+            {
+                name: 'Implementação SSO',
+                responsible: 'TechPartners',
+                effort: 160,
+                duration: 20,
+                dependencies: [
+                    'Conclusão da fase de Descoberta e Análise',
+                    'Liberação do ambiente de homologação pela infraestrutura'
+                ],
+                notes: 'Construção técnica da integração, federação de identidade e preparação dos componentes de autenticação.',
+                tasks: [
+                    { name: 'Provisionar ambiente de homologação', responsible: 'Equipe Infraestrutura', effort: 24, duration: 3, dependency: 'Acesso cloud' },
+                    { name: 'Configurar federação com AD', responsible: 'TechPartners', effort: 32, duration: 4, dependency: 'Credenciais de diretório' },
+                    { name: 'Implementar fluxo OAuth2/SAML', responsible: 'Rafael Souza', effort: 40, duration: 5, dependency: 'Definição técnica' },
+                    { name: 'Aplicar políticas de segurança', responsible: 'Segurança da Informação', effort: 16, duration: 2, dependency: 'Baseline de segurança' },
+                    { name: 'Executar testes integrados', responsible: 'Mariana Lima', effort: 24, duration: 3, dependency: 'Build estável' }
                 ]
             },
-            'phase-3': {
-                riskLevel: 'Alto',
-                events: [
-                    { actor: 'TechPartners', when: '17/03/2026 10:20', note: 'Federação concluída, aguardando validação de políticas.' },
-                    { actor: 'Carlos Silva', when: '16/03/2026 16:05', note: 'Testes UAT replanejados por bloqueio de homologação.' }
+            {
+                name: 'Validação e Go-Live',
+                responsible: 'PMO Corporativo',
+                effort: 100,
+                duration: 13,
+                dependencies: [
+                    'Conclusão da implementação SSO',
+                    'Evidências técnicas aprovadas pela Segurança da Informação'
+                ],
+                notes: 'Validação final com negócio, estabilização inicial e preparação da entrada assistida em produção.',
+                tasks: [
+                    { name: 'Planejar roteiro de testes UAT', responsible: 'Ana Costa', effort: 16, duration: 2, dependency: 'Ambiente homologado' },
+                    { name: 'Executar bateria de testes UAT', responsible: 'Carlos Silva', effort: 24, duration: 3, dependency: 'Roteiro aprovado' },
+                    { name: 'Corrigir pendências críticas', responsible: 'TechPartners', effort: 24, duration: 3, dependency: 'Resultado UAT' },
+                    { name: 'Aprovar checklist de produção', responsible: 'Segurança da Informação', effort: 8, duration: 1, dependency: 'Evidências completas' },
+                    { name: 'Realizar go-live assistido', responsible: 'Equipe Infraestrutura', effort: 16, duration: 2, dependency: 'Janela de mudança' },
+                    { name: 'Monitorar estabilização inicial', responsible: 'Rafael Souza', effort: 12, duration: 2, dependency: 'Go-live concluído' }
                 ]
             }
-        };
-        const metadataChipThemes = {
-            // active: {
-            //     responsible: { bg: '#5B61A1', border: '#5B61A1', textClass: 'text-white', iconColor: '#DBEAFE' },
-            //     phase: { bg: '#838ABD', border: '#838ABD', textClass: 'text-white', iconColor: '#DBEAFE' },
-            //     date: { bg: '#A7AED3', border: '#A7AED3', textClass: 'text-white', iconColor: '#EFF6FF' }
-            // }
-            active: {
-                responsible: { bg: '#3D567E', border: '#3D567E', textClass: 'text-white', iconColor: '#FEF3C7' },
-                phase: { bg: '#15803D', border: '#15803D', textClass: 'text-white', iconColor: '#BBF7D0' },
-                date: { bg: '#c20014', border: '#c20014', textClass: 'text-white', iconColor: '#FCE7F3' }
+        ];
+
+        var milestonesData = [
+            {
+                name: 'Concluir descoberta e baseline técnico',
+                period: '05/02/2026 até 10/02/2026',
+                status: 'concluido',
+                owner: 'Ana Costa',
+                criteria: [
+                    'Escopo funcional validado com negócio e TI.',
+                    'Matriz de sistemas impactados aprovada.'
+                ],
+                tasks: [
+                    { phaseName: 'Descoberta e Análise', taskName: 'Mapear sistemas impactados', responsible: 'Carlos Silva', date: '27/01/2026', status: 'concluido' },
+                    { phaseName: 'Implementação SSO', taskName: 'Provisionar ambiente de homologação', responsible: 'Equipe Infraestrutura', date: '31/01/2026', status: 'concluido' },
+                    { phaseName: 'Validação e Go-Live', taskName: 'Planejar roteiro de testes UAT', responsible: 'Ana Costa', date: '03/02/2026', status: 'concluido' }
+                ]
+            },
+            {
+                name: 'Entrega da implementação SSO em homologação',
+                period: '10/03/2026 até 18/03/2026',
+                status: 'em_andamento',
+                owner: 'TechPartners',
+                criteria: [
+                    'Federação com AD funcionando para usuários piloto.',
+                    'Políticas de segurança aplicadas e auditadas.'
+                ],
+                tasks: [
+                    { phaseName: 'Implementação SSO', taskName: 'Configurar federação com AD', responsible: 'TechPartners', date: '12/02/2026', status: 'em_execucao' },
+                    { phaseName: 'Descoberta e Análise', taskName: 'Definir escopo funcional', responsible: 'Ana Costa', date: '15/02/2026', status: 'concluido' },
+                    { phaseName: 'Implementação SSO', taskName: 'Aplicar políticas de segurança', responsible: 'Segurança da Informação', date: '20/02/2026', status: 'validacao_ti' },
+                    { phaseName: 'Validação e Go-Live', taskName: 'Executar bateria de testes UAT', responsible: 'Carlos Silva', date: '22/02/2026', status: 'validacao_solicitante' }
+                ]
+            },
+            {
+                name: 'Go-live e estabilização inicial',
+                period: '14/03/2026 até 20/03/2026',
+                status: 'planejado',
+                owner: 'PMO Corporativo',
+                criteria: [
+                    'UAT concluído sem pendências críticas abertas.',
+                    'Checklist de produção aprovado pelas áreas responsáveis.'
+                ],
+                tasks: [
+                    { phaseName: 'Descoberta e Análise', taskName: 'Consolidar documentação inicial', responsible: 'Rafael Souza', date: '02/03/2026', status: 'concluido' },
+                    { phaseName: 'Implementação SSO', taskName: 'Implementar fluxo OAuth2/SAML', responsible: 'TechPartners', date: '08/03/2026', status: 'aguardando_execucao' },
+                    { phaseName: 'Validação e Go-Live', taskName: 'Monitorar estabilização inicial', responsible: 'Rafael Souza', date: '14/03/2026', status: 'aguardando_execucao' },
+                    { phaseName: 'Validação e Go-Live', taskName: 'Aprovar checklist de produção', responsible: 'Segurança da Informação', date: '12/03/2026', status: 'aguardando_execucao' }
+                ]
             }
-            // active: {
-            //     responsible: { bg: '#166534', border: '#166534', textClass: 'text-white', iconColor: '#BBF7D0' },
-            //     phase: { bg: '#15803D', border: '#15803D', textClass: 'text-white', iconColor: '#BBF7D0' },
-            //     date: { bg: '#16A34A', border: '#16A34A', textClass: 'text-white', iconColor: '#DCFCE7' }
-            // }
-            // active: {
-            //     responsible: { bg: '#4F46E5', border: '#4F46E5', textClass: 'text-white', iconColor: '#DBEAFE' },
-            //     phase: { bg: '#0891B2', border: '#0891B2', textClass: 'text-white', iconColor: '#CFFAFE' },
-            //     date: { bg: '#CA8A04', border: '#CA8A04', textClass: 'text-white', iconColor: '#FEF3C7' }
-            // }
-        };
-        const phaseTaskPanelState = {};
-        const unlockedPhaseStartButtons = new Set();
-        const startedMilestones = new Set();
-        let pendingStartMilestonePhaseId = null;
+        ];
 
-        function getChipInlineStyle(chip) {
-            return `background-color: ${chip.bg}; border-color: ${chip.border};`;
-        }
+        var risksData = [
+            {
+                title: 'Integração SSO com legado',
+                severity: 'Alto',
+                probability: 'Alta',
+                impact: 'Alto',
+                mitigation: 'Executar validação antecipada com os sistemas legados prioritários e reservar janela técnica para ajustes de compatibilidade.',
+                fallback: 'Realizar rollout gradual por sistema, priorizando os módulos compatíveis e postergando integrações com maior risco.',
+                owner: 'TechPartners'
+            },
+            {
+                title: 'Disponibilidade da equipe-chave',
+                severity: 'Médio',
+                probability: 'Média',
+                impact: 'Médio',
+                mitigation: 'Definir backup operacional para as atividades críticas e alinhar capacidade semanal com os gestores envolvidos.',
+                fallback: 'Replanejar entregas intermediárias e redistribuir atividades entre infraestrutura, PMO e fornecedor.',
+                owner: 'Ana Costa'
+            },
+            {
+                title: 'Aprovação de segurança para produção',
+                severity: 'Alto',
+                probability: 'Média',
+                impact: 'Alto',
+                mitigation: 'Antecipar evidências técnicas e checkpoints com Segurança da Informação antes do marco de go-live.',
+                fallback: 'Executar entrada assistida em ondas, mantendo os sistemas críticos na autenticação atual até aprovação completa.',
+                owner: 'Segurança da Informação'
+            }
+        ];
 
-        function applyChipTheme(element, chip) {
-            if (!element) return;
-            element.style.backgroundColor = chip.bg;
-            element.style.borderColor = chip.border;
-            element.classList.add('border');
-            element.classList.remove('text-white', 'text-gray-900', 'text-gray-800', 'text-gray-700');
-            element.classList.add(chip.textClass);
-            const icon = element.querySelector('i');
-            if (icon) icon.style.color = chip.iconColor;
-        }
+        var raciData = [
+            {
+                milestone: 'Concluir descoberta e baseline técnico',
+                responsible: 'Ana Costa',
+                approver: 'Diretoria TI',
+                consulted: 'João Vieira, PMO Corporativo',
+                informed: 'Segurança da Informação, Gestores das áreas impactadas'
+            },
+            {
+                milestone: 'Entrega da implementação SSO em homologação',
+                responsible: 'TechPartners',
+                approver: 'Ana Costa',
+                consulted: 'Equipe Infraestrutura, Segurança da Informação',
+                informed: 'João Vieira, Diretoria TI'
+            },
+            {
+                milestone: 'Go-live e estabilização inicial',
+                responsible: 'PMO Corporativo',
+                approver: 'PMO Corporativo',
+                consulted: 'Equipe Infraestrutura, TechPartners, Segurança da Informação',
+                informed: 'Diretoria TI, João Vieira, Gestores das áreas envolvidas'
+            }
+        ];
 
-        function applyHeaderChipThemes(phaseCard) {
-            const theme = metadataChipThemes.active;
-            phaseCard.querySelectorAll('.phase-owner').forEach((element) => applyChipTheme(element, theme.responsible));
-            phaseCard.querySelectorAll('.phase-dates').forEach((element) => applyChipTheme(element, theme.date));
-        }
+        var communicationPlanData = [
+            {
+                audience: 'Diretoria TI',
+                channel: 'Comitê',
+                frequency: 'Semanal'
+            },
+            {
+                audience: 'João Vieira e solicitante',
+                channel: 'Reunião',
+                frequency: 'Semanal'
+            },
+            {
+                audience: 'Segurança da Informação',
+                channel: 'Teams',
+                frequency: 'Por marco'
+            },
+            {
+                audience: 'Gestores das áreas impactadas',
+                channel: 'E-mail',
+                frequency: 'Conforme go-live'
+            }
+        ];
 
-        function parsePercent(value) {
-            const parsed = Number.parseInt(String(value).replace('%', '').trim(), 10);
-            return Number.isFinite(parsed) ? Math.max(0, Math.min(100, parsed)) : 0;
-        }
+        var collapsedPhases = {};
+        var collapsedMilestones = {};
 
-        function parseBrDate(value) {
-            const parts = String(value || '').split('/');
-            if (parts.length !== 3) return null;
-            const day = Number(parts[0]);
-            const month = Number(parts[1]) - 1;
-            const year = Number(parts[2]);
-            if (!Number.isFinite(day) || !Number.isFinite(month) || !Number.isFinite(year)) return null;
-            return new Date(year, month, day);
-        }
-
-        function getTodayDateOnly() {
-            const now = new Date();
-            return new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        }
-
-        function getPhaseCards() {
-            return Array.from(document.querySelectorAll('[data-phase-card]'));
-        }
-
-        function getPhaseData(phaseCard) {
-            const title = phaseCard.querySelector('.phase-title')?.textContent?.trim() || '';
-            const owner = phaseCard.querySelector('.phase-owner')?.textContent?.trim() || '';
-            const dates = phaseCard.querySelector('.phase-dates')?.textContent?.trim() || '';
-            const status = phaseCard.querySelector('.phase-status')?.textContent?.trim() || '';
-            const progressValue = parsePercent(phaseCard.querySelector('.phase-progress-value')?.textContent || '0%');
-            const nextMilestone = phaseCard.querySelector('.phase-next-milestone')?.textContent?.trim() || '';
-            const notes = phaseCard.querySelector('.phase-notes')?.value?.trim() || '';
-            return { title, owner, dates, status, progressValue, nextMilestone, notes };
-        }
-
-        function getPhaseHeaderData(phaseCard) {
-            return {
-                title: phaseCard.querySelector('.phase-title')?.textContent?.trim() || '',
-                owner: phaseCard.querySelector('.phase-owner')?.textContent?.replace(/\s+/g, ' ').trim() || '',
-                dates: phaseCard.querySelector('.phase-dates')?.textContent?.replace(/\s+/g, ' ').trim() || '',
-                status: phaseCard.querySelector('.phase-status')?.textContent?.trim() || '',
-                progressValue: phaseCard.querySelector('.phase-progress-value')?.textContent?.trim() || '0%'
+        function getStatusMeta(status) {
+            var map = {
+                concluido: {
+                    label: 'Concluído',
+                    badge: 'border-green-200 bg-green-50 text-green-700',
+                    icon: 'fa-solid fa-circle-check text-green-600'
+                },
+                em_andamento: {
+                    label: 'Em andamento',
+                    badge: 'border-yellow-200 bg-yellow-50 text-yellow-700',
+                    icon: 'fa-solid fa-hourglass-half text-yellow-600'
+                },
+                planejado: {
+                    label: 'Planejado',
+                    badge: 'border-gray-200 bg-gray-50 text-gray-700',
+                    icon: 'fa-regular fa-circle text-gray-500'
+                }
             };
+            return map[status] || map.planejado;
         }
 
-        function getMilestoneComments(phaseId, milestoneIndex) {
-            if (!phaseOperationalData[phaseId]) {
-                phaseOperationalData[phaseId] = { riskLevel: 'Não definido', commentsByMilestone: {} };
-            }
-            const phaseOperation = phaseOperationalData[phaseId];
-            if (!phaseOperation.commentsByMilestone) {
-                phaseOperation.commentsByMilestone = {};
-            }
-            if (
-                !Array.isArray(phaseOperation.commentsByMilestone[0]) &&
-                Array.isArray(phaseOperation.events) &&
-                phaseOperation.events.length
-            ) {
-                phaseOperation.commentsByMilestone[0] = [...phaseOperation.events];
-            }
-            if (!Array.isArray(phaseOperation.commentsByMilestone[milestoneIndex])) {
-                phaseOperation.commentsByMilestone[milestoneIndex] = [];
-            }
-            return phaseOperation.commentsByMilestone[milestoneIndex];
+        function escapeHtml(value) {
+            return String(value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
-        function renderMilestoneComments(events) {
-            if (!events.length) {
-                return '<div class="rounded-lg border border-dashed border-gray-300 bg-white p-3 text-xs text-gray-500">Sem comentários de atividades registrados.</div>';
-            }
-            return events.map((event) => `
-                <div class="rounded-lg border border-gray-200 bg-white p-2">
-                    <div class="text-xs text-gray-500">${event.when}</div>
-                    <div class="text-xs font-semibold text-bevap-navy">${event.actor}</div>
-                    <div class="text-xs text-gray-500">${event.taskName ? `Tarefa: ${event.taskName}` : ''}</div>
-                    <div class="text-xs text-gray-700">${event.note}</div>
-                </div>
-            `).join('');
-        }
-
-        function updateMilestoneCommentsPanel(phaseId, milestoneIndex) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            const milestoneCard = phaseCard.querySelector(`[data-milestone-index="${milestoneIndex}"]`);
-            if (!milestoneCard) return;
-            const commentsContainer = milestoneCard.querySelector('[data-milestone-comments]');
-            if (!commentsContainer) return;
-            commentsContainer.innerHTML = renderMilestoneComments(getMilestoneComments(phaseId, milestoneIndex));
-        }
-
-        function setPhaseTaskPanelTab(phaseId, tab) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            phaseTaskPanelState[phaseId] = tab === 'history' ? 'history' : 'tasks';
-            const isTasks = phaseTaskPanelState[phaseId] === 'tasks';
-            const tasksButton = phaseCard.querySelector('[data-phase-tab-button="tasks"]');
-            const historyButton = phaseCard.querySelector('[data-phase-tab-button="history"]');
-            if (tasksButton) {
-                tasksButton.className = `px-2 py-1 rounded-md text-xs font-medium ${isTasks ? 'bg-bevap-navy text-white' : 'bg-gray-100 text-gray-700'}`;
-            }
-            if (historyButton) {
-                historyButton.className = `px-2 py-1 rounded-md text-xs font-medium ${isTasks ? 'bg-gray-100 text-gray-700' : 'bg-bevap-navy text-white'}`;
-            }
-            phaseCard.querySelectorAll('[data-milestone-tab-panel="tasks"]').forEach((panel) => panel.classList.toggle('hidden', !isTasks));
-            phaseCard.querySelectorAll('[data-milestone-tab-panel="history"]').forEach((panel) => panel.classList.toggle('hidden', isTasks));
-        }
-
-        function getTaskStatusInfo(task) {
-            if (task.done) {
-                return { label: 'Concluído', badgeClass: 'task-status-homolog' };
-            }
-            if (task.activityStatus === 'homolog') {
-                return { label: 'Homolog', badgeClass: 'task-status-homolog' };
-            }
-            if (task.activityStatus === 'em_validacao') {
-                return { label: 'Em validação', badgeClass: 'task-status-validacao' };
-            }
-            if (task.activityStatus === 'desenvolvimento') {
-                return { label: 'Desenvolvimento', badgeClass: 'task-status-desenvolvimento' };
-            }
-            if (task.activityStatus === 'pausado') {
-                return { label: 'Pausado', badgeClass: 'task-status-pausado' };
-            }
-            if (task.activityStatus === 'nao_iniciado') {
-                return { label: 'Não iniciado', badgeClass: 'task-status-nao-iniciado' };
-            }
-            if (task.blocked) {
-                return { label: 'Pausado', badgeClass: 'task-status-pausado' };
-            }
-            return { label: 'Não iniciado', badgeClass: 'task-status-nao-iniciado' };
-        }
-
-        function registerTaskToggleEvent(phaseId, milestoneIndex, taskIndex, isChecked) {
-            const task = phaseMilestones[phaseId]?.[milestoneIndex]?.tasks?.[taskIndex];
-            if (!task) return;
-            const milestoneComments = getMilestoneComments(phaseId, milestoneIndex);
-            milestoneComments.unshift({
-                actor: task.responsible || 'Não definido',
-                when: formatDateTimeBr(new Date()),
-                taskName: task.name || 'Tarefa sem nome',
-                note: isChecked ? 'Tarefa marcada como concluída.' : 'Tarefa desmarcada como concluída.'
-            });
-            phaseOperationalData[phaseId].commentsByMilestone[milestoneIndex] = milestoneComments.slice(0, 10);
-            updateMilestoneCommentsPanel(phaseId, milestoneIndex);
-        }
-
-        function setTaskActivityStatus(phaseId, milestoneIndex, taskIndex, nextStatus) {
-            const task = phaseMilestones[phaseId]?.[milestoneIndex]?.tasks?.[taskIndex];
-            if (!task) return;
-            const allowedStatus = ['nao_iniciado', 'desenvolvimento', 'pausado', 'em_validacao', 'homolog'];
-            if (!allowedStatus.includes(nextStatus)) return;
-            task.activityStatus = nextStatus;
-
-            const statusInfo = getTaskStatusInfo(task);
-            const milestoneComments = getMilestoneComments(phaseId, milestoneIndex);
-            milestoneComments.unshift({
-                actor: task.responsible || 'Não definido',
-                when: formatDateTimeBr(new Date()),
-                taskName: task.name || 'Tarefa sem nome',
-                note: `Status da atividade atualizado para ${statusInfo.label}.`
-            });
-            phaseOperationalData[phaseId].commentsByMilestone[milestoneIndex] = milestoneComments.slice(0, 10);
-            updateMilestoneCommentsPanel(phaseId, milestoneIndex);
-            renderPhaseMilestones(phaseId);
-            const phaseCard = document.getElementById(phaseId);
-            if (phaseCard) bindTaskCheckboxListeners(phaseCard, phaseId);
-        }
-
-        function closeAllTaskStatusMenus(phaseCard) {
-            phaseCard.querySelectorAll('[data-task-status-menu]').forEach((menu) => {
-                menu.classList.add('hidden');
-            });
-        }
-
-        function toggleTaskStatusMenu(phaseId, milestoneIndex, taskIndex) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            const menu = phaseCard.querySelector(`[data-task-status-menu][data-milestone-index="${milestoneIndex}"][data-task-index="${taskIndex}"]`);
-            if (!menu) return;
-            const isOpen = !menu.classList.contains('hidden');
-            closeAllTaskCommentPopovers(phaseCard);
-            closeAllTaskStatusMenus(phaseCard);
-            if (!isOpen) menu.classList.remove('hidden');
-        }
-
-        function renderPhaseMilestones(phaseId) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            const theme = metadataChipThemes.active;
-
-            const container = phaseCard.querySelector(`.phase-milestones[data-phase-key="${phaseId}"]`);
-            const milestones = phaseMilestones[phaseId] || [];
+        function renderPhases() {
+            var container = document.getElementById('execution-phases-list');
             if (!container) return;
-
-            const acceptanceContainer = phaseCard.querySelector('.phase-acceptance');
-            const acceptanceCriteria = milestones.flatMap((milestone) => milestone.acceptanceCriteria || []);
-            if (acceptanceContainer) {
-                acceptanceContainer.innerHTML = `
-                    <div class="flex items-center gap-2 mb-2">
-                        <span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 text-blue-700">
-                            <i class="fa-solid fa-check-double text-[10px]"></i>
-                        </span>
-                        <div class="text-sm uppercase tracking-wide text-blue-700">Aceite</div>
-                    </div>
-                    <div class="space-y-1.5">
-                        ${acceptanceCriteria.map((criteria) => `
-                            <div class="text-sm text-gray-700 flex items-start gap-2">
-                                <i class="fa-solid fa-check text-[9px] text-bevap-green mt-1"></i>
-                                <span>${criteria}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            }
-
-            container.innerHTML = milestones.map((milestone, milestoneIndex) => {
-                const activePanel = phaseTaskPanelState[phaseId] || 'tasks';
-                return `
-                <div class="bg-gradient-to-br from-slate-50 to-white border border-blue-100 rounded-xl p-3" data-milestone-index="${milestoneIndex}">
-                    <div class="space-y-3 ${activePanel === 'history' ? 'hidden' : ''}" data-milestone-tab-panel="tasks">
-                        ${milestone.tasks.map((task, taskIndex) => {
-                    const statusInfo = getTaskStatusInfo(task);
-                    const totalHours = Number(task.totalHours ?? 0);
-                    const usedHours = Number(task.usedHours ?? 0);
-                    const remainingHours = totalHours - usedHours;
-                    const usedHoursValueStyle = usedHours > totalHours ? 'color: #DC2626;' : usedHours < totalHours ? 'color: #0F766E;' : 'color: #1D4ED8;';
-                    const remainingValue = `${remainingHours}h`;
-                    const remainingValueStyle = remainingHours < 0 ? 'color: #DC2626;' : remainingHours > 0 ? 'color: #0F766E;' : 'color: #1D4ED8;';
-                    const taskRequestLink = `detalhamento-solicitacao.html?phase=${encodeURIComponent(phaseId)}&milestone=${milestoneIndex + 1}&task=${taskIndex + 1}`;
-                    return `
-                        <div class="relative rounded-xl border border-gray-200 bg-white px-3 py-2.5 shadow-sm">
-                            <input type="checkbox"
-                                class="phase-task-checkbox sr-only"
-                                data-phase-id="${phaseId}"
-                                data-milestone-index="${milestoneIndex}"
-                                data-task-index="${taskIndex}"
-                                data-weight="${task.weight}"
-                                ${task.done ? 'checked' : ''}
-                                disabled>
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="min-w-0 flex-1">
-                                    <div class="flex items-start gap-2 min-w-0">
-                                        <span class="${task.done ? 'inline-flex h-5 w-5 items-center justify-center rounded-md border bg-bevap-green border-bevap-green text-white' : 'inline-flex h-5 w-5 items-center justify-center text-gray-500'}">
-                                            <i class="${task.done ? 'fa-solid fa-check text-[10px]' : 'fa-regular fa-clock text-[11px]'}"></i>
-                                        </span>
-                                        <a href="${taskRequestLink}" class="inline-flex items-center gap-1.5 min-w-0 text-sm font-semibold text-bevap-navy leading-5 hover:text-blue-700 transition-colors">
-                                            <span class="truncate">${task.name}</span>
-                                            <i class="fa-solid fa-link text-[11px] shrink-0"></i>
-                                        </a>
-                                    </div>
-                                    <div class="mt-2 flex flex-nowrap items-center gap-2 text-gray-600" style="font-size: 13px;">
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full border ${theme.responsible.textClass} whitespace-nowrap" style="${getChipInlineStyle(theme.responsible)}">
-                                            <i class="fa-solid fa-user mr-1" style="color: ${theme.responsible.iconColor};"></i>
-                                            <span>Responsável: ${task.responsible || 'Não definido'}</span>
-                                        </span>
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full border ${theme.phase.textClass} whitespace-nowrap" style="${getChipInlineStyle(theme.phase)}">
-                                            <i class="fa-solid fa-layer-group mr-1" style="color: ${theme.phase.iconColor};"></i>
-                                            <span>Fase: ${task.phaseName || 'Não definida'}</span>
-                                        </span>
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full border ${theme.date.textClass} whitespace-nowrap" style="${getChipInlineStyle(theme.date)}">
-                                            <i class="fa-solid fa-calendar-alt mr-1" style="color: ${theme.date.iconColor};"></i>
-                                            <span>${task.dueDate || 'Sem data'}</span>
-                                        </span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-1.5 shrink-0 pt-0.5">
-                                    <span class="text-xs text-gray-500">Status:</span>
-                                    <span class="task-status-badge ${statusInfo.badgeClass}">
-                                        <span class="task-status-dot"></span>
-                                        <span>${statusInfo.label}</span>
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="mt-2 rounded-lg border border-gray-200 bg-gray-50 px-2.5 py-1.5">
-                                <div class="flex flex-wrap items-center gap-x-4 gap-y-1" style="font-size: 13px;">
-                                    <span class="inline-flex items-center gap-1">
-                                        <span class="text-gray-500">Esforço Estimado:</span>
-                                        <span class="font-semibold text-blue-700">${totalHours}h</span>
-                                    </span>
-                                    <span class="inline-flex items-center gap-1">
-                                        <span class="text-gray-500">Esforço Utilizado:</span>
-                                        <span class="font-semibold" style="${usedHoursValueStyle}">${usedHours}h</span>
-                                    </span>
-                                    <span class="inline-flex items-center gap-1">
-                                        <span class="text-gray-500">Horas Restantes:</span>
-                                        <span class="font-semibold" style="${remainingValueStyle}">${remainingValue}</span>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        `;
-                }).join('')}
-                    </div>
-                </div>
-            `;
+            container.innerHTML = phasesData.map(function (phase, index) {
+                var dependencies = Array.isArray(phase.dependencies)
+                    ? phase.dependencies
+                    : (phase.dependency ? [phase.dependency] : []);
+                var isCollapsed = collapsedPhases[index] === true;
+                return '' +
+                    '<div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">' +
+                        '<div class="flex items-start gap-3">' +
+                            '<span class="mt-0.5 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-blue-50 text-blue-700 shrink-0">' +
+                                '<i class="fa-solid fa-layer-group text-base"></i>' +
+                            '</span>' +
+                            '<div class="min-w-0 flex-1 pt-0.5">' +
+                                '<h3 class="text-base font-montserrat font-semibold text-bevap-navy">FASE: ' + escapeHtml(phase.name) + '</h3>' +
+                                '<p class="mt-1 text-sm leading-6 text-gray-600">' + escapeHtml(phase.notes) + '</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-4 flex flex-wrap items-center justify-between gap-3">' +
+                            '<div class="flex flex-wrap gap-2 text-[13px]">' +
+                                '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user-tie mr-1" style="color: #dbeafe;"></i>Responsável: ' + escapeHtml(phase.responsible) + '</span>' +
+                                '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-days mr-1 text-red-100"></i>Duração: ' + phase.duration + ' dias</span>' +
+                                '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #16a34a; border-color: #16a34a;"><i class="fa-regular fa-clock mr-1 text-green-200"></i>Esforço Total: ' + phase.effort + 'h</span>' +
+                            '</div>' +
+                            '<button type="button" onclick="togglePhaseCollapse(' + index + ')" class="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50">' +
+                                '<i class="fa-solid ' + (isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up') + ' mr-2 text-gray-400"></i>' + (isCollapsed ? 'Expandir' : 'Recolher') +
+                            '</button>' +
+                        '</div>' +
+                        '<div class="' + (isCollapsed ? 'hidden' : 'block') + '">' +
+                        '<div class="mt-4 rounded-xl border border-yellow-200 bg-yellow-50 p-4">' +
+                            '<div class="flex items-center gap-3 text-sm font-semibold text-gray-900">' +
+                                '<span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-yellow-200 text-yellow-700 shrink-0">' +
+                                    '<i class="fa-solid fa-link text-xs"></i>' +
+                                '</span>' +
+                                '<span>Dependências da Fase</span>' +
+                            '</div>' +
+                            '<div class="mt-3 space-y-2 pl-12">' +
+                                dependencies.map(function (dependency) {
+                                    return '' +
+                                        '<div class="flex items-start gap-3 text-sm text-gray-700">' +
+                                            '<span class="mt-2 inline-flex h-2.5 w-2.5 rounded-full bg-yellow-700 shrink-0"></span>' +
+                                            '<span class="font-medium text-gray-700">' + escapeHtml(dependency) + '</span>' +
+                                        '</div>';
+                                }).join('') +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-4 rounded-xl border border-gray-200 bg-slate-50 p-4">' +
+                            '<div class="mb-3 flex items-center justify-between gap-3">' +
+                                '<div>' +
+                                    '<h4 class="text-sm font-montserrat font-semibold text-gray-900">Tarefas da Fase</h4>' +
+                                    '<p class="text-xs text-gray-500">Relação de tarefas planejadas com esforço e duração.</p>' +
+                                '</div>' +
+                                '<span class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600">' + phase.tasks.length + ' tarefas</span>' +
+                            '</div>' +
+                            '<div class="space-y-3">' +
+                                phase.tasks.map(function (task) {
+                                    return '' +
+                                        '<div class="rounded-xl border border-gray-200 bg-white p-4">' +
+                                            '<div class="flex items-start justify-between gap-3">' +
+                                                '<div class="min-w-0 flex-1">' +
+                                                    '<div class="text-sm font-semibold text-bevap-navy">' + escapeHtml(task.name) + '</div>' +
+                                                    '<div class="mt-2 flex flex-wrap gap-2 text-[13px]">' +
+                                                        '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user mr-1" style="color: #dbeafe;"></i>Responsável: ' + escapeHtml(task.responsible) + '</span>' +
+                                                        '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #16a34a; border-color: #16a34a;"><i class="fa-regular fa-clock mr-1 text-green-200"></i>' + task.effort + 'h</span>' +
+                                                        '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-days mr-1 text-red-100"></i>' + task.duration + ' dias</span>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                            '</div>' +
+                                            '<div class="mt-3 border-t border-gray-100 pt-3 text-sm text-gray-600"><span class="font-medium text-gray-700">Dependência:</span> ' + escapeHtml(task.dependency) + '</div>' +
+                                        '</div>';
+                                }).join('') +
+                            '</div>' +
+                        '</div>' +
+                        '</div>' +
+                    '</div>';
             }).join('');
-            setPhaseTaskPanelTab(phaseId, phaseTaskPanelState[phaseId] || 'tasks');
-            renderPhaseOperationalPanels(phaseId);
-            updateReleaseGates(phaseCard);
         }
 
-        function syncMilestoneDataFromUI(phaseId) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            const checkboxes = Array.from(phaseCard.querySelectorAll('.phase-task-checkbox'));
-            checkboxes.forEach((checkbox) => {
-                const milestoneIndex = Number(checkbox.dataset.milestoneIndex);
-                const taskIndex = Number(checkbox.dataset.taskIndex);
-                const phaseData = phaseMilestones[phaseId];
-                if (!phaseData?.[milestoneIndex]?.tasks?.[taskIndex]) return;
-                phaseData[milestoneIndex].tasks[taskIndex].done = checkbox.checked;
-            });
+        function togglePhaseCollapse(index) {
+            collapsedPhases[index] = !collapsedPhases[index];
+            renderPhases();
         }
 
-        function formatDateTimeBr(date = new Date()) {
-            return date.toLocaleString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-        }
-
-        function addTaskEventComment(phaseId, milestoneIndex, taskIndex) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-
-            const input = phaseCard.querySelector(`[data-task-comment-input][data-milestone-index="${milestoneIndex}"][data-task-index="${taskIndex}"]`);
-            if (!input) return;
-
-            const note = input.value.trim();
-            if (!note) return;
-
-            const task = phaseMilestones[phaseId]?.[milestoneIndex]?.tasks?.[taskIndex];
-            if (!task) return;
-
-            const milestoneComments = getMilestoneComments(phaseId, milestoneIndex);
-            milestoneComments.unshift({
-                actor: task.responsible || 'Não definido',
-                when: formatDateTimeBr(new Date()),
-                taskName: task.name || 'Tarefa sem nome',
-                note
-            });
-            phaseOperationalData[phaseId].commentsByMilestone[milestoneIndex] = milestoneComments.slice(0, 10);
-
-            input.value = '';
-            closeTaskCommentPopover(phaseId, milestoneIndex, taskIndex);
-            updateMilestoneCommentsPanel(phaseId, milestoneIndex);
-            setPhaseTaskPanelTab(phaseId, 'history');
-            renderPhaseOperationalPanels(phaseId);
-            updateSummaryFromPhases();
-        }
-
-        function closeAllTaskCommentPopovers(phaseCard) {
-            phaseCard.querySelectorAll('[data-task-comment-popover]').forEach((popover) => {
-                popover.classList.add('hidden');
-            });
-        }
-
-        function toggleTaskCommentPopover(phaseId, milestoneIndex, taskIndex) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            const popover = phaseCard.querySelector(`[data-task-comment-popover][data-milestone-index="${milestoneIndex}"][data-task-index="${taskIndex}"]`);
-            if (!popover) return;
-            const isOpen = !popover.classList.contains('hidden');
-            closeAllTaskStatusMenus(phaseCard);
-            closeAllTaskCommentPopovers(phaseCard);
-            if (!isOpen) {
-                popover.classList.remove('hidden');
-                const input = popover.querySelector('[data-task-comment-input]');
-                if (input) input.focus();
-            }
-        }
-
-        function closeTaskCommentPopover(phaseId, milestoneIndex, taskIndex) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            const popover = phaseCard.querySelector(`[data-task-comment-popover][data-milestone-index="${milestoneIndex}"][data-task-index="${taskIndex}"]`);
-            if (!popover) return;
-            popover.classList.add('hidden');
-        }
-
-        function updatePhaseProgressFromTasks(phaseId) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            syncMilestoneDataFromUI(phaseId);
-            const checkboxes = Array.from(phaseCard.querySelectorAll('.phase-task-checkbox'));
-            if (!checkboxes.length) return;
-            const totalWeight = checkboxes.reduce((sum, checkbox) => sum + Number(checkbox.dataset.weight || 0), 0);
-            const checkedWeight = checkboxes
-                .filter((checkbox) => checkbox.checked)
-                .reduce((sum, checkbox) => sum + Number(checkbox.dataset.weight || 0), 0);
-            const progress = totalWeight > 0 ? Math.round((checkedWeight / totalWeight) * 100) : 0;
-            setProgressState(phaseCard, progress);
-            updateNextMilestoneForPhase(phaseId);
-            renderPhaseOperationalPanels(phaseId);
-            updateReleaseGates(phaseCard);
-        }
-
-        function updateNextMilestoneForPhase(phaseId) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            const target = phaseCard.querySelector('.phase-next-milestone');
-            if (!target) return;
-            const milestones = phaseMilestones[phaseId] || [];
-            const nextMilestone = milestones.find((milestone) => milestone.tasks.some((task) => !task.done));
-            target.textContent = nextMilestone
-                ? nextMilestone.nextMilestoneLabel
-                : 'Todos os marcos da fase foram atingidos';
-        }
-
-        function getReleaseGateStates(phaseCard) {
-            const progressValue = parsePercent(phaseCard.querySelector('.phase-progress-value')?.textContent || '0%');
-            const phaseId = phaseCard.id;
-            const milestoneTasks = (phaseMilestones[phaseId] || []).flatMap((milestone) => milestone.tasks || []);
-            const completedTasks = milestoneTasks.filter((task) => task.done).length;
-            const acceptanceItems = phaseCard.querySelectorAll('.phase-acceptance .fa-check-double').length;
-            return {
-                progress: progressValue >= 100,
-                acceptance: acceptanceItems > 0,
-                tasks: milestoneTasks.length > 0 && completedTasks === milestoneTasks.length
+        function getTaskStatusMeta(status) {
+            var map = {
+                aguardando_execucao: {
+                    label: 'Aguardando Execução',
+                    badge: 'border-gray-200 bg-gray-50 text-gray-700',
+                    icon: 'fa-regular fa-clock text-gray-500'
+                },
+                em_execucao: {
+                    label: 'Em Execução',
+                    badge: 'border-blue-200 bg-blue-50 text-blue-700',
+                    icon: 'fa-solid fa-play text-blue-600'
+                },
+                validacao_solicitante: {
+                    label: 'Validação do Solicitante',
+                    badge: 'border-yellow-200 bg-yellow-50 text-yellow-700',
+                    icon: 'fa-solid fa-user-check text-yellow-600'
+                },
+                validacao_ti: {
+                    label: 'Validação do TI',
+                    badge: 'border-indigo-200 bg-indigo-50 text-indigo-700',
+                    icon: 'fa-solid fa-shield-halved text-indigo-600'
+                },
+                concluido: {
+                    label: 'Concluído',
+                    badge: 'border-green-200 bg-green-50 text-green-700',
+                    icon: 'fa-solid fa-circle-check text-green-600'
+                }
             };
+            return map[status] || map.aguardando_execucao;
         }
 
-        function setPhaseActionButtonContent(button, label, iconClass) {
-            if (!button) return;
-            button.innerHTML = `<i class="${iconClass} mr-2"></i>${label}`;
+        function renderMilestones() {
+            var container = document.getElementById('execution-milestones-list');
+            if (!container) return;
+            container.innerHTML = milestonesData.map(function (milestone, index) {
+                var status = getStatusMeta(milestone.status);
+                var isCollapsed = collapsedMilestones[index] === true;
+                var executionActivityLink = '../marcos/ux-marco-execucao-atividade.html';
+                return '' +
+                    '<div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">' +
+                        '<div class="flex items-start justify-between gap-4">' +
+                            '<div class="min-w-0 flex-1">' +
+                                '<div class="flex items-center gap-3">' +
+                                    '<span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-50 text-yellow-700 shrink-0">' +
+                                        '<i class="fa-solid fa-flag-checkered text-base"></i>' +
+                                    '</span>' +
+                                    '<div class="min-w-0 flex-1">' +
+                                        '<h3 class="text-base font-montserrat font-semibold text-bevap-navy">Marco: ' + escapeHtml(milestone.name) + '</h3>' +
+                                    '</div>' +
+                                '</div>' +
+                            '</div>' +
+                            '<span class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold shrink-0 ' + status.badge + '">' +
+                                '<i class="' + status.icon + '"></i>' +
+                                '<span>' + status.label + '</span>' +
+                            '</span>' +
+                        '</div>' +
+                        '<div class="mt-4 flex flex-wrap items-center justify-between gap-3">' +
+                            '<div class="flex flex-wrap gap-2 text-[13px]">' +
+                                '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user-tie mr-1" style="color: #dbeafe;"></i>Responsável: ' + escapeHtml(milestone.owner) + '</span>' +
+                                '<span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>' + escapeHtml(milestone.period) + '</span>' +
+                            '</div>' +
+                            '<button type="button" onclick="toggleMilestoneCollapse(' + index + ')" class="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50">' +
+                                '<i class="fa-solid ' + (isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up') + ' mr-2 text-gray-400"></i>' + (isCollapsed ? 'Expandir' : 'Recolher') +
+                            '</button>' +
+                        '</div>' +
+                        '<div class="' + (isCollapsed ? 'hidden' : 'block') + '">' +
+                        '<div class="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">' +
+                            '<div class="mb-1.5 flex items-center gap-2">' +
+                                '<i class="fa-solid fa-check-double text-sm text-blue-700"></i>' +
+                                '<h4 class="text-sm font-montserrat font-semibold text-gray-900">Critérios de Aceite</h4>' +
+                            '</div>' +
+                            '<div class="space-y-0.5">' +
+                                milestone.criteria.map(function (item) {
+                                    return '<div class="flex items-start gap-1 rounded-lg bg-blue-50 px-3 py-1 text-sm leading-snug text-gray-700"><i class="fa-solid fa-check mt-0.5 text-[10px] text-bevap-green"></i><span>' + escapeHtml(item) + '</span></div>';
+                                }).join('') +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-4 rounded-xl border border-gray-200 bg-slate-50 p-4">' +
+                                '<div class="mb-3 flex items-center justify-between gap-3">' +
+                                    '<div>' +
+                                        '<h4 class="text-sm font-montserrat font-semibold text-gray-900">Tarefas do Marco</h4>' +
+                                        '<p class="text-xs text-gray-500">Tarefas relacionadas no planejamento para compor esta entrega.</p>' +
+                                    '</div>' +
+                                    '<span class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs font-medium text-gray-600">' + milestone.tasks.length + ' tarefas</span>' +
+                                '</div>' +
+                                '<div class="space-y-3">' +
+                                    milestone.tasks.map(function (task) {
+                                        var taskStatus = getTaskStatusMeta(task.status);
+                                        return '' +
+                                            '<div class="rounded-xl border border-gray-200 bg-white p-4">' +
+                                                '<div class="flex items-start justify-between gap-3">' +
+                                                    '<div class="min-w-0 flex-1">' +
+                                                        '<a href="' + executionActivityLink + '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 text-sm font-semibold text-bevap-navy hover:text-blue-700 transition-colors">' +
+                                                            '<span>' + escapeHtml(task.taskName) + '</span>' +
+                                                            '<i class="fa-solid fa-link text-[11px] shrink-0"></i>' +
+                                                        '</a>' +
+                                                        '<div class="mt-2 flex flex-wrap gap-2 text-[13px]">' +
+                                                            '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user-tie mr-1 text-blue-100"></i>Responsável: ' + escapeHtml(task.responsible || '-') + '</span>' +
+                                                            '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #16a34a; border-color: #16a34a;"><i class="fa-solid fa-layer-group mr-1 text-green-200"></i>Fase: ' + escapeHtml(task.phaseName) + '</span>' +
+                                                            '<span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-days mr-1 text-red-100"></i>' + escapeHtml(task.date) + '</span>' +
+                                                        '</div>' +
+                                                    '</div>' +
+                                                    '<span class="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold shrink-0 ' + taskStatus.badge + '">' +
+                                                        '<i class="' + taskStatus.icon + '"></i>' +
+                                                        '<span>' + taskStatus.label + '</span>' +
+                                                    '</span>' +
+                                                '</div>' +
+                                            '</div>';
+                                    }).join('') +
+                                '</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
+            }).join('');
         }
 
-        function lockPhaseNotesField(phaseCard) {
-            const notesField = phaseCard?.querySelector('.phase-notes');
-            if (!notesField) return;
-            notesField.readOnly = true;
-            notesField.classList.add('bg-gray-100', 'text-gray-600', 'cursor-not-allowed');
+        function toggleMilestoneCollapse(index) {
+            collapsedMilestones[index] = !collapsedMilestones[index];
+            renderMilestones();
         }
 
-        function getNextPhaseCard(phaseId) {
-            const phaseCards = getPhaseCards();
-            const currentIndex = phaseCards.findIndex((card) => card.id === phaseId);
-            if (currentIndex < 0) return null;
-            return phaseCards[currentIndex + 1] || null;
+        function renderRisks() {
+            var container = document.getElementById('execution-risks-list');
+            if (!container) return;
+            container.innerHTML = risksData.map(function (risk) {
+                var accent = risk.severity === 'Alto'
+                    ? 'border-red-300 bg-white'
+                    : risk.severity === 'Médio'
+                        ? 'border-yellow-200 bg-yellow-50'
+                        : 'border-green-200 bg-green-50';
+                var badge = risk.severity === 'Alto'
+                    ? 'bg-red-200 text-red-900'
+                    : risk.severity === 'Médio'
+                        ? 'bg-yellow-100 text-yellow-800'
+                        : 'bg-green-100 text-green-800';
+                var metaText = risk.severity === 'Alto'
+                    ? 'text-red-800'
+                    : risk.severity === 'Médio'
+                        ? 'text-yellow-700'
+                        : 'text-green-700';
+                return '' +
+                    '<div class="rounded-xl border p-5 shadow-sm ' + accent + '">' +
+                        '<div class="flex items-start justify-between gap-3">' +
+                            '<div class="min-w-0 flex-1">' +
+                                '<div class="flex items-center gap-2">' +
+                                    '<i class="fa-solid fa-triangle-exclamation text-sm ' + (risk.severity === 'Alto' ? 'text-red-600' : (risk.severity === 'Médio' ? 'text-yellow-600' : 'text-green-600')) + '"></i>' +
+                                    '<h4 class="text-base font-montserrat font-semibold text-bevap-navy">' + escapeHtml(risk.title) + '</h4>' +
+                                '</div>' +
+                                '<div class="mt-2 text-sm ' + metaText + '">Probabilidade: ' + escapeHtml(risk.probability) + ' | Impacto: ' + escapeHtml(risk.impact) + '</div>' +
+                            '</div>' +
+                            '<span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ' + badge + '">' + escapeHtml(risk.severity) + '</span>' +
+                        '</div>' +
+                        '<div class="mt-3 text-sm text-gray-600"><span class="font-medium text-gray-700">Responsável:</span> ' + escapeHtml(risk.owner) + '</div>' +
+                        '<div class="mt-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700"><strong>Mitigação:</strong> ' + escapeHtml(risk.mitigation) + '</div>' +
+                        '<div class="mt-3 rounded-lg border border-gray-200 bg-white p-4 text-sm text-gray-700"><strong>Plano B:</strong> ' + escapeHtml(risk.fallback) + '</div>' +
+                    '</div>';
+            }).join('');
         }
 
-        function openStartMilestoneModal(phaseId) {
-            const phaseCard = document.getElementById(phaseId);
-            const modal = document.getElementById('start-milestone-modal');
-            const message = document.getElementById('start-milestone-modal-message');
-            if (!phaseCard || !modal || !message) return;
-            const phaseTitle = phaseCard.querySelector('.phase-title')?.textContent?.trim() || 'esta fase';
-            message.textContent = `Deseja iniciar o marco de "${phaseTitle}"?`;
-            pendingStartMilestonePhaseId = phaseId;
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+        function renderRaci() {
+            var body = document.getElementById('execution-raci-body');
+            if (!body) return;
+            body.innerHTML = raciData.map(function (row) {
+                return '' +
+                    '<tr>' +
+                        '<td class="px-4 py-3 align-top">' +
+                            '<div class="font-medium text-bevap-navy">' + escapeHtml(row.milestone) + '</div>' +
+                        '</td>' +
+                        '<td class="px-4 py-3 align-top text-gray-700">' + escapeHtml(row.responsible) + '</td>' +
+                        '<td class="px-4 py-3 align-top text-gray-700">' + escapeHtml(row.approver) + '</td>' +
+                        '<td class="px-4 py-3 align-top text-gray-700">' + escapeHtml(row.consulted) + '</td>' +
+                        '<td class="px-4 py-3 align-top text-gray-700">' + escapeHtml(row.informed) + '</td>' +
+                    '</tr>';
+            }).join('');
         }
 
-        function closeStartMilestoneModal() {
-            const modal = document.getElementById('start-milestone-modal');
-            if (!modal) return;
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-            pendingStartMilestonePhaseId = null;
+        function renderCommunicationPlan() {
+            var body = document.getElementById('execution-communication-body');
+            if (!body) return;
+            body.innerHTML = communicationPlanData.map(function (row) {
+                return '' +
+                    '<tr>' +
+                        '<td class="px-4 py-3 text-gray-700">' + escapeHtml(row.audience) + '</td>' +
+                        '<td class="px-4 py-3 text-gray-700">' + escapeHtml(row.channel) + '</td>' +
+                        '<td class="px-4 py-3 text-gray-700">' + escapeHtml(row.frequency) + '</td>' +
+                    '</tr>';
+            }).join('');
         }
 
-        function applyStartMilestone(phaseId) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            startedMilestones.add(phaseId);
-            lockPhaseNotesField(phaseCard);
-            updateReleaseGates(phaseCard);
-            const nextPhaseCard = getNextPhaseCard(phaseId);
-            if (nextPhaseCard) {
-                unlockedPhaseStartButtons.add(nextPhaseCard.id);
-                updateReleaseGates(nextPhaseCard);
-            }
-            updateSummaryFromPhases();
+        function updateSummary() {
+            return;
         }
 
-        function confirmStartMilestone() {
-            if (!pendingStartMilestonePhaseId) return;
-            const phaseId = pendingStartMilestonePhaseId;
-            closeStartMilestoneModal();
-            applyStartMilestone(phaseId);
-        }
-
-        function updateReleaseGates(phaseCard) {
-            if (!phaseCard) return;
-            const states = getReleaseGateStates(phaseCard);
-
-            const completeButton = phaseCard.querySelector('.phase-complete-button');
-            if (completeButton) {
-                if (startedMilestones.has(phaseCard.id)) {
-                    completeButton.disabled = true;
-                    completeButton.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
-                    completeButton.classList.remove('bg-bevap-green', 'text-white', 'hover:bg-green-700');
-                    setPhaseActionButtonContent(completeButton, 'Marco Iniciado', 'fa-solid fa-circle-check');
-                    return;
-                }
-                const isReady = unlockedPhaseStartButtons.has(phaseCard.id) || Object.values(states).every(Boolean);
-                completeButton.disabled = !isReady;
-                completeButton.classList.toggle('bg-gray-300', !isReady);
-                completeButton.classList.toggle('text-gray-500', !isReady);
-                completeButton.classList.toggle('cursor-not-allowed', !isReady);
-                completeButton.classList.toggle('bg-bevap-green', isReady);
-                completeButton.classList.toggle('text-white', isReady);
-                completeButton.classList.toggle('hover:bg-green-700', isReady);
-                setPhaseActionButtonContent(completeButton, 'Iniciar Marco', 'fa-solid fa-play');
-            }
-        }
-
-        function renderPhaseOperationalPanels(phaseId) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            const phaseTasks = (phaseMilestones[phaseId] || []).flatMap((milestone) => milestone.tasks || []);
-            const today = getTodayDateOnly();
-            const blocked = phaseTasks.filter((task) => !task.done && task.blocked).length;
-            const overdue = phaseTasks.filter((task) => {
-                if (task.done) return false;
-                const dueDate = parseBrDate(task.dueDate);
-                return dueDate ? dueDate < today : false;
-            }).length;
-            const pending = phaseTasks.filter((task) => !task.done && !task.blocked).length;
-
-            const kpis = { pending, overdue, blocked };
-            phaseCard.querySelectorAll('[data-task-kpi]').forEach((kpiElement) => {
-                const key = kpiElement.dataset.taskKpi;
-                kpiElement.textContent = String(kpis[key] ?? 0);
-            });
-
-        }
-
-        function setProgressState(phaseCard, progressValue) {
-            const progress = Math.max(0, Math.min(100, progressValue));
-            const progressLabel = phaseCard.querySelector('.phase-progress-value');
-            const progressBar = phaseCard.querySelector('.phase-progress-bar');
-            if (progressLabel) progressLabel.textContent = `${progress}%`;
-            if (progressBar) {
-                progressBar.className = 'phase-progress-bar bg-blue-500 h-2.5 rounded-full transition-all';
-                progressBar.style.width = `${progress}%`;
-            }
-
-            const statusBadge = phaseCard.querySelector('.phase-status');
-            if (statusBadge) {
-                statusBadge.className = 'phase-status inline-flex items-center gap-1.5 px-3 py-1 border text-xs font-semibold rounded-full shrink-0';
-                if (progress === 0) {
-                    statusBadge.classList.add('border-gray-200', 'bg-gray-50', 'text-gray-700');
-                    statusBadge.innerHTML = '<i class="fa-regular fa-circle text-gray-500"></i><span>Não Iniciada</span>';
-                } else if (progress < 100) {
-                    statusBadge.classList.add('border-yellow-200', 'bg-yellow-50', 'text-yellow-700');
-                    statusBadge.innerHTML = '<i class="fa-solid fa-hourglass-half text-yellow-600"></i><span>Em Andamento</span>';
-                } else {
-                    statusBadge.classList.add('border-green-200', 'bg-green-50', 'text-green-700');
-                    statusBadge.innerHTML = '<i class="fa-solid fa-circle-check text-green-600"></i><span>Concluída</span>';
-                }
-            }
-            updateReleaseGates(phaseCard);
-        }
-
-        function updateSummaryFromPhases() {
-            const phases = getPhaseCards().map(getPhaseData);
-            if (!phases.length) return;
-
-            const totalProgress = phases.reduce((sum, phase) => sum + phase.progressValue, 0);
-            const averageProgress = Math.round(totalProgress / phases.length);
-            const completedCount = phases.filter(phase => phase.progressValue >= 100).length;
-            const qaReadyCount = getPhaseCards().filter((phaseCard) => Object.values(getReleaseGateStates(phaseCard)).every(Boolean)).length;
-
-            const progressText = document.getElementById('execution-progress-text');
-            const progressBar = document.getElementById('execution-progress-bar');
-            const completedPhases = document.getElementById('completed-phases-count');
-            const qaCount = document.getElementById('qa-ready-count');
-
-            if (progressText) progressText.textContent = `${averageProgress}%`;
-            if (progressBar) progressBar.style.width = `${averageProgress}%`;
-            if (completedPhases) completedPhases.textContent = `${completedCount} de ${phases.length}`;
-            if (qaCount) qaCount.textContent = `${qaReadyCount} de ${phases.length} fases`;
-        }
-
-        function markNextTaskComplete(phaseId) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            const nextUncheckedTask = phaseCard.querySelector('.phase-task-checkbox:not(:checked)');
-            if (nextUncheckedTask) {
-                nextUncheckedTask.checked = true;
-                updatePhaseProgressFromTasks(phaseId);
-            }
-            updateSummaryFromPhases();
-        }
-
-        function completePhase(phaseId) {
-            const phaseCard = document.getElementById(phaseId);
-            if (!phaseCard) return;
-            const completeButton = phaseCard.querySelector('.phase-complete-button');
-            if (completeButton?.disabled) return;
-            openStartMilestoneModal(phaseId);
-        }
-
-        function bindTaskCheckboxListeners(phaseCard, phaseId) {
-            phaseCard.querySelectorAll('.phase-task-checkbox').forEach((checkbox) => {
-                checkbox.addEventListener('change', () => {
-                    const milestoneIndex = Number(checkbox.dataset.milestoneIndex);
-                    const taskIndex = Number(checkbox.dataset.taskIndex);
-                    registerTaskToggleEvent(phaseId, milestoneIndex, taskIndex, checkbox.checked);
-                    updatePhaseProgressFromTasks(phaseId);
-                    renderPhaseMilestones(phaseId);
-                    bindTaskCheckboxListeners(phaseCard, phaseId);
-                    updateSummaryFromPhases();
-                });
+        function toggleTab(tabName) {
+            ['phases', 'milestones', 'risks', 'raci'].forEach(function (tab) {
+                var button = document.getElementById('tab-execution-' + tab);
+                var content = document.getElementById('tab-content-execution-' + tab);
+                if (!button || !content) return;
+                var active = tab === tabName;
+                button.classList.toggle('border-bevap-green', active);
+                button.classList.toggle('text-bevap-green', active);
+                button.classList.toggle('bg-green-50', active);
+                button.classList.toggle('border-transparent', !active);
+                button.classList.toggle('text-gray-500', !active);
+                button.classList.toggle('hover:text-gray-700', !active);
+                content.classList.toggle('hidden', !active);
             });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            getPhaseCards().forEach(phaseCard => {
-                const phaseId = phaseCard.id;
-                applyHeaderChipThemes(phaseCard);
-                renderPhaseMilestones(phaseId);
-                const progress = parsePercent(phaseCard.querySelector('.phase-progress-value')?.textContent || '0%');
-                setProgressState(phaseCard, progress);
-                updatePhaseProgressFromTasks(phaseId);
-                bindTaskCheckboxListeners(phaseCard, phaseId);
-                const notesField = phaseCard.querySelector('.phase-notes');
-                if (notesField) {
-                    notesField.addEventListener('input', () => updateSummaryFromPhases());
-                }
+        function bindTabs() {
+            var scroller = document.getElementById('execution-tabs-scroll');
+            var leftArrow = document.getElementById('execution-tabs-left-arrow');
+            var rightArrow = document.getElementById('execution-tabs-right-arrow');
+
+            function updateArrows() {
+                if (!scroller || !leftArrow || !rightArrow) return;
+                var maxScroll = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+                var hasOverflow = maxScroll > 2;
+                var atStart = scroller.scrollLeft <= 2;
+                var atEnd = scroller.scrollLeft >= maxScroll - 2;
+                leftArrow.classList.toggle('opacity-0', !hasOverflow || atStart);
+                leftArrow.classList.toggle('pointer-events-none', !hasOverflow || atStart);
+                rightArrow.classList.toggle('opacity-0', !hasOverflow || atEnd);
+                rightArrow.classList.toggle('pointer-events-none', !hasOverflow || atEnd);
+            }
+
+            document.getElementById('tab-execution-phases')?.addEventListener('click', function () {
+                toggleTab('phases');
             });
-            const startModal = document.getElementById('start-milestone-modal');
-            document.getElementById('start-milestone-modal-cancel')?.addEventListener('click', closeStartMilestoneModal);
-            document.getElementById('start-milestone-modal-confirm')?.addEventListener('click', confirmStartMilestone);
-            startModal?.addEventListener('click', (event) => {
-                if (event.target === startModal) closeStartMilestoneModal();
+            document.getElementById('tab-execution-milestones')?.addEventListener('click', function () {
+                toggleTab('milestones');
             });
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape') closeStartMilestoneModal();
+            document.getElementById('tab-execution-risks')?.addEventListener('click', function () {
+                toggleTab('risks');
             });
-            updateSummaryFromPhases();
+            document.getElementById('tab-execution-raci')?.addEventListener('click', function () {
+                toggleTab('raci');
+            });
+            leftArrow?.addEventListener('click', function () {
+                scroller.scrollTo({ left: 0, behavior: 'smooth' });
+                window.setTimeout(updateArrows, 360);
+            });
+            rightArrow?.addEventListener('click', function () {
+                scroller.scrollTo({ left: scroller.scrollWidth - scroller.clientWidth, behavior: 'smooth' });
+                window.setTimeout(updateArrows, 360);
+            });
+            scroller?.addEventListener('scroll', updateArrows);
+            window.setTimeout(updateArrows, 0);
+            toggleTab('phases');
+        }
+
+        function showToast(title, message, type) {
+            var toast = document.getElementById('toast');
+            var icon = document.getElementById('toast-icon');
+            var titleElement = document.getElementById('toast-title');
+            var messageElement = document.getElementById('toast-message');
+            if (!toast || !icon || !titleElement || !messageElement) return;
+            var types = {
+                success: { border: 'border-emerald-500', icon: 'fa-solid fa-circle-check text-emerald-600' },
+                error: { border: 'border-red-500', icon: 'fa-solid fa-circle-xmark text-red-600' },
+                info: { border: 'border-blue-500', icon: 'fa-solid fa-circle-info text-blue-600' }
+            };
+            var selected = types[type] || types.info;
+            toast.className = 'fixed top-24 right-4 z-[70] hidden max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl ' + selected.border;
+            icon.className = selected.icon + ' text-xl';
+            titleElement.textContent = title;
+            messageElement.textContent = message;
+            toast.classList.remove('hidden');
+            window.clearTimeout(window.__projectExecutionToastTimeout);
+            window.__projectExecutionToastTimeout = window.setTimeout(function () {
+                toast.classList.add('hidden');
+            }, 3200);
+        }
+
+        function openReturnModal() {
+            document.getElementById('return-modal')?.classList.remove('hidden');
+        }
+
+        function closeReturnModal() {
+            document.getElementById('return-modal')?.classList.add('hidden');
+        }
+
+        function confirmReturnModal() {
+            var reason = document.getElementById('return-reason');
+            if (!reason || !reason.value.trim()) {
+                showToast('Campo obrigatório', 'Descreva o motivo para retornar ao planejamento.', 'error');
+                reason?.focus();
+                return;
+            }
+            closeReturnModal();
+            window.location.href = '../ux-planejamento.html';
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            renderPhases();
+            renderMilestones();
+            renderRisks();
+            renderRaci();
+            renderCommunicationPlan();
+            updateSummary();
+            bindTabs();
+
+            document.querySelector('[data-action="return-planning"]')?.addEventListener('click', openReturnModal);
+            document.querySelector('[data-action="close-return-modal"]')?.addEventListener('click', closeReturnModal);
+            document.querySelector('[data-action="confirm-return-modal"]')?.addEventListener('click', confirmReturnModal);
+            document.getElementById('return-modal')?.addEventListener('click', function (event) {
+                if (event.target && event.target.id === 'return-modal') closeReturnModal();
+            });
         });
     </script>
 </body>
-
 </html>

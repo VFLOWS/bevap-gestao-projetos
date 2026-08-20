@@ -1,0 +1,18 @@
+{
+	"version": "1.0.0",
+	"configurations": [
+		{
+			"id": "2t3ez8ycauymn6mju4d3bqjrirag35",
+			"name": "HOMOLOG",
+			"host": "fluigqa.bevap.com.br",
+			"ssl": true,
+			"port": 8443,
+			"username": "vinicius.nogueira@vflows.com.br",
+			"password": "eyJpdiI6IjliNzUwNDdkOThlMTg0MDBjNTM0ZTBjMTIxZGNmMTM2Iiwic2FsdCI6IjBkZDM5NWUwYzU5YzI1NzhiNGQ3ZjRjN2U0NjYzZmE3IiwidGV4dCI6ImQzYmMxYTA4ZmEzY2U2YTVhNDJmNWM1NmNjMWE5YTIzM2I5OTBjZWQ1OWI2YWVkNmY4OTM2N2UxY2EzMzdlY2EifQ==",
+			"userCode": "14cdc0c0-a710-4412-81dd-d94fe3abe00a",
+			"confirmExporting": false,
+			"hasBrowser": false,
+			"companyId": 1
+		}
+	]
+}
