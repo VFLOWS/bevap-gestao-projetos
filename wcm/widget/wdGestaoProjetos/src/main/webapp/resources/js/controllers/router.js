@@ -128,6 +128,42 @@ const router = {
           controller: glpiErrorTreatmentController,
           handler: () => glpiErrorTreatmentController.load(params)
         },
+        dpGlpiErrorTreatment: {
+          controller: dpGlpiErrorTreatmentController,
+          title: 'TI - Tratar Erro Integracao GLPI',
+          breadcrumb: ['TI', 'Erro Integracao GLPI'],
+          handler: () => dpGlpiErrorTreatmentController.load(params)
+        },
+        dpStartExecErrorTreatment: {
+          controller: dpStartExecErrorTreatmentController,
+          title: 'TI - Tratar Erro Iniciar Execução',
+          breadcrumb: ['TI', 'Erro Iniciar Execução'],
+          handler: () => dpStartExecErrorTreatmentController.load(params)
+        },
+        executionActivityWaiting: {
+          controller: executionActivityWaitingController,
+          title: 'Aguardando Execucao da Atividade',
+          breadcrumb: ['Execucao de Fases', 'Aguardando Execucao'],
+          handler: () => executionActivityWaitingController.load(params)
+        },
+        executionActivity: {
+          controller: executionActivityController,
+          title: 'Execucao da Atividade',
+          breadcrumb: ['Execucao de Fases', 'Execucao da Atividade'],
+          handler: () => executionActivityController.load(params)
+        },
+        executionActivityRequesterValidation: {
+          controller: executionActivityRequesterValidationController,
+          title: 'Solicitante - Validacao da Atividade',
+          breadcrumb: ['Execucao de Fases', 'Validacao do Solicitante'],
+          handler: () => executionActivityRequesterValidationController.load(params)
+        },
+        executionActivityTiValidation: {
+          controller: executionActivityTiValidationController,
+          title: 'TI - Validacao da Atividade',
+          breadcrumb: ['Execucao de Fases', 'Validacao TI'],
+          handler: () => executionActivityTiValidationController.load(params)
+        },
         requesterProposalApproval: {
           controller: requesterProposalApprovalController,
           title: 'Solicitante - Aprovar Proposta Comercial',

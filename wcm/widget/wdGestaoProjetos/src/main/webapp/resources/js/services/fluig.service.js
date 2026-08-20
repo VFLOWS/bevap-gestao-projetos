@@ -293,6 +293,13 @@ var fluigService = {
                 datasetId: 'dsGetDesenvolvimentoProjetos',
                 formName: 'FormDesenvolvimentoProjetos',
                 label: 'Desenvolvimento'
+            },
+            execucaoFases: {
+                type: 'execucaoFases',
+                processName: 'execucaoFasesAtividades',
+                datasetId: 'dsGetExecucaoAtividade',
+                formName: 'formExecucaoAtividade',
+                label: 'Execucao de Fases'
             }
         };
     },
@@ -309,6 +316,10 @@ var fluigService = {
 
         if (text === 'desenvolvimento') {
             return 'desenvolvimento';
+        }
+
+        if (text === 'execucaofases' || text === 'execucao-fases' || text === 'execucao fases') {
+            return 'execucaoFases';
         }
 
         return '';
@@ -331,6 +342,10 @@ var fluigService = {
 
         if (text.indexOf('processdesenvolvimentoprojetos') !== -1 || text.indexOf('desenvolvimento') !== -1) {
             return 'desenvolvimento';
+        }
+
+        if (text.indexOf('execucaofasesatividades') !== -1 || text.indexOf('execucao fases') !== -1 || text.indexOf('execuÃ§Ã£o fases') !== -1) {
+            return 'execucaoFases';
         }
 
         return '';
@@ -421,7 +436,7 @@ var fluigService = {
     },
 
     getProjectCancelledActivities: function () {
-        return [24, 47, 59];
+        return [24, 47, 55, 56, 59];
     },
 
     getProjectProcessActionMap: function (processType) {
@@ -470,6 +485,31 @@ var fluigService = {
                  route: 'projectFinal',
                  label: 'Visualizar Encerramento'
                  }
+            };
+        }
+
+        if (normalizedType === 'execucaoFases') {
+            return {
+                14: {
+                    enabled: true,
+                    route: 'executionActivityWaiting',
+                    label: 'Aguardar Execucao'
+                },
+                18: {
+                    enabled: true,
+                    route: 'executionActivity',
+                    label: 'Executar Atividade'
+                },
+                23: {
+                    enabled: true,
+                    route: 'executionActivityRequesterValidation',
+                    label: 'Validar Atividade'
+                },
+                32: {
+                    enabled: true,
+                    route: 'executionActivityTiValidation',
+                    label: 'Validar Atividade TI'
+                }
             };
         }
 
@@ -559,6 +599,23 @@ var fluigService = {
                 46: 'Erro de Integracao GLPI',
                 52: 'Erro de Integracao GLPI',
                 72: 'Finalizado'
+            };
+        }
+
+        if (normalizedType === 'execucaoFases') {
+            return {
+                0: 'Inicio da Atividade',
+                12: 'Integracao GLPI',
+                14: 'Aguardando Execucao da Atividade',
+                18: 'Execucao da Atividade',
+                23: 'Validacao do Solicitante',
+                25: 'Aguardando Encaminhamento da Validacao do Solicitante',
+                32: 'Validacao TI',
+                34: 'Aguardando Encaminhamento da Validacao TI',
+                36: 'Integracao GLPI',
+                41: 'Finalizado',
+                46: 'Erro de Integracao GLPI',
+                52: 'Erro de Integracao GLPI'
             };
         }
 
