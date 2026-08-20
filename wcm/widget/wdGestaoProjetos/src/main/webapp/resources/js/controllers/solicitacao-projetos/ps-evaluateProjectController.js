@@ -198,16 +198,7 @@ const evaluateProjectController = {
 
       const returnReason = this.asText(container.find('#evaluate-return-reason-input').val());
       if (!returnReason) {
-        const ui = this.getUiComponents();
-        if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
-          ui.validation.showValidationModal(this.getContainer(), {
-            missingFields: ['Justificativa da devolucao'],
-            title: 'Campos Obrigatorios',
-            message: 'Por favor, preencha todos os campos obrigatorios antes de devolver a solicitacao.'
-          });
-        } else {
-          this.showToast('Informe o motivo da devolucao.', 'warning');
-        }
+        this.showToast('Informe o motivo da devolucao.', 'warning');
         container.find('#evaluate-return-reason-input').trigger('focus');
         return;
       }
@@ -218,6 +209,32 @@ const evaluateProjectController = {
         decisionField: 'decisaoAvaliarProjeto',
         decisionValue: 'correcao',
         successMessage: 'Projeto devolvido para correcao'
+      });
+    });
+
+    container.on(`click${ns}`, '[data-action="confirm-reject"]', (event) => {
+      event.preventDefault();
+
+      const rejectCategory = this.asText(container.find('#evaluate-reject-category-input').val());
+      if (!rejectCategory) {
+        this.showToast('Selecione a categoria da reprovacao.', 'warning');
+        container.find('#evaluate-reject-category-input').trigger('focus');
+        return;
+      }
+
+      const rejectDescription = this.asText(container.find('#evaluate-reject-description-input').val());
+      if (!rejectDescription) {
+        this.showToast('Informe a justificativa da reprovacao.', 'warning');
+        container.find('#evaluate-reject-description-input').trigger('focus');
+        return;
+      }
+
+      this.handleTaskAction({
+        modalId: 'modal-reject',
+        choosedState: 14,
+        decisionField: 'decisaoAvaliarProjeto',
+        decisionValue: 'cancelado',
+        successMessage: 'Projeto marcado como nao continuidade'
       });
     });
 
@@ -985,16 +1002,6 @@ const evaluateProjectController = {
   },
 
   showEvaluateValidationWarning: function (missing) {
-    const ui = this.getUiComponents();
-    if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
-      ui.validation.showValidationModal(this.getContainer(), {
-        missingFields: missing,
-        title: 'Campos Obrigatorios',
-        message: 'Por favor, preencha todos os campos obrigatorios antes de continuar.'
-      });
-      return;
-    }
-
     this.showToast(`Campos obrigatorios: Preencha ${missing.join(' | ')}`, 'warning');
   },
 

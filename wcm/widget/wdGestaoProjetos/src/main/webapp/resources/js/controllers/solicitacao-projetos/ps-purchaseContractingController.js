@@ -1833,69 +1833,6 @@ const purchaseContractingController = {
     return payload.filter((item) => item.fileName && item.fileContent);
   },
 
-  validateAllocationCompliance: function () {
-    const issues = [];
-    const tolerance = 0.009;
-    const proposalTotal = this.getProposalTotalAmount();
-    const root = this.getContainer();
-
-    const kinds = [
-      {
-        kind: 'capex',
-        enabled: Boolean(root.find('#contract-cost-nature-capex').prop('checked')),
-        percent: this.parsePercentValue(root.find('#contract-capex-percent').val())
-      },
-      {
-        kind: 'opex',
-        enabled: Boolean(root.find('#contract-cost-nature-opex').prop('checked')),
-        percent: this.parsePercentValue(root.find('#contract-opex-percent').val())
-      }
-    ];
-
-    kinds.forEach((entry) => {
-      if (!entry.enabled) return;
-
-      const kindLabel = entry.kind.toUpperCase();
-      const expectedTotal = proposalTotal * (entry.percent / 100);
-      const committedTotal = this.calculateCommittedAmount(entry.kind);
-
-      if (Math.abs(committedTotal - expectedTotal) > tolerance) {
-        issues.push(`${kindLabel} - Total comprometido (${this.formatCurrency(committedTotal)}) deve ser igual ao valor total da natureza (${this.formatCurrency(expectedTotal)})`);
-      }
-
-      const rows = this.collectAllocationRows(entry.kind);
-      rows.forEach((row, index) => {
-        const rowLabel = `${kindLabel} linha ${index + 1}`;
-        const committed = this.parseCurrencyValue(row.committed);
-        const balance = this.parseCurrencyValue(row.balance);
-        let balanceAfter = this.parseCurrencyValue(row.balanceAfter);
-
-        if (balanceAfter === null && committed !== null && balance !== null) {
-          balanceAfter = balance - committed;
-        }
-
-        if (this.asText(row.committed) && (committed === null || committed <= 0)) {
-          issues.push(`${rowLabel} - Valor Comprometido deve ser maior que zero`);
-        }
-
-        if (balance === null) {
-          issues.push(`${rowLabel} - Saldo deve ser informado`);
-          return;
-        }
-
-        if (committed !== null && committed - balance > tolerance) {
-          issues.push(`${rowLabel} - Valor Comprometido nao pode ser maior que o Saldo`);
-        }
-
-        if (balanceAfter !== null && balanceAfter < -tolerance) {
-          issues.push(`${rowLabel} - Saldo apos compromisso nao pode ficar negativo`);
-        }
-      });
-    });
-
-    return issues;
-  },
-
   validateRequiredForApproval: function () {
     const root = this.getContainer();
     const missing = [];
@@ -1944,11 +1881,6 @@ const purchaseContractingController = {
     const installmentsTotal = this.getInstallmentsTotalAmount();
     if (finalValue !== null && Math.abs(Number(finalValue) - Number(installmentsTotal)) > 0.009) {
       missing.push(`Total das parcelas deve ser igual ao Valor Final (${this.formatCurrency(finalValue)}). Total atual: ${this.formatCurrency(installmentsTotal)}`);
-    }
-
-    const complianceIssues = this.validateAllocationCompliance();
-    if (complianceIssues.length) {
-      missing.push.apply(missing, complianceIssues);
     }
 
     return missing;
@@ -2231,11 +2163,6 @@ const purchaseContractingController = {
   },
 
   showToast: function (title, message, type) {
-    const ui = $(document).data('gpUiComponents');
-    if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
-      if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;
-    }
-
     const root = this.getContainer();
     const toast = root.find('#toast');
     const icon = root.find('#toast-icon');

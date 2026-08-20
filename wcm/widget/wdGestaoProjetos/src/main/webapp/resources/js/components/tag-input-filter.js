@@ -40,9 +40,9 @@ class TagInputFilter {
             ? ''
             : '<div class="tag-input-dropdown absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-10 hidden max-h-72 overflow-hidden flex flex-col"></div>';
         this.container.innerHTML = `
-            <div class="tag-input-wrapper ${wrapperPositionClass}">
-                <div class="tag-input-area bg-white border-2 border-gray-200 rounded-xl w-full min-h-[45px] px-3 py-2 flex items-center gap-2 cursor-text focus-within:ring-2 focus-within:ring-bevap-green focus-within:border-bevap-green overflow-hidden">
-                    <input type="text" class="tag-input-search flex-grow min-w-0 p-1 text-sm outline-none bg-transparent" placeholder="${this.options.placeholder}">
+            <div class="tag-input-wrapper relative">
+                <div class="tag-input-area bg-white border-2 border-gray-200 rounded-xl w-full h-[45px] p-2.5 flex items-center gap-2 cursor-text focus-within:ring-2 focus-within:ring-bevap-green focus-within:border-bevap-green overflow-hidden">    
+                <input type="text" class="tag-input-search flex-grow min-w-0 p-1 text-sm outline-none bg-transparent" placeholder="${this.options.placeholder}">
                 </div>
                 ${dropdownMarkup}
             </div>

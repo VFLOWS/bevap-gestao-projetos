@@ -70,8 +70,6 @@ const router = {
         },
         solicitationDetail: {
           controller: solicitationDetailController,
-          title: 'Minha Solicitacao',
-          breadcrumb: ['Solicitacoes', 'Minha Solicitacao'],
           handler: () => solicitationDetailController.load(params)
         },
         correction: {
@@ -124,14 +122,10 @@ const router = {
         },
         purchaseContracting: {
           controller: purchaseContractingController,
-          title: 'Compras - Realizar Contratacao',
-          breadcrumb: ['Compras', 'Realizar Contratacao'],
           handler: () => purchaseContractingController.load(params)
         },
         glpiErrorTreatment: {
           controller: glpiErrorTreatmentController,
-          title: 'TI - Tratar Erro Integracao GLPI',
-          breadcrumb: ['TI', 'Erro Integracao GLPI'],
           handler: () => glpiErrorTreatmentController.load(params)
         },
         dpGlpiErrorTreatment: {
