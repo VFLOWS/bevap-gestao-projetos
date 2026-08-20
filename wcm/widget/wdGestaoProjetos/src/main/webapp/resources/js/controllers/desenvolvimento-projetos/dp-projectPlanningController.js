@@ -3915,14 +3915,20 @@
       return;
     }
 
-    const legacyLoading = typeof FLUIGC !== 'undefined' ? FLUIGC.loading($('#page-container')) : null;
-    if (legacyLoading) legacyLoading.show();
+    const loading = modalLoadingService.show({
+      title: 'Concluindo planejamento',
+      message: 'Aguarde enquanto o planejamento e enviado ao Fluig...'
+    });
 
     try {
+      await loading.waitForPaint();
+      loading.updateMessage('Localizando processo do desenvolvimento...');
       const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
+      loading.updateMessage('Preparando anexos do planejamento...');
       const attachmentsPayload = await this.collectAttachmentsPayload();
       const formDatasetName = this.asText(this._state.formName) || 'DSFormDesenvolvimentoProjetos_1778522207146';
 
+      loading.updateMessage('Enviando movimentacao para o Fluig...');
       await fluigService.saveAndSendTask({
         id: processInstanceId,
         numState: this._nextStateAfterPlanning,
@@ -3932,17 +3938,25 @@
         attachments: attachmentsPayload
       }, this.collectPlanningTaskFields());
 
-      this.showToast('Planejamento concluído e enviado para execução.', 'success');
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 800);
+      loading.hide();
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: documentId,
+          title: 'Planejamento concluido!',
+          message: 'Planejamento concluido e enviado para execucao.',
+          nextStep: 'Acompanhe a execucao do projeto pelo dashboard.'
+        });
+      } else {
+        this.showToast('Planejamento concluído e enviado para execução.', 'success');
+      }
 
     } catch (error) {
       console.error('[projectPlanningController] concludePlanning error:', error);
       this.showToast(`Falha ao concluir: ${this.asText(error && (error.message || error)) || 'erro'}`, 'error');
     } finally {
-      if (legacyLoading) legacyLoading.hide();
+      loading.hide();
     }
   },
 

@@ -238,6 +238,32 @@ const evaluateProjectController = {
       });
     });
 
+    container.on(`click${ns}`, '[data-action="confirm-reject"]', (event) => {
+      event.preventDefault();
+
+      const rejectCategory = this.asText(container.find('#evaluate-reject-category-input').val());
+      if (!rejectCategory) {
+        this.showToast('Selecione a categoria da reprovacao.', 'warning');
+        container.find('#evaluate-reject-category-input').trigger('focus');
+        return;
+      }
+
+      const rejectDescription = this.asText(container.find('#evaluate-reject-description-input').val());
+      if (!rejectDescription) {
+        this.showToast('Informe a justificativa da reprovacao.', 'warning');
+        container.find('#evaluate-reject-description-input').trigger('focus');
+        return;
+      }
+
+      this.handleTaskAction({
+        modalId: 'modal-reject',
+        choosedState: 14,
+        decisionField: 'decisaoAvaliarProjeto',
+        decisionValue: 'cancelado',
+        successMessage: 'Projeto marcado como nao continuidade'
+      });
+    });
+
     container.on(`click${ns}`, '[data-action="confirm-approve"]', (event) => {
       event.preventDefault();
       this.handleTaskAction({
@@ -995,16 +1021,6 @@ const evaluateProjectController = {
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () {
-        legacyLoading.hide();
-      },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {

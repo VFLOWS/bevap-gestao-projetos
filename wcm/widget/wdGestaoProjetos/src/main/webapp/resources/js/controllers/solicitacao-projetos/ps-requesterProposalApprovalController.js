@@ -629,16 +629,6 @@ const requesterProposalApprovalController = {
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () {
-        legacyLoading.hide();
-      },
-      updateMessage: function () { }
-    };
   },
 
   waitForUiPaint: function () {

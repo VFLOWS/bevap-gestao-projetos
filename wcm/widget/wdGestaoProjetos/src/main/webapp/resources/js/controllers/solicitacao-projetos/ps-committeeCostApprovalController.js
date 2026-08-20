@@ -1055,14 +1055,6 @@ const committeeCostApprovalController = {
         message: 'Aguarde enquanto a tarefa é enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () { legacyLoading.hide(); },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {

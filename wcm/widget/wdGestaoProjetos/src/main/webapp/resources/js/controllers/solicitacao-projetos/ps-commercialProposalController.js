@@ -2752,14 +2752,6 @@ const commercialProposalController = {
         message: 'Aguarde enquanto os dados sao enviados ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () { legacyLoading.hide(); },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {

@@ -66,22 +66,10 @@ const router = {
     if (this._isRouting) return;
     this._isRouting = true;
 
-    const container = $('#page-container');
-    const loading = (function () {
-      if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
-        return modalLoadingService.show({
-          title: 'Aguarde',
-          message: 'Carregando a tela...'
-        });
-      }
-
-      const legacyLoading = FLUIGC.loading(container);
-      legacyLoading.show();
-      return {
-        hide: function () { legacyLoading.hide(); },
-        updateMessage: function () {}
-      };
-    })();
+    const loading = modalLoadingService.show({
+      title: 'Aguarde',
+      message: 'Carregando a tela...'
+    });
 
     try {
       const [page, paramStr] = rawHash.split('?');
@@ -171,14 +159,10 @@ const router = {
         },
         purchaseContracting: {
           controller: purchaseContractingController,
-          title: 'Compras - Realizar Contratacao',
-          breadcrumb: ['Compras', 'Realizar Contratacao'],
           handler: () => purchaseContractingController.load(params)
         },
         glpiErrorTreatment: {
           controller: glpiErrorTreatmentController,
-          title: 'TI - Tratar Erro Integracao GLPI',
-          breadcrumb: ['TI', 'Erro Integracao GLPI'],
           handler: () => glpiErrorTreatmentController.load(params)
         },
         dpGlpiErrorTreatment: {

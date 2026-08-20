@@ -4,6 +4,7 @@ const executionActivityController = {
   _datasetName: 'formExecucaoAtividade',
   _eventNamespace: '.executionActivity',
   _toastTimer: null,
+  _loadingHandle: null,
   _state: {
     documentId: null,
     processInstanceId: null,
@@ -36,6 +37,7 @@ const executionActivityController = {
 
   destroy() {
     $(document).off(this._eventNamespace);
+    this.setLoading(false);
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
       this._toastTimer = null;
@@ -628,8 +630,11 @@ const executionActivityController = {
       const taskFields = this.collectExecutionTaskFields(this._state.entries, {
         decision: 'concluido'
       });
+      this.setLoading(true, 'Preparando anexos da atividade...');
       const attachments = await this.collectAttachmentsPayload();
 
+      this.setLoading(true, 'Enviando movimentacao para o Fluig...');
+      await modalLoadingService.waitForPaint();
       await fluigService.saveAndSendTask({
         id: this._state.processInstanceId,
         numState: 23,
@@ -1018,8 +1023,25 @@ const executionActivityController = {
   },
 
   setLoading(isVisible, label = 'Carregando...') {
-    $('#ui-loading-label').text(label);
-    $('#ui-loading-overlay').toggleClass('hidden', !isVisible);
+    $('#ui-loading-overlay').addClass('hidden');
+
+    if (isVisible) {
+      if (this._loadingHandle) {
+        this._loadingHandle.updateMessage(label);
+        return;
+      }
+
+      this._loadingHandle = modalLoadingService.show({
+        title: 'Aguarde',
+        message: label
+      });
+      return;
+    }
+
+    if (this._loadingHandle) {
+      this._loadingHandle.hide();
+      this._loadingHandle = null;
+    }
   },
 
   setActionButtonsState(isDisabled) {

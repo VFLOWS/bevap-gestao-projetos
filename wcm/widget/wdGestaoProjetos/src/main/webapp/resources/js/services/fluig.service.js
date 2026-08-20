@@ -461,6 +461,24 @@ var fluigService = {
         var definition = this.getProjectProcessDefinition(processType);
         var finalRow = row && typeof row === 'object' ? row : {};
         var finalExtras = extras && typeof extras === 'object' ? extras : {};
+        var detectedType = this.detectProjectProcessType(
+            finalExtras._dashboardProcessType
+            || finalRow._dashboardProcessType
+            || processType
+            || finalExtras.processType
+            || finalExtras.processName
+            || finalRow.processType
+            || finalRow.processName
+            || finalExtras.datasetId
+            || finalRow.datasetId
+            || finalExtras.formName
+            || finalRow.formName
+        );
+
+        if (!definition && detectedType) {
+            definition = this.getProjectProcessDefinition(detectedType);
+        }
+
         var rawState = finalExtras.estadoProcesso !== undefined
             ? finalExtras.estadoProcesso
             : finalRow.estadoProcesso;
@@ -469,10 +487,11 @@ var fluigService = {
             : (finalExtras.status !== undefined ? finalExtras.status : (finalRow.STATUS !== undefined ? finalRow.STATUS : finalRow.status));
         var activity = finalExtras.activity !== undefined
             ? finalExtras.activity
-            : this.resolveProjectProcessActivity(processType, rawState, rawStatus);
+            : this.resolveProjectProcessActivity(definition ? definition.type : detectedType, rawState, rawStatus);
 
         return Object.assign({}, finalRow, finalExtras, {
-            processType: definition ? definition.type : this.detectProjectProcessType(processType),
+            _dashboardProcessType: finalExtras._dashboardProcessType || finalRow._dashboardProcessType || (definition ? definition.type : detectedType),
+            processType: definition ? definition.type : detectedType,
             processName: definition ? definition.processName : '',
             datasetId: definition ? definition.datasetId : '',
             formName: definition ? definition.formName : '',
@@ -615,6 +634,63 @@ var fluigService = {
                     enabled: true,
                     route: 'epFinalGoLiveValidation',
                     label: 'Validação Final GO Live'
+                },
+                35: {
+                    enabled: true,
+                    route: 'epGoLiveExecution',
+                    label: 'Realizar GO Live'
+                },
+                42: {
+                    enabled: true,
+                    route: 'epRequesterGoLiveValidation',
+                    label: 'Validar GO Live'
+                },
+                46: {
+                    enabled: true,
+                    route: 'epProjectClosureDocumentation',
+                    label: 'Anexar Documentacao de Encerramento'
+                },
+                50: {
+                    enabled: true,
+                    route: 'epGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
+                51: {
+                    enabled: false,
+                    route: '',
+                    label: 'Integrando GLPI',
+                    hideButton: true
+                },
+                56: {
+                    enabled: false,
+                    route: '',
+                    label: 'Finalizado',
+                    hideButton: true
+                }
+            };
+        }
+
+        if (normalizedType === 'entrega') {
+            return {
+                14: {
+                    enabled: true,
+                    route: 'epGlpiErrorTreatment',
+                    label: 'Tratar Erro GLPI'
+                },
+                18: {
+                    enabled: true,
+                    route: 'epDeliveryPlanning',
+                    label: 'Planejar Entrega'
+                },
+                22: {
+                    enabled: true,
+                    route: 'epUserTraining',
+                    label: 'Treinamento dos Usuarios'
+                },
+                27: {
+                    enabled: true,
+                    route: 'epFinalGoLiveValidation',
+                    label: 'Validacao Final GO Live'
                 },
                 35: {
                     enabled: true,
@@ -817,8 +893,17 @@ var fluigService = {
             : this.buildProjectProcessContext(processTypeOrContext, {
                 estadoProcesso: activity
             });
-        var processType = this.detectProjectProcessType(context.processType || context.processName);
-        var currentActivity = this.parseProjectProcessActivity(context.activity !== undefined ? context.activity : context.estadoProcesso);
+        var processType = this.detectProjectProcessType(
+            context._dashboardProcessType
+            || context.processType
+            || context.processName
+            || context.datasetId
+            || context.formName
+        );
+        var currentActivity = this.parseProjectProcessActivity(context.activity);
+        if (currentActivity === null) {
+            currentActivity = this.parseProjectProcessActivity(context.estadoProcesso);
+        }
         var actionMap = this.getProjectProcessActionMap(processType);
 
         if (currentActivity !== null && actionMap[currentActivity]) {
@@ -872,9 +957,18 @@ var fluigService = {
             : this.buildProjectProcessContext(processTypeOrContext, {
                 estadoProcesso: estadoProcesso
             });
-        var processType = this.detectProjectProcessType(context.processType || context.processName);
+        var processType = this.detectProjectProcessType(
+            context._dashboardProcessType
+            || context.processType
+            || context.processName
+            || context.datasetId
+            || context.formName
+        );
         var raw = this.asTrimmedString(context.estadoProcesso);
-        var activity = this.parseProjectProcessActivity(context.activity !== undefined ? context.activity : raw);
+        var activity = this.parseProjectProcessActivity(context.activity);
+        if (activity === null) {
+            activity = this.parseProjectProcessActivity(raw);
+        }
         var stateLabelMap = this.getProjectProcessStateLabelMap(processType);
 
         if (this.getProjectCancelledActivities(processType).indexOf(activity) !== -1) {
@@ -1025,29 +1119,8 @@ var fluigService = {
             return "";
         }
 
-        // Safra logic: harvest starts 01/04 (April 1). If current/reference date
-        // is on or after April 1 of year Y then safra is Y-(Y+1), otherwise (Y-1)-Y.
-        var ref = referenceDate || new Date().toISOString();
-        var dt = new Date(ref);
-        if (isNaN(dt.getTime())) dt = new Date();
-        var year = dt.getFullYear();
-        var month = dt.getMonth() + 1; // 1..12
-
-        var startYear;
-        // if month >= 4 (April or later) safra starts this year, else starts previous year
-        if (month >= 4) {
-            startYear = year;
-        } else {
-            startYear = year - 1;
-        }
-        var endYear = startYear + 1;
-
-        var startYY = String(startYear).slice(-2);
-        var endYY = String(endYear).slice(-2);
-        var safraCode = startYY + endYY; // e.g. '2627'
-
-        var paddedProcessId = String(processId || '0').replace(/^0+/, '').padStart(4, '0');
-        return 'PRJ-' + safraCode + '-' + paddedProcessId;
+        var projectYear = this.extractYearFromDateLike(referenceDate) || String(new Date().getFullYear());
+        return "PRJ-" + projectYear + "-" + processId;
     },
 
     asBooleanString: function (value) {

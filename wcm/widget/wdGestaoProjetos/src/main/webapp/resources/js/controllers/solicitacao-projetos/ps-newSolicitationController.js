@@ -78,7 +78,6 @@ const newSolicitationController = {
       'escopo-inicial',
       'out-of-scope',
       'dependencies',
-      'stakeholders',
       'declaracao'
     ],
     requiredFieldLabels: {
@@ -197,7 +196,7 @@ const newSolicitationController = {
         containerSelector: '#coligada-tag-filter',
         hiddenLabelSelector: '#coligada',
         hiddenCodeSelector: '#cod-coligada',
-        datasetId: 'deGetColigada_RM',
+        datasetId: 'ds_ConsultaCentroCustoUsuario',
         valueField: 'CODCOLIGADA',
         labelField: 'COLIGADA_DISPLAY',
         fields: ['CODCOLIGADA', 'NOMEFANTASIA'],
@@ -2074,16 +2073,6 @@ const newSolicitationController = {
         message: message || 'Aguarde enquanto a solicitação é criada no Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () {
-        legacyLoading.hide();
-      },
-      updateMessage: function () {}
-    };
   },
 
   updateDraftHash: function () {

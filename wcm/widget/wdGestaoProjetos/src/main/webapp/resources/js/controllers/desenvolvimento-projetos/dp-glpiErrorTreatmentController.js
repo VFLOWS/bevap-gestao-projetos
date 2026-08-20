@@ -260,16 +260,6 @@ const dpGlpiErrorTreatmentController = {
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () {
-        legacyLoading.hide();
-      },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {
@@ -308,10 +298,19 @@ const dpGlpiErrorTreatmentController = {
         datasetName: 'DSFormDesenvolvimentoProjetos'
       }, taskFields);
 
-      this.showToast('Sucesso', 'Projeto enviado para Integracao GLPI.', 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      loading.hide();
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Acao concluida!',
+          message: 'Projeto enviado para Integracao GLPI.',
+          nextStep: 'Acompanhe a integracao pelo dashboard.'
+        });
+      } else {
+        this.showToast('Sucesso', 'Projeto enviado para Integracao GLPI.', 'success');
+      }
     } catch (error) {
       console.error('[dpGlpiErrorTreatment] Error moving task:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel movimentar o projeto.', 'error');

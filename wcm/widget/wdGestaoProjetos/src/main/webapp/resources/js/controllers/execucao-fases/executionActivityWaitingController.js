@@ -4,6 +4,7 @@ const executionActivityWaitingController = {
   _datasetName: 'formExecucaoAtividade',
   _eventNamespace: '.executionActivityWaiting',
   _toastTimer: null,
+  _loadingHandle: null,
   _state: {
     documentId: null,
     processInstanceId: null,
@@ -97,6 +98,7 @@ const executionActivityWaitingController = {
 
   destroy() {
     $(document).off(this._eventNamespace);
+    this.setLoading(false);
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
       this._toastTimer = null;
@@ -357,6 +359,8 @@ const executionActivityWaitingController = {
       this.setStartButtonState(true);
       this.setLoading(true, 'Iniciando execução...');
 
+      this.setLoading(true, 'Enviando movimentacao para o Fluig...');
+      await modalLoadingService.waitForPaint();
       await fluigService.saveAndSendTask({
         id: this._state.processInstanceId,
         numState: 18,
@@ -385,9 +389,25 @@ const executionActivityWaitingController = {
   },
 
   setLoading(isVisible, label = 'Carregando...') {
-    const overlay = $('#ui-loading-overlay');
-    $('#ui-loading-label').text(label);
-    overlay.toggleClass('hidden', !isVisible);
+    $('#ui-loading-overlay').addClass('hidden');
+
+    if (isVisible) {
+      if (this._loadingHandle) {
+        this._loadingHandle.updateMessage(label);
+        return;
+      }
+
+      this._loadingHandle = modalLoadingService.show({
+        title: 'Aguarde',
+        message: label
+      });
+      return;
+    }
+
+    if (this._loadingHandle) {
+      this._loadingHandle.hide();
+      this._loadingHandle = null;
+    }
   },
 
   showToast(message, type = 'success') {

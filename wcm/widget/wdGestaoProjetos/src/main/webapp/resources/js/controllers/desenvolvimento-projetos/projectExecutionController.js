@@ -1539,11 +1539,20 @@
         comments: this.asText(config && config.comments) || ''
       }, taskFields);
 
-      this.showToast(this.asText(config && config.successMessage) || 'Movimentacao realizada com sucesso.', 'success');
-
-      setTimeout(function () {
-        location.hash = '#dashboard';
-      }, 800);
+      var successMessage = this.asText(config && config.successMessage) || 'Movimentacao realizada com sucesso.';
+      loading.hide();
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: documentId,
+          title: 'Acao concluida!',
+          message: successMessage,
+          nextStep: 'Acompanhe a proxima etapa pelo dashboard.'
+        });
+      } else {
+        this.showToast(successMessage, 'success');
+      }
     } finally {
       loading.hide();
     }

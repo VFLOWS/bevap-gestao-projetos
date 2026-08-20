@@ -5,6 +5,7 @@ const executionActivityTiValidationController = {
   _eventNamespace: '.executionActivityTiValidation',
   _nextState: 34,
   _toastTimer: null,
+  _loadingHandle: null,
   _state: {
     documentId: null,
     processInstanceId: null,
@@ -43,6 +44,7 @@ const executionActivityTiValidationController = {
 
   destroy() {
     $(document).off(this._eventNamespace);
+    this.setLoading(false);
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
       this._toastTimer = null;
@@ -610,13 +612,25 @@ const executionActivityTiValidationController = {
         history: this._state.tiHistory
       });
 
+      this.setLoading(true, 'Enviando movimentacao para o Fluig...');
+      await modalLoadingService.waitForPaint();
       await fluigService.saveAndSendTask(this.getMovementTaskData(config.comments), taskFields);
 
       this.closeModal();
-      this.showToast('Sucesso', this.asText(config.successMessage) || 'Movimentação realizada.', 'success');
-      setTimeout(() => {
-        window.location.hash = '#dashboard';
-      }, 900);
+      this.setLoading(false);
+      const successMessage = this.asText(config.successMessage) || 'Movimentacao realizada.';
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: this._state.processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Acao concluida!',
+          message: successMessage,
+          nextStep: 'Acompanhe a proxima etapa pelo dashboard.'
+        });
+      } else {
+        this.showToast('Sucesso', successMessage, 'success');
+      }
     } catch (error) {
       console.error('Erro ao movimentar validação TI:', error);
       this.showToast('Erro ao movimentar', error && error.message ? error.message : 'Não foi possível movimentar a atividade.', 'error');
@@ -1251,8 +1265,25 @@ const executionActivityTiValidationController = {
   },
 
   setLoading(isVisible, label = 'Carregando...') {
-    $('#ui-loading-label').text(label);
-    $('#ui-loading-overlay').toggleClass('hidden', !isVisible);
+    $('#ui-loading-overlay').addClass('hidden');
+
+    if (isVisible) {
+      if (this._loadingHandle) {
+        this._loadingHandle.updateMessage(label);
+        return;
+      }
+
+      this._loadingHandle = modalLoadingService.show({
+        title: 'Aguarde',
+        message: label
+      });
+      return;
+    }
+
+    if (this._loadingHandle) {
+      this._loadingHandle.hide();
+      this._loadingHandle = null;
+    }
   },
 
   setActionButtonsState(isDisabled) {

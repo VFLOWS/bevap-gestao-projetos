@@ -1936,11 +1936,6 @@ const purchaseContractingController = {
       missing.push(`Total das parcelas deve ser igual ao Valor Final (${this.formatCurrency(finalValue)}). Total atual: ${this.formatCurrency(installmentsTotal)}`);
     }
 
-    const complianceIssues = this.validateAllocationCompliance();
-    if (complianceIssues.length) {
-      missing.push.apply(missing, complianceIssues);
-    }
-
     return missing;
   },
 
@@ -2173,14 +2168,6 @@ const purchaseContractingController = {
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () { legacyLoading.hide(); },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {
