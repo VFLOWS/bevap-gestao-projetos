@@ -188,20 +188,7 @@
                                 </button>
                             </div>
 
-                            <div class="overflow-x-auto">
-                                <table class="w-full border border-gray-300 rounded-lg">
-                                    <thead class="bg-gray-50">
-                                        <tr>
-                                            <th class="px-4 py-3 text-left text-sm font-medium text-gray-700">Descricao</th>
-                                            <th class="px-4 py-3 text-center text-sm font-medium text-gray-700">Qtd</th>
-                                            <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Valor Unit.</th>
-                                            <th class="px-4 py-3 text-right text-sm font-medium text-gray-700">Total</th>
-                                            <th class="px-4 py-3 w-10"></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="proposal-items-list"></tbody>
-                                </table>
-                            </div>
+                            <div id="proposal-items-list" class="space-y-3"></div>
                         </section>
 
                         <section>
@@ -329,13 +316,7 @@
             <button data-action="save-draft" class="px-5 py-2.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-all">
                 <i class="fa-solid fa-save mr-2"></i> Salvar Rascunho
             </button>
-            <div class="flex items-center space-x-3">
-                <button data-action="open-reject-modal" class="px-5 py-2.5 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 transition-all">
-                    <i class="fa-solid fa-ban mr-2"></i> Reprovar
-                </button>
-                <button data-action="open-return-modal" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
-                    <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correcao
-                </button>
+            <div class="flex items-center">
                 <button data-action="open-approve-modal" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
                     <i class="fa-solid fa-paper-plane mr-2"></i> Enviar ao Solicitante
                 </button>
@@ -365,32 +346,12 @@
     </div>
 </div>
 
-<div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correcao</h3>
-        <p class="text-sm text-gray-600 mb-4">Informe categoria e justificativa da devolucao:</p>
-        <select id="return-category-input" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
-            <option value="">Selecione a categoria</option>
-            <option value="tecnica">Inviabilidade tecnica</option>
-            <option value="prioridades">Mudanca de prioridades</option>
-            <option value="recursos">Recursos indisponiveis</option>
-            <option value="riscos">Risco elevado</option>
-            <option value="escopo">Escopo indefinido</option>
-            <option value="outro">Outro</option>
-        </select>
-        <textarea id="return-reason-input" rows="4" placeholder="Motivo da devolucao..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
-        <div class="flex justify-end space-x-3">
-            <button data-action="close-modal" data-modal-id="modal-return" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
-            <button data-action="confirm-return" class="px-4 py-2 text-sm text-white bg-yellow-600 hover:bg-yellow-700 rounded-lg transition-all">Devolver</button>
-        </div>
-    </div>
-</div>
 
 <div id="modal-reject" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Reprovar Proposta Comercial</h3>
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Confirmar remocao</h3>
         <p class="text-sm text-gray-600 mb-4">Informe categoria e justificativa da reprovação:</p>
-        <select id="reject-category-input" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
+        <select id="reject-category-input" class="hidden w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
             <option value="">Selecione a categoria</option>
             <option value="tecnica">Inviabilidade tecnica</option>
             <option value="prioridades">Mudanca de prioridades</option>
@@ -399,10 +360,10 @@
             <option value="escopo">Escopo indefinido</option>
             <option value="outro">Outro</option>
         </select>
-        <textarea id="reject-reason-input" rows="4" placeholder="Descricao detalhada..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+        <textarea id="reject-reason-input" rows="4" placeholder="Descricao detalhada..." class="hidden w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
         <div class="flex justify-end space-x-3">
             <button data-action="close-modal" data-modal-id="modal-reject" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>
-            <button data-action="confirm-reject" class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all">Confirmar</button>
+            <button data-action="confirm-remove-item" class="px-4 py-2 text-sm text-white bg-red-600 hover:bg-red-700 rounded-lg transition-all">Remover</button>
         </div>
     </div>
 </div>

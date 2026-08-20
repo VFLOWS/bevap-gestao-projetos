@@ -259,6 +259,11 @@ const requesterProposalApprovalController = {
   },
 
   showToast: function (title, message, type = 'info') {
+    const ui = $(document).data('gpUiComponents');
+    if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
+      if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;
+    }
+
     const container = this.getContainer();
     const toast = container.find('#toast');
     if (!toast.length) return;

@@ -68,7 +68,9 @@ const committeeCostApprovalController = {
     historyCache: {},
     isSubmitting: false,
     participants: [],
-    attachments: []
+    attachments: [],
+    participantFilter: null,
+    participantOptions: []
   },
 
   load: function (params = {}) {
@@ -86,6 +88,7 @@ const committeeCostApprovalController = {
         this.applyCostApprovalLabels();
         this.renderSidebarSkeleton();
         this.initializeTabs();
+        this.initializeParticipantFilter();
         this.bindEvents();
         this.loadReadOnlyTab('solicitacao');
         this.loadBaseContext();
@@ -115,6 +118,8 @@ const committeeCostApprovalController = {
     this._state.isSubmitting = false;
     this._state.participants = [];
     this._state.attachments = [];
+    this._state.participantFilter = null;
+    this._state.participantOptions = [];
   },
 
   getTemplateUrl: function () {
@@ -276,13 +281,7 @@ const committeeCostApprovalController = {
 
     container.on(`click${ns}`, '#cap-add-participant', (event) => {
       event.preventDefault();
-      this.addParticipantFromInput();
-    });
-
-    container.on(`keydown${ns}`, '#cap-participant-input', (event) => {
-      if (event.key !== 'Enter') return;
-      event.preventDefault();
-      this.addParticipantFromInput();
+      this.addParticipantFromFilter();
     });
 
     container.on(`click${ns}`, '[data-action="remove-cap-participant"]', (event) => {
@@ -423,6 +422,58 @@ const committeeCostApprovalController = {
     const modal = this.getContainer().find(`#${modalId}`);
     if (!modal.length) return;
     modal.addClass('hidden');
+  },
+
+  initializeParticipantFilter: function () {
+    const mount = this.getContainer().find('#cap-participant-filter').get(0);
+    if (!mount || typeof TagInputFilter === 'undefined') {
+      if (typeof TagInputFilter === 'undefined') {
+        console.warn('[committeeCostApproval] TagInputFilter nao encontrado. Verifique application.info');
+      }
+      return;
+    }
+
+    if (!mount.id) {
+      mount.id = 'cap-participant-filter';
+    }
+
+    this._state.participantFilter = new TagInputFilter('#cap-participant-filter', {
+      placeholder: 'Selecione um participante...',
+      data: [],
+      labelField: 'NOME_NORMALIZADO',
+      valueField: 'CHAPA',
+      columns: [
+        { header: 'Chapa', field: 'CHAPA', width: 'w-1/5' },
+        { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'w-2/5' },
+        { header: 'Funcao', field: 'NOMEFUNCAO', width: 'w-1/5' },
+        { header: 'Secao', field: 'NOMESECAO', width: 'w-1/5' }
+      ],
+      singleSelection: true
+    });
+
+    this.loadParticipantOptions()
+      .then((rows) => {
+        this._state.participantOptions = rows;
+        if (this._state.participantFilter && typeof this._state.participantFilter.updateData === 'function') {
+          this._state.participantFilter.updateData(rows);
+        }
+      })
+      .catch((error) => {
+        console.error('[committeeCostApproval] Erro carregando dsBuscaFunc:', error);
+      });
+  },
+
+  loadParticipantOptions: async function () {
+    let rows = [];
+    try {
+      rows = await fluigService.getDatasetRows('dsBuscaFunc', {
+        fields: ['CHAPA', 'CHAPANOMEFUNCIONARIO', 'NOMEFUNCAO', 'NOMESECAO']
+      });
+    } catch (error) {
+      rows = await fluigService.getDataset('dsBuscaFunc');
+    }
+
+    return this.normalizeEmployeeRows(rows || []);
   },
 
   getReadOnlyTabConfig: function (tabName) {
@@ -768,25 +819,47 @@ const committeeCostApprovalController = {
     return missing;
   },
 
-  addParticipantFromInput: function () {
-    const root = this.getContainer();
-    const input = root.find('#cap-participant-input').first();
-    if (!input.length) return;
+  addParticipantFromFilter: function () {
+    const filter = this._state.participantFilter;
+    const selectedItems = filter && typeof filter.getSelectedItems === 'function'
+      ? filter.getSelectedItems()
+      : [];
+    const selected = Array.isArray(selectedItems) && selectedItems.length ? selectedItems[0] : null;
 
-    const name = this.asText(input.val());
-    if (!name) {
-      this.showToast('Participante', 'Informe o nome do participante.', 'warning');
-      input.trigger('focus');
+    if (!selected) {
+      this.showToast('Participante', 'Selecione um participante.', 'warning');
+      const filterInput = this.getContainer().find('#cap-participant-filter input[type="text"]').first();
+      if (filterInput.length) filterInput.trigger('focus');
       return;
     }
 
+    const selectedValue = this.asText(selected.value || selected.CHAPA);
+    const option = (Array.isArray(this._state.participantOptions) ? this._state.participantOptions : [])
+      .find((item) => this.asText(item && item.CHAPA) === selectedValue)
+      || null;
+
+    const name = this.asText(option && option.NOME_NORMALIZADO) || this.asText(selected.label);
+    if (!name) return;
+
+    const normalizedName = this.normalizeLookupText(name);
     const current = Array.isArray(this._state.participants) ? this._state.participants.slice() : [];
+    const alreadyAdded = current.some((participant) => this.normalizeLookupText(participant && participant.name) === normalizedName);
+    if (alreadyAdded) {
+      this.showToast('Participante', 'Este participante ja foi adicionado.', 'warning');
+      if (filter && typeof filter.removeAll === 'function') filter.removeAll();
+      return;
+    }
+
     current.push({
       id: `local:${Date.now()}:${Math.random().toString(16).slice(2)}`,
       name: name
     });
     this._state.participants = current;
-    input.val('');
+
+    if (filter && typeof filter.removeAll === 'function') {
+      filter.removeAll();
+    }
+
     this.renderParticipants();
   },
 
@@ -1075,6 +1148,11 @@ const committeeCostApprovalController = {
   },
 
   showToast: function (title, message, type) {
+    const ui = $(document).data('gpUiComponents');
+    if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
+      if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;
+    }
+
     const toast = this.getContainer().find('#toast');
     const icon = this.getContainer().find('#toast-icon');
     const toastTitle = this.getContainer().find('#toast-title');
@@ -1166,6 +1244,49 @@ const committeeCostApprovalController = {
     } catch (error) {
       return [];
     }
+  },
+
+  normalizeLookupText: function (value) {
+    return this.asText(value)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+  },
+
+  normalizeEmployeeRows: function (rows) {
+    return (Array.isArray(rows) ? rows : []).map((row) => {
+      const chapa = this.asText(row && (row.CHAPA || row.chapa));
+      const rawName = this.asText(row && (row.CHAPANOMEFUNCIONARIO || row.chapanomefuncionario || row.NOME || row.nome));
+      const normalizedName = this.normalizeEmployeeName(rawName);
+      if (!normalizedName) return null;
+
+      return {
+        CHAPA: chapa || rawName,
+        CHAPANOMEFUNCIONARIO: rawName,
+        NOME_NORMALIZADO: normalizedName,
+        NOMEFUNCAO: this.asText(row && (row.NOMEFUNCAO || row.nomefuncao)),
+        NOMESECAO: this.asText(row && (row.NOMESECAO || row.nomesecao))
+      };
+    }).filter(Boolean);
+  },
+
+  normalizeEmployeeName: function (value) {
+    let text = this.asText(value);
+    if (!text) return '';
+
+    const dashIndex = text.indexOf('-');
+    if (dashIndex >= 0) {
+      text = text.slice(dashIndex + 1);
+    }
+
+    text = text.replace(/\s+/g, ' ').trim().toLowerCase();
+    if (!text) return '';
+
+    return text.replace(/(^|\s)(\S)/g, function (match, separator, letter) {
+      return separator + letter.toUpperCase();
+    });
   },
 
   asText: function (value) {

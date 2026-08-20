@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Execução de Projeto Finalizada</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bevap-navy': '#3D567E',
+                        'bevap-green': '#1C8C5D',
+                        'bevap-gold': '#F1B434'
+                    },
+                    fontFamily: {
+                        'montserrat': ['Montserrat', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        #execution-tabs-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #execution-tabs-scroll::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-inter text-gray-900">
+    <header class="fixed left-0 right-0 top-0 z-50 bg-bevap-navy shadow-lg">
+        <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 rounded-lg bg-white px-4 py-1">
+                    <img src="../logoBevap.png" class="h-auto w-24" alt="BEVAP">
+                </div>
+                <div class="hidden h-8 w-px bg-gray-400 md:block"></div>
+                <h1 class="hidden font-montserrat text-lg font-semibold text-white md:block">Execução de Projeto Finalizada</h1>
+            </div>
+            <div class="flex items-center space-x-3">
+                <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Usuário" class="h-9 w-9 rounded-full border-2 border-bevap-gold">
+            </div>
+        </div>
+        <div class="mx-auto flex h-10 max-w-7xl items-center px-4 text-sm sm:px-6 lg:px-8">
+            <nav class="flex items-center gap-2 text-sm" aria-label="Breadcrumb">
+                <a href="../ux-dashboard.html" class="inline-flex items-center gap-2 text-gray-300 transition-colors hover:text-white">
+                    <i class="fa-solid fa-house text-xs"></i>
+                    <span>Início</span>
+                </a>
+                <span class="text-gray-400">/</span>
+                <a href="../ux-planejamento.html" class="text-gray-300 transition-colors hover:text-white">Planejamento</a>
+                <span class="text-gray-400">/</span>
+                <a href="ux-execucao-projeto.html" class="text-gray-300 transition-colors hover:text-white">Execução do Projeto</a>
+                <span class="text-gray-400">/</span>
+                <span class="font-medium text-bevap-gold">Execução de Projeto Finalizada</span>
+            </nav>
+        </div>
+    </header>
+
+    <main class="pt-32 pb-16">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+                <div class="space-y-6 lg:col-span-2">
+                    <div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm leading-6 text-gray-700">
+                        O projeto foi encerrado com sucesso após a conclusão da execução, aprovação do solicitante e validação técnica da TI. Toda a documentação, evidências e registros operacionais permaneceram consolidados nesta visão final.
+                    </div>
+
+                    <section class="rounded-lg bg-white shadow-md">
+                        <div class="border-b border-gray-200">
+                            <div class="relative">
+                                <div id="execution-tabs-scroll" class="flex overflow-x-auto scroll-smooth pr-14 pl-14 md:pl-0 md:pr-2">
+                                    <button type="button" id="tab-execution-phases" class="whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
+                                        <i class="fa-solid fa-layer-group mr-2"></i>Fases
+                                    </button>
+                                    <button type="button" id="tab-execution-milestones" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-flag-checkered mr-2"></i>Marcos
+                                    </button>
+                                    <button type="button" id="tab-execution-risks" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-triangle-exclamation mr-2"></i>Riscos
+                                    </button>
+                                    <button type="button" id="tab-execution-raci" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-users mr-2"></i>RACI
+                                    </button>
+                                    <button type="button" id="tab-execution-requester" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-user-check mr-2"></i>Validação do Solicitante
+                                    </button>
+                                    <button type="button" id="tab-execution-ti" class="whitespace-nowrap border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                                        <i class="fa-solid fa-shield-halved mr-2"></i>Validação do TI
+                                    </button>
+                                </div>
+                                <button id="execution-tabs-left-arrow" type="button" class="pointer-events-none absolute left-0 top-0 bottom-0 flex w-24 items-center justify-start rounded-r-full rounded-l-md border-0 bg-gradient-to-r from-white via-white/80 to-transparent pl-2 text-bevap-navy opacity-0 transition-opacity duration-300">
+                                    <span class="flex items-center gap-0 text-base leading-none">
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                        <i class="fa-solid fa-chevron-left"></i>
+                                    </span>
+                                </button>
+                                <button id="execution-tabs-right-arrow" type="button" class="pointer-events-none absolute right-0 top-0 bottom-0 flex w-24 items-center justify-end rounded-l-full rounded-r-md border-0 bg-gradient-to-l from-white via-white/80 to-transparent pr-2 text-bevap-navy opacity-0 transition-opacity duration-300">
+                                    <span class="flex items-center gap-0 text-base leading-none">
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                        <i class="fa-solid fa-chevron-right"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="tab-content-execution-phases" class="p-6">
+                            <div class="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">Acompanhe a execução agrupada por fases planejadas na EAP, visualizando responsáveis, esforço previsto, duração e todas as tarefas previstas para cada fase do projeto.</p>
+                            </div>
+                            <div id="execution-phases-list" class="mt-6 space-y-5"></div>
+                        </div>
+
+                        <div id="tab-content-execution-milestones" class="hidden p-6">
+                            <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">Visualize o cronograma executivo por marcos, com período, status, critérios de aceite e as tarefas vinculadas de cada fase que compõem a entrega planejada.</p>
+                            </div>
+                            <div id="execution-milestones-list" class="mt-6 space-y-5"></div>
+                        </div>
+
+                        <div id="tab-content-execution-risks" class="hidden p-6">
+                            <div class="rounded-lg border border-red-200 bg-red-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">Consulte os riscos consolidados do projeto com severidade, probabilidade, impacto, mitigação e contingência definidos no encerramento.</p>
+                            </div>
+                            <div id="execution-risks-list" class="mt-6 space-y-4"></div>
+                        </div>
+
+                        <div id="tab-content-execution-raci" class="hidden p-6">
+                            <div class="rounded-lg border border-indigo-200 bg-indigo-50 p-4">
+                                <p class="text-sm leading-6 text-gray-700">A matriz RACI final mantém a visão de responsabilidades por marco e o plano de comunicação utilizado ao longo do projeto.</p>
+                            </div>
+                            <div class="mt-6 overflow-x-auto rounded-xl border border-gray-200 bg-white">
+                                <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Marco</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Responsável (R)</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Aprovador (A)</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Consultado (C)</th>
+                                            <th class="align-top px-4 py-3 text-left font-semibold text-gray-700">Informado (I)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="execution-raci-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                                </table>
+                            </div>
+                            <div class="mt-6 rounded-xl border border-gray-200 bg-white p-4">
+                                <div class="mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-comments text-sm text-bevap-gold"></i>
+                                    <h4 class="text-sm font-montserrat font-semibold text-gray-900">Plano de Comunicação</h4>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="min-w-full divide-y divide-gray-200 text-sm">
+                                        <thead class="bg-gray-50">
+                                            <tr>
+                                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Público</th>
+                                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Canal</th>
+                                                <th class="px-4 py-3 text-left font-semibold text-gray-700">Periodicidade</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="execution-communication-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="tab-content-execution-requester" class="hidden p-6">
+                            <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-amber-50 text-amber-700 shrink-0">
+                                        <i class="fa-solid fa-user-check text-base"></i>
+                                    </span>
+                                    <div>
+                                        <h4 class="text-sm font-montserrat font-semibold text-gray-900">Validação do Solicitante</h4>
+                                        <p class="text-xs text-gray-500">Histórico consolidado da análise do solicitante até a aprovação final desta etapa.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4 space-y-3">
+                                    <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">JV</span>
+                                                <div>
+                                                    <div class="font-semibold leading-5 text-bevap-navy">João Vieira</div>
+                                                    <div class="mt-1 text-xs text-gray-500">Solicitou novo planejamento</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full border border-yellow-200 bg-yellow-50 px-2.5 py-1 text-xs font-semibold text-yellow-700">Replanejamento solicitado</span>
+                                                <div class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">12/03/2026 14:20</div>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-700">Solicitei revisão do planejamento para consolidar as evidências do marco de homologação e ajustar os pontos pendentes antes da aprovação final.</p>
+                                    </div>
+                                    <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">JV</span>
+                                                <div>
+                                                    <div class="font-semibold leading-5 text-bevap-navy">João Vieira</div>
+                                                    <div class="mt-1 text-xs text-gray-500">Aprovação do solicitante</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Aprovado</span>
+                                                <div class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">15/03/2026 10:05</div>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-700">Validei o projeto conforme o detalhamento apresentado. Os marcos, evidências e registros enviados ficaram coerentes com a entrega esperada para esta etapa.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="tab-content-execution-ti" class="hidden p-6">
+                            <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700 shrink-0">
+                                        <i class="fa-solid fa-shield-halved text-base"></i>
+                                    </span>
+                                    <div>
+                                        <h4 class="text-sm font-montserrat font-semibold text-gray-900">Validação do TI</h4>
+                                        <p class="text-xs text-gray-500">Comentário final aprovado pela equipe de Tecnologia da Informação.</p>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <div class="rounded-xl border border-gray-200 bg-slate-50 p-4">
+                                        <div class="flex items-start justify-between gap-3">
+                                            <div class="flex items-center gap-3">
+                                                <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-bevap-navy text-sm font-semibold text-white">TI</span>
+                                                <div>
+                                                    <div class="font-semibold leading-5 text-bevap-navy">Equipe de Tecnologia da Informação</div>
+                                                    <div class="mt-1 text-xs text-gray-500">Aprovação da TI</div>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-xs font-semibold text-emerald-700">Aprovado</span>
+                                                <div class="inline-flex items-center rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-500">16/03/2026 16:40</div>
+                                            </div>
+                                        </div>
+                                        <p class="mt-2 text-sm text-gray-700">A validação técnica foi concluída com êxito. O desenho implementado, os controles aplicados, as evidências apresentadas e o encerramento operacional do projeto foram aprovados pela TI.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                </div>
+
+                <aside class="lg:col-span-1">
+                    <div class="sticky top-24 space-y-4">
+                        <div class="rounded-lg bg-white p-5 shadow-md">
+                            <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                                <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold"></i>
+                                Resumo do Projeto
+                            </h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Código</span><span class="font-mono font-semibold text-bevap-navy">PRJ-2026-014</span></div>
+                                <div class="border-b pb-2"><span class="text-gray-600">Título</span><p class="mt-1 font-medium text-gray-900">Implantar SSO corporativo</p></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Área</span><span class="font-medium text-gray-900">Tecnologia da Informação</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Patrocinador</span><span class="font-medium text-gray-900">Diretoria TI</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Previsão Final</span><span class="font-medium text-gray-900">20/03/2026</span></div>
+                                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span class="font-medium text-gray-900">João Vieira</span></div>
+                                <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-800"><i class="fa-solid fa-circle-check mr-1"></i>Execução de Projeto Finalizada</span></div>
+                            </div>
+                            <div class="mt-4 space-y-2 border-t pt-4">
+                                <a href="../ux-planejamento.html" class="flex w-full items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy transition-colors hover:bg-gray-50">
+                                    <i class="fa-solid fa-timeline mr-2"></i>Linha do Tempo
+                                </a>
+                                <button type="button" class="flex w-full items-center justify-center rounded-lg border border-bevap-green px-4 py-2 text-sm font-medium text-bevap-green transition-colors hover:bg-green-50">
+                                    <i class="fa-solid fa-paperclip mr-2"></i>Ver Anexos
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="rounded-lg bg-white p-5 shadow-md">
+                            <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                                <i class="fa-solid fa-list-check mr-2 text-bevap-green"></i>
+                                Progresso
+                            </h3>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Solicitação aprovada</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Análise TI concluída</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Planejamento do projeto concluído</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Execução do projeto concluída</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Validação do solicitante concluída</span></div>
+                                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2"></i><span>Validação do TI concluída</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast" class="hidden fixed top-24 right-4 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+        <div class="flex items-start gap-3">
+            <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600"></i>
+            <div>
+                <div id="toast-title" class="font-semibold text-bevap-navy"></div>
+                <div id="toast-message" class="text-sm text-gray-600"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="ux-projeto-validacao-common.js"></script>
+    <script src="ux-projeto-final.js"></script>
+</body>
+</html>
