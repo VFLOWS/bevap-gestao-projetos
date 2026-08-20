@@ -1,0 +1,205 @@
+<style>
+    :root {
+        --bevap-navy: #3D567E;
+        --bevap-green: #1C8C5D;
+        --bevap-gold: #F1B434;
+    }
+
+    .font-montserrat { font-family: 'Montserrat', sans-serif; }
+    .bg-bevap-green { background-color: var(--bevap-green); }
+    .text-bevap-navy { color: var(--bevap-navy); }
+    .text-bevap-green { color: var(--bevap-green); }
+    .text-bevap-gold { color: var(--bevap-gold); }
+    .border-bevap-green { border-color: var(--bevap-green); }
+    .border-bevap-navy { border-color: var(--bevap-navy); }
+</style>
+
+<main class="mx-auto max-w-7xl px-4 pb-32 pt-32 sm:px-6 lg:px-8" data-page="epRequesterGoLiveValidation">
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+            <section class="rounded-lg bg-white shadow-md">
+                <div class="border-b border-gray-200">
+                    <div class="flex flex-wrap">
+                        <button type="button" id="ep-solic-overview-tab" class="border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
+                            <i class="fa-solid fa-user-check mr-2"></i>Solicitante Validar GO Live
+                        </button>
+                        <button type="button" id="ep-solic-final-history-tab" class="border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                            <i class="fa-solid fa-shield-halved mr-2"></i>Validacao Final TI
+                        </button>
+                        <button type="button" id="ep-solic-ti-history-tab" class="border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                            <i class="fa-solid fa-rocket mr-2"></i>TI Realizar GO Live
+                        </button>
+                        <button type="button" id="ep-solic-documents-tab" class="border-b-2 border-transparent px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700">
+                            <i class="fa-solid fa-paperclip mr-2"></i>Documentos
+                        </button>
+                    </div>
+                </div>
+
+                <div id="ep-solic-overview-content" class="p-6">
+                    <h3 class="mb-4 flex items-center text-lg font-montserrat font-bold text-bevap-navy">
+                        <i class="fa-solid fa-comments mr-3 text-bevap-gold"></i>Comentario Final do Solicitante
+                    </h3>
+                    <label for="ep-solic-opinion" class="mb-2 block text-sm font-medium text-gray-700">Observacao Final do Solicitante <span class="text-red-500">*</span></label>
+                    <textarea id="ep-solic-opinion" rows="5" placeholder="Registre a validacao final do solicitante sobre o GO Live em producao..." class="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 text-sm focus:border-transparent focus:ring-2 focus:ring-bevap-green"></textarea>
+                    <div class="mt-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+                        <label class="flex items-start gap-3">
+                            <input type="checkbox" id="ep-solic-agreement" class="mt-1 h-4 w-4 rounded border-gray-300 text-bevap-green focus:ring-bevap-green">
+                            <span class="text-sm text-gray-700">Confirmo que validei o GO Live em producao e que esta tudo de acordo para seguir com o encerramento da entrega. <span class="text-red-500">*</span></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="ep-solic-final-history-content" class="hidden p-6">
+                    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700">
+                                <i class="fa-solid fa-shield-halved text-base"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-sm font-montserrat font-semibold text-gray-900">Validacao Final TI</h4>
+                                <p class="text-xs text-gray-500">Registro da validacao tecnica final concluida antes da execucao do GO Live.</p>
+                            </div>
+                        </div>
+                        <div id="ep-solic-final-history-list" class="mt-4 space-y-3"></div>
+                    </div>
+                </div>
+
+                <div id="ep-solic-ti-history-content" class="hidden p-6">
+                    <div class="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+                        <div class="flex items-center gap-3">
+                            <span class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-700">
+                                <i class="fa-solid fa-rocket text-base"></i>
+                            </span>
+                            <div>
+                                <h4 class="text-sm font-montserrat font-semibold text-gray-900">TI Realizar GO Live</h4>
+                                <p class="text-xs text-gray-500">Registro da execucao concluida pela TI na etapa anterior.</p>
+                            </div>
+                        </div>
+                        <div id="ep-solic-ti-history-list" class="mt-4 space-y-3"></div>
+                    </div>
+                </div>
+
+                <div id="ep-solic-documents-content" class="hidden p-6">
+                    <div class="mb-4 flex items-start gap-3 rounded-lg border border-blue-200 bg-blue-50 p-4">
+                        <i class="fa-solid fa-paperclip mt-0.5 text-blue-600"></i>
+                        <div class="text-sm text-gray-700">
+                            <p class="font-medium text-bevap-navy">Documentos do GO Live</p>
+                            <p class="mt-1">Anexe os documentos da validacao do GO Live em producao pelo solicitante.</p>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5">
+                        <h3 class="mb-4 flex items-center text-base font-montserrat font-semibold text-bevap-navy">
+                            <i class="fa-solid fa-paperclip mr-3 text-bevap-gold"></i>Documentos
+                        </h3>
+                        <input type="file" id="ep-solic-documents-input" class="hidden" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.png,.jpg,.jpeg">
+                        <label for="ep-solic-documents-input" id="ep-solic-documents-dropzone" class="block cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors hover:border-bevap-green">
+                            <i class="fa-solid fa-cloud-arrow-up mb-3 text-4xl text-gray-400"></i>
+                            <p class="mb-2 text-gray-600">Arraste arquivos ou clique para selecionar</p>
+                            <p class="text-sm text-gray-500">PDF, DOC, XLS, PPT (max. 10MB)</p>
+                        </label>
+                        <div id="ep-solic-documents-list" class="mt-4 space-y-3"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <aside class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                <div class="rounded-lg bg-white p-5 shadow-md">
+                    <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                        <i class="fa-solid fa-clipboard-list mr-2 text-bevap-gold"></i>Resumo do Projeto
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Codigo</span><span id="ep-solic-project-code" class="font-mono font-semibold text-bevap-navy">-</span></div>
+                        <div class="border-b pb-2"><span class="text-gray-600">Titulo</span><p id="ep-solic-project-title" class="mt-1 font-medium text-gray-900">-</p></div>
+                        <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span id="ep-solic-project-requester" class="font-medium text-gray-900">-</span></div>
+                        <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800"><i class="fa-solid fa-user-check mr-1"></i>Validacao em producao</span></div>
+                    </div>
+                    <div class="mt-4 space-y-2 border-t pt-4">
+                        <a href="#" class="flex w-full items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy transition-colors hover:bg-gray-50">
+                            <i class="fa-solid fa-timeline mr-2"></i>Linha do Tempo
+                        </a>
+                        <button type="button" data-action="open-solic-documents" class="flex w-full items-center justify-center rounded-lg border border-bevap-green px-4 py-2 text-sm font-medium text-bevap-green transition-colors hover:bg-green-50">
+                            <i class="fa-solid fa-paperclip mr-2"></i>Ver Anexos
+                        </button>
+                    </div>
+                </div>
+                <div class="rounded-lg bg-white p-5 shadow-md">
+                    <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                        <i class="fa-solid fa-list-check mr-2 text-bevap-green"></i>Progresso
+                    </h3>
+                    <div id="ep-solic-progress-list" class="space-y-3 text-sm"></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<footer class="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white shadow-lg">
+    <div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
+        <button type="button" data-action="save-solic-draft" class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50">
+            <i class="fa-solid fa-save mr-2"></i>Salvar Rascunho
+        </button>
+        <div class="flex flex-wrap items-center justify-end gap-3">
+            <button type="button" data-action="open-solic-cancel" class="rounded-lg bg-red-600 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-red-700">
+                <i class="fa-solid fa-ban mr-2"></i>Nao Continuidade
+            </button>
+            <button type="button" data-action="open-solic-return" class="rounded-lg bg-yellow-500 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-yellow-600">
+                <i class="fa-solid fa-rotate-left mr-2"></i>Realizar Novo Planejamento
+            </button>
+            <button type="button" data-action="open-solic-approve" class="rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
+                <i class="fa-solid fa-circle-check mr-2"></i>Concluir Validacao do Solicitante
+            </button>
+        </div>
+    </div>
+</footer>
+
+<div id="ep-solic-return-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+        <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Realizar Novo Planejamento</h3>
+        <p class="mb-4 text-sm text-gray-600">Descreva os pontos que exigem novo planejamento antes de devolver a entrega para revisao do GO Live.</p>
+        <textarea id="ep-solic-return-reason" rows="4" placeholder="Motivo do novo planejamento..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5"></textarea>
+        <div class="flex justify-end gap-3">
+            <button type="button" data-action="close-solic-return" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700">Cancelar</button>
+            <button type="button" data-action="confirm-solic-return" class="rounded-lg bg-yellow-500 px-6 py-2 font-medium text-white">Confirmar Retorno</button>
+        </div>
+    </div>
+</div>
+
+<div id="ep-solic-cancel-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+        <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Nao Continuidade</h3>
+        <p class="mb-4 text-sm text-gray-600">Justifique a decisao de nao continuidade do projeto:</p>
+        <select id="ep-solic-cancel-category" class="mb-3 w-full rounded-lg border border-gray-300 px-4 py-2.5">
+            <option value="">Selecione a categoria</option>
+            <option value="orcamento">Restricao orcamentaria</option>
+            <option value="tecnica">Inviabilidade tecnica</option>
+            <option value="prioridade">Baixa prioridade</option>
+            <option value="recursos">Falta de recursos</option>
+        </select>
+        <textarea id="ep-solic-cancel-reason" rows="4" placeholder="Descricao detalhada..." class="mb-4 w-full resize-none rounded-lg border border-gray-300 px-4 py-2.5"></textarea>
+        <div class="flex justify-end gap-3">
+            <button type="button" data-action="close-solic-cancel" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700">Cancelar</button>
+            <button type="button" data-action="confirm-solic-cancel" class="rounded-lg bg-red-600 px-6 py-2 font-medium text-white">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<div id="ep-solic-approve-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+        <h3 class="mb-4 text-xl font-montserrat font-bold text-bevap-navy">Concluir Validacao do Solicitante</h3>
+        <p id="ep-solic-approve-message" class="mb-6 text-gray-700"></p>
+        <p class="mb-6 text-sm text-gray-600">Ao confirmar, a validacao do GO Live em producao sera registrada.</p>
+        <div class="flex justify-end gap-3">
+            <button type="button" data-action="close-solic-approve" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700">Cancelar</button>
+            <button type="button" data-action="confirm-solic-approve" class="rounded-lg bg-bevap-green px-6 py-2 font-medium text-white">Confirmar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="fixed right-4 top-24 z-[70] hidden max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+    <div class="flex items-start gap-3">
+        <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600"></i>
+        <div><div id="toast-title" class="font-semibold text-bevap-navy"></div><div id="toast-message" class="text-sm text-gray-600"></div></div>
+    </div>
+</div>

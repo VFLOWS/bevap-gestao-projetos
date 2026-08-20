@@ -40,7 +40,7 @@ const committeeCostApprovalController = {
     'fornecedorRecomendadoTITT',
     'valortotalTIPC',
     'prazoEstimadoTIPC',
-    // GCC (para aba Custo & Orcamento)
+    // GCC (para aba Custo & Orçamento)
     'capexGCC',
     'opexGCC',
     'tblNaturezaCustoCapexGCC.centroCustoCapexGCC',
@@ -398,7 +398,14 @@ const committeeCostApprovalController = {
         taskFields: this.collectCommitteeTaskFields()
       });
 
-      this.showToast('Rascunho salvo', 'As alterações foram salvas com sucesso.', 'success');
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[committeeCostApproval] Error saving draft:', error);
       this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
@@ -548,7 +555,7 @@ const committeeCostApprovalController = {
 
   loadBaseContext: async function () {
     if (!this._state.documentId) {
-      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para esta rota.', 'warning');
+      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para está rota.', 'warning');
       return;
     }
 
@@ -666,7 +673,7 @@ const committeeCostApprovalController = {
         {
           variant: 'block',
           label: 'Fornecedor Recomendado',
-          value: this.asText(row && row.fornecedorRecomendadoTITT) || 'Nao informado'
+          value: this.asText(row && row.fornecedorRecomendadoTITT) || 'Não informado'
         },
         {
           variant: 'kvList',
@@ -1048,14 +1055,6 @@ const committeeCostApprovalController = {
         message: 'Aguarde enquanto a tarefa é enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () { legacyLoading.hide(); },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {
@@ -1096,7 +1095,20 @@ const committeeCostApprovalController = {
       if (shouldValidateMainFields) {
         const missing = this.validateCap();
         if (missing && missing.length) {
-          this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          if (config && config.modalId) {
+            this.closeModal(config.modalId);
+          }
+          const ui = this.getUiComponents();
+          if (ui && ui.validation && typeof ui.validation.showValidationModal === 'function') {
+            ui.validation.showValidationModal(this.getContainer(), {
+              missingFields: missing,
+              title: 'Campos Obrigatórios',
+              message: 'Por favor, preencha todos os campos obrigatórios antes de continuar.',
+              closeSelectors: ['#approve-modal']
+            });
+          } else {
+            this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          }
           return;
         }
       }
@@ -1134,10 +1146,15 @@ const committeeCostApprovalController = {
         this.closeModal(config.modalId);
       }
 
-      this.showToast('Sucesso', `Ação registrada: ${this.asText(config && config.action)}.`, 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showActionSuccess === 'function') {
+        window.gpActionFeedback.showActionSuccess(this, config, {
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          message: `Acao registrada: ${this.asText(config && config.action)}.`
+        });
+      } else {
+        this.showToast('Sucesso', `Ação registrada: ${this.asText(config && config.action)}.`, 'success');
+      }
     } catch (error) {
       console.error('[committeeCostApproval] Error moving task:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
@@ -1148,6 +1165,12 @@ const committeeCostApprovalController = {
   },
 
   showToast: function (title, message, type) {
+    const normalizedType = type || 'info';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
+      return;
+    }
+
     const ui = $(document).data('gpUiComponents');
     if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
       if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;

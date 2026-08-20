@@ -26,7 +26,7 @@
                 <div class="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1 text-[13px] text-gray-600">
                   <span id="ef-exec-responsible-badge" class="hidden shrink-0 whitespace-nowrap rounded-full bg-blue-700 px-3 py-1.5 font-bold text-white">
                     <i class="fa-solid fa-user mr-1 text-blue-100" aria-hidden="true"></i>
-                    Responsavel: <span id="ef-exec-responsible">-</span>
+                    Responsável: <span id="ef-exec-responsible">-</span>
                   </span>
                   <span class="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-red-600 px-3 py-1.5 font-bold text-white">
                     <i class="fa-solid fa-calendar-alt mr-1 text-red-100" aria-hidden="true"></i>
@@ -40,7 +40,7 @@
                       <i class="fa-solid fa-flag-checkered text-xs" aria-hidden="true"></i>
                     </span>
                     <span class="font-medium">Marco: <span id="ef-exec-milestone-name">-</span></span>
-                    <span id="ef-exec-milestone-period-row" class="hidden font-medium text-gray-700">Periodo do Marco: <span id="ef-exec-milestone-period">-</span></span>
+                    <span id="ef-exec-milestone-period-row" class="hidden font-medium text-gray-700">Período do Marco: <span id="ef-exec-milestone-period">-</span></span>
                   </div>
                   <div class="mt-3 flex items-center justify-between gap-4 rounded-xl bg-emerald-300 px-3 py-2">
                     <div class="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
@@ -52,17 +52,16 @@
                         <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-emerald-500 text-gray-700">
                           <i class="fa-solid fa-user text-xs" aria-hidden="true"></i>
                         </span>
-                        <span class="font-medium">Responsavel da Fase: <span id="ef-exec-phase-responsible">-</span></span>
+                        <span class="font-medium">Responsável da Fase: <span id="ef-exec-phase-responsible">-</span></span>
                       </span>
                     </div>
-                    <span id="ef-exec-phase-effort-row" class="hidden shrink-0 text-sm font-medium text-gray-700">Esforço: <span id="ef-exec-phase-effort">-</span></span>
                   </div>
                   <div id="ef-exec-dependencies-block" class="hidden mt-3 rounded-xl border border-yellow-300 bg-yellow-100 px-3 py-3 text-gray-700">
                     <div class="flex items-center gap-3">
                       <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-yellow-400 text-gray-700">
                         <i class="fa-solid fa-link text-xs" aria-hidden="true"></i>
                       </span>
-                      <span class="font-medium">Dependencia da Atividade</span>
+                      <span class="font-medium">Dependência da Atividade</span>
                     </div>
                     <div id="ef-exec-dependencies-list" class="mt-3 space-y-2 pl-10"></div>
                   </div>
@@ -74,7 +73,7 @@
           <section class="rounded-lg bg-white shadow-md">
             <div class="border-b border-gray-200">
               <button type="button" class="border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
-                <i class="fa-solid fa-clipboard-list mr-2" aria-hidden="true"></i>Execucao da Atividade
+                <i class="fa-solid fa-clipboard-list mr-2" aria-hidden="true"></i>Execução da Atividade
               </button>
             </div>
 
@@ -85,7 +84,7 @@
                     <i class="fa-regular fa-clock text-base" aria-hidden="true"></i>
                   </span>
                   <div>
-                    <h3 class="text-sm font-semibold text-gray-900">Lancamentos da Atividade</h3>
+                    <h3 class="text-sm font-semibold text-gray-900">Lançamentos da Atividade</h3>
                     <p class="text-xs text-gray-500">Registre data, intervalo e comentário no mesmo apontamento.</p>
                   </div>
                 </div>
@@ -108,7 +107,7 @@
                   <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <div class="text-sm font-semibold text-gray-900">Apontamento de Tempo</div>
-                      <p class="mt-1 text-sm text-gray-500">Os apontamentos so sao gravados no card ao salvar ou enviar.</p>
+                      <p class="mt-1 text-sm text-gray-500">Os apontamentos só são gravados no card ao salvar ou enviar.</p>
                     </div>
                     <button type="button" data-action="open-add-entry-modal" class="inline-flex items-center justify-center rounded-lg bg-bevap-navy px-4 py-2 text-sm font-medium text-white transition-colors hover:opacity-95">
                       <i class="fa-solid fa-plus mr-2" aria-hidden="true"></i>Adicionar Apontamento
@@ -118,7 +117,7 @@
 
                 <div class="mt-4">
                   <div class="mb-3 flex items-center justify-between gap-3">
-                    <h4 class="text-sm font-semibold text-gray-900">Historico de Lancamentos</h4>
+                    <h4 class="text-sm font-semibold text-gray-900">Histórico de Lançamentos</h4>
                     <button type="button" id="ef-exec-entry-history-toggle" class="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50" aria-expanded="true">
                       <i class="fa-solid fa-chevron-up text-[10px]" aria-hidden="true"></i>
                       <span>Recolher</span>
@@ -151,7 +150,7 @@
                 </button>
 
                 <div id="ef-exec-files-pending-warning" class="hidden mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
-                  Existem anexos pendentes. Eles serao anexados apenas ao enviar para validacao.
+                  Existem anexos pendentes. Eles serão anexados apenas ao enviar para validação.
                 </div>
                 <div id="ef-exec-files-list" class="mt-4 space-y-2"></div>
               </div>
@@ -166,14 +165,14 @@
                 <i class="fa-solid fa-project-diagram mr-2 text-bevap-gold" aria-hidden="true"></i>Resumo do Projeto
               </h3>
               <div class="space-y-3 text-sm">
-                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Codigo</span><span id="ef-exec-project-code" class="font-mono font-semibold text-bevap-navy">-</span></div>
-                <div class="border-b pb-2"><span class="text-gray-600">Titulo</span><p id="ef-exec-project-title" class="mt-1 font-medium text-gray-900">-</p></div>
-                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Area</span><span id="ef-exec-project-area" class="font-medium text-gray-900">-</span></div>
+                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Código</span><span id="ef-exec-project-code" class="font-mono font-semibold text-bevap-navy">-</span></div>
+                <div class="border-b pb-2"><span class="text-gray-600">Título</span><p id="ef-exec-project-title" class="mt-1 font-medium text-gray-900">-</p></div>
+                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Área</span><span id="ef-exec-project-area" class="font-medium text-gray-900">-</span></div>
                 <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Patrocinador</span><span id="ef-exec-project-sponsor" class="font-medium text-gray-900">-</span></div>
                 <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Prioridade</span><span id="ef-exec-project-priority" class="font-medium text-gray-900">-</span></div>
                 <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span id="ef-exec-project-requester" class="font-medium text-gray-900">-</span></div>
-                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Responsavel</span><span id="ef-exec-project-responsible" class="font-medium text-gray-900">-</span></div>
-                <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800"><i class="fa-solid fa-play mr-1" aria-hidden="true"></i>Em execucao</span></div>
+                <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Responsável</span><span id="ef-exec-project-responsible" class="font-medium text-gray-900">-</span></div>
+                <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800"><i class="fa-solid fa-play mr-1" aria-hidden="true"></i>Em Execução</span></div>
               </div>
               <div class="mt-4 space-y-2 border-t pt-4">
                 <button type="button" disabled class="flex w-full cursor-not-allowed items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy opacity-60">
@@ -190,10 +189,10 @@
                 <i class="fa-solid fa-list-check mr-2 text-bevap-green" aria-hidden="true"></i>Progresso
               </h3>
               <div class="space-y-2 text-sm">
-                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2" aria-hidden="true"></i><span>Planejamento do projeto concluido</span></div>
-                <div class="flex items-center text-blue-600"><i class="fa-solid fa-play mr-2" aria-hidden="true"></i><span>Execucao da atividade em andamento</span></div>
-                <div class="flex items-center text-gray-400"><i class="fa-regular fa-circle mr-2" aria-hidden="true"></i><span>Validacao do solicitante</span></div>
-                <div class="flex items-center text-gray-400"><i class="fa-regular fa-circle mr-2" aria-hidden="true"></i><span>Validacao do TI</span></div>
+                <div class="flex items-center text-green-600"><i class="fa-solid fa-check-circle mr-2" aria-hidden="true"></i><span>Planejamento do projeto concluído</span></div>
+                <div class="flex items-center text-blue-600"><i class="fa-solid fa-play mr-2" aria-hidden="true"></i><span>Execução da atividade em andamento</span></div>
+                <div class="flex items-center text-gray-400"><i class="fa-regular fa-circle mr-2" aria-hidden="true"></i><span>Validação do solicitante</span></div>
+                <div class="flex items-center text-gray-400"><i class="fa-regular fa-circle mr-2" aria-hidden="true"></i><span>Validação do TI</span></div>
               </div>
             </div>
           </div>
@@ -209,14 +208,14 @@
           <i class="fa-solid fa-save mr-2" aria-hidden="true"></i>Salvar
         </button>
         <button type="button" data-action="send-requester" class="inline-flex items-center justify-center rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md hover:bg-green-700">
-          <i class="fa-solid fa-paper-plane mr-2" aria-hidden="true"></i>Enviar para Validacao do Solicitante
+          <i class="fa-solid fa-paper-plane mr-2" aria-hidden="true"></i>Enviar para Validação do Solicitante
         </button>
       </div>
     </div>
   </footer>
 
   <div id="modal-root"></div>
-  <div id="toast" class="hidden fixed right-4 top-24 z-[70] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+  <div id="toast" class="hidden fixed right-4 top-24 z-[90] max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
     <div class="flex items-start gap-3">
       <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600" aria-hidden="true"></i>
       <div>

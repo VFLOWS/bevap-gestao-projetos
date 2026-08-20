@@ -26,22 +26,10 @@ const router = {
     if (this._isRouting) return;
     this._isRouting = true;
 
-    const container = $('#page-container');
-    const loading = (function () {
-      if (typeof modalLoadingService !== 'undefined' && modalLoadingService.show) {
-        return modalLoadingService.show({
-          title: 'Aguarde',
-          message: 'Carregando a tela...'
-        });
-      }
-
-      const legacyLoading = FLUIGC.loading(container);
-      legacyLoading.show();
-      return {
-        hide: function () { legacyLoading.hide(); },
-        updateMessage: function () {}
-      };
-    })();
+    const loading = modalLoadingService.show({
+      title: 'Aguarde',
+      message: 'Carregando a tela...'
+    });
 
     try {
       const [page, paramStr] = rawHash.split('?');
@@ -140,28 +128,76 @@ const router = {
           breadcrumb: ['TI', 'Erro Iniciar Execução'],
           handler: () => dpStartExecErrorTreatmentController.load(params)
         },
+        dpStartDeliveryErrorTreatment: {
+          controller: dpStartDeliveryErrorTreatmentController,
+          title: 'TI - Tratar Erro Iniciar Entrega Projeto',
+          breadcrumb: ['TI', 'Erro Iniciar Entrega'],
+          handler: () => dpStartDeliveryErrorTreatmentController.load(params)
+        },
+        epGlpiErrorTreatment: {
+          controller: epGlpiErrorTreatmentController,
+          title: 'Entrega - Tratar Erro Integracao GLPI',
+          breadcrumb: ['Entrega', 'Erro Integracao GLPI'],
+          handler: () => epGlpiErrorTreatmentController.load(params)
+        },
+        epDeliveryPlanning: {
+          controller: epDeliveryPlanningController,
+          title: 'Planejamento da Entrega do Projeto',
+          breadcrumb: ['Entrega', 'Planejamento da Entrega'],
+          handler: () => epDeliveryPlanningController.load(params)
+        },
+        epUserTraining: {
+          controller: epUserTrainingController,
+          title: 'Treinamento dos Usuarios da Entrega',
+          breadcrumb: ['Entrega', 'Treinamento dos Usuarios'],
+          handler: () => epUserTrainingController.load(params)
+        },
+        epFinalGoLiveValidation: {
+          controller: epFinalGoLiveValidationController,
+          title: 'TI - Validacao Final do Projeto para GO Live',
+          breadcrumb: ['Entrega', 'Validacao Final GO Live'],
+          handler: () => epFinalGoLiveValidationController.load(params)
+        },
+        epGoLiveExecution: {
+          controller: epGoLiveExecutionController,
+          title: 'TI - Realizar GO Live em Producao',
+          breadcrumb: ['Entrega', 'Realizar GO Live'],
+          handler: () => epGoLiveExecutionController.load(params)
+        },
+        epRequesterGoLiveValidation: {
+          controller: epRequesterGoLiveValidationController,
+          title: 'Solicitante - Validar GO Live em Producao',
+          breadcrumb: ['Entrega', 'Validar GO Live'],
+          handler: () => epRequesterGoLiveValidationController.load(params)
+        },
+        epProjectClosureDocumentation: {
+          controller: epProjectClosureDocumentationController,
+          title: 'TI - Anexar Documentacao de Encerramento do Projeto',
+          breadcrumb: ['Entrega', 'Encerramento'],
+          handler: () => epProjectClosureDocumentationController.load(params)
+        },
         executionActivityWaiting: {
           controller: executionActivityWaitingController,
-          title: 'Aguardando Execucao da Atividade',
-          breadcrumb: ['Execucao de Fases', 'Aguardando Execucao'],
+          title: 'Aguardando Execução da Atividade',
+          breadcrumb: ['Execução de Fases', 'Aguardando Execução'],
           handler: () => executionActivityWaitingController.load(params)
         },
         executionActivity: {
           controller: executionActivityController,
-          title: 'Execucao da Atividade',
-          breadcrumb: ['Execucao de Fases', 'Execucao da Atividade'],
+          title: 'Execução da Atividade',
+          breadcrumb: ['Execução de Fases', 'Execução da Atividade'],
           handler: () => executionActivityController.load(params)
         },
         executionActivityRequesterValidation: {
           controller: executionActivityRequesterValidationController,
-          title: 'Solicitante - Validacao da Atividade',
-          breadcrumb: ['Execucao de Fases', 'Validacao do Solicitante'],
+          title: 'Solicitante - Validação da Atividade',
+          breadcrumb: ['Execução de Fases', 'Validação do Solicitante'],
           handler: () => executionActivityRequesterValidationController.load(params)
         },
         executionActivityTiValidation: {
           controller: executionActivityTiValidationController,
-          title: 'TI - Validacao da Atividade',
-          breadcrumb: ['Execucao de Fases', 'Validacao TI'],
+          title: 'TI - Validação da Atividade',
+          breadcrumb: ['Execução de Fases', 'Validação TI'],
           handler: () => executionActivityTiValidationController.load(params)
         },
         requesterProposalApproval: {
@@ -173,26 +209,26 @@ const router = {
         // ADICIONE ESTA NOVA ROTA:
         projectExecution: {
           controller: projectExecutionController,
-          title: 'Desenvolvimento - Execução do Projeto',
-          breadcrumb: ['Desenvolvimento', 'Execução do Projeto'],
+          title: 'Desenvolvimento - Execução de Projeto',
+          breadcrumb: ['Desenvolvimento', 'Execução de Projeto'],
           handler: () => projectExecutionController.load(params)
         },
         projectRequesterValidation: {
           controller: projectRequesterValidationController,
-          title: 'Desenvolvimento - Validacao do Solicitante',
-          breadcrumb: ['Desenvolvimento', 'Validacao do Solicitante'],
+          title: 'Desenvolvimento - Validação do Solicitante',
+          breadcrumb: ['Desenvolvimento', 'Validação do Solicitante'],
           handler: () => projectRequesterValidationController.load(params)
         },
         projectTiValidation: {
           controller: projectTiValidationController,
-          title: 'Desenvolvimento - Validacao TI',
-          breadcrumb: ['Desenvolvimento', 'Validacao TI'],
+          title: 'Desenvolvimento - Validação TI',
+          breadcrumb: ['Desenvolvimento', 'Validação TI'],
           handler: () => projectTiValidationController.load(params)
         },
         projectFinal: {
           controller: projectFinalController,
-          title: 'Desenvolvimento - Execucao de Projeto Finalizada',
-          breadcrumb: ['Desenvolvimento', 'Execucao de Projeto Finalizada'],
+          title: 'Desenvolvimento - Execução de Projeto Finalizada',
+          breadcrumb: ['Desenvolvimento', 'Execução de Projeto Finalizada'],
           handler: () => projectFinalController.load(params)
         },
       };

@@ -1,0 +1,190 @@
+<style>
+    :root {
+        --bevap-navy: #3D567E;
+        --bevap-green: #1C8C5D;
+        --bevap-gold: #F1B434;
+    }
+
+    .font-montserrat { font-family: 'Montserrat', sans-serif; }
+    .bg-bevap-navy { background-color: var(--bevap-navy); }
+    .text-bevap-navy { color: var(--bevap-navy); }
+    .text-bevap-green { color: var(--bevap-green); }
+    .border-bevap-green { border-color: var(--bevap-green); }
+    .text-bevap-gold { color: var(--bevap-gold); }
+</style>
+
+<main class="mx-auto max-w-7xl px-4 pb-24 pt-32 sm:px-6 lg:px-8" data-page="epDeliveryPlanning">
+    <div class="mb-8">
+        <div class="mx-auto flex w-11/12 max-w-4xl items-center justify-between">
+            <button type="button" class="flex cursor-pointer items-center border-0 bg-transparent p-0" data-step-target="1">
+                <div id="step-indicator-1" class="flex h-8 w-8 items-center justify-center rounded-full bg-bevap-green text-sm font-medium text-white">1</div>
+                <div id="step-label-1" class="ml-2 hidden text-sm font-medium text-bevap-green sm:block">Planejamento GO Live</div>
+            </button>
+            <div class="mx-2 h-1 flex-1 rounded bg-gray-200">
+                <div id="step-progress-1" class="h-1 rounded bg-bevap-green" style="width: 100%"></div>
+            </div>
+            <button type="button" class="flex cursor-pointer items-center border-0 bg-transparent p-0" data-step-target="2">
+                <div id="step-indicator-2" class="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-sm font-medium text-gray-600">2</div>
+                <div id="step-label-2" class="ml-2 hidden text-sm text-gray-600 sm:block">Documentos</div>
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+        <div class="lg:col-span-2">
+            <section id="delivery-step-1" class="delivery-step rounded-lg bg-white shadow-md">
+                <div class="border-b border-gray-200">
+                    <div class="flex overflow-x-auto">
+                        <button type="button" id="tab-delivery-go-live" class="whitespace-nowrap border-b-2 border-bevap-green bg-green-50 px-6 py-4 text-sm font-medium text-bevap-green">
+                            <i class="fa-solid fa-rocket mr-2"></i>Planejamento GO Live
+                        </button>
+                        <button type="button" id="tab-delivery-summary" class="relative whitespace-nowrap border-b-2 border-transparent px-6 py-4 pr-10 text-sm font-medium text-gray-500 hover:text-gray-700">
+                            <i class="fa-solid fa-file-lines mr-2"></i>Resumo da Entrega
+                            <span id="tab-delivery-summary-alert" class="pointer-events-none absolute right-2 top-2 inline-flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-white ring-2 ring-white" title="Aten&ccedil;&atilde;o" aria-label="Aten&ccedil;&atilde;o">
+                                <i class="fa-solid fa-exclamation text-[10px]"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="tab-content-delivery-go-live" class="p-6">
+                    <div class="mb-4 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
+                        <i class="fa-solid fa-circle-exclamation text-blue-600"></i>
+                        <p class="text-sm text-gray-700">Este bloco &eacute; para o planejamento da entrega. Organize o trabalho em planejamentos sequenciais e objetivos; em cada planejamento, defina o t&iacute;tulo, o respons&aacute;vel, a data de execu&ccedil;&atilde;o, a descri&ccedil;&atilde;o e as depend&ecirc;ncias para estruturar o roteiro do go-live.</p>
+                    </div>
+
+                    <div id="delivery-plan-container" class="space-y-4"></div>
+
+                    <div id="delivery-empty-state" class="hidden rounded-lg border border-dashed border-gray-300 bg-gray-50 p-6 text-center text-sm text-gray-600">
+                        Nenhum planejamento cadastrado. Clique em <span class="font-medium text-bevap-green">Novo Planejamento</span> para come&ccedil;ar.
+                    </div>
+
+                    <div class="mt-6 flex justify-end border-t border-gray-200 pt-4">
+                        <button type="button" data-action="add-delivery-phase" class="rounded-lg bg-bevap-green px-4 py-2 text-white transition-colors hover:bg-green-700">
+                            <i class="fa-solid fa-layer-group mr-2"></i>Novo Planejamento
+                        </button>
+                    </div>
+                </div>
+
+                <div id="tab-content-delivery-summary" class="hidden p-6">
+                    <h3 class="mb-6 flex items-center text-xl font-montserrat font-bold text-bevap-navy">
+                        <i class="fa-solid fa-file-lines mr-3 text-bevap-gold"></i>Resumo da Entrega
+                    </h3>
+                    <div class="rounded-lg border border-blue-200 bg-blue-50 p-4">
+                        <p class="text-sm leading-6 text-gray-700">Acompanhe aqui o resumo da entrega com as informa&ccedil;&otilde;es dos marcos relacionados ao go live, mantendo o mesmo padr&atilde;o visual da execu&ccedil;&atilde;o do projeto.</p>
+                    </div>
+
+                    <div class="mt-6">
+                        <div class="mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-flag-checkered text-sm text-yellow-700"></i>
+                            <h4 class="text-sm font-montserrat font-semibold text-gray-900">Marcos Relacionados</h4>
+                        </div>
+                        <div id="delivery-related-milestones-list" class="space-y-5"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="delivery-step-2" class="delivery-step hidden rounded-lg bg-white p-6 shadow-md">
+                <h3 class="mb-6 flex items-center text-xl font-montserrat font-bold text-bevap-navy">
+                    <i class="fa-solid fa-paperclip mr-3 text-bevap-gold"></i>Documentos
+                </h3>
+                <div class="mb-4 flex items-center gap-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
+                    <i class="fa-solid fa-circle-exclamation text-blue-600"></i>
+                    <p class="text-sm text-gray-700">Finalize o planejamento da entrega anexando os documentos principais e materiais de apoio necess&aacute;rios para o go-live.</p>
+                </div>
+
+                <div>
+                    <h4 class="mb-4 text-lg font-semibold text-bevap-navy">Anexar Documentos</h4>
+                    <label id="delivery-documents-dropzone" class="block cursor-pointer rounded-lg border-2 border-dashed border-gray-300 p-8 text-center transition-colors hover:border-bevap-green">
+                        <i class="fa-solid fa-cloud-arrow-up mb-3 text-4xl text-gray-400"></i>
+                        <p class="mb-2 text-gray-600">Arraste arquivos ou clique para selecionar</p>
+                        <p class="text-sm text-gray-500">PDF, DOC, XLS (m&aacute;x. 10MB)</p>
+                        <input type="file" id="delivery-documents-input" class="hidden" multiple>
+                    </label>
+                    <div id="delivery-documents-list" class="mt-4 space-y-3"></div>
+                </div>
+            </section>
+
+            <div class="mt-8 flex justify-between border-t pt-6">
+                <button type="button" data-action="prev-step" class="rounded-lg border border-gray-300 px-6 py-2.5 font-medium text-gray-700 transition-all hover:bg-gray-50 disabled:opacity-50" disabled>
+                    <i class="fa-solid fa-arrow-left mr-2"></i>Anterior
+                </button>
+                <button type="button" id="delivery-next-step-btn" data-action="next-step" class="rounded-lg bg-bevap-green px-6 py-2.5 font-medium text-white shadow-md transition-all hover:bg-green-700 disabled:opacity-50 disabled:shadow-none">
+                    <span id="next-btn-label">Pr&oacute;ximo: Documentos</span>
+                    <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <aside class="lg:col-span-1">
+            <div class="sticky top-24 space-y-4">
+                <div class="rounded-lg bg-white p-5 shadow-md">
+                    <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                        <i class="fa-solid fa-clipboard-list mr-2 text-bevap-gold"></i>Resumo do Projeto
+                    </h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">C&oacute;digo</span><span id="project-code" class="font-mono font-semibold text-bevap-navy">-</span></div>
+                        <div class="border-b pb-2"><span class="text-gray-600">T&iacute;tulo</span><p id="project-title" class="mt-1 font-medium text-gray-900">-</p></div>
+                        <div class="flex items-center justify-between border-b pb-2"><span class="text-gray-600">Solicitante</span><span id="project-requester" class="font-medium text-gray-900">-</span></div>
+                        <div class="flex items-center justify-between"><span class="text-gray-600">Status</span><span class="inline-flex items-center rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800"><i class="fa-solid fa-rocket mr-1"></i>Planejamento da Entrega</span></div>
+                    </div>
+                    <div class="mt-4 space-y-2 border-t pt-4">
+                        <a href="#" class="flex w-full items-center justify-center rounded-lg border border-bevap-navy px-4 py-2 text-sm font-medium text-bevap-navy transition-colors hover:bg-gray-50">
+                            <i class="fa-solid fa-timeline mr-2"></i>Linha do Tempo
+                        </a>
+                        <button type="button" class="flex w-full items-center justify-center rounded-lg border border-bevap-green px-4 py-2 text-sm font-medium text-bevap-green transition-colors hover:bg-green-50">
+                            <i class="fa-solid fa-paperclip mr-2"></i>Ver Anexos
+                        </button>
+                    </div>
+                </div>
+
+                <div class="rounded-lg bg-white p-5 shadow-md">
+                    <h3 class="mb-4 flex items-center font-montserrat text-lg font-bold text-bevap-navy">
+                        <i class="fa-solid fa-list-check mr-2 text-bevap-green"></i>Progresso da Entrega
+                    </h3>
+                    <div id="delivery-progress-list" class="space-y-2 text-sm"></div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</main>
+
+<footer class="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200 bg-white shadow-lg">
+    <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between">
+            <button type="button" data-action="save-delivery-plan" class="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 transition-all hover:bg-gray-50">
+                <i class="fa-solid fa-save mr-2"></i>Salvar Rascunho
+            </button>
+            <button type="button" data-action="conclude-delivery-plan" class="rounded-lg bg-bevap-green px-6 py-2.5 text-sm font-medium text-white shadow-md transition-all hover:bg-green-700">
+                <i class="fa-solid fa-paper-plane mr-2"></i>Concluir Planejamento Go Live
+            </button>
+        </div>
+    </div>
+</footer>
+
+<div id="delivery-conclude-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 p-4">
+    <div class="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
+        <div class="mb-4 flex items-center">
+            <div class="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
+                <i class="fa-solid fa-check-circle text-2xl text-bevap-green"></i>
+            </div>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Conclus&atilde;o</h3>
+        </div>
+        <p id="delivery-conclude-message" class="mb-6 text-gray-700">Voc&ecirc; est&aacute; concluindo o planejamento da entrega do projeto.</p>
+        <p class="mb-6 text-sm text-gray-600">Ao confirmar, o fluxo seguir&aacute; para a pr&oacute;xima etapa operacional do projeto.</p>
+        <div class="flex justify-end space-x-3">
+            <button type="button" data-action="close-conclude-modal" class="rounded-lg border border-gray-300 px-4 py-2 text-gray-700 transition-colors hover:bg-gray-50">Cancelar</button>
+            <button type="button" data-action="confirm-conclude-modal" class="rounded-lg bg-bevap-green px-6 py-2 font-medium text-white transition-colors hover:bg-green-700">Confirmar Conclus&atilde;o</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="fixed right-4 top-24 z-[70] hidden max-w-sm rounded-lg border-l-4 bg-white px-4 py-3 shadow-xl">
+    <div class="flex items-start gap-3">
+        <i id="toast-icon" class="fa-solid fa-circle-info text-xl text-blue-600"></i>
+        <div>
+            <div id="toast-title" class="font-semibold text-bevap-navy"></div>
+            <div id="toast-message" class="text-sm text-gray-600"></div>
+        </div>
+    </div>
+</div>

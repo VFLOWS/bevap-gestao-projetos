@@ -1,0 +1,157 @@
+﻿GERENTE DO CENTRO DE CUSTO - APROVAR PROJETO
+
+Correções Ortográficas e de Caixa (Falta de Acentuação / Caixa Alta)
+No Nome da Guia Principal:
+[x] Onde está: Painel financeiro ➔ Correto:Painel Financeiro(Ajustar o F para maiúsculo).
+Nos Rótulos e Textos da Interface:
+[x] Onde está: Analise Financeira - GCC ➔ Correto:Análise Financeira - GCC
+[x] Onde está: classificacao contabil ➔ Correto:classificação contábil
+[x] Onde está: Vigencia: ➔ Correto:Vigência: | Condicao: ➔ Correto:Condição:
+[x] Onde está: Periodo Competencia * ➔ Correto:Período Competência *
+[x] Onde está: Observacoes do Gerente do Centro de Custo ➔ Correto:Observações do Gerente do Centro de Custo
+[x] Onde está: Saldo apos compromisso ➔ Correto:Saldo após compromisso
+Erros Ortográficos nas Ações de Devolução (Botão e Modal)
+No Botão de Ação (Rodapé):
+[x] Onde está: devolver para correcao ➔ Correto:Devolver para Correção
+No Modal de Devolução:
+[x] Onde está: devolver para correçãoi / correcao ➔ Correto:Devolver para Correção(Remover o caractere "i" residual do texto e aplicar a acentuação correta).
+Divergência de Rótulo (Label de Botão no Modal)
+Botão de Confirmação no Modal de Aprovação: O botão de ação positiva dentro do modal de confirmação está exibindo o texto genérico Aprovar.
+[x] Correção: Alterar o rótulo do botão para Aprovar Custo, garantindo que a ação seja específica ao contexto da etapa atual (GCC).
+
+SOLICITANTE APROVAR PROPOSTA
+
+6.3 Pequenos Ajustes Identificados
+Correções Ortográficas (Falta de Acentuação no Sistema)
+Identificamos a ausência de acentos em rótulos de campos fixos e de sistema gerados na guia de visualização:
+Nos Rótulos de Campos:
+[x] Onde está: Condicao ➔ Correto:Condição
+[x] Onde está: Vigencia ➔ Correto:Vigência
+[x] Onde está: DescricaoQtdValor (na tabela de Itens) ➔ Correto:Descrição | Qtd | Valor(Adicionar os espaços ou divisórias corretas entre as colunas)
+[x] Onde está: Medio (na tabela de riscos) ➔ Correto:Médio
+[x] Onde está: Responsavel: / Nao informado ➔ Correto:Responsável: / Não informado
+No Texto do Checkbox de Consentimento:
+[x] Onde está: suas condicoes gerais ➔ Correto:suas condições gerais
+Ajuste Visual de UX (Sinalização de Obrigatoriedade)
+Cor do Indicador de Campo Obrigatório (*): No termo de aceite (Li e concordo com a proposta comercial apresentada e suas condicoes gerais *), o símbolo de asterisco indicador de campo obrigatório está renderizado na cor preta.
+[x] Correção: Alterar o CSS para que este asterisco * fique na cor vermelha, padronizando a identidade visual de obrigatoriedade do sistema.
+
+
+COMITE APROVAR CUSTO PROJETO
+
+8.3 Pequenos Ajustes Identificados
+Correções Ortográficas (Falta de Acentuação na Visualização)
+Ao espelhar os dados consolidados da análise financeira para a leitura do Comitê, os seguintes rótulos de sistema apresentam falta de acentuação:
+No Nome da Guia Principal:
+[x] Onde está: custo e orçamento ➔ Correto:Custo e Orçamento(Aplicar a inicial maiúscula na palavra "Custo")
+Nos Componentes Internos e Histórico:
+[x] Onde está: Analise Financeira ➔ Correto:Análise Financeira
+[x] Onde está: Vigencia: ➔ Correto:Vigência:
+[x] Onde está: Condicao: ➔ Correto:Condição:
+[x] Onde está: Periodo Competencia ➔ Correto:Período Competência
+[x] Onde está: Saldo apos compromisso ➔ Correto:Saldo após compromisso
+Ajuste Visual(Sinalização de Obrigatoriedade)
+Cor do Indicador de Campo Obrigatório (*): Nos campos de preenchimento da decisão (Data/Hora *, Participantes * e Anotações *), o símbolo de asterisco que indica a obrigatoriedade não está renderizado na cor padrão do sistema.
+[x] Correção: Alterar o CSS desses componentes para que o asterisco * fique na cor vermelha, corrigindo o tom atual que se encontra em preto e padronizando a sinalização visual de campos obrigatórios.
+
+
+COMPRAS REALIZAR CONTRATACAO
+
+9.3 Pequenos Ajustes Identificados
+Correções Ortográficas em Títulos de Guias (Falta de Acentuação)
+Ausência de acentos e caracteres especiais nos rótulos das abas de navegação da tela:
+Na Primeira Guia:
+[x] Onde está: dados da contratação ➔ Correto:Dados da Contratação(Aplicar inicial maiúscula).
+Na Segunda Guia:
+[x] Onde está: compliance e documentos / LGPD - Pro e conferencia financeira ➔ Correto:Compliance e Documentos | LGPD - Pro e Conferência Financeira
+Erros Ortográficos nas Ações e Modais de Devolução
+No Botão de Devolução (Rodapé):
+[x] Onde está: devolver para correcao ➔ Correto:Devolver para Correção
+No Modal de Devolução (Janela Pop-up):
+[x] Onde está: devolver para correçãoi / correcao ➔ Correto:Devolver para Correção(Remover o caractere "i" residual de digitação e ajustar a acentuação e cedilha).
+Erros Ortográficos nos Botões de Ação Positiva (Aprovação/Conclusão)
+No Modal de Edição de Parcela (Botão de Salvar):
+[x] Onde está: Sal ➔ Correto:Salvar(O botão encontra-se cortado ou com o texto incompleto).
+No Botão de Encerramento da Etapa (Rodapé):
+[x] Onde está: concluir contratacao ➔ Correto:Concluir Contratação(Aplicar as iniciais maiúsculas e corrigir a acentuação/cedilha).
+
+
+TI ANEXAR PROPOSTA comercial
+5.3 Pequenos Ajustes Identificados
+Correções Ortográficas (Falta de Acentuação)
+Identificamos pequenos desvios em textos do sistema que necessitam da aplicação da norma culta:
+No Placeholder da Seção de Pré-requisitos:
+[x] Onde está: pre-requisito ➔ Correto:pré-requisito
+No Modal de Confirmação de Exclusão (Ao remover um Pré-requisito ou Risco):
+No Título do Modal:
+[x] Onde está: Confirmar remocao ➔ Correto:Confirmar remoção
+No Texto de Alerta:
+[x] Onde está: Deseja realmente remover este registro da proposta comercial? ➔ Como o modal serve tanto para a tabela de Riscos quanto para a de Pré-requisitos, recomenda-se corrigir a acentuação de "remoção" no título para alinhar o componente. O texto do corpo está ortograficamente correto, restando apenas aplicar o acento ao título do modal.
+
+
+DESENVOLVIMENTO COMITE APROVAR PROJETO
+Ao puxar o histórico da etapa anterior para a guia de leitura do Comitê, alguns textos fixos e de sistema apresentam falta de acentuação:
+Na Guia Triagem TI:
+[x] Onde está: Decisão: Execução Interna (O texto corrido abaixo está sem acentos em termos do sistema):
+[x] Onde está: Descricao: ➔ Correto:Descrição:
+[x] Onde está: Mitigacao: ➔ Correto:Mitigação:
+[x] Onde está: Responsavel: ➔ Correto:Responsável:
+Ajuste Visual de UX (Sinalização de Obrigatoriedade)
+Cor do Indicador de Campo Obrigatório (*): Nos campos Data/Hora * e Participantes *, o símbolo de asterisco que identifica a obrigatoriedade do preenchimento está renderizado na cor preta.
+[x] Correção: Alterar o CSS do componente para que o asterisco * fique na cor vermelha, mantendo o padrão visual de identificação de campos obrigatórios adotado no restante do widget.
+
+
+GESTOR IMEDIATO APROVAR PROJETO
+2.3 Pequenos Ajustes Identificados
+Correções Ortográficas (Falta de Acentuação)
+Identificamos a falta de acentuação em termos fixos dentro de duas guias desta etapa:
+Na Guia do Gestor (Impacto na Área):
+[x] Onde está: Recursos Necessarios da Area ➔ Correto: Recursos Necessários da Área
+[x] Onde está: Prioridade para a Area ➔ Correto: Prioridade para a Área
+[x] Onde está: Critico ➔ Correto: Crítico
+[x] Onde está: Estrategico ➔ Correto: Estratégico
+[x] Onde está: Observacoes do Gestor ➔ Correto: Observações do Gestor
+Na Guia de Visualização (Análise TI):
+[x] Onde está: Esforco Estimado ➔ Correto: Esforço Estimado
+[x] Onde está: Riscos Identificados ➔ Correto: Riscos Identificados
+[x] Onde está: medio (dentro da tabela de riscos) ➔ Correto: Médio
+[x] Onde está: Nao informado (na tabela de riscos) ➔ Correto: Não informado
+[x] Onde está: Dependencias Tecnicas ➔ Correto: Dependências Técnicas
+[x] Onde está: Observacoes da Analise ➔ Correto: Observações da Análise
+[x] Onde está: Checklist da Analise TI ➔ Correto: Checklist da Análise TI
+[x] Onde está: Documentacao tecnica adequada ➔ Correto: Documentação técnica adequada
+[x] Onde está: Alinhamento estrategico confirmado ➔ Correto: Alinhamento estratégico confirmado
+[x] Onde está: Recursos tecnicos disponiveis ➔ Correto: Recursos técnicos disponíveis
+Ajuste de Layout (Interface Digital)
+[x] Desalinhamento na Tabela de Riscos: Na visualização dos Riscos Identificados dentro da aba de TI, as colunas do "Nível do Risco" e da "Descrição do Risco" estão visualmente desalinhadas na interface. É necessário ajustar o CSS/Grid do componente para alinhar os textos corretamente e melhorar a leitura. ( deixar um tamanho fixo para eles ao inves de seguir o tamanho da palvra seria o ideal)
+
+TI AVALIAR PROJETO
+1.3 Pequenos Ajustes Identificados
+Correções Ortográficas (Falta de Acentuação)
+Para deixar a interface alinhada com a norma culta, é necessário aplicar a acentuação correta em alguns textos fixos das telas:
+Na Guia Solicitação:
+[x] Onde está: Nao alinhado aos objetivos estrategicos BEVAP ➔ Correto: Não alinhado aos objetivos estratégicos BEVAP
+[x] Onde está: Beneficios Esperados ➔ Correto: Benefícios Esperados
+[x] Onde está: Dependencias ➔ Correto: Dependências
+[x] Onde está: Objetivos Estrategicos ➔ Correto: Objetivos Estratégicos
+[x] Onde está: Observacoes Adicionais ➔ Correto: Observações Adicionais
+Na Guia Análise Técnica:
+[x] Onde está: Descricao do Risco ➔ Correto: Descrição do Risco
+Melhoria (Componente Ausente)
+[x] Modal de Confirmação ao Remover Risco: Na tabela de Riscos Identificados, ao clicar na ação de excluir um risco, o sistema remove o registro imediatamente. Falta um componente de confirmação (modal de "Tem certeza que deseja remover este risco?") para evitar que o usuário apague uma informação por clique acidental. ( essa confirmacao existe em outras tabelas de risco iguais a essa existentes no projeto)
+
+REVISÃO GERAL SOLICITAÇÃO-PROJETOS
+[x] Impacto na área no gestor imediato.
+[x] Guia solicitação: Dados Básicos e Área/Unidade.
+[x] Header da página TI - Triagem Técnica.
+[x] Títulos e textos de apoio com histórico, composição financeira e decisão.
+[x] Checkboxes e textos auxiliares com acentuação.
+[x] Asteriscos obrigatórios em vermelho na tela GCC - Aprovar Custo do Projeto.
+[x] Compras: Data de Emissão e demais acentuações da etapa.
+
+AJUSTES FUNCIONAIS SOLICITAÇÃO-PROJETOS
+[x] Salvar rascunho: redirecionar todas as telas para o dashboard e exibir a confirmação após o redirecionamento.
+[x] TI Anexar Proposta: validação de campos obrigatórios não deixa modal de aprovação aberto em segundo plano.
+[x] GCC - Aprovar Custo: validação de campos obrigatórios fecha o modal de aprovação antes do alerta.
+[x] Comitê Aprovar Custo: validação de campos obrigatórios fecha o modal de aprovação antes do alerta.
+

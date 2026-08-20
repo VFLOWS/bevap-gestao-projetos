@@ -134,9 +134,9 @@
   function getRiskBadge(level) {
     const normalized = asText(level).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if (normalized === 'alto') return { label: 'Alto', classes: 'bg-red-100 text-red-800' };
-    if (normalized === 'medio') return { label: 'Medio', classes: 'bg-yellow-100 text-yellow-800' };
+    if (normalized === 'medio') return { label: 'Médio', classes: 'bg-yellow-100 text-yellow-800' };
     if (normalized === 'baixo') return { label: 'Baixo', classes: 'bg-green-100 text-green-800' };
-    return { label: asText(level) || 'Nao informado', classes: 'bg-slate-100 text-slate-700' };
+    return { label: asText(level) || 'Não informado', classes: 'bg-slate-100 text-slate-700' };
   }
 
   function renderItems(items) {
@@ -149,7 +149,7 @@
         <table class="w-full text-sm">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-4 py-2 text-left text-gray-700 font-medium">Descricao</th>
+          <th class="px-4 py-2 text-left text-gray-700 font-medium">Descrição</th>
               <th class="px-4 py-2 text-center text-gray-700 font-medium">Qtd</th>
               <th class="px-4 py-2 text-right text-gray-700 font-medium">Valor</th>
             </tr>
@@ -183,8 +183,8 @@
                   <h6 class="font-medium text-bevap-navy">${escapeHtml(risk.title || 'Risco')}</h6>
                   <span class="text-xs font-semibold ${escapeHtml(badge.classes)} px-1.5 py-0.5 rounded">${escapeHtml(badge.label)}</span>
                 </div>
-                <div class="text-sm text-gray-600 mb-2">Probabilidade: ${escapeHtml(risk.probability || 'Nao informado')} | Impacto: ${escapeHtml(risk.impact || 'Nao informado')}</div>
-                ${risk.mitigation ? `<div class="text-sm text-gray-700 mb-1"><strong>Mitigacao:</strong> ${escapeHtml(risk.mitigation)}</div>` : ''}
+                <div class="text-sm text-gray-600 mb-2">Probabilidade: ${escapeHtml(risk.probability || 'Não informado')} | Impacto: ${escapeHtml(risk.impact || 'Não informado')}</div>
+                ${risk.mitigation ? `<div class="text-sm text-gray-700 mb-1"><strong>Mitigação:</strong> ${escapeHtml(risk.mitigation)}</div>` : ''}
                 ${escapeHtml(risk.fallback || risk.planoB || risk.planB || '') ? `<div class="text-sm text-gray-700"><strong>Plano B:</strong> ${escapeHtml(risk.fallback || risk.planoB || risk.planB || '')}</div>` : ''}
             </div>
           `;
@@ -209,7 +209,7 @@
 
   function renderPrerequisites(items) {
     if (!items.length) {
-      return '<div class="text-sm text-gray-500">Nenhum pre-requisito informado.</div>';
+      return '<div class="text-sm text-gray-500">Nenhum pré-requisito informado.</div>';
     }
 
     return `
@@ -232,8 +232,8 @@
                 ${getPrerequisiteStatusBadge(statusRaw)}
               </div>
               ${(owner || mitigation || fallback) ? `
-                <div class="mt-2 text-sm text-gray-600"><strong>Responsavel:</strong> ${owner || 'Nao informado'}</div>
-                ${mitigation ? `<div class="mt-1 text-sm text-gray-700"><strong>Mitigacao:</strong> ${mitigation}</div>` : ''}
+                <div class="mt-2 text-sm text-gray-600"><strong>Responsável:</strong> ${owner || 'Não informado'}</div>
+                ${mitigation ? `<div class="mt-1 text-sm text-gray-700"><strong>Mitigação:</strong> ${mitigation}</div>` : ''}
                 ${fallback ? `<div class="mt-1 text-sm text-gray-700"><strong>Plano B:</strong> ${fallback}</div>` : ''}
               ` : ''}
             </div>
@@ -284,7 +284,7 @@
         ? { label: 'Sim', classes: 'bg-green-100 text-green-700', icon: 'fa-circle-check text-bevap-green' }
         : parsed === false
           ? { label: 'Nao', classes: 'bg-red-100 text-red-700', icon: 'fa-circle-xmark text-red-500' }
-          : { label: 'Nao informado', classes: 'bg-slate-100 text-slate-700', icon: 'fa-circle-info text-slate-500' };
+          : { label: 'Não informado', classes: 'bg-slate-100 text-slate-700', icon: 'fa-circle-info text-slate-500' };
 
       return `
             <div class="flex items-center justify-between gap-4 p-3 border border-gray-200 rounded-lg bg-white">
@@ -303,14 +303,14 @@
   function getProposalDecisionBadge(value) {
     const normalized = asText(value).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     if (normalized === 'aprovado') return { label: 'Aprovado', classes: 'bg-green-100 text-green-800' };
-    if (normalized === 'correcao') return { label: 'Correcao', classes: 'bg-yellow-100 text-yellow-800' };
+    if (normalized === 'correção') return { label: 'Correção', classes: 'bg-yellow-100 text-yellow-800' };
     if (normalized === 'reprovado' || normalized === 'cancelado') return { label: 'Reprovado', classes: 'bg-red-100 text-red-800' };
-    return { label: asText(value) || 'Nao informado', classes: 'bg-slate-100 text-slate-700' };
+    return { label: asText(value) || 'Não informado', classes: 'bg-slate-100 text-slate-700' };
   }
 
   function renderHtml(row, params) {
     if (!row) {
-      return '<div class="text-sm text-gray-500">Nao foi possivel carregar a proposta do fornecedor.</div>';
+      return '<div class="text-sm text-gray-500">Não foi possível carregar a proposta do fornecedor.</div>';
     }
 
     const items = parseTableJson(row.tblItensServicosTIPC || row['tblItensServicosTIPC']).map((item) => {
@@ -350,7 +350,7 @@
       { label: 'Impostos e taxas inclusos', value: row.impostosTaxasInclusosTIPC },
       { label: 'Prazos de entrega definidos', value: row.prazosEntregaDefinidosTIPC },
       { label: 'Garantias e SLA especificados', value: row.garantiasSlaEspecificadosTIPC },
-      { label: 'Vigencia da proposta confirmada', value: row.vigenciaPropostaConfirmadaTIPC },
+      { label: 'Vigência da proposta confirmada', value: row.vigenciaPropostaConfirmadaTIPC },
       { label: 'Documentos anexados e completos', value: row.documentosAnexCompTIPC }
     ];
 
@@ -370,7 +370,7 @@
       );
     const proposalDecisionBadge = getProposalDecisionBadge(row.decisaoPropostaSAP);
     const agreementValue = parseBooleanLike(row.liConcordoPropostaComercialSAP);
-    const agreementLabel = agreementValue === true ? 'Sim' : agreementValue === false ? 'Nao' : 'Nao informado';
+    const agreementLabel = agreementValue === true ? 'Sim' : agreementValue === false ? 'Não' : 'Não informado';
     const feedbackBody = asText(row.observacoesNegociacaoSAP);
 
     return `
@@ -385,14 +385,14 @@
             <div>
               <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Fornecedor</h3>
               <div class="space-y-2 text-sm">
-                <div class="font-medium text-gray-900">${escapeHtml(asText(row.nomeFornecedorTIPC) || 'Nao informado')}</div>
-                <div class="text-gray-600">CNPJ: ${escapeHtml(asText(row.cnpjTIPC) || 'Nao informado')}</div>
+                <div class="font-medium text-gray-900">${escapeHtml(asText(row.nomeFornecedorTIPC) || 'Não informado')}</div>
+                <div class="text-gray-600">CNPJ: ${escapeHtml(asText(row.cnpjTIPC) || 'Não informado')}</div>
               </div>
             </div>
             <div>
               <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Contato Principal</h3>
               <div class="space-y-1 text-sm">
-                <div class="font-medium text-gray-900">${escapeHtml(asText(row.nomeContatoTIPC) || 'Nao informado')}</div>
+                <div class="font-medium text-gray-900">${escapeHtml(asText(row.nomeContatoTIPC) || 'Não informado')}</div>
                 ${asText(row.emailTIPC) ? `<div class="text-gray-600">${escapeHtml(row.emailTIPC)}</div>` : ''}
                 ${asText(row.telefoneTIPC) ? `<div class="text-gray-600">${escapeHtml(row.telefoneTIPC)}</div>` : ''}
               </div>
@@ -404,20 +404,20 @@
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             <div class="bg-gray-50 p-4 rounded-lg">
               <div class="text-xs text-gray-500 uppercase tracking-wide">Valor Total</div>
-              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(asText(row.valortotalTIPC) || 'Nao informado')}</div>
+              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(asText(row.valortotalTIPC) || 'Não informado')}</div>
               ${asText(row.moedaTIPC) ? `<div class="text-xs text-green-600">${escapeHtml(row.moedaTIPC)}</div>` : ''}
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
-              <div class="text-xs text-gray-500 uppercase tracking-wide">Condicao</div>
-              <div class="text-sm font-medium text-gray-900">${escapeHtml(asText(row.condicaoPagamentoTIPC) || 'Nao informado')}</div>
+              <div class="text-xs text-gray-500 uppercase tracking-wide">Condição</div>
+              <div class="text-sm font-medium text-gray-900">${escapeHtml(asText(row.condicaoPagamentoTIPC) || 'Não informado')}</div>
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
               <div class="text-xs text-gray-500 uppercase tracking-wide">Prazo</div>
-              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(formatWeeks(row.prazoEstimadoTIPC) || 'Nao informado')}</div>
+              <div class="text-lg font-bold text-bevap-navy">${escapeHtml(formatWeeks(row.prazoEstimadoTIPC) || 'Não informado')}</div>
             </div>
             <div class="bg-gray-50 p-4 rounded-lg">
-              <div class="text-xs text-gray-500 uppercase tracking-wide">Vigencia</div>
-              <div class="text-sm font-medium text-gray-900">${escapeHtml(formatDays(row.vigenciaDiasTIPC) || 'Nao informado')}</div>
+              <div class="text-xs text-gray-500 uppercase tracking-wide">Vigência</div>
+              <div class="text-sm font-medium text-gray-900">${escapeHtml(formatDays(row.vigenciaDiasTIPC) || 'Não informado')}</div>
             </div>
           </div>
 
@@ -425,11 +425,11 @@
 
           <div class="mb-6">
             <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Escopo Resumido</h3>
-            <p class="text-gray-700 text-sm leading-relaxed whitespace-pre-line">${escapeHtml(asText(row.escopoResumidoTIPC) || 'Nao informado')}</p>
+            <p class="text-gray-700 text-sm leading-relaxed whitespace-pre-line">${escapeHtml(asText(row.escopoResumidoTIPC) || 'Não informado')}</p>
           </div>
 
           <div class="mb-6">
-            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Itens e Servicos</h3>
+            <h3 class="text-lg font-montserrat font-semibold text-bevap-navy mb-3">Itens e Serviços</h3>
             ${renderItems(items)}
           </div>
 
@@ -458,9 +458,9 @@
               <div class="bg-white border border-green-200 rounded-lg p-4">
                 <div class="mb-3">
                   <div class="font-semibold text-gray-900 text-sm">Solicitante</div>
-                  <div class="text-xs text-gray-500">Decisao: ${escapeHtml(proposalDecisionBadge.label)} • Concorda com a proposta: ${escapeHtml(agreementLabel)}</div>
+                  <div class="text-xs text-gray-500">Decisão: ${escapeHtml(proposalDecisionBadge.label)} • Concorda com a proposta: ${escapeHtml(agreementLabel)}</div>
                 </div>
-                <p class="text-sm text-green-800 leading-relaxed whitespace-pre-line">${escapeHtml(feedbackBody || 'Sem observacoes registradas pelo solicitante.')}</p>
+                <p class="text-sm text-green-800 leading-relaxed whitespace-pre-line">${escapeHtml(feedbackBody || 'Sem observações registradas pelo solicitante.')}</p>
               </div>
             </div>
           ` : ''}

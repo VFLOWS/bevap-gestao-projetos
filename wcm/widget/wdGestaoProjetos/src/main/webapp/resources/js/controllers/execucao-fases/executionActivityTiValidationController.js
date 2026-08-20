@@ -5,6 +5,7 @@ const executionActivityTiValidationController = {
   _eventNamespace: '.executionActivityTiValidation',
   _nextState: 34,
   _toastTimer: null,
+  _loadingHandle: null,
   _state: {
     documentId: null,
     processInstanceId: null,
@@ -43,6 +44,7 @@ const executionActivityTiValidationController = {
 
   destroy() {
     $(document).off(this._eventNamespace);
+    this.setLoading(false);
     if (this._toastTimer) {
       clearTimeout(this._toastTimer);
       this._toastTimer = null;
@@ -64,7 +66,6 @@ const executionActivityTiValidationController = {
 
     container.on(`click${ns}`, '#tab-ti-detail', () => this.toggleTab('detail'));
     container.on(`click${ns}`, '#tab-ti-requester', () => this.toggleTab('requester'));
-    container.on(`click${ns}`, '#tab-ti-history', () => this.toggleTab('history'));
     container.on(`click${ns}`, '#tab-ti-checklist', () => this.toggleTab('checklist'));
     container.on(`scroll${ns}`, '#ti-panel-tabs-scroll', () => this.updateTabArrows());
     container.on(`click${ns}`, '#ti-panel-tabs-left-arrow', () => this.scrollTabsToStart());
@@ -276,7 +277,6 @@ const executionActivityTiValidationController = {
     this.setText('#ef-ti-due-date', this.formatDate(card.dueDate) || '-');
     this.setText('#ef-ti-phase-name', card.phase || '-');
     this.setText('#ef-ti-phase-responsible', card.phaseResponsible || '-');
-    this.setText('#ef-ti-phase-effort', this.formatEffort(card.phaseEffort) || '-');
     this.setText('#ef-ti-milestone-name', card.milestone || '-');
     this.setText('#ef-ti-milestone-period', card.milestonePeriod || '-');
     this.setText('#ef-ti-estimated-effort', this.formatEffort(card.activityEffort) || '-');
@@ -293,7 +293,6 @@ const executionActivityTiValidationController = {
     $('#ef-ti-effort-badge').toggleClass('hidden', !this.asText(card.activityEffort));
     $('#ef-ti-estimated-summary').toggleClass('hidden', !this.asText(card.activityEffort));
     $('#ef-ti-phase-responsible-row').toggleClass('hidden', !this.asText(card.phaseResponsible));
-    $('#ef-ti-phase-effort-row').toggleClass('hidden', !this.asText(card.phaseEffort));
     $('#ef-ti-milestone-period-row').toggleClass('hidden', !this.asText(card.milestonePeriod));
 
     this.renderDependencies(card.dependencies);
@@ -434,7 +433,7 @@ const executionActivityTiValidationController = {
   getDecisionLabel(decision) {
     const value = this.asText(decision);
     if (value === 'validado') return 'Validado';
-    if (value === 'correcao' || value === 'devolver_correcao') return 'Devolvido para correção';
+    if (value === 'correcao' || value === 'devolver_correcao') return 'Devolvido para Correção';
     if (value === 'nao_continuidade') return 'Não continuidade';
     return 'Registro';
   },
@@ -455,7 +454,7 @@ const executionActivityTiValidationController = {
     if (finalTab === 'checklist') {
       this._state.checklistVisited = true;
     }
-    ['detail', 'requester', 'history', 'checklist'].forEach((tab) => {
+    ['detail', 'requester', 'checklist'].forEach((tab) => {
       const active = tab === finalTab;
       $(`#tab-ti-${tab}`)
         .toggleClass('border-bevap-green bg-green-50 text-bevap-green', active)
@@ -508,7 +507,7 @@ const executionActivityTiValidationController = {
       return;
     }
     this.openConfirmModal({
-      title: 'Confirmar Validação',
+      title: 'Concluir Validação TI',
       body: 'Confirma o registro da validação técnica da atividade?',
       confirmAction: 'confirm-approve-ti',
       confirmLabel: 'Confirmar',
@@ -592,6 +591,7 @@ const executionActivityTiValidationController = {
       requireAgreement: !!config.requireAgreement
     });
     if (!validation.valid) {
+      this.closeModal();
       this.showToast('Validação pendente', validation.message, 'error');
       if (!validation.checklistOk || !validation.agreementOk) this.toggleTab('checklist');
       return;
@@ -612,13 +612,25 @@ const executionActivityTiValidationController = {
         history: this._state.tiHistory
       });
 
+      this.setLoading(true, 'Enviando movimentacao para o Fluig...');
+      await modalLoadingService.waitForPaint();
       await fluigService.saveAndSendTask(this.getMovementTaskData(config.comments), taskFields);
 
       this.closeModal();
-      this.showToast('Sucesso', this.asText(config.successMessage) || 'Movimentação realizada.', 'success');
-      setTimeout(() => {
-        window.location.hash = '#dashboard';
-      }, 900);
+      this.setLoading(false);
+      const successMessage = this.asText(config.successMessage) || 'Movimentacao realizada.';
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: this._state.processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Acao concluida!',
+          message: successMessage,
+          nextStep: 'Acompanhe a proxima etapa pelo dashboard.'
+        });
+      } else {
+        this.showToast('Sucesso', successMessage, 'success');
+      }
     } catch (error) {
       console.error('Erro ao movimentar validação TI:', error);
       this.showToast('Erro ao movimentar', error && error.message ? error.message : 'Não foi possível movimentar a atividade.', 'error');
@@ -1253,8 +1265,25 @@ const executionActivityTiValidationController = {
   },
 
   setLoading(isVisible, label = 'Carregando...') {
-    $('#ui-loading-label').text(label);
-    $('#ui-loading-overlay').toggleClass('hidden', !isVisible);
+    $('#ui-loading-overlay').addClass('hidden');
+
+    if (isVisible) {
+      if (this._loadingHandle) {
+        this._loadingHandle.updateMessage(label);
+        return;
+      }
+
+      this._loadingHandle = modalLoadingService.show({
+        title: 'Aguarde',
+        message: label
+      });
+      return;
+    }
+
+    if (this._loadingHandle) {
+      this._loadingHandle.hide();
+      this._loadingHandle = null;
+    }
   },
 
   setActionButtonsState(isDisabled) {

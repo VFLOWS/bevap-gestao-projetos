@@ -71,7 +71,7 @@ const glpiErrorTreatmentController = {
     }
 
     if (titleEl.length) {
-      titleEl.text('TI - Tratar Erro Integracao GLPI');
+      titleEl.text('TI - Tratar Erro Integração GLPI');
     }
 
     if (breadcrumbEl.length) {
@@ -121,7 +121,7 @@ const glpiErrorTreatmentController = {
 
   loadBaseContext: async function () {
     if (!this._state.documentId) {
-      this.showToast('Sem solicitacao', 'Nenhum documentId foi informado para esta rota.', 'warning');
+      this.showToast('Sem solicitação', 'Nenhum documentId foi informado para está rota.', 'warning');
       return;
     }
 
@@ -136,14 +136,14 @@ const glpiErrorTreatmentController = {
       const row = rows && rows.length ? rows[0] : null;
 
       if (!row) {
-        this.showToast('Nao encontrado', 'Nao foi possivel localizar os dados desta solicitacao.', 'warning');
+        this.showToast('Não encontrado', 'Não foi possível localizar os dados desta solicitação.', 'warning');
         return;
       }
 
       this.fillFormFromRow(row);
     } catch (error) {
       console.error('[glpiErrorTreatment] Error loading base context:', error);
-      this.showToast('Erro ao carregar', 'Nao foi possivel carregar os dados da etapa de erro GLPI.', 'error');
+      this.showToast('Erro ao carregar', 'Não foi possível carregar os dados da etapa de erro GLPI.', 'error');
     }
   },
 
@@ -185,7 +185,7 @@ const glpiErrorTreatmentController = {
     }
 
     if (!this._state.documentId) {
-      throw new Error('Nao foi possivel identificar a solicitacao atual');
+      throw new Error('Não foi possível identificar a solicitação atual');
     }
 
     const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._state.documentId);
@@ -213,16 +213,6 @@ const glpiErrorTreatmentController = {
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () {
-        legacyLoading.hide();
-      },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {
@@ -252,7 +242,7 @@ const glpiErrorTreatmentController = {
       const processInstanceId = await this.resolveProcessInstanceId();
       const taskFields = this.collectTaskFields();
 
-      loading.updateMessage('Enviando para a proxima atividade...');
+      loading.updateMessage('Enviando para a próxima atividade...');
       await this.waitForUiPaint();
       await fluigService.saveAndSendTask({
         id: processInstanceId,
@@ -261,13 +251,21 @@ const glpiErrorTreatmentController = {
         datasetName: 'DSFormSolicitacaoProjetos'
       }, taskFields);
 
-      this.showToast('Sucesso', 'Solicitacao enviada para Integracao GLPI.', 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showSuccess === 'function') {
+        window.gpActionFeedback.showSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Acao concluida!',
+          message: 'Solicitacao enviada para Integracao GLPI.',
+          nextStep: 'Integracao GLPI'
+        });
+      } else {
+        this.showToast('Sucesso', 'Solicitação enviada para Integração GLPI.', 'success');
+      }
     } catch (error) {
       console.error('[glpiErrorTreatment] Error moving task:', error);
-      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel movimentar a solicitacao.', 'error');
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
     } finally {
       this._state.isSubmitting = false;
       sendButton.prop('disabled', false).removeClass('opacity-60 cursor-not-allowed');
@@ -276,6 +274,12 @@ const glpiErrorTreatmentController = {
   },
 
   showToast: function (title, message, type) {
+    const normalizedType = type || 'info';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
+      return;
+    }
+
     const toast = this.getContainer().find('#toast');
     const icon = this.getContainer().find('#toast-icon');
     const toastTitle = this.getContainer().find('#toast-title');

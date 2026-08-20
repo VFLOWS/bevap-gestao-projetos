@@ -22,6 +22,7 @@
     phases: [],
     milestones: [],
     risks: [],
+    dependencies: [],
     raciRows: [],
     communicationPlanRows: []
   },
@@ -128,14 +129,14 @@
       };
     }
 
-    if (titleEl.length) titleEl.text('Desenvolvimento - Execu\u00e7\u00e3o do Projeto');
+    if (titleEl.length) titleEl.text('Desenvolvimento - Execução de Projeto');
     if (breadcrumbEl.length) {
       breadcrumbEl.html([
         '<a href="#dashboard" class="inline-flex items-center gap-2 text-gray-300 hover:text-white transition-colors"><i class="fa-solid fa-house text-xs"></i><span>In\u00edcio</span></a>',
         '<span class="text-gray-400">/</span>',
         '<span class="text-gray-300">Portf\u00f3lio</span>',
         '<span class="text-gray-400">/</span>',
-        '<span class="text-bevap-gold font-medium">Execu\u00e7\u00e3o do Projeto</span>'
+        '<span class="text-bevap-gold font-medium">Execução de Projeto</span>'
       ].join(''));
     }
   },
@@ -159,6 +160,7 @@
     this._state.phases = [];
     this._state.milestones = [];
     this._state.risks = [];
+    this._state.dependencies = [];
     this._state.raciRows = [];
     this._state.communicationPlanRows = [];
     this._collapsedPhases = {};
@@ -216,6 +218,7 @@
     var phases = Array.isArray(payload.wbs && payload.wbs.phases) ? payload.wbs.phases.slice() : [];
     var milestones = Array.isArray(payload.milestones && payload.milestones.items) ? payload.milestones.items.slice() : [];
     var risks = Array.isArray(payload.risks && payload.risks.items) ? payload.risks.items.slice() : [];
+    var dependencies = Array.isArray(payload.externalDependencies && payload.externalDependencies.items) ? payload.externalDependencies.items.slice() : [];
     var raciRows = Array.isArray(payload.raci && payload.raci.rows) ? payload.raci.rows.slice() : [];
     var communicationRows = Array.isArray(payload.communicationPlan && payload.communicationPlan.items) ? payload.communicationPlan.items.slice() : [];
     var summaryRows = this.extractMilestoneTaskSummaryRows(row);
@@ -235,6 +238,9 @@
     });
     this._state.risks = risks.map(function (risk, index) {
       return self.normalizeRisk(risk, index);
+    });
+    this._state.dependencies = dependencies.map(function (dependency, index) {
+      return self.normalizeDependency(dependency, index);
     });
     this._state.raciRows = raciRows.map(function (row) {
       return self.normalizeRaciRow(row);
@@ -261,6 +267,9 @@
     var summaryRows = this.extractMilestoneTaskSummaryRows(row);
     var riskRows = this.extractIndexedRows(row, [
       'riskIdDP', 'riskDescriptionDP', 'riskProbabilityDP', 'riskImpactDP', 'riskMitigationDP', 'riskPlanBDP'
+    ]);
+    var dependencyRows = this.extractIndexedRows(row, [
+      'externalDependencyIdDP', 'externalDependencyDescriDP', 'externalDependencyStatusDP', 'externalDependencyResponDP', 'externalDependencyMitiDP', 'externalDependencyPlanBDP'
     ]);
     var communicationRows = this.extractIndexedRows(row, [
       'commAudienceDP', 'commChannelDP', 'commFrequencyDP'
@@ -331,6 +340,20 @@
         impact: riskRow.riskImpactDP,
         mitigation: riskRow.riskMitigationDP,
         planB: riskRow.riskPlanBDP
+      }, index);
+    });
+
+    this._state.dependencies = dependencyRows.map(function (dependencyRow, index) {
+      return self.normalizeDependency({
+        id: dependencyRow.externalDependencyIdDP,
+        title: dependencyRow.externalDependencyDescriDP,
+        description: dependencyRow.externalDependencyDescriDP,
+        status: dependencyRow.externalDependencyStatusDP,
+        owner: dependencyRow.externalDependencyResponDP,
+        responsible: dependencyRow.externalDependencyResponDP,
+        mitigation: dependencyRow.externalDependencyMitiDP,
+        fallback: dependencyRow.externalDependencyPlanBDP,
+        planB: dependencyRow.externalDependencyPlanBDP
       }, index);
     });
 
@@ -425,7 +448,7 @@
       name: this.asText(milestone && milestone.name) || ('Marco ' + (index + 1)),
       startDate: this.asText(milestone && milestone.startDate),
       endDate: this.asText(milestone && milestone.endDate),
-      period: this.firstDefinedValue([milestone && milestone.period, this.joinDateRange(milestone && milestone.startDate, milestone && milestone.endDate)]),
+      period: this.formatDisplayPeriod(this.firstDefinedValue([milestone && milestone.period, this.joinDateRange(milestone && milestone.startDate, milestone && milestone.endDate)])),
       owner: this.firstDefinedValue([milestone && milestone.owner, milestone && milestone.responsible, this.resolveMilestoneOwner(tasks)]) || 'Não definido',
       criteria: Array.isArray(milestone && milestone.criteria) ? milestone.criteria : [],
       tasks: tasks
@@ -445,6 +468,17 @@
       mitigation: this.firstDefinedValue([risk && risk.mitigation]) || '-',
       fallback: this.firstDefinedValue([risk && risk.fallback, risk && risk.planB]) || '-',
       owner: this.firstDefinedValue([risk && risk.owner, risk && risk.responsible]) || '-'
+    };
+  },
+
+  normalizeDependency: function (dependency, index) {
+    return {
+      id: this.asText(dependency && dependency.id) || ('dependency-' + (index + 1)),
+      title: this.firstDefinedValue([dependency && dependency.title, dependency && dependency.description]) || ('Dependência ' + (index + 1)),
+      status: this.firstDefinedValue([dependency && dependency.status]) || 'Pendente',
+      owner: this.firstDefinedValue([dependency && dependency.owner, dependency && dependency.responsible]) || '-',
+      mitigation: this.firstDefinedValue([dependency && dependency.mitigation]) || '-',
+      fallback: this.firstDefinedValue([dependency && dependency.fallback, dependency && dependency.planB]) || '-'
     };
   },
 
@@ -501,13 +535,19 @@
   renderRisksPanel: function () {
     var self = this;
     var risks = this._state.risks || [];
-    if (!risks.length) {
-      $('#execution-risks-list').html('<div class="rounded-xl border border-gray-200 bg-white p-5 text-sm text-gray-500 shadow-sm">Nenhum risco cadastrado.</div>');
+    var dependencies = this._state.dependencies || [];
+    if (!risks.length && !dependencies.length) {
+      $('#execution-risks-list').html('<div class="rounded-xl border border-gray-200 bg-white p-5 text-sm text-gray-500 shadow-sm">Nenhum risco ou dependência cadastrado.</div>');
       return;
     }
-    $('#execution-risks-list').html(risks.map(function (risk) {
-      return self.getRiskCardHtml(risk);
-    }).join(''));
+    $('#execution-risks-list').html([
+      risks.length ? '<div class="space-y-4"><h4 class="text-sm font-montserrat font-semibold text-gray-900">Riscos</h4>' + risks.map(function (risk) {
+        return self.getRiskCardHtml(risk);
+      }).join('') + '</div>' : '',
+      dependencies.length ? '<div class="space-y-4"><h4 class="text-sm font-montserrat font-semibold text-gray-900">Dependências</h4>' + dependencies.map(function (dependency) {
+        return self.getDependencyCardHtml(dependency);
+      }).join('') + '</div>' : ''
+    ].filter(Boolean).join('<div class="h-2"></div>'));
   },
 
   renderRaciPanel: function () {
@@ -612,7 +652,7 @@
       '  <div class="mt-4 flex flex-wrap items-center justify-between gap-3">',
       '    <div class="flex flex-wrap gap-2 text-[13px]">',
       '      <span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user-tie mr-1" style="color: #dbeafe;"></i>Responsável: ' + this.escapeHtml(milestone.owner) + '</span>',
-      '      <span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>' + this.escapeHtml(milestone.period || '-') + '</span>',
+      '      <span class="inline-flex items-center rounded-full border px-3 py-1.5 text-white" style="background-color: #dc2626; border-color: #dc2626;"><i class="fa-solid fa-calendar-alt mr-1 text-red-100"></i>' + this.escapeHtml(this.formatDisplayPeriod(milestone.period) || '-') + '</span>',
       '    </div>',
       '    <button type="button" data-milestone-toggle="' + this.escapeHtml(milestone.id || String(index)) + '" class="inline-flex items-center rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 hover:bg-gray-50"><i class="fa-solid ' + (isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up') + ' mr-2 text-gray-400"></i>' + (isCollapsed ? 'Expandir' : 'Recolher') + '</button>',
       '  </div>',
@@ -641,11 +681,15 @@
 
   getMilestoneTaskHtml: function (task) {
     var status = this.getTaskExecutionStatusMeta(task.status);
+    var taskHref = this.getExecutionActivityHref(task);
+    var taskTitleHtml = taskHref
+      ? '<a href="' + this.escapeHtml(taskHref) + '" class="inline-flex min-w-0 items-center gap-2 text-sm font-semibold text-bevap-navy hover:text-bevap-green hover:underline"><span class="truncate">' + this.escapeHtml(task.taskName) + '</span><i class="fa-solid fa-link text-[11px] shrink-0"></i></a>'
+      : '<span class="inline-flex min-w-0 items-center gap-2 text-sm font-semibold text-bevap-navy"><span class="truncate">' + this.escapeHtml(task.taskName) + '</span></span>';
     return [
       '<div class="rounded-xl border border-gray-200 bg-white p-4">',
       '  <div class="flex items-start justify-between gap-3">',
       '    <div class="min-w-0 flex-1">',
-      '      <span class="inline-flex items-center gap-2 text-sm font-semibold text-bevap-navy"><span>' + this.escapeHtml(task.taskName) + '</span><i class="fa-solid fa-link text-[11px] shrink-0"></i></span>',
+      '      ' + taskTitleHtml,
       '      <div class="mt-2 flex flex-wrap gap-2 text-[13px]">',
       '        <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #2563eb; border-color: #2563eb;"><i class="fa-solid fa-user-tie mr-1 text-blue-100"></i>Responsável: ' + this.escapeHtml(task.responsible || '-') + '</span>',
       '        <span class="inline-flex items-center rounded-full border px-2.5 py-1 text-white" style="background-color: #16a34a; border-color: #16a34a;"><i class="fa-solid fa-layer-group mr-1 text-green-200"></i>Fase: ' + this.escapeHtml(task.phaseName || '-') + '</span>',
@@ -681,6 +725,31 @@
     ].join('');
   },
 
+  getDependencyCardHtml: function (dependency) {
+    var statusMeta = this.getDependencyStatusMeta(dependency.status);
+    return [
+      '<div class="rounded-xl border border-yellow-200 bg-yellow-50 p-5 shadow-sm">',
+      '  <div class="flex items-start justify-between gap-3">',
+      '    <div class="min-w-0 flex-1">',
+      '      <div class="flex items-center gap-2"><i class="fa-solid fa-link text-sm text-yellow-700"></i><h4 class="text-base font-montserrat font-semibold text-bevap-navy">' + this.escapeHtml(dependency.title) + '</h4></div>',
+      '      <div class="mt-2 text-sm text-yellow-800">Responsável: ' + this.escapeHtml(dependency.owner) + '</div>',
+      '    </div>',
+      '    <span class="inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ' + statusMeta.badge + '">' + this.escapeHtml(statusMeta.label) + '</span>',
+      '  </div>',
+      '  <div class="mt-3 rounded-lg border border-yellow-100 bg-white p-4 text-sm text-gray-700"><strong>Mitigação:</strong> ' + this.escapeHtml(dependency.mitigation) + '</div>',
+      '  <div class="mt-3 rounded-lg border border-yellow-100 bg-white p-4 text-sm text-gray-700"><strong>Plano B:</strong> ' + this.escapeHtml(dependency.fallback) + '</div>',
+      '</div>'
+    ].join('');
+  },
+
+  getDependencyStatusMeta: function (status) {
+    var normalized = this.normalizeText(status);
+    if (normalized.indexOf('conclu') !== -1) return { label: 'Concluída', badge: 'bg-green-100 text-green-800' };
+    if (normalized.indexOf('andamento') !== -1) return { label: 'Em andamento', badge: 'bg-blue-100 text-blue-800' };
+    if (normalized.indexOf('bloque') !== -1) return { label: 'Bloqueada', badge: 'bg-red-100 text-red-800' };
+    return { label: 'Pendente', badge: 'bg-yellow-100 text-yellow-800' };
+  },
+
   updateProjectSummary: function () {
     var summary = this._state.projectSummary || {};
     $('#project-code').text(summary.code || '-');
@@ -688,7 +757,7 @@
     $('#project-area').text(summary.area || '-');
     $('#project-sponsor').text(summary.sponsor || '-');
     $('#project-requester').text(summary.requester || '-');
-    $('#project-deadline').text(this._state.projectDeadline || '-');
+    $('#project-deadline').text(this.formatDisplayDate(this._state.projectDeadline) || '-');
     $('#project-state').text(summary.state || 'Execução em andamento');
   },
 
@@ -736,7 +805,7 @@
     (milestones || []).forEach(function (milestone) {
       var period = milestone.period || '';
       if (!period) return;
-      var parts = period.split(' - ');
+      var parts = String(period).indexOf(' até ') >= 0 ? String(period).split(' até ') : String(period).split(' - ');
       lastDate = parts.length > 1 ? parts[1] : period;
     });
     return lastDate || '';
@@ -817,7 +886,7 @@
         return;
       }
 
-      var statusLabel = self.mapDatasetTaskStatus(statusRow.STATUS);
+      var statusLabel = self.mapDatasetTaskStatus(statusRow.STATUS, statusRow.estadoProcesso);
       var estadoProcesso = self.asText(statusRow.estadoProcesso);
       var documentId = self.asText(statusRow.documentid);
       var statusBool = statusLabel ? 'true' : 'false';
@@ -934,12 +1003,52 @@
     }
   },
 
-  mapDatasetTaskStatus: function (status) {
+  mapDatasetTaskStatus: function (status, estadoProcesso) {
     var numericStatus = parseInt(status, 10);
     if (numericStatus === 2) return 'concluido';
     if (numericStatus === 1) return 'cancelado';
-    if (numericStatus === 0) return 'em_andamento';
+    if (numericStatus === 0) return this.mapActiveTaskStatusByState(estadoProcesso);
     return '';
+  },
+
+  mapActiveTaskStatusByState: function (estadoProcesso) {
+    var stateCode = this.extractStateCode(estadoProcesso);
+    if (stateCode === '14') return 'aguardando_execucao';
+    if (stateCode === '23') return 'validacao_solicitante';
+    if (stateCode === '32') return 'validacao_ti';
+    if (['12', '18', '36', '46', '52'].indexOf(stateCode) !== -1) return 'em_execucao';
+    return 'em_execucao';
+  },
+
+  extractStateCode: function (value) {
+    var text = this.asText(value);
+    if (!text) return '';
+    var match = text.match(/^\s*(\d+)/);
+    return match ? match[1] : '';
+  },
+
+  getExecutionActivityRouteByState: function (estadoProcesso) {
+    var stateCode = this.extractStateCode(estadoProcesso);
+    if (stateCode === '14') return 'executionActivityWaiting';
+    if (stateCode === '18') return 'executionActivity';
+    if (stateCode === '23') return 'executionActivityRequesterValidation';
+    if (stateCode === '32') return 'executionActivityTiValidation';
+    return '';
+  },
+
+  getExecutionActivityHref: function (task) {
+    var status = this.normalizeTaskExecutionStatus(task && task.status);
+    if (status === 'concluido' || status === 'cancelado') return '';
+
+    var route = this.getExecutionActivityRouteByState(task && task.estadoProcesso);
+    var documentId = this.asText(task && task.documentId);
+    var processInstanceId = this.asText(task && task.process);
+    if (!route || (!documentId && !processInstanceId)) return '';
+
+    var params = [];
+    if (documentId) params.push('documentId=' + encodeURIComponent(documentId));
+    if (processInstanceId) params.push('processInstanceId=' + encodeURIComponent(processInstanceId));
+    return '#' + route + '?' + params.join('&');
   },
 
   selectExecutionDatasetRow: function (rows, processId) {
@@ -952,7 +1061,7 @@
       return self.asText(row && row.NUM_PROCES) === normalizedProcessId;
     });
     var mappableMatches = exactMatches.filter(function (row) {
-      return !!self.mapDatasetTaskStatus(row && row.STATUS);
+      return !!self.mapDatasetTaskStatus(row && row.STATUS, row && row.estadoProcesso);
     });
 
     console.log('[ExecucaoProjeto] Analise das linhas do dataset', {
@@ -986,9 +1095,12 @@
     if (!normalized) return '';
     if (normalized.indexOf('conclu') !== -1 || normalized === '2') return 'concluido';
     if (normalized.indexOf('cancel') !== -1 || normalized === '1') return 'cancelado';
+    if (normalized.indexOf('aguardando') !== -1) return 'aguardando_execucao';
+    if (normalized.indexOf('validacao') !== -1 && normalized.indexOf('solicitante') !== -1) return 'validacao_solicitante';
+    if (normalized.indexOf('validacao') !== -1 && normalized.indexOf('ti') !== -1) return 'validacao_ti';
+    if (normalized.indexOf('em_execucao') !== -1 || normalized.indexOf('execucao') !== -1) return 'em_execucao';
     if (
       normalized.indexOf('andamento') !== -1 ||
-      normalized.indexOf('execucao') !== -1 ||
       normalized.indexOf('validacao_ti') !== -1 ||
       normalized.indexOf('validacao ti') !== -1 ||
       normalized.indexOf('validacao_solicitante') !== -1 ||
@@ -1072,26 +1184,38 @@
   resolveMilestoneStatus: function (tasks, milestone) {
     if (!tasks.length) return 'planejado';
 
+    var normalizedStatuses = (tasks || []).map(function (task) {
+      return projectExecutionController.normalizeText(task && task.status);
+    });
+    var hasConcluded = normalizedStatuses.some(function (status) {
+      return status.indexOf('conclu') !== -1;
+    });
+    var hasCancelled = normalizedStatuses.some(function (status) {
+      return status.indexOf('cancel') !== -1;
+    });
+    var allDone = normalizedStatuses.length > 0 && normalizedStatuses.every(function (status) {
+      return status.indexOf('conclu') !== -1;
+    });
+    var allCancelled = normalizedStatuses.length > 0 && normalizedStatuses.every(function (status) {
+      return status.indexOf('cancel') !== -1;
+    });
+    var allFinished = normalizedStatuses.length > 0 && normalizedStatuses.every(function (status) {
+      return status.indexOf('conclu') !== -1 || status.indexOf('cancel') !== -1;
+    });
+    if (allDone) return 'concluido';
+    if (allCancelled) return 'cancelado';
+    if (allFinished && hasConcluded) return 'concluido';
+
     var isTodayWithinPeriod = this.isTodayWithinMilestonePeriod(milestone);
     var startDate = this.parseDateValue(milestone && milestone.startDate);
     var today = new Date();
     var normalizedToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     if (startDate && startDate.getTime() > normalizedToday.getTime()) return 'planejado';
 
-    var normalizedStatuses = (tasks || []).map(function (task) {
-      return projectExecutionController.normalizeText(task && task.status);
-    });
-    var allCancelled = normalizedStatuses.length > 0 && normalizedStatuses.every(function (status) {
-      return status.indexOf('cancel') !== -1;
-    });
-    var allDone = normalizedStatuses.length > 0 && normalizedStatuses.every(function (status) {
-      return status.indexOf('conclu') !== -1;
-    });
-    if (allCancelled) return 'cancelado';
-    if (allDone) return 'concluido';
-
     var hasInProgress = normalizedStatuses.some(function (status) {
-      return status.indexOf('andamento') !== -1 || status.indexOf('execucao') !== -1;
+      return status.indexOf('andamento') !== -1
+        || status.indexOf('execucao') !== -1
+        || status.indexOf('validacao') !== -1;
     });
     if (hasInProgress) return 'em_andamento';
 
@@ -1109,6 +1233,9 @@
       normalizedStatuses: normalizedStatuses,
       allCancelled: allCancelled,
       allDone: allDone,
+      allFinished: allFinished,
+      hasConcluded: hasConcluded,
+      hasCancelled: hasCancelled,
       hasInProgress: hasInProgress,
       isTodayWithinPeriod: isTodayWithinPeriod,
       hasFinishedActivity: hasFinishedActivity,
@@ -1133,7 +1260,10 @@
     var normalized = this.normalizeTaskExecutionStatus(status);
     if (normalized === 'concluido') return { label: 'Concluído', badge: 'border-green-200 bg-green-50 text-green-700', icon: 'fa-solid fa-circle-check text-green-600' };
     if (normalized === 'cancelado') return { label: 'Cancelado', badge: 'border-red-200 bg-red-50 text-red-700', icon: 'fa-solid fa-ban text-red-600' };
-    if (normalized === 'em_andamento') return { label: 'Em andamento', badge: 'border-blue-200 bg-blue-50 text-blue-700', icon: 'fa-solid fa-play text-blue-600' };
+    if (normalized === 'aguardando_execucao') return { label: 'Aguardando Execução', badge: 'border-gray-200 bg-gray-50 text-gray-700', icon: 'fa-regular fa-clock text-gray-500' };
+    if (normalized === 'em_execucao' || normalized === 'em_andamento') return { label: 'Em Execução', badge: 'border-blue-200 bg-blue-50 text-blue-700', icon: 'fa-solid fa-play text-blue-600' };
+    if (normalized === 'validacao_solicitante') return { label: 'Validação do Solicitante', badge: 'border-yellow-200 bg-yellow-50 text-yellow-700', icon: 'fa-solid fa-user-check text-yellow-600' };
+    if (normalized === 'validacao_ti') return { label: 'Validação do TI', badge: 'border-indigo-200 bg-indigo-50 text-indigo-700', icon: 'fa-solid fa-shield-halved text-indigo-600' };
     return { label: 'Planejado', badge: 'border-gray-200 bg-gray-50 text-gray-700', icon: 'fa-regular fa-clock text-gray-500' };
   },
 
@@ -1268,13 +1398,18 @@
       throw new Error('documentId nao informado.');
     }
 
-    var processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
-    var taskFields = this.collectExecutionTaskFields(config && config.decisionValue, config && config.justificationValue);
-    var legacyLoading = typeof FLUIGC !== 'undefined' ? FLUIGC.loading($('#page-container')) : null;
-
-    if (legacyLoading) legacyLoading.show();
+    var loading = modalLoadingService.show({
+      title: 'Movendo execucao',
+      message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
+    });
 
     try {
+      await loading.waitForPaint();
+      loading.updateMessage('Localizando processo do desenvolvimento...');
+      var processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
+      loading.updateMessage('Preparando dados da execucao...');
+      var taskFields = this.collectExecutionTaskFields(config && config.decisionValue, config && config.justificationValue);
+      loading.updateMessage('Enviando movimentacao para o Fluig...');
       await fluigService.saveAndSendTask({
         id: processInstanceId,
         numState: this.asText(config && config.nextState),
@@ -1283,13 +1418,22 @@
         comments: this.asText(config && config.comments) || ''
       }, taskFields);
 
-      this.showToast(this.asText(config && config.successMessage) || 'Movimentacao realizada com sucesso.', 'success');
-
-      setTimeout(function () {
-        location.hash = '#dashboard';
-      }, 800);
+      var successMessage = this.asText(config && config.successMessage) || 'Movimentacao realizada com sucesso.';
+      loading.hide();
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: documentId,
+          title: 'Acao concluida!',
+          message: successMessage,
+          nextStep: 'Acompanhe a proxima etapa pelo dashboard.'
+        });
+      } else {
+        this.showToast(successMessage, 'success');
+      }
     } finally {
-      if (legacyLoading) legacyLoading.hide();
+      loading.hide();
     }
   },
 
@@ -1516,6 +1660,18 @@
     var end = this.formatDisplayDate(endDate);
     if (start && end) return start + ' - ' + end;
     return start || end || '';
+  },
+
+  formatDisplayPeriod: function (value) {
+    var text = this.asText(value);
+    if (!text) return '';
+    var separator = text.indexOf(' até ') >= 0 ? ' até ' : (text.indexOf(' - ') >= 0 ? ' - ' : '');
+    if (!separator) return this.formatDisplayDate(text);
+    var parts = text.split(separator);
+    var start = this.formatDisplayDate(parts[0]);
+    var end = this.formatDisplayDate(parts[1]);
+    if (start && end) return start + ' - ' + end;
+    return start || end || text;
   },
 
   formatDisplayDate: function (value) {

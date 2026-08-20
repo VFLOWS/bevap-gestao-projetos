@@ -5,8 +5,8 @@
                 <div class="flex items-start">
                     <i class="fa-solid fa-info-circle text-blue-600 mt-0.5 mr-3"></i>
                     <div class="text-sm text-blue-800">
-                        <p class="font-medium mb-1">Analise TI concluida</p>
-                        <p>Revise o historico do projeto e registre o impacto na sua area antes de aprovar.</p>
+                        <p class="font-medium mb-1">Análise TI concluída</p>
+                        <p>Revise o histórico do projeto e registre o impacto na sua área antes de aprovar.</p>
                     </div>
                 </div>
             </div>
@@ -15,16 +15,16 @@
                 <div class="border-b">
                     <nav class="flex flex-wrap">
                         <button data-tab="solicitacao" id="tab-solicitacao" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-                            <i class="fa-solid fa-file-lines mr-2"></i>Solicitacao
+                            <i class="fa-solid fa-file-lines mr-2"></i>Solicitação
                         </button>
                         <button data-tab="analise-ti" id="tab-analise-ti" class="px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
-                            <i class="fa-solid fa-microscope mr-2"></i>Analise TI
+                            <i class="fa-solid fa-microscope mr-2"></i>Análise TI
                         </button>
                         <button data-tab="impacto" id="tab-impacto" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
                             <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
                                 <i class="fa-solid fa-exclamation text-[10px]"></i>
                             </span>
-                            <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Area
+                            <i class="fa-solid fa-chart-line mr-2"></i>Impacto na Área
                         </button>
                         <button data-tab="checklist" id="tab-checklist" class="relative px-6 py-4 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:text-gray-700">
                             <span class="tab-notice-badge absolute top-2 right-2 w-4 h-4 bg-orange-500 text-white rounded-full ring-2 ring-white flex items-center justify-center" title="Atencao" aria-label="Atencao">
@@ -37,13 +37,13 @@
 
                 <div id="tab-content-solicitacao" class="p-6" data-tab-panel="solicitacao">
                     <div data-component="tab-solicitacao-history" class="text-sm text-gray-500">
-                        Carregando conteudo da solicitacao...
+                        Carregando conteúdo da solicitação...
                     </div>
                 </div>
 
                 <div id="tab-content-analise-ti" class="p-6 hidden" data-tab-panel="analise-ti">
                     <div data-component="tab-analise-ti-history" class="text-sm text-gray-500">
-                        Carregando conteudo da analise TI...
+                        Carregando conteúdo da análise TI...
                     </div>
                 </div>
 
@@ -52,7 +52,7 @@
                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
                             <p class="text-sm text-blue-800">
                                 <i class="fa-solid fa-info-circle mr-2"></i>
-                                Avalie o impacto deste projeto na capacidade operacional da sua area.
+                                Avalie o impacto deste projeto na capacidade operacional da sua área.
                             </p>
                         </div>
 
@@ -60,7 +60,7 @@
                             <label class="block text-sm font-medium text-gray-700 mb-3">Disponibilidade da Equipe <span class="text-red-500">*</span></label>
                             <div class="bg-gray-50 p-5 rounded-lg">
                                 <div class="flex items-center justify-between mb-3">
-                                    <span class="text-sm text-gray-600">Capacidade disponivel</span>
+                                    <span class="text-sm text-gray-600">Capacidade disponível</span>
                                     <span class="text-lg font-bold text-bevap-navy" id="capacity-value">60%</span>
                                 </div>
                                 <input id="team-availability-input" data-field="disponibilidadedaEquipeSI" type="range" min="0" max="100" value="60" class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-bevap-green">
@@ -73,8 +73,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Recursos Necessarios da Area <span class="text-red-500">*</span></label>
-                            <textarea id="required-resources-input" data-field="recursosNecessariosAreaSI" rows="3" placeholder="Descreva quais recursos serao necessarios..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Recursos Necessários da Área <span class="text-red-500">*</span></label>
+                            <textarea id="required-resources-input" data-field="recursosNecessariosAreaSI" rows="3" placeholder="Descreva quais recursos serão necessários..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
                         </div>
 
                         <div>
@@ -83,20 +83,20 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Prioridade para a Area <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Prioridade para a Área <span class="text-red-500">*</span></label>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                                 <label class="relative">
                                     <input type="radio" name="area-priority" value="critico" data-field="prioridadeparaaAreaSI" class="sr-only peer">
                                     <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-red-500 peer-checked:bg-red-50 text-center transition-all">
                                         <i class="fa-solid fa-exclamation-triangle text-red-500 text-2xl mb-2"></i>
-                                        <div class="font-semibold">Critico</div>
+                                        <div class="font-semibold">Crítico</div>
                                     </div>
                                 </label>
                                 <label class="relative">
                                     <input type="radio" name="area-priority" value="estrategico" data-field="prioridadeparaaAreaSI" class="sr-only peer" checked>
                                     <div class="p-4 border-2 border-gray-300 rounded-lg cursor-pointer peer-checked:border-bevap-green peer-checked:bg-green-50 text-center transition-all">
                                         <i class="fa-solid fa-star text-bevap-green text-2xl mb-2"></i>
-                                        <div class="font-semibold">Estrategico</div>
+                                        <div class="font-semibold">Estratégico</div>
                                     </div>
                                 </label>
                                 <label class="relative">
@@ -110,8 +110,8 @@
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Observacoes do Gestor</label>
-                            <textarea id="manager-observations-input" data-field="observacoesdoGestorSI" rows="4" placeholder="Comentarios adicionais sobre o impacto na area..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Observações do Gestor</label>
+                            <textarea id="manager-observations-input" data-field="observacoesdoGestorSI" rows="4" placeholder="Comentários adicionais sobre o impacto na área..." class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none"></textarea>
                         </div>
                     </div>
                 </div>
@@ -132,24 +132,24 @@
                             <label class="flex items-start">
                                 <input id="resources-identified-check" data-field="recursosNecessIdentSI" type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Recursos necessarios estao identificados</span>
-                                    <p class="text-gray-500 text-xs mt-1">Pessoas, orcamento, ferramentas e demais recursos foram mapeados.</p>
+                                    <span class="font-medium">Recursos necessários estão identificados</span>
+                                    <p class="text-gray-500 text-xs mt-1">Pessoas, orçamento, ferramentas e demais recursos foram mapeados.</p>
                                 </span>
                             </label>
 
                             <label class="flex items-start">
                                 <input id="conflicts-clear-check" data-field="naoHaConflitosCriticosSI" type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Nao ha conflitos criticos de agenda</span>
-                                    <p class="text-gray-500 text-xs mt-1">Nao existem iniciativas concorrentes que inviabilizem o cronograma planejado.</p>
+                                    <span class="font-medium">Não há conflitos criticos de agenda</span>
+                                    <p class="text-gray-500 text-xs mt-1">Não existem iniciativas concorrentes que inviabilizem o cronograma planejado.</p>
                                 </span>
                             </label>
 
                             <label class="flex items-start">
                                 <input id="aligned-priorities-check" data-field="projetoAlinhadoPrioridadesSI" type="checkbox" class="impacto-checklist-item mt-1 w-4 h-4 text-bevap-green border-gray-300 rounded focus:ring-bevap-green">
                                 <span class="ml-3 text-sm text-gray-700">
-                                    <span class="font-medium">Projeto alinhado as prioridades da area</span>
-                                    <p class="text-gray-500 text-xs mt-1">O projeto esta coerente com metas e prioridades operacionais da area.</p>
+                                    <span class="font-medium">Projeto alinhado as prioridades da área</span>
+                                    <p class="text-gray-500 text-xs mt-1">O projeto está coerente com metas e prioridades operacionais da área.</p>
                                 </span>
                             </label>
                         </div>
@@ -188,7 +188,7 @@
                     <i class="fa-solid fa-ban mr-2"></i> Reprovar
                 </button>
                 <button data-action="open-return-modal" class="px-5 py-2.5 text-sm font-medium text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-all">
-                    <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correcao
+                    <i class="fa-solid fa-rotate-left mr-2"></i> Devolver para Correção
                 </button>
                 <button data-action="open-approve-modal" class="px-6 py-2.5 text-sm font-medium text-white bg-bevap-green rounded-lg hover:bg-green-700 transition-all shadow-md">
                     <i class="fa-solid fa-check mr-2"></i> Aprovar
@@ -204,10 +204,10 @@
             <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-4">
                 <i class="fa-solid fa-check-circle text-bevap-green text-2xl"></i>
             </div>
-            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovacao</h3>
+            <h3 class="text-xl font-montserrat font-bold text-bevap-navy">Confirmar Aprovação</h3>
         </div>
-        <p class="text-gray-700 mb-3">Voce esta aprovando o projeto <strong id="approve-project-label">Projeto selecionado</strong>.</p>
-        <p class="text-sm text-gray-600 mb-6">Ao confirmar, o projeto seguiria para TI - Triagem Tecnica.</p>
+        <p class="text-gray-700 mb-3">Você está aprovando o projeto <strong id="approve-project-label">Projeto selecionado</strong>.</p>
+        <p class="text-sm text-gray-600 mb-6">Ao confirmar, o projeto seguiria para TI - Triagem Técnica.</p>
         <div class="flex justify-end space-x-3">
             <button data-action="close-modal" data-modal-id="approve-modal" class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 Cancelar
@@ -221,7 +221,7 @@
 
 <div id="modal-return" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-lg shadow-xl max-w-md w-full p-6">
-        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correcao</h3>
+        <h3 class="text-xl font-montserrat font-bold text-bevap-navy mb-4">Devolver para Correção</h3>
         <p class="text-sm text-gray-600 mb-4">Descreva os pontos que precisam ser corrigidos pelo solicitante:</p>
         <textarea id="return-reason-input" rows="4" placeholder="Motivo da devolucao..." required aria-required="true" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
         <div class="flex justify-end space-x-3">
@@ -237,17 +237,17 @@
         <p class="text-sm text-gray-600 mb-4">Justifique a reprovacao do projeto para notificar os stakeholders:</p>
         <select id="reject-category-input" required aria-required="true" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green mb-3">
             <option value="">Selecione a categoria</option>
-            <option value="estrategia">Nao alinhado a estrategia</option>
+            <option value="estrategia">Não alinhado a estrategia</option>
             <option value="prioridades">Prioridades conflitantes</option>
             <option value="recursos">Recursos indisponiveis</option>
-            <option value="orcamento">Orcamento ou ROI insuficiente</option>
+            <option value="orcamento">Orçamento ou ROI insuficiente</option>
             <option value="riscos">Risco elevado</option>
             <option value="escopo">Escopo indefinido</option>
             <option value="outro">Outro</option>
         </select>
-        <textarea id="reject-description-input" rows="4" placeholder="Descricao detalhada..." required aria-required="true" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
+        <textarea id="reject-description-input" rows="4" placeholder="Descrição detalhada..." required aria-required="true" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-bevap-green focus:border-transparent transition-all resize-none mb-4"></textarea>
         <div class="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-            <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> Esta acao permanece apenas na interface nesta entrega.</p>
+            <p class="text-xs text-red-800"><i class="fa-solid fa-info-circle mr-1"></i> Esta ação permanece apenas na interface nesta entrega.</p>
         </div>
         <div class="flex justify-end space-x-3">
             <button data-action="close-modal" data-modal-id="modal-reject" class="px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg transition-all">Cancelar</button>

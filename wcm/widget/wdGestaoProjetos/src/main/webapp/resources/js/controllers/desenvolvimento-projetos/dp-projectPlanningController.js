@@ -1,19 +1,61 @@
 ﻿var projectPlanningController = {
   _eventNamespace: '.projectPlanning',
-  _projectFields: ['documentid', 'titulodoprojetoNS', 'areaUnidadeNS', 'solicitanteNomeNS', 'patrocinadorNS', 'prioridadeNS', 'estadoProcesso', 'projectPlanningJsonDP', 'documentsJsonDP', 'execucaoProjetoTITT', 'execFasesAtividadesCorrecao', 'milestoneTaskCancelProcDP'],
 
+  // Campos mínimos usados para resolver o contexto do processo e hidratar a tela.
+  _projectFields: [
+    'documentid',
+    'titulodoprojetoNS',
+    'areaUnidadeNS',
+    'solicitanteNomeNS',
+    'patrocinadorNS',
+    'prioridadeNS',
+    'estadoProcesso',
+    'projectPlanningJsonDP',
+    'documentsJsonDP',
+    'execucaoProjetoTITT',
+    'execFasesAtividadesCorrecao',
+    'milestoneTaskCancelProcDP',
+    'tblRiscosIniciaisTIPC.tituloRiscoTIPC',
+    'tblRiscosIniciaisTIPC.descricaoRiscoTIPC',
+    'tblRiscosIniciaisTIPC.mitigacaoRiscoTIPC',
+    'tblRiscosIniciaisTIPC.planoBRiscoTIPC',
+    'tblRiscosIniciaisTIPC.nivelRiscoTIPC',
+    'tblRiscosIniciaisTIPC.impactoRiscoTIPC',
+    'tblRiscosIniciaisTIPC.probabilidadeRiscoTIPC',
+    'tblRiscosIniciaisTIPC.riscoPotencialTIPC',
+    'tblRiscosIdentificadosTITT.tituloRiscoTITT',
+    'tblRiscosIdentificadosTITT.descricaoRiscoTITT',
+    'tblRiscosIdentificadosTITT.mitigacaoRiscoTITT',
+    'tblRiscosIdentificadosTITT.planoBRiscoTITT',
+    'tblRiscosIdentificadosTITT.nivelRiscoTITT',
+    'tblRiscosIdentificadosTITT.impactoRiscoTITT',
+    'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT'
+  ],
+
+  // Próxima atividade do processo Desenvolvimento Projetos quando o planejamento é concluído.
   _nextStateAfterPlanning: '16',
 
+  // Controles internos de UI e ciclo de vida. Esses valores não são salvos no formulário.
   _headerBackup: null,
   _globalsBackup: null,
   _pendingDeleteAction: null,
   _toastTimeoutId: null,
+  _wbsChangeTimer: null,
+  _milestoneChangeTimer: null,
 
+  // Cache do dataset de funcionários. A tela possui vários campos de responsável
+  // usando o mesmo dataset, então evitamos reprocessar a mesma lista a cada campo.
+  _employeeOptionsCache: null,
+  _employeeOptionsPromise: null,
+  _employeeOptionByName: null,
+
+  // Dados renderizados em memória pelas tabelas dinâmicas da tela.
   _raciMatrixData: [],
   _raciRemovedStakeholdersByPhase: new Map(), // Mantido para compatibilidade, mesmo sendo manual agora
   _teamAllocationData: [],
   _communicationPlanData: [],
 
+  // Estado do processo/documento aberto e das etapas visuais do planejamento.
   _state: {
     documentId: '',
     estadoProcesso: '',
@@ -36,6 +78,8 @@
     }
   },
 
+  // Entrada principal chamada pelo router. Monta o template, carrega dependências,
+  // busca dados do processo e aplica eventual rascunho já salvo no formulário.
   load: async function (params = {}) {
     const container = $('#page-container');
 
@@ -79,6 +123,9 @@
       clearTimeout(this._toastTimeoutId);
       this._toastTimeoutId = null;
     }
+
+    this.clearPlanningChangeTimers();
+    this.destroyTagFilters(document);
   },
 
   getTemplateUrl: function () {
@@ -88,7 +135,29 @@
   // ---------------------------
   // Integração de Funcionários (dsBuscaFunc)
   // ---------------------------
+
+  // Garante que a lista de funcionários esteja disponível para todos os TagInputFilter.
+  // Se a lista já foi carregada nesta sessão do controller, reaproveita o cache.
   loadEmployeeOptions: async function () {
+    if (Array.isArray(this._employeeOptionsCache)) {
+      this.setEmployeeOptions(this._employeeOptionsCache);
+      return;
+    }
+
+    if (this._employeeOptionsPromise) {
+      this.setEmployeeOptions(await this._employeeOptionsPromise);
+      return;
+    }
+
+    this._employeeOptionsPromise = this.fetchEmployeeOptions();
+
+    const options = await this._employeeOptionsPromise;
+    this._employeeOptionsCache = options;
+    this.setEmployeeOptions(options);
+  },
+
+  // Busca o dataset no Fluig e normaliza as colunas para um formato único usado pela UI.
+  fetchEmployeeOptions: async function () {
     let rows = [];
     try {
       rows = await fluigService.getDatasetRows('dsBuscaFunc', {
@@ -102,7 +171,7 @@
       }
     }
 
-    this._state.employeeOptions = (Array.isArray(rows) ? rows : []).map((row) => {
+    return (Array.isArray(rows) ? rows : []).map((row) => {
       const chapa = this.asText(row.CHAPA || row.chapa);
       const rawName = this.asText(row.CHAPANOMEFUNCIONARIO || row.chapanomefuncionario || row.NOME || row.nome);
       const normalizedName = this.normalizeEmployeeName(rawName);
@@ -119,6 +188,32 @@
     }).filter(Boolean);
   },
 
+  // Atualiza o estado com a lista de funcionários e monta um índice por nome.
+  // Esse índice evita varrer o array inteiro ao preencher responsáveis já salvos.
+  setEmployeeOptions: function (options) {
+    this._state.employeeOptions = Array.isArray(options) ? options : [];
+    this._employeeOptionByName = new Map();
+
+    this._state.employeeOptions.forEach((item) => {
+      const name = this.asText(item && item.NOME_NORMALIZADO);
+      if (name && !this._employeeOptionByName.has(name)) {
+        this._employeeOptionByName.set(name, item);
+      }
+    });
+  },
+
+  // Recupera funcionário pelo nome normalizado. Usado para hidratar TagInputFilter já preenchido.
+  getEmployeeOptionByName: function (name) {
+    const normalizedName = this.asText(name);
+    if (!normalizedName) return null;
+    if (this._employeeOptionByName && this._employeeOptionByName.has(normalizedName)) {
+      return this._employeeOptionByName.get(normalizedName);
+    }
+    return this._state.employeeOptions.find(e => e.NOME_NORMALIZADO === normalizedName) || null;
+  },
+
+  // Converte valores vindos do dataset para nomes legíveis e consistentes.
+  // Ex.: "123 - JOAO SILVA" vira "Joao Silva".
   normalizeEmployeeName: function (value) {
     let text = this.asText(value);
     if (!text) return '';
@@ -139,6 +234,8 @@
     return String(this._state.wbsTaskSeqRuntime);
   },
 
+  // Mantém IDs estáveis para tarefas da WBS/marcos. Isso é importante para rastrear
+  // tarefas já criadas, tarefas removidas e vínculos com atividades derivadas.
   ensurePersistentTaskId: function (rawId) {
     const text = this.asText(rawId);
     if (/^\d+$/.test(text)) {
@@ -151,6 +248,8 @@
     return this.getNextPersistentTaskSequenceId();
   },
 
+  // Inicializa todos os campos TagInputFilter dentro de um container.
+  // A mesma função atende responsáveis da WBS, matriz RACI e plano de comunicação.
   initAllTagFilters: function (containerElement) {
     if (typeof TagInputFilter === 'undefined') return;
     const $container = $(containerElement || document);
@@ -172,17 +271,16 @@
         labelField: 'NOME_NORMALIZADO',
         valueField: 'CHAPA',
         columns: [
-          { header: 'Chapa', field: 'CHAPA', width: 'w-1/4' },
-          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'w-3/4' }
+          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'flex-1' }
         ],
+        portalDropdown: true,
+        compact: true,
         singleSelection: true,
         onItemAdded: (item) => {
           hiddenInput.val(item.NOME_NORMALIZADO).trigger('change');
-          this.onWbsChanged();
         },
         onItemRemoved: () => {
           hiddenInput.val('').trigger('change');
-          this.onWbsChanged();
         }
       });
 
@@ -205,15 +303,16 @@
         labelField: 'NOME_NORMALIZADO',
         valueField: 'CHAPA',
         columns: [
-          { header: 'Chapa', field: 'CHAPA', width: 'w-1/4' },
-          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'w-3/4' }
+          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'flex-1' }
         ],
+        portalDropdown: true,
         singleSelection: true, // usamos true mas limpamos em seguida para gerar a UX de chips
         onItemAdded: (item) => {
           this.addRaciStakeholder(index, field, item.NOME_NORMALIZADO);
           setTimeout(() => { if (filter.removeAll) filter.removeAll(); }, 10);
         }
       });
+      mount._filterInstance = filter;
       mount._filterReady = true;
     });
 
@@ -230,19 +329,35 @@
         labelField: 'NOME_NORMALIZADO',
         valueField: 'CHAPA',
         columns: [
-          { header: 'Chapa', field: 'CHAPA', width: 'w-1/4' },
-          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'w-3/4' }
+          { header: 'Nome', field: 'NOME_NORMALIZADO', width: 'flex-1' }
         ],
+        portalDropdown: true,
         singleSelection: true,
         onItemAdded: (item) => {
           this.addCommunicationAudience(index, item.NOME_NORMALIZADO);
           setTimeout(() => { if (filter.removeAll) filter.removeAll(); }, 10);
         }
       });
+      mount._filterInstance = filter;
       mount._filterReady = true;
     });
   },
 
+  // Destrói instâncias de TagInputFilter antes de sobrescrever HTML dinâmico.
+  // Evita manter dropdowns/listeners antigos vivos depois de redesenhar tabelas.
+  destroyTagFilters: function (containerElement) {
+    const $container = $(containerElement || document);
+    $container.find('.single-resp-mount, .raci-tag-mount, .comm-tag-mount').each((_, mount) => {
+      if (mount._filterInstance && typeof mount._filterInstance.destroy === 'function') {
+        mount._filterInstance.destroy();
+      }
+      mount._filterInstance = null;
+      mount._filterReady = false;
+    });
+  },
+
+  // Quando um responsável já veio salvo no formulário, reabre o TagInputFilter
+  // com o chip selecionado para manter UI e campo hidden sincronizados.
   refreshResponsibleTagFilter: function (mount) {
     if (!mount || !mount._filterInstance) return;
     const hiddenInput = $(mount).next('.responsible-input');
@@ -250,18 +365,20 @@
     if (!initialVal) return;
     const normalizedInitialValue = this.normalizeEmployeeName(initialVal);
     if (!normalizedInitialValue) return;
-    const found = this._state.employeeOptions.find(e => e.NOME_NORMALIZADO === normalizedInitialValue);
+    const found = this.getEmployeeOptionByName(normalizedInitialValue);
     mount._filterInstance.setSelectedItems([{
       value: found ? found.CHAPA : `legacy:${normalizedInitialValue}`,
       label: found ? found.NOME_NORMALIZADO : normalizedInitialValue
     }]);
   },
 
+  // Reaplica o estado visual dos campos de responsável dentro de um container.
   refreshAllResponsibleTagFilters: function (containerElement) {
     const $container = $(containerElement || document);
     $container.find('.single-resp-mount').each((_, mount) => this.refreshResponsibleTagFilter(mount));
   },
 
+  // Guarda o cabeçalho original da widget para trocar o contexto visual da atividade.
   backupAndSetHeader: function () {
     const header = $('#header');
     if (!header.length) return;
@@ -289,6 +406,7 @@
     }
   },
 
+  // Restaura o cabeçalho quando o controller é destruído ou a rota muda.
   restoreHeader: function () {
     if (!this._headerBackup) return;
 
@@ -309,6 +427,7 @@
     this._headerBackup = null;
   },
 
+  // Carrega bibliotecas externas usadas pela tela, como Sortable e Date Range Picker.
   ensureLibsLoaded: async function () {
     const tasks = [];
 
@@ -332,6 +451,7 @@
     }
   },
 
+  // Evita inserir o mesmo script mais de uma vez na página.
   loadScriptOnce: function (src, id) {
     return new Promise((resolve, reject) => {
       if (id && document.getElementById(id)) {
@@ -350,6 +470,7 @@
     });
   },
 
+  // Evita inserir o mesmo CSS mais de uma vez na página.
   loadCssOnce: function (href, id) {
     return new Promise((resolve) => {
       if (id && document.getElementById(id)) {
@@ -367,6 +488,8 @@
     });
   },
 
+  // Liga eventos delegados da tela. Como muitos elementos são criados dinamicamente,
+  // a maioria dos eventos fica em document/page-container em vez do elemento final.
   bindEvents: function () {
     this.unbindEvents();
 
@@ -387,12 +510,11 @@
     });
 
     $(document).on(`input${this._eventNamespace} change${this._eventNamespace}`, '#wbs-container input, #wbs-container textarea, #wbs-container select', () => {
-      this.onWbsChanged();
+      this.scheduleWbsChanged();
     });
 
     $(document).on(`input${this._eventNamespace} change${this._eventNamespace}`, '#milestones-container input, #milestones-container select', () => {
-      this.updateMilestoneTimeline();
-      this.syncRaciWithMilestones(); // RACI agora segue o cronograma
+      this.scheduleMilestoneChanged();
     });
 
     $('#page-container').on(`click${this._eventNamespace}`, '[data-action="show-timeline"]', (event) => {
@@ -417,15 +539,61 @@
 
     $('#page-container').on(`click${this._eventNamespace}`, '[data-action="remove-dp-attachment"]', (event) => {
       const id = $(event.currentTarget).data('attachment-id');
-      this.removeAttachment(id);
+      this.openDeleteModal('Deseja realmente remover este anexo?', () => this.removeAttachment(id));
     });
+
+    this._boundMilestoneDropdownPosition = () => this.repositionOpenMilestoneTaskDropdowns();
+    window.addEventListener('scroll', this._boundMilestoneDropdownPosition, true);
+    window.addEventListener('resize', this._boundMilestoneDropdownPosition);
   },
 
+  // Remove listeners da tela ao sair da rota, evitando handlers duplicados em novo load.
   unbindEvents: function () {
     $(document).off(this._eventNamespace);
     $('#page-container').off(this._eventNamespace);
+    this.clearPlanningChangeTimers();
+    if (this._boundMilestoneDropdownPosition) {
+      window.removeEventListener('scroll', this._boundMilestoneDropdownPosition, true);
+      window.removeEventListener('resize', this._boundMilestoneDropdownPosition);
+      this._boundMilestoneDropdownPosition = null;
+    }
   },
 
+  // Limpa timers de debounce pendentes de WBS/Cronograma.
+  clearPlanningChangeTimers: function () {
+    if (this._wbsChangeTimer) {
+      clearTimeout(this._wbsChangeTimer);
+      this._wbsChangeTimer = null;
+    }
+    if (this._milestoneChangeTimer) {
+      clearTimeout(this._milestoneChangeTimer);
+      this._milestoneChangeTimer = null;
+    }
+  },
+
+  // Agrupa alterações rápidas da WBS para recalcular resumos só depois da digitação.
+  scheduleWbsChanged: function () {
+    if (this._wbsChangeTimer) clearTimeout(this._wbsChangeTimer);
+    this._wbsChangeTimer = setTimeout(() => {
+      this._wbsChangeTimer = null;
+      this.onWbsChanged();
+    }, 120);
+  },
+
+  // Agrupa alterações rápidas do cronograma para atualizar timeline e RACI com menos custo.
+  scheduleMilestoneChanged: function () {
+    if (this._milestoneChangeTimer) clearTimeout(this._milestoneChangeTimer);
+    this._milestoneChangeTimer = setTimeout(() => {
+      this._milestoneChangeTimer = null;
+      this.updateMilestoneTimeline();
+      this.syncRaciWithMilestones();
+      if (this._state.currentStep === 4) {
+        this.renderRaciMatrixTable();
+      }
+    }, 120);
+  },
+
+  // Inicializa componentes visuais após template e datasets estarem prontos.
   initializeUi: function () {
     this.goToStep(1);
     this.initAllTagFilters(document);
@@ -446,6 +614,7 @@
     this.setConcludeModalText('-', '-');
   },
 
+  // Ativa date range picker nos campos de período dos marcos.
   initializeMilestoneDatePickers: function (rootElement) {
     if (!rootElement) return;
     if (typeof $.fn.daterangepicker === 'undefined') return;
@@ -460,7 +629,7 @@
         input.daterangepicker({
           autoUpdateInput: true,
           locale: {
-            format: 'YYYY-MM-DD',
+            format: 'DD/MM/YYYY',
             applyLabel: 'Aplicar',
             cancelLabel: 'Cancelar',
             fromLabel: 'De',
@@ -469,9 +638,9 @@
         });
 
         input.on('apply.daterangepicker', function (ev, picker) {
-          const start = picker && picker.startDate ? picker.startDate.format('YYYY-MM-DD') : '';
-          const end = picker && picker.endDate ? picker.endDate.format('YYYY-MM-DD') : '';
-          input.val(start && end ? `${start} até ${end}` : '');
+          const start = picker && picker.startDate ? picker.startDate.format('DD/MM/YYYY') : '';
+          const end = picker && picker.endDate ? picker.endDate.format('DD/MM/YYYY') : '';
+          input.val(start && end ? `${start} - ${end}` : '');
         });
 
         input.data('gp-daterangepicker-ready', true);
@@ -582,6 +751,8 @@
   // Project summary
   // ---------------------------
 
+  // Resolve o contexto do processo/documento e renderiza o resumo lateral do projeto.
+  // Também prepara o card de progresso que acompanha as etapas do planejamento.
   loadProjectSummary: async function () {
     const documentId = this.asText(this._state.documentId);
 
@@ -706,6 +877,7 @@
   // Draft load / apply
   // ---------------------------
 
+  // Carrega dados já salvos no formulário para reabrir um rascunho ou uma correção.
   loadPlanningDraft: async function () {
     const documentId = this.asText(this._state.documentId);
     if (!documentId) {
@@ -726,9 +898,24 @@
           'chkRisksDP',
           'chkRaciDP',
           'chkDocsDP',
+          'execucaoProjetoTITT',
           'execFasesAtividadesCorrecao',
           'milestoneTaskCancelProcDP',
-          
+          'tblRiscosIniciaisTIPC.tituloRiscoTIPC',
+          'tblRiscosIniciaisTIPC.descricaoRiscoTIPC',
+          'tblRiscosIniciaisTIPC.mitigacaoRiscoTIPC',
+          'tblRiscosIniciaisTIPC.planoBRiscoTIPC',
+          'tblRiscosIniciaisTIPC.nivelRiscoTIPC',
+          'tblRiscosIniciaisTIPC.impactoRiscoTIPC',
+          'tblRiscosIniciaisTIPC.probabilidadeRiscoTIPC',
+          'tblRiscosIniciaisTIPC.riscoPotencialTIPC',
+          'tblRiscosIdentificadosTITT.tituloRiscoTITT',
+          'tblRiscosIdentificadosTITT.descricaoRiscoTITT',
+          'tblRiscosIdentificadosTITT.mitigacaoRiscoTITT',
+          'tblRiscosIdentificadosTITT.planoBRiscoTITT',
+          'tblRiscosIdentificadosTITT.nivelRiscoTITT',
+          'tblRiscosIdentificadosTITT.impactoRiscoTITT',
+          'tblRiscosIdentificadosTITT.probabilidadeRiscoTITT'
         ],
         filters: {
           documentid: documentId,
@@ -758,6 +945,8 @@
     }
   },
 
+  // Converte o registro do dataset em um payload único usado pela tela.
+  // O formulário salva parte em JSON e parte em tabelas pai-filho; aqui juntamos tudo.
   buildPlanningPayloadFromStoredRow: function (row) {
     const payload = this.parseJson(row && row.projectPlanningJsonDP) || this.createEmptyPlanningPayload();
     const currentChecklist = payload.checklist || {};
@@ -784,7 +973,13 @@
 
     const storedWbs = this.buildStoredWbsPayload(phaseRows, taskRows, payload.wbs);
     const storedMilestones = this.buildStoredMilestonesPayload(milestoneRows, criteriaRows, milestoneTaskRows, summaryRows, storedWbs, payload.milestones);
-    const storedRisks = this.buildStoredRisksPayload(riskRows, payload.risks);
+    let storedRisks = this.buildStoredRisksPayload(riskRows, payload.risks);
+    if (!storedRisks || !Array.isArray(storedRisks.items) || !storedRisks.items.length) {
+      storedRisks = this.buildInitialRisksPlanningPayload(row);
+      if (storedRisks.items.length) {
+        payload.checklist.risks = true;
+      }
+    }
     const storedDependencies = this.buildStoredDependenciesPayload(dependencyRows, payload.externalDependencies);
     const storedCommunication = this.buildStoredCommunicationPayload(communicationRows, payload.communicationPlan);
     const storedAllocation = this.buildStoredAllocationPayload(allocationRows, payload.teamAllocation);
@@ -801,6 +996,7 @@
     return payload;
   },
 
+  // Payload inicial quando ainda não há planejamento salvo.
   createEmptyPlanningPayload: function () {
     return {
       meta: {
@@ -831,6 +1027,7 @@
     };
   },
 
+  // Reconstrói a WBS a partir das tabelas pai-filho de fases e tarefas.
   buildStoredWbsPayload: function (phaseRows, taskRows, existingWbs) {
     const phases = Array.isArray(phaseRows) ? phaseRows.slice() : [];
     const tasks = Array.isArray(taskRows) ? taskRows.slice() : [];
@@ -895,6 +1092,8 @@
     };
   },
 
+  // Reconstrói marcos, critérios e tarefas do cronograma a partir das tabelas salvas.
+  // Também preserva vínculos com tarefas da WBS para não perder rastreabilidade.
   buildStoredMilestonesPayload: function (milestoneRows, criteriaRows, milestoneTaskRows, summaryRows, wbsPayload, existingMilestones) {
     const milestones = Array.isArray(milestoneRows) ? milestoneRows.slice() : [];
     const criteria = Array.isArray(criteriaRows) ? criteriaRows.slice() : [];
@@ -987,6 +1186,7 @@
     };
   },
 
+  // Reconstrói riscos cadastrados diretamente no planejamento.
   buildStoredRisksPayload: function (riskRows, existingRisks) {
     if (!Array.isArray(riskRows) || !riskRows.length) {
       return existingRisks && typeof existingRisks === 'object' ? existingRisks : { items: [] };
@@ -1005,6 +1205,82 @@
     return { items };
   },
 
+  // Quando ainda não há riscos no planejamento, escolhe a origem inicial:
+  // projetos externos usam os riscos revisados na proposta; internos usam a triagem.
+  buildInitialRisksPlanningPayload: function (row) {
+    const executionType = this.asText(row && row.execucaoProjetoTITT);
+
+    if (this.isExternalExecutionType(executionType)) {
+      return this.buildProposalRisksPlanningPayload(row && (row.tblRiscosIniciaisTIPC || row['tblRiscosIniciaisTIPC']));
+    }
+
+    return this.buildTriageRisksPlanningPayload(row && (row.tblRiscosIdentificadosTITT || row['tblRiscosIdentificadosTITT']));
+  },
+
+  // Identifica se o projeto segue execução externa, com passagem por proposta comercial.
+  isExternalExecutionType: function (value) {
+    const normalized = this.normalizeText(value);
+    return normalized.indexOf('extern') !== -1;
+  },
+
+  // Converte riscos revisados na etapa de Proposta Comercial para o formato do planejamento.
+  buildProposalRisksPlanningPayload: function (tblValue) {
+    const rows = this.parseJson(tblValue);
+    const items = Array.isArray(rows) ? rows.map((risk, index) => {
+      const legacy = this.asText(risk && risk.riscoPotencialTIPC);
+      const title = this.asText(risk && risk.tituloRiscoTIPC) || legacy;
+      const description = this.asText(risk && risk.descricaoRiscoTIPC) || (title === legacy ? legacy : title);
+      const probability = this.asText(risk && risk.probabilidadeRiscoTIPC) || 'Alta';
+      const impact = this.asText(risk && risk.impactoRiscoTIPC) || 'Alto';
+      const mitigation = this.asText(risk && risk.mitigacaoRiscoTIPC);
+      const fallback = this.asText(risk && risk.planoBRiscoTIPC);
+      const level = this.asText(risk && risk.nivelRiscoTIPC) || impact || 'Alto';
+
+      return {
+        id: `proposal-risk-${index + 1}`,
+        title: title || description,
+        description: description,
+        probability: probability,
+        impact: impact,
+        mitigation: mitigation,
+        fallback: fallback,
+        planB: fallback,
+        level: level
+      };
+    }).filter((risk) => risk.title || risk.description || risk.mitigation || risk.planB) : [];
+
+    return { items };
+  },
+
+  // Converte riscos da triagem técnica para o formato do planejamento.
+  buildTriageRisksPlanningPayload: function (tblValue) {
+    const rows = this.parseJson(tblValue);
+    const items = Array.isArray(rows) ? rows.map((risk, index) => {
+      const title = this.asText(risk && risk.tituloRiscoTITT);
+      const description = this.asText(risk && risk.descricaoRiscoTITT) || title;
+      const probability = this.asText(risk && risk.probabilidadeRiscoTITT) || 'Alta';
+      const impact = this.asText(risk && risk.impactoRiscoTITT) || 'Alto';
+      const mitigation = this.asText(risk && risk.mitigacaoRiscoTITT);
+      const fallback = this.asText(risk && risk.planoBRiscoTITT);
+      const level = this.asText(risk && risk.nivelRiscoTITT) || impact || 'Alto';
+
+      return {
+        id: `triage-risk-${index + 1}`,
+        title: title || description,
+        description: description,
+        probability: probability,
+        impact: impact,
+        mitigation: mitigation,
+        fallback: fallback,
+        planB: fallback,
+        level: level
+      };
+    }).filter((risk) => risk.title || risk.description || risk.mitigation || risk.planB) : [];
+
+    return { items };
+  },
+
+  // Reconstrói dependências externas salvas no formulário.
   buildStoredDependenciesPayload: function (rows, existingDependencies) {
     if (!Array.isArray(rows) || !rows.length) {
       return existingDependencies && typeof existingDependencies === 'object' ? existingDependencies : { items: [] };
@@ -1023,6 +1299,7 @@
     return { items };
   },
 
+  // Reconstrói o plano de comunicação salvo no formulário.
   buildStoredCommunicationPayload: function (rows, existingCommunication) {
     if (!Array.isArray(rows) || !rows.length) {
       return existingCommunication && typeof existingCommunication === 'object' ? existingCommunication : { items: [] };
@@ -1035,6 +1312,7 @@
     return { items };
   },
 
+  // Reconstrói a alocação calculada/salva para exibição.
   buildStoredAllocationPayload: function (rows, existingAllocation) {
     if (!Array.isArray(rows) || !rows.length) {
       return existingAllocation && typeof existingAllocation === 'object' ? existingAllocation : { items: [] };
@@ -1047,6 +1325,7 @@
     return { items };
   },
 
+  // Recarrega a matriz RACI salva em JSON.
   buildStoredRaciPayload: function (raciJson, existingRaci) {
     const parsed = raciJson && typeof raciJson === 'object' ? raciJson : {};
     if (!Array.isArray(parsed.rows) || !parsed.rows.length) {
@@ -1073,6 +1352,8 @@
     return end && end !== start ? `${start} - ${end}` : start;
   },
 
+  // Aplica o payload intermediário na interface: recria WBS, marcos, riscos,
+  // dependências, comunicação, RACI, alocação e checklist visual.
   applyPlanningPayload: function (payload) {
     const finalPayload = payload && typeof payload === 'object' ? payload : {};
 
@@ -1324,6 +1605,8 @@
     this.applyExecutionCorrectionLocks();
   },
 
+  // Em correções vindas da execução, identifica tarefas/marcos que não podem
+  // ser alterados novamente para proteger processos já iniciados.
   prepareCorrectionLocks: function (payload, row) {
     this._state.lockedTaskKeys = new Set();
     this._state.lockedTaskIds = new Set();
@@ -1385,6 +1668,7 @@
     });
   },
 
+  // Bloqueia visualmente campos relacionados a tarefas/marcos travados por correção.
   applyExecutionCorrectionLocks: function () {
     if (!this._state.isExecutionCorrection) return;
     const lockedTaskKeys = this._state.lockedTaskKeys || new Set();
@@ -1468,6 +1752,7 @@
   // Stepper
   // ---------------------------
 
+  // Troca a etapa visível do planejamento e recalcula seções dependentes quando necessário.
   goToStep: function (step) {
     const nextStep = parseInt(step, 10);
     if (!Number.isFinite(nextStep)) return;
@@ -1496,6 +1781,8 @@
     }
   },
 
+  // Quando a WBS muda, atualiza alocação, opções de tarefas nos marcos,
+  // timeline e resumo de documentos.
   onWbsChanged: function () {
     this.syncTeamAllocationInternal();
     this.pruneMilestoneTasksWithoutWbsSource();
@@ -1511,6 +1798,7 @@
     this.updateDocumentsPlanSummary();
   },
 
+  // Remove tarefas de marcos que apontam para tarefas da WBS que não existem mais.
   pruneMilestoneTasksWithoutWbsSource: function () {
     const catalog = this.getMilestoneCatalog().tasks || [];
     const validTaskIds = new Set(catalog.map((task) => this.asText(task && task.id)).filter(Boolean));
@@ -1523,6 +1811,7 @@
     this.updateMilestoneTaskTitles();
   },
 
+  // Interpreta o período do marco aceitando os formatos usados na tela e em rascunhos antigos.
   parseMilestonePeriod: function (periodText) {
     const text = this.asText(periodText);
     if (!text) {
@@ -1548,6 +1837,7 @@
     return { startDate, endDate };
   },
 
+  // Normaliza datas digitadas/salvas para ISO, que é o formato usado internamente.
   normalizePeriodDateToIso: function (dateValue) {
     const text = this.asText(dateValue);
     if (!text) return '';
@@ -1581,9 +1871,10 @@
     if (!period.endDate || period.endDate === period.startDate) {
       return this.formatDateBr(period.startDate);
     }
-    return `${this.formatDateBr(period.startDate)} até ${this.formatDateBr(period.endDate)}`;
+    return `${this.formatDateBr(period.startDate)} - ${this.formatDateBr(period.endDate)}`;
   },
 
+  // Monta o catálogo de tarefas disponíveis para seleção nos marcos a partir da WBS.
   getMilestoneCatalog: function () {
     const phases = [];
     const tasks = [];
@@ -1621,6 +1912,7 @@
     return this.asText(match && match.id);
   },
 
+  // Retorna as tarefas de marco já selecionadas para evitar duplicidade.
   getMilestoneTaskAssignments: function () {
     const assignmentCount = new Map();
     document.querySelectorAll('.milestone-task-row').forEach((row) => {
@@ -1639,6 +1931,7 @@
     row.dataset.taskStarted = '';
   },
 
+  // Monta o HTML de uma linha de tarefa dentro de um marco.
   getMilestoneTaskRowHTML: function (rowData = {}) {
     const taskDate = this.asText(rowData.date);
     const taskLabel = this.escapeHtml(rowData.taskLabel || '');
@@ -1648,7 +1941,7 @@
           <div class="w-full min-w-0 relative">
             <label class="block text-sm text-gray-600 mb-1">Descrição da Tarefa</label>
             <div class="relative">
-              <input type="text" value="${taskLabel}" class="milestone-task-search w-full px-3 py-2 pr-16 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Pesquisar tarefa...">
+              <input type="text" value="${taskLabel}" class="milestone-task-search w-full h-10 px-3 py-2 pr-16 border border-gray-300 rounded-lg text-sm bg-white" placeholder="Pesquisar tarefa...">
               <button type="button" class="milestone-task-clear hidden absolute top-1/2 right-8 -translate-y-1/2 text-red-500 hover:text-red-700 px-1" title="Limpar">
                 <i class="fa-solid fa-xmark"></i>
               </button>
@@ -1656,12 +1949,12 @@
                 <i class="fa-solid fa-chevron-down text-xs"></i>
               </button>
             </div>
-            <div class="milestone-task-dropdown hidden absolute left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 max-h-56 overflow-y-auto"></div>
+            <div class="milestone-task-dropdown hidden fixed bg-white border border-gray-200 rounded-lg shadow-lg z-[9999] max-h-80 overflow-y-auto"></div>
             <div class="milestone-task-phase hidden mt-1 text-xs text-gray-500"></div>
           </div>
           <div class="w-full lg:w-auto">
             <label class="block text-sm text-gray-600 mb-1">Data de Entrega</label>
-            <input type="date" value="${this.escapeHtml(taskDate)}" class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
+            <input type="date" value="${this.escapeHtml(taskDate)}" class="w-full h-10 px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white">
           </div>
           <div class="flex items-center justify-end space-x-2 shrink-0 pt-6">
             <button type="button" class="milestone-task-handle text-gray-400 hover:text-gray-600 cursor-grab px-1 py-1" title="Mover Tarefa">
@@ -1676,6 +1969,7 @@
     `;
   },
 
+  // Liga eventos específicos de uma linha de tarefa do marco, incluindo busca, limpeza e data.
   bindMilestoneTaskRowEvents: function (taskRow) {
     if (!taskRow || taskRow.dataset.eventsReady === 'true') return;
 
@@ -1742,6 +2036,7 @@
     taskRow.dataset.eventsReady = 'true';
   },
 
+  // Atualiza as opções disponíveis nos campos de tarefa dos marcos conforme a WBS atual.
   refreshMilestoneTaskSelectOptions: function () {
     const tasks = this.getMilestoneCatalog().tasks;
     const assignments = this.getMilestoneTaskAssignments();
@@ -1858,6 +2153,7 @@
         return;
       }
 
+      this.positionMilestoneTaskDropdown(row);
       if (!filteredTasks.length) {
         dropdown.innerHTML = '<div class="px-3 py-2 text-sm text-gray-500">Nenhuma tarefa encontrada</div>';
         dropdown.classList.remove('hidden');
@@ -1901,6 +2197,34 @@
           this.updateMilestoneTimeline();
         });
       });
+    });
+  },
+
+  positionMilestoneTaskDropdown: function (row) {
+    const input = row && row.querySelector ? row.querySelector('.milestone-task-search') : null;
+    const dropdown = row && row.querySelector ? row.querySelector('.milestone-task-dropdown') : null;
+    if (!input || !dropdown) return;
+    const rect = input.getBoundingClientRect();
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+    if (rect.bottom < 0 || rect.top > viewportHeight || rect.right < 0 || rect.left > viewportWidth) {
+      row.dataset.dropdownOpen = 'false';
+      dropdown.classList.add('hidden');
+      return;
+    }
+    const top = rect.bottom + 4;
+    const availableHeight = Math.max(160, viewportHeight - top - 12);
+    dropdown.style.left = `${Math.max(8, rect.left)}px`;
+    dropdown.style.top = `${top}px`;
+    dropdown.style.width = `${Math.max(260, rect.width)}px`;
+    dropdown.style.maxHeight = `${Math.min(360, availableHeight)}px`;
+  },
+
+  repositionOpenMilestoneTaskDropdowns: function () {
+    document.querySelectorAll('.milestone-task-row[data-dropdown-open="true"]').forEach((row) => {
+      const dropdown = row.querySelector('.milestone-task-dropdown');
+      if (!dropdown || dropdown.classList.contains('hidden')) return;
+      this.positionMilestoneTaskDropdown(row);
     });
   },
 
@@ -2221,6 +2545,7 @@
   // WBS
   // ---------------------------
 
+  // Reordena a numeração visual das fases após adicionar, remover ou arrastar.
   updateWbsNumbers: function () {
     const container = document.getElementById('wbs-container');
     if (!container) return;
@@ -2232,6 +2557,7 @@
     });
   },
 
+  // Cria uma nova fase da WBS e inicializa seus campos dinâmicos.
   addPhase: function () {
     const container = document.getElementById('wbs-container');
     if (!container) return;
@@ -2313,6 +2639,7 @@
     this.onWbsChanged();
   },
 
+  // Adiciona uma dependência textual dentro de fase ou tarefa da WBS.
   addDependencyItem: function (buttonElement) {
     const field = buttonElement.closest('.dependency-field');
     if (!field) return;
@@ -2334,6 +2661,7 @@
     this.onWbsChanged();
   },
 
+  // Monta o DOM de uma tarefa da WBS antes de anexá-la à fase.
   createSubtaskElement: function (taskData, subtaskIndex) {
     const subtask = document.createElement('div');
     subtask.className = 'wbs-subtask border border-gray-200 rounded-lg bg-gray-50 p-4 ml-4';
@@ -2384,6 +2712,7 @@
     return subtask;
   },
 
+  // Adiciona uma tarefa na fase atual e reprocessa alocação/cronograma.
   addSubtask: function (buttonElement, taskData = {}) {
     const phaseItem = buttonElement.closest('.wbs-item');
     if (!phaseItem) return;
@@ -2400,6 +2729,7 @@
     this.onWbsChanged();
   },
 
+  // Remove fase ou tarefa da WBS mediante confirmação.
   removeItem: function (element) {
     const subtask = element.closest('.wbs-subtask');
     if (subtask) {
@@ -2420,6 +2750,7 @@
     });
   },
 
+  // Ativa ordenação por drag-and-drop nas fases.
   initWbsSortables: function () {
     if (typeof window.Sortable === 'undefined') return;
 
@@ -2442,6 +2773,7 @@
     Array.from(container.querySelectorAll('.wbs-item')).forEach((item) => this.initTaskSortables(item));
   },
 
+  // Ativa ordenação por drag-and-drop nas tarefas de uma fase.
   initTaskSortables: function (phaseItem) {
     if (typeof window.Sortable === 'undefined') return;
 
@@ -2464,6 +2796,7 @@
   // Milestones
   // ---------------------------
 
+  // Adiciona um novo marco do cronograma e cria critério/tarefa iniciais.
   addMilestone: function () {
     const container = document.getElementById('milestones-container');
     if (!container) return;
@@ -2521,6 +2854,7 @@
     this.refreshMilestoneConfiguration();
   },
 
+  // HTML de uma linha de critério de aceite dentro de um marco.
   getMilestoneCriteriaRowHTML: function (rowData = {}) {
     const criteria = this.escapeHtml(rowData.criteria || '');
     return `
@@ -2534,6 +2868,7 @@
     `;
   },
 
+  // Adiciona critério de aceite ao marco atual.
   addMilestoneCriteria: function (buttonElement, rowData = {}) {
     const milestoneCard = buttonElement.closest('.milestone-card');
     if (!milestoneCard) return;
@@ -2562,6 +2897,7 @@
     this.refreshMilestoneConfiguration();
   },
 
+  // Adiciona uma tarefa da WBS dentro de um marco, mantendo metadados de vínculo.
   addMilestoneTask: function (buttonElement, taskData = {}) {
     const milestoneCard = buttonElement.closest('.milestone-card');
     if (!milestoneCard) return;
@@ -2591,6 +2927,7 @@
     this.refreshMilestoneConfiguration();
   },
 
+  // Remove uma tarefa de marco e registra cancelamento se ela já tiver processo iniciado.
   removeMilestoneTask: function (buttonElement) {
     const row = buttonElement.closest('.milestone-task-row');
     if (!row) return;
@@ -2605,6 +2942,7 @@
     });
   },
 
+  // Remove um marco inteiro e atualiza timeline/RACI depois da exclusão.
   removeMilestone: function (element) {
     this.openDeleteModal('Tem certeza que deseja remover este marco?', () => {
       const milestoneCard = element.closest('.milestone-card');
@@ -2615,20 +2953,23 @@
     });
   },
 
+  // Habilita drag-and-drop de marcos e das tarefas dentro de cada marco.
   initMilestoneSortables: function () {
     if (typeof window.Sortable === 'undefined') return;
     const container = document.getElementById('milestones-container');
-    if (!container || container.dataset.sortableReady === 'true') return;
+    if (!container) return;
 
-    try {
-      Sortable.create(container, {
-        animation: 150,
-        handle: '.milestone-handle',
-        draggable: '.milestone-card',
-        onEnd: () => this.refreshMilestoneConfiguration()
-      });
-      container.dataset.sortableReady = 'true';
-    } catch (error) { }
+    if (container.dataset.sortableReady !== 'true') {
+      try {
+        Sortable.create(container, {
+          animation: 150,
+          handle: '.milestone-handle',
+          draggable: '.milestone-card',
+          onEnd: () => this.refreshMilestoneConfiguration()
+        });
+        container.dataset.sortableReady = 'true';
+      } catch (error) { }
+    }
 
     container.querySelectorAll('.milestone-tasks-list').forEach((taskList) => {
       if (taskList.dataset.sortableReady === 'true') return;
@@ -2644,18 +2985,21 @@
     });
   },
 
+  // Define cores e ícones do card de risco conforme o nível informado.
   getRiskVisual: function (level) {
     if (level === 'Baixo') return { card: 'border border-green-200 rounded-lg p-4 bg-white', title: 'text-green-800', badge: 'px-2 py-1 bg-green-100 text-green-800 text-xs rounded', meta: 'text-sm text-green-700 mb-2' };
     if (level === 'Médio' || level === 'Medio') return { card: 'border border-yellow-200 rounded-lg p-4 bg-yellow-50', title: 'text-yellow-800', badge: 'px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded', meta: 'text-sm text-yellow-700 mb-2' };
     return { card: 'border border-red-300 rounded-lg p-4 bg-white', title: 'text-red-900', badge: 'px-2 py-1 bg-red-200 text-red-900 text-xs rounded', meta: 'text-sm text-red-800 mb-2' };
   },
 
+  // Solicita confirmação antes de remover um risco.
   requestRemoveRiskCard: function (buttonElement) {
     const card = buttonElement.closest('.risk-item');
     if (!card) return;
     this.openDeleteModal('Tem certeza que deseja remover este risco?', () => card.remove());
   },
 
+  // Persiste os dados do risco no dataset do próprio card para alternar edição/leitura.
   setRiskCardData: function (card, data) {
     card.dataset.riskTitle = this.asText(data.title);
     card.dataset.riskLevel = this.asText(data.level) || 'Alto';
@@ -2665,6 +3009,7 @@
     card.dataset.riskFallback = this.asText(data.fallback);
   },
 
+  // Lê os dados atuais do risco a partir do dataset do card ou do conteúdo renderizado.
   hydrateRiskCardData: function (card) {
     if (card.dataset.riskTitle) return;
     const title = this.asText(card.querySelector('h5')?.textContent);
@@ -2679,6 +3024,7 @@
     this.setRiskCardData(card, { title, level, probability, impact, mitigation, fallback });
   },
 
+  // Renderiza o risco em modo leitura.
   renderRiskReadOnlyCard: function (card) {
     const title = this.asText(card.dataset.riskTitle);
     const level = this.asText(card.dataset.riskLevel) || 'Alto';
@@ -2706,6 +3052,7 @@
     card.querySelector('.risk-remove')?.addEventListener('click', (event) => this.requestRemoveRiskCard(event.currentTarget));
   },
 
+  // Renderiza o risco em modo edição.
   renderRiskEditCard: function (card) {
     const title = this.asText(card.dataset.riskTitle);
     const level = this.asText(card.dataset.riskLevel) || 'Alto';
@@ -2754,6 +3101,7 @@
     this.renderRiskReadOnlyCard(card);
   },
 
+  // Cria um novo risco em modo edição.
   addRisk: function () {
     const container = document.getElementById('risk-matrix-list');
     if (!container) return;
@@ -2768,6 +3116,7 @@
     this.renderRiskEditCard(card);
   },
 
+  // Define o badge visual das dependências externas.
   getDependencyStatusBadge: function (status) {
     if (status === 'Concluída' || status === 'Concluida') return '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs rounded"><i class="fa-solid fa-check mr-1"></i>Concluída</span>';
     if (status === 'Em andamento') return '<span class="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded"><i class="fa-solid fa-spinner mr-1"></i>Em andamento</span>';
@@ -2775,12 +3124,14 @@
     return '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded"><i class="fa-solid fa-clock mr-1"></i>Pendente</span>';
   },
 
+  // Solicita confirmação antes de remover uma dependência externa.
   requestRemoveDependencyCard: function (buttonElement) {
     const card = buttonElement.closest('.dependency-item');
     if (!card) return;
     this.openDeleteModal('Tem certeza que deseja remover esta dependência?', () => card.remove());
   },
 
+  // Persiste os dados da dependência no dataset do card.
   setDependencyCardData: function (card, data) {
     card.dataset.dependencyTitle = this.asText(data.title);
     card.dataset.dependencyStatus = this.asText(data.status) || 'Pendente';
@@ -2789,6 +3140,7 @@
     card.dataset.dependencyFallback = this.asText(data.fallback);
   },
 
+  // Lê dados da dependência a partir do dataset/card renderizado.
   hydrateDependencyCardData: function (card) {
     if (card.dataset.dependencyTitle) return;
     const title = this.asText(card.querySelector('h5')?.textContent);
@@ -2800,6 +3152,7 @@
     this.setDependencyCardData(card, { title, status, owner, mitigation, fallback });
   },
 
+  // Renderiza a dependência em modo leitura.
   renderDependencyReadOnlyCard: function (card) {
     const title = this.asText(card.dataset.dependencyTitle);
     const status = this.asText(card.dataset.dependencyStatus) || 'Pendente';
@@ -2825,6 +3178,7 @@
     card.querySelector('.dependency-remove')?.addEventListener('click', (event) => this.requestRemoveDependencyCard(event.currentTarget));
   },
 
+  // Renderiza a dependência em modo edição e inicializa o TagInputFilter do responsável.
   renderDependencyEditCard: function (card) {
     const title = this.asText(card.dataset.dependencyTitle);
     const status = this.asText(card.dataset.dependencyStatus) || 'Pendente';
@@ -2869,6 +3223,7 @@
     this.renderDependencyReadOnlyCard(card);
   },
 
+  // Cria uma nova dependência externa em modo edição.
   addExternalDependency: function () {
     const container = document.getElementById('external-dependencies-list');
     if (!container) return;
@@ -2886,6 +3241,7 @@
   // Plano de Comunicação
   // ---------------------------
 
+  // Adiciona uma linha ao plano de comunicação.
   addCommunicationPlanRow: function () {
     const body = document.getElementById('communication-plan-body');
     if (!body) return;
@@ -2894,6 +3250,7 @@
     this.renderCommunicationPlanTable();
   },
 
+  // Adiciona um público/responsável à linha do plano de comunicação.
   addCommunicationAudience: function (index, stakeholderName) {
     const row = this._communicationPlanData[index];
     if (!row) return;
@@ -2906,6 +3263,7 @@
     }
   },
 
+  // Remove um público/responsável da linha do plano de comunicação.
   removeCommunicationAudience: function (index, stakeholderName) {
     const row = this._communicationPlanData[index];
     if (!row) return;
@@ -2913,9 +3271,12 @@
     this.renderCommunicationPlanTable();
   },
 
+  // Renderiza a tabela de comunicação e reinicializa os TagInputFilter das linhas.
   renderCommunicationPlanTable: function () {
     const body = document.getElementById('communication-plan-body');
     if (!body) return;
+
+    this.destroyTagFilters(body);
 
     body.innerHTML = this._communicationPlanData.map((row, index) => {
       const channelOptions = ['E-mail', 'Daily', 'Reunião', 'Teams', 'Comitê']
@@ -2952,7 +3313,7 @@
             </select>
           </td>
           <td class="px-2 py-2 text-center align-top">
-            <button onclick="projectPlanningController._communicationPlanData.splice(${index}, 1); projectPlanningController.renderCommunicationPlanTable()" class="text-red-400 hover:text-red-600" title="Remover linha">
+            <button type="button" onclick="projectPlanningController.requestRemoveCommunicationPlanRow(${index})" class="text-red-400 hover:text-red-600" title="Remover linha">
               <i class="fa-solid fa-trash"></i>
             </button>
           </td>
@@ -2963,15 +3324,24 @@
     this.initAllTagFilters(body);
   },
 
+  requestRemoveCommunicationPlanRow: function (index) {
+    this.openDeleteModal('Deseja realmente remover esta linha do Plano de Comunicação?', () => {
+      this._communicationPlanData.splice(index, 1);
+      this.renderCommunicationPlanTable();
+    });
+  },
+
 
   // ---------------------------
   // RACI + Alocação (baseado no protótipo)
   // ---------------------------
 
+  // Normaliza o nome do marco para chave de comparação da RACI.
   getRaciPhaseKey: function (phaseName) {
     return this.asText(phaseName).toLowerCase();
   },
 
+  // Garante que campos de responsáveis sejam sempre tratados como array.
   normalizeStakeholderField: function (fieldValue) {
     if (Array.isArray(fieldValue)) {
       return fieldValue.map((v) => this.asText(v)).filter(Boolean);
@@ -2980,6 +3350,7 @@
     return text ? [text] : [];
   },
 
+  // Lê os responsáveis e esforços atuais da WBS direto do DOM.
   getWbsPhaseBaseDataFromDom: function () {
     const phaseItems = Array.from(document.querySelectorAll('#wbs-container > .wbs-item'));
     return phaseItems.map((phaseItem, index) => {
@@ -3002,6 +3373,7 @@
     });
   },
 
+  // Classifica perfis usados na alocação automática.
   getTeamProfileByMember: function (memberName) {
     const normalizedName = this.asText(memberName).toLowerCase();
     if (!normalizedName) return 'TI';
@@ -3018,6 +3390,7 @@
     return parsed;
   },
 
+  // Calcula dedicação proporcional por pessoa com base nos esforços da WBS.
   computeTeamAllocationFromWbsPayload: function (wbs) {
     const phases = wbs && Array.isArray(wbs.phases) ? wbs.phases : [];
     const groupedByPerson = new Map();
@@ -3062,6 +3435,7 @@
       }));
   },
 
+  // Sincroniza as linhas da RACI com os marcos do cronograma, preservando seleções existentes.
   syncRaciWithMilestones: function () {
     const milestones = this.collectMilestonesFromDom();
     const existingRowsMap = new Map(this._raciMatrixData.map(r => [this.getRaciPhaseKey(r.phase), r]));
@@ -3076,6 +3450,7 @@
     });
   },
 
+  // Cria um snapshot mínimo da WBS atual para cálculo de alocação.
   buildWbsSnapshotFromDom: function () {
     const container = document.getElementById('wbs-container');
     const phases = [];
@@ -3115,14 +3490,17 @@
     return { phases, summary };
   },
 
+  // Recalcula a alocação do time a partir da WBS.
   syncTeamAllocationInternal: function () {
     const wbsSnapshot = this.buildWbsSnapshotFromDom();
     this._teamAllocationData = this.computeTeamAllocationFromWbsPayload(wbsSnapshot);
   },
 
+  // Adiciona um responsável em uma coluna R/A/C/I.
   addRaciStakeholder: function (index, field, stakeholderName) {
     const row = this._raciMatrixData[index];
     if (!row) return;
+
     const selected = this.asText(stakeholderName);
     if (!selected) return;
 
@@ -3146,6 +3524,7 @@
     this.renderRaciMatrixTable();
   },
 
+  // Remove um responsável de uma coluna R/A/C/I.
   removeRaciStakeholder: function (index, field, stakeholderName) {
     const row = this._raciMatrixData[index];
     if (!row) return;
@@ -3162,11 +3541,14 @@
     this.renderRaciMatrixTable();
   },
 
+  // Renderiza a matriz RACI mantendo o visual antigo com TagInputFilter por célula.
   renderRaciMatrixTable: function () {
     this.syncRaciWithMilestones();
 
     const body = document.getElementById('raci-matrix-body');
     if (!body) return;
+
+    this.destroyTagFilters(body);
 
     if (!this._raciMatrixData.length) {
       body.innerHTML = '<div class="text-sm text-gray-500">Adicione ao menos um Marco para gerar a matriz RACI.</div>';
@@ -3212,6 +3594,7 @@
     return 'px-2 py-1 bg-bevap-green text-white text-xs rounded';
   },
 
+  // Renderiza a lista de alocação calculada por pessoa.
   renderTeamAllocationList: function () {
     this.syncTeamAllocationInternal();
 
@@ -3240,6 +3623,7 @@
     `).join('');
   },
 
+  // Atualiza RACI e alocação quando a etapa 4 é aberta ou dados base mudam.
   renderRaciAndResources: function () {
     this.renderRaciMatrixTable();
     this.renderTeamAllocationList();
@@ -3249,6 +3633,7 @@
   // Modals + Toast
   // ---------------------------
 
+  // Abre modal de devolução/correção do planejamento.
   openReturnModal: function () {
     const modal = document.getElementById('return-modal');
     if (modal) modal.classList.remove('hidden');
@@ -3269,6 +3654,7 @@
     this.showToast('Devolução registrada (mock).', 'success');
   },
 
+  // Abre modal de cancelamento do processo.
   openCancelModal: function () {
     const modal = document.getElementById('cancel-modal');
     if (modal) modal.classList.remove('hidden');
@@ -3297,6 +3683,7 @@
     this.showToast('Cancelamento registrado (mock).', 'success');
   },
 
+  // Abre modal de confirmação antes de concluir e movimentar o processo.
   openConcludeModal: function () {
     const modal = document.getElementById('conclude-modal');
     if (modal) modal.classList.remove('hidden');
@@ -3307,6 +3694,7 @@
     if (modal) modal.classList.add('hidden');
   },
 
+  // Valida, salva o payload em campos do formulário, envia anexos e movimenta a tarefa.
   confirmConcludePlanning: async function () {
     this.closeConcludeModal();
 
@@ -3326,14 +3714,20 @@
       return;
     }
 
-    const legacyLoading = typeof FLUIGC !== 'undefined' ? FLUIGC.loading($('#page-container')) : null;
-    if (legacyLoading) legacyLoading.show();
+    const loading = modalLoadingService.show({
+      title: 'Concluindo planejamento',
+      message: 'Aguarde enquanto o planejamento e enviado ao Fluig...'
+    });
 
     try {
+      await loading.waitForPaint();
+      loading.updateMessage('Localizando processo do desenvolvimento...');
       const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(documentId);
+      loading.updateMessage('Preparando anexos do planejamento...');
       const attachmentsPayload = await this.collectAttachmentsPayload();
       const formDatasetName = this.asText(this._state.formName) || 'DSFormDesenvolvimentoProjetos_1778522207146';
 
+      loading.updateMessage('Enviando movimentacao para o Fluig...');
       await fluigService.saveAndSendTask({
         id: processInstanceId,
         numState: this._nextStateAfterPlanning,
@@ -3343,20 +3737,30 @@
         attachments: attachmentsPayload
       }, this.collectPlanningTaskFields());
 
-      this.showToast('Planejamento concluído e enviado para execução.', 'success');
-
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 800);
+      loading.hide();
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: documentId,
+          title: 'Planejamento concluido!',
+          message: 'Planejamento concluido e enviado para execucao.',
+          nextStep: 'Acompanhe a execucao do projeto pelo dashboard.'
+        });
+      } else {
+        this.showToast('Planejamento concluído e enviado para execução.', 'success');
+      }
 
     } catch (error) {
       console.error('[projectPlanningController] concludePlanning error:', error);
       this.showToast(`Falha ao concluir: ${this.asText(error && (error.message || error)) || 'erro'}`, 'error');
     } finally {
-      if (legacyLoading) legacyLoading.hide();
+      loading.hide();
     }
   },
 
+  // Valida regras mínimas antes de permitir concluir o planejamento.
+  // Retorna uma lista de problemas apontando a etapa onde o usuário deve corrigir.
   validatePlanningForConclude: function () {
 
     const issues = [];
@@ -3378,19 +3782,19 @@
       const phaseTasks = Array.isArray(phase && phase.tasks) ? phase.tasks : [];
 
       if (!this.asText(phase && phase.name)) {
-        issues.push({ step: 1, message: `Informe a descricao da fase ${i + 1}.` });
+        issues.push({ step: 1, message: `Informe a descrição da fase ${i + 1}.` });
         break;
       }
       if (!this.asText(phase && phase.responsible)) {
-        issues.push({ step: 1, message: `Informe o responsavel da fase: ${phaseLabel}.` });
+        issues.push({ step: 1, message: `Informe o responsável da fase: ${phaseLabel}.` });
         break;
       }
       if (!Number.isFinite(phase && phase.effortHours) || Number(phase.effortHours) <= 0) {
-        issues.push({ step: 1, message: `Informe o esforco (h) da fase: ${phaseLabel}.` });
+        issues.push({ step: 1, message: `Informe o esforço (h) da fase: ${phaseLabel}.` });
         break;
       }
       if (!Number.isFinite(phase && phase.durationDays) || Number(phase.durationDays) <= 0) {
-        issues.push({ step: 1, message: `Informe a duracao (dias) da fase: ${phaseLabel}.` });
+        issues.push({ step: 1, message: `Informe a duração (dias) da fase: ${phaseLabel}.` });
         break;
       }
       if (!phaseTasks.length) {
@@ -3402,19 +3806,19 @@
         const task = phaseTasks[t];
         const taskLabel = this.asText(task && task.name) || `Tarefa ${t + 1}`;
         if (!this.asText(task && task.name)) {
-          issues.push({ step: 1, message: `Informe a descricao da tarefa ${t + 1} da fase: ${phaseLabel}.` });
+          issues.push({ step: 1, message: `Informe a descrição da tarefa ${t + 1} da fase: ${phaseLabel}.` });
           break;
         }
         if (!this.asText(task && task.responsible)) {
-          issues.push({ step: 1, message: `Informe o responsavel da tarefa: ${taskLabel} na fase ${phaseLabel}.` });
+          issues.push({ step: 1, message: `Informe o responsável da tarefa: ${taskLabel} na fase ${phaseLabel}.` });
           break;
         }
         if (!Number.isFinite(task && task.effortHours) || Number(task.effortHours) <= 0) {
-          issues.push({ step: 1, message: `Informe o esforco (h) da tarefa: ${taskLabel}.` });
+          issues.push({ step: 1, message: `Informe o esforço (h) da tarefa: ${taskLabel}.` });
           break;
         }
         if (!Number.isFinite(task && task.durationDays) || Number(task.durationDays) <= 0) {
-          issues.push({ step: 1, message: `Informe a duracao (dias) da tarefa: ${taskLabel}.` });
+          issues.push({ step: 1, message: `Informe a duração (dias) da tarefa: ${taskLabel}.` });
           break;
         }
 
@@ -3543,6 +3947,7 @@
     return issues;
   },
 
+  // Modal genérico de confirmação usado por remoções de cards, fases, tarefas etc.
   openDeleteModal: function (message, onConfirm) {
     const modal = document.getElementById('delete-modal');
     const messageEl = document.getElementById('delete-modal-message');
@@ -3571,6 +3976,7 @@
     this.closeDeleteModal();
   },
 
+  // Toast simples usado por esta tela para mensagens locais.
   showToast: function (message, type = 'warning') {
     const toast = document.getElementById('toast');
     const content = document.getElementById('toast-content');
@@ -3619,6 +4025,7 @@
   // Footer actions
   // ---------------------------
 
+  // Ação do botão "Salvar rascunho": persiste os dados sem movimentar o processo.
   saveDraft: function () {
     const documentId = this.asText(this._state.documentId);
     if (!documentId) {
@@ -3637,6 +4044,7 @@
     })();
   },
 
+  // Salva o JSON principal e as tabelas pai-filho no card do Fluig.
   persistPlanningJsonDP: async function ({ silent } = {}) {
     const documentId = this.asText(this._state.documentId);
     if (!documentId) {
@@ -3654,6 +4062,7 @@
     }
   },
 
+  // Coleta o estado atual da tela em um payload único.
   buildPlanningPayload: function () {
     const payload = {
       meta: {
@@ -3902,6 +4311,8 @@
     return payload;
   },
 
+  // Transforma o payload em lista de campos para dsSaveDraft/dsSaveAndSendTask.
+  // Inclui JSONs de controle e linhas pai-filho com sufixo ___indice.
   collectPlanningTaskFields: function () {
     const payload = this.buildPlanningPayload();
     const milestoneTaskState = this.ensureMilestoneTaskMetadata(payload);
@@ -4057,6 +4468,7 @@
     return fields;
   },
 
+  // Lê o estado salvo das tarefas de marco no resumo pai-filho.
   getExistingMilestoneTaskSummaryState: function () {
     const state = {
       byKey: {},
@@ -4098,6 +4510,7 @@
     return state;
   },
 
+  // Antes de salvar, garante que tarefas de marco preservem process/document/status.
   ensureMilestoneTaskMetadata: function (payload) {
     const state = this.getExistingMilestoneTaskState(payload);
     let nextId = state.maxId;
@@ -4131,6 +4544,7 @@
     return state;
   },
 
+  // Lê metadados existentes diretamente dos inputs/formulário para reaproveitar no payload.
   getExistingMilestoneTaskState: function (payload) {
     const state = {
       byId: {},
@@ -4196,6 +4610,7 @@
     return state;
   },
 
+  // Chave usada para identificar uma tarefa de marco mesmo após reabrir o rascunho.
   buildMilestoneTaskIdentityKey: function (task) {
     const milestoneId = this.asText(task && (task.milestoneId || task.milestoneTaskMilestoneIdDP));
     const taskName = this.asText(task && (task.taskName || task.task || task.taskLabel || task.milestoneTaskTextDP));
@@ -4208,6 +4623,7 @@
     ].join('||');
   },
 
+  // Chave reduzida usada na tabela de resumo das tarefas de marco.
   buildMilestoneTaskSummaryIdentityKey: function (task) {
     const taskName = this.asText(task && (task.taskName || task.task || task.taskLabel));
     const phaseName = this.asText(task && task.phaseName);
@@ -4221,6 +4637,7 @@
       this.normalizeText(dueDate)
     ].join('||');
   },
+  // Normaliza texto para comparações sem acento e sem diferença de caixa.
   normalizeText: function (value) {
     return this.asText(value)
       .toLowerCase()
@@ -4229,6 +4646,7 @@
       .trim();
   },
 
+  // Normaliza valores booleanos vindos do Fluig, que podem chegar como string.
   normalizeBoolean: function (value) {
     const normalized = this.normalizeText(value);
     return normalized === 'true' || normalized === '1' || normalized === 'sim' || normalized === 'yes';
@@ -4243,6 +4661,7 @@
     return '';
   },
 
+  // Faz parse seguro de JSON salvo em campo texto.
   parseJson: function (value) {
     const raw = this.asText(value);
     if (!raw || raw === 'null') return null;
@@ -4253,10 +4672,12 @@
     }
   },
 
+  // Abre a timeline do processo atual usando helper global da widget.
   showTimeline: function () {
     this.showToast('Abrindo histórico do projeto...', 'info');
   },
 
+  // Abre a visualização de anexos do processo atual usando helper global da widget.
   showAttachments: function () {
     this.showToast('Abrindo visualização de anexos...', 'info');
   },
@@ -4269,6 +4690,7 @@
     return this.asText(priority);
   },
 
+  // Itens fixos exibidos no progresso lateral da atividade.
   getProgressItems: function () {
     return [
       { style: 'success', label: 'Solicitação aprovada', iconClass: 'fa-solid fa-check-circle' },
@@ -4308,6 +4730,7 @@
   // Utils
   // ---------------------------
 
+  // Converte qualquer valor em texto seguro para regras da tela.
   asText: function (value) {
     if (value === null || value === undefined || value === 'null') {
       return '';
@@ -4315,6 +4738,7 @@
     return String(value).trim();
   },
 
+  // Escapa texto antes de interpolar em HTML.
   escapeHtml: function (value) {
     return this.asText(value)
       .replace(/&/g, '&amp;')
@@ -4324,12 +4748,14 @@
       .replace(/'/g, '&#39;');
   },
 
+  // Converte número aceitando vírgula decimal.
   parseNumber: function (value) {
     const text = this.asText(value).replace(',', '.');
     const parsed = parseFloat(text);
     return Number.isFinite(parsed) ? parsed : 0;
   },
 
+  // Adiciona arquivos novos à fila local antes de salvar/enviar.
   addAttachments: function (fileList) {
     const files = fileList ? Array.from(fileList) : [];
     if (!files.length) return;
@@ -4344,6 +4770,7 @@
     this.renderAttachmentsList();
   },
 
+  // Remove anexo da fila local ou da lista renderizada.
   removeAttachment: function (id) {
     if (!this._state.attachments) return;
     this._state.attachments = this._state.attachments.filter((att) => String(att.id) !== String(id));
@@ -4359,6 +4786,7 @@
     return `${mb.toFixed(1)} MB`;
   },
 
+  // Carrega anexos já salvos no campo JSON do formulário.
   loadStoredAttachments: function (rawValue) {
     const items = this.parseJson(rawValue);
     this._state.attachments = Array.isArray(items) ? items.map((att, index) => ({
@@ -4372,6 +4800,7 @@
     this.renderAttachmentsList();
   },
 
+  // Registra processos de tarefas de marco que deverão ser cancelados após remoção.
   queueCancelledMilestoneProcess: function (row) {
     if (!this._state.isExecutionCorrection || !row) return;
     const processId = this.asText(row.dataset.taskProcess);
@@ -4394,6 +4823,7 @@
     return 'fa-file text-gray-500';
   },
 
+  // Renderiza a lista de anexos novos e já salvos.
   renderAttachmentsList: function () {
     const list = document.getElementById('dp-attachment-list');
     if (!list) return;
@@ -4427,6 +4857,7 @@
     }).join('');
   },
 
+  // Converte arquivo local para Base64 antes de enviar ao dataset de movimento.
   readFileAsBase64: function (file) {
     return new Promise((resolve, reject) => {
       if (!(file instanceof Blob)) {
@@ -4444,6 +4875,7 @@
     });
   },
 
+  // Monta o payload de anexos esperado pelo saveAndSendTask.
   collectAttachmentsPayload: async function () {
     const items = this._state.attachments || [];
     if (!items.length) return [];
@@ -4463,4 +4895,6 @@
   }
 
 };
+
+window.projectPlanningController = projectPlanningController;
 

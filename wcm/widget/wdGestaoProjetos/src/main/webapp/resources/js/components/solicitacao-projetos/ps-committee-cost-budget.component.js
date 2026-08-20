@@ -266,7 +266,7 @@
       <div class="space-y-6">
         <h2 class="text-xl font-montserrat font-bold text-bevap-navy mb-6 flex items-center">
           <i class="fa-solid fa-dollar-sign mr-3 text-bevap-gold"></i>
-          Analise de Custo &amp; Orcamento
+          Análise de Custo &amp; Orçamento
         </h2>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -280,7 +280,7 @@
           </div>
 
           <div>
-            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Distribuicao CAPEX/OPEX</h3>
+            <h3 class="text-base font-montserrat font-semibold text-bevap-navy mb-3">Distribuição CAPEX/OPEX</h3>
             <div class="space-y-3">
               <div>
                 <div class="flex items-center justify-between mb-2">
@@ -316,7 +316,7 @@
                   <th class="px-4 py-3 text-left font-semibold text-gray-700">Centro de Custo</th>
                   <th class="px-4 py-3 text-right font-semibold text-gray-700">Valor</th>
                   <th class="px-4 py-3 text-center font-semibold text-gray-700">% Total</th>
-                  <th class="px-4 py-3 text-center font-semibold text-gray-700">Alcada</th>
+                  <th class="px-4 py-3 text-center font-semibold text-gray-700">Alçada</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 bg-white">
@@ -332,7 +332,7 @@
   async function render(options = {}) {
     const documentId = asText(options.documentId);
     if (!documentId) {
-      return '<div class="text-sm text-gray-500">Selecione uma solicitacao para visualizar Custo &amp; Orcamento.</div>';
+      return '<div class="text-sm text-gray-500">Selecione uma solicitação para visualizar Custo &amp; Orçamento.</div>';
     }
 
     const baseRow = options.row || null;
@@ -348,7 +348,7 @@
 
     const row = hasGccFields ? baseRow : await loadRow(documentId);
     if (!row) {
-      return '<div class="text-sm text-gray-500">Nao foi possivel carregar dados de Custo &amp; Orcamento.</div>';
+      return '<div class="text-sm text-gray-500">Não foi possível carregar dados de Custo &amp; Orçamento.</div>';
     }
 
     return renderHtml(buildModel(row));
@@ -360,14 +360,14 @@
       return render(options);
     }
 
-    $target.html('<div class="text-sm text-gray-500">Carregando Custo &amp; Orcamento...</div>');
+    $target.html('<div class="text-sm text-gray-500">Carregando Custo &amp; Orçamento...</div>');
 
     try {
       const html = await render(options);
       $target.html(html);
       return html;
     } catch (error) {
-      $target.html('<div class="text-sm text-red-600">Nao foi possivel carregar esta aba.</div>');
+      $target.html('<div class="text-sm text-red-600">Não foi possível carregar esta aba.</div>');
       return '';
     }
   }

@@ -174,7 +174,7 @@ const purchaseContractingController = {
     }
 
     if (titleEl.length) {
-      titleEl.text('Compras - Realizar Contratacao');
+      titleEl.text('Compras - Realizar Contratação');
     }
 
     if (breadcrumbEl.length) {
@@ -277,18 +277,13 @@ const purchaseContractingController = {
       this.openModal('modal-return');
     });
 
-    root.on(`click${ns}`, '[data-action="open-reject-modal"]', (event) => {
-      event.preventDefault();
-      this.openModal('modal-reject');
-    });
-
     root.on(`click${ns}`, '[data-action="close-modal"]', (event) => {
       event.preventDefault();
       const modalId = this.asText($(event.currentTarget).attr('data-modal-id'));
       if (modalId) this.closeModal(modalId);
     });
 
-    root.on(`click${ns}`, '#approve-modal, #modal-return, #modal-reject, #finance-installment-edit-modal', (event) => {
+    root.on(`click${ns}`, '#approve-modal, #modal-return, #finance-installment-edit-modal', (event) => {
       if (event.target === event.currentTarget) {
         $(event.currentTarget).addClass('hidden');
       }
@@ -302,11 +297,6 @@ const purchaseContractingController = {
     root.on(`click${ns}`, '[data-action="confirm-return"]', (event) => {
       event.preventDefault();
       this.handleReturn();
-    });
-
-    root.on(`click${ns}`, '[data-action="confirm-reject"]', (event) => {
-      event.preventDefault();
-      this.handleReject();
     });
 
     root.on(`change${ns}`, 'input[name="contract-type"]', () => {
@@ -468,11 +458,11 @@ const purchaseContractingController = {
     }
 
     if (!component || typeof component.render !== 'function') {
-      target.html('<div class="text-sm text-red-600">Componente da aba indisponivel.</div>');
+      target.html('<div class="text-sm text-red-600">Componente da aba indisponível.</div>');
       return;
     }
 
-    target.html('<div class="text-sm text-gray-500">Carregando conteudo...</div>');
+    target.html('<div class="text-sm text-gray-500">Carregando conteúdo...</div>');
 
     try {
       const html = typeof component.renderInto === 'function'
@@ -486,7 +476,7 @@ const purchaseContractingController = {
       this.mountAttachmentsInTab(target, component, options);
     } catch (error) {
       console.error(`[purchaseContracting] Error loading tab ${tabName}:`, error);
-      target.html('<div class="text-sm text-red-600">Nao foi possivel carregar esta aba.</div>');
+      target.html('<div class="text-sm text-red-600">Não foi possível carregar esta aba.</div>');
     }
   },
 
@@ -505,7 +495,7 @@ const purchaseContractingController = {
 
       if (!row) {
         this.renderSidebarSkeleton();
-        this.showToast('Nao encontrado', 'Nao foi possivel localizar dados da solicitacao.', 'warning');
+        this.showToast('Não encontrado', 'Não foi possível localizar dados da solicitação.', 'warning');
         return;
       }
 
@@ -514,7 +504,7 @@ const purchaseContractingController = {
       this.updateApproveModalProject(row);
     } catch (error) {
       console.error('[purchaseContracting] Error loading base context:', error);
-      this.showToast('Erro ao carregar', 'Nao foi possivel carregar os dados de Compras.', 'error');
+      this.showToast('Erro ao carregar', 'Não foi possível carregar os dados de Compras.', 'error');
     }
   },
 
@@ -565,10 +555,10 @@ const purchaseContractingController = {
       priorityClasses: 'bg-gray-100 text-gray-700',
       typeLabel: 'N/A',
       typeClasses: 'bg-gray-100 text-gray-700',
-      supplier: 'Nao informado',
+      supplier: 'Não informado',
       totalValue: 'R$ 0,00',
-      payment: 'Nao informado',
-      vigencia: 'Nao informado',
+      payment: 'Não informado',
+      vigencia: 'Não informado',
       statusLabel: 'Aguardando Compras'
     });
 
@@ -594,10 +584,10 @@ const purchaseContractingController = {
       priorityClasses: this.getPriorityBadgeClasses(row.prioridadeNS),
       typeLabel: this.getExecutionTypeLabel(row.execucaoProjetoTITT) || 'N/A',
       typeClasses: this.getExecutionTypeBadgeClasses(row.execucaoProjetoTITT),
-      supplier: this.asText(row.fornecedorRecomendadoTITT) || this.asText(row.nomeFornecedorTIPC) || 'Nao informado',
+      supplier: this.asText(row.fornecedorRecomendadoTITT) || this.asText(row.nomeFornecedorTIPC) || 'Não informado',
       totalValue: totalValueRaw ? this.formatCurrency(this.parseCurrencyValue(totalValueRaw) || 0) : 'R$ 0,00',
-      payment: this.asText(row.condicaoPagamentoCRC) || this.asText(row.condicaoPagamentoTIPC) || 'Nao informado',
-      vigencia: this.formatSummaryVigencia(row.vigenciaDiasTIPC) || 'Nao informado',
+      payment: this.asText(row.condicaoPagamentoCRC) || this.asText(row.condicaoPagamentoTIPC) || 'Não informado',
+      vigencia: this.formatSummaryVigencia(row.vigenciaDiasTIPC) || 'Não informado',
       statusLabel: 'Aguardando Compras'
     });
 
@@ -617,10 +607,10 @@ const purchaseContractingController = {
     const priorityClasses = this.escapeHtml(this.asText(summary && summary.priorityClasses) || 'bg-gray-100 text-gray-700');
     const typeLabel = this.escapeHtml(this.asText(summary && summary.typeLabel) || 'N/A');
     const typeClasses = this.escapeHtml(this.asText(summary && summary.typeClasses) || 'bg-gray-100 text-gray-700');
-    const supplier = this.escapeHtml(this.asText(summary && summary.supplier) || 'Nao informado');
+    const supplier = this.escapeHtml(this.asText(summary && summary.supplier) || 'Não informado');
     const totalValue = this.escapeHtml(this.asText(summary && summary.totalValue) || 'R$ 0,00');
-    const payment = this.escapeHtml(this.asText(summary && summary.payment) || 'Nao informado');
-    const vigencia = this.escapeHtml(this.asText(summary && summary.vigencia) || 'Nao informado');
+    const payment = this.escapeHtml(this.asText(summary && summary.payment) || 'Não informado');
+    const vigencia = this.escapeHtml(this.asText(summary && summary.vigencia) || 'Não informado');
     const statusLabel = this.escapeHtml(this.asText(summary && summary.statusLabel) || 'Aguardando Compras');
 
     target.html(`
@@ -729,14 +719,14 @@ const purchaseContractingController = {
 
   getProgressItems: function () {
     return [
-      { style: 'success', label: 'Solicitacao aprovada', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Analise TI concluida', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Impacto na area concluido', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Triagem tecnica concluida', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Solicitação aprovada', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Análise TI concluída', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Impacto na área concluido', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Triagem técnica concluída', iconClass: 'fa-solid fa-check-circle' },
       { style: 'success', label: 'Proposta comercial aprovada', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'success', label: 'Aprovacao GCC concluida', iconClass: 'fa-solid fa-check-circle' },
+      { style: 'success', label: 'Aprovação GCC concluída', iconClass: 'fa-solid fa-check-circle' },
       { style: 'success', label: 'Comite de custo concluido', iconClass: 'fa-solid fa-check-circle' },
-      { style: 'warning', label: 'Compras - contratacao em andamento', iconClass: 'fa-solid fa-clock' }
+      { style: 'warning', label: 'Compras - contratação em andamento', iconClass: 'fa-solid fa-clock' }
     ];
   },
 
@@ -1167,7 +1157,7 @@ const purchaseContractingController = {
     }
 
     this._state.paymentConditionFilter = new TagInputFilter('#finance-payment-condition-filter', {
-      placeholder: 'Selecione a condicao...',
+      placeholder: 'Selecione a condição...',
       data: [],
       labelField: 'NOME',
       valueField: 'CODIGO',
@@ -1833,14 +1823,77 @@ const purchaseContractingController = {
     return payload.filter((item) => item.fileName && item.fileContent);
   },
 
+  validateAllocationCompliance: function () {
+    const issues = [];
+    const tolerance = 0.009;
+    const proposalTotal = this.getProposalTotalAmount();
+    const root = this.getContainer();
+
+    const kinds = [
+      {
+        kind: 'capex',
+        enabled: Boolean(root.find('#contract-cost-nature-capex').prop('checked')),
+        percent: this.parsePercentValue(root.find('#contract-capex-percent').val())
+      },
+      {
+        kind: 'opex',
+        enabled: Boolean(root.find('#contract-cost-nature-opex').prop('checked')),
+        percent: this.parsePercentValue(root.find('#contract-opex-percent').val())
+      }
+    ];
+
+    kinds.forEach((entry) => {
+      if (!entry.enabled) return;
+
+      const kindLabel = entry.kind.toUpperCase();
+      const expectedTotal = proposalTotal * (entry.percent / 100);
+      const committedTotal = this.calculateCommittedAmount(entry.kind);
+
+      if (Math.abs(committedTotal - expectedTotal) > tolerance) {
+        issues.push(`${kindLabel} - Total comprometido (${this.formatCurrency(committedTotal)}) deve ser igual ao valor total da natureza (${this.formatCurrency(expectedTotal)})`);
+      }
+
+      const rows = this.collectAllocationRows(entry.kind);
+      rows.forEach((row, index) => {
+        const rowLabel = `${kindLabel} linha ${index + 1}`;
+        const committed = this.parseCurrencyValue(row.committed);
+        const balance = this.parseCurrencyValue(row.balance);
+        let balanceAfter = this.parseCurrencyValue(row.balanceAfter);
+
+        if (balanceAfter === null && committed !== null && balance !== null) {
+          balanceAfter = balance - committed;
+        }
+
+        if (this.asText(row.committed) && (committed === null || committed <= 0)) {
+          issues.push(`${rowLabel} - Valor Comprometido deve ser maior que zero`);
+        }
+
+        if (balance === null) {
+          issues.push(`${rowLabel} - Saldo deve ser informado`);
+          return;
+        }
+
+        if (committed !== null && committed - balance > tolerance) {
+          issues.push(`${rowLabel} - Valor Comprometido nao pode ser maior que o Saldo`);
+        }
+
+        if (balanceAfter !== null && balanceAfter < -tolerance) {
+          issues.push(`${rowLabel} - Saldo após compromisso não pode ficar negativo`);
+        }
+      });
+    });
+
+    return issues;
+  },
+
   validateRequiredForApproval: function () {
     const root = this.getContainer();
     const missing = [];
 
     if (!this.asText(root.find('#contract-number').val())) missing.push('N do Pedido/Contrato');
-    if (!this.asText(root.find('#contract-issue-date').val())) missing.push('Data de Emissao');
-    if (!this.asText(root.find('#contract-start-date').val())) missing.push('Inicio da Vigencia');
-    if (!this.asText(root.find('#contract-end-date').val())) missing.push('Fim da Vigencia');
+    if (!this.asText(root.find('#contract-issue-date').val())) missing.push('Data de Emissão');
+    if (!this.asText(root.find('#contract-start-date').val())) missing.push('Início da Vigência');
+    if (!this.asText(root.find('#contract-end-date').val())) missing.push('Fim da Vigência');
     if (!this.asText(root.find('#contract-scope').val())) missing.push('Escopo Acordado');
 
     const capexChecked = Boolean(root.find('#contract-cost-nature-capex').prop('checked'));
@@ -1875,7 +1928,7 @@ const purchaseContractingController = {
     });
 
     if (!this.asText(root.find('#contract-final-value').val())) missing.push('Valor Final');
-    if (!this.asText(root.find('#finance-payment-condition').val())) missing.push('Condicao de Pagamento (Financeiro)');
+    if (!this.asText(root.find('#finance-payment-condition').val())) missing.push('Condição de Pagamento (Financeiro)');
 
     const finalValue = this.parseCurrencyValue(root.find('#contract-final-value').val());
     const installmentsTotal = this.getInstallmentsTotalAmount();
@@ -1991,10 +2044,17 @@ const purchaseContractingController = {
         taskFields: this.collectTaskFields()
       });
 
-      this.showToast('Rascunho salvo', 'As alteracoes foram salvas com sucesso.', 'success');
+      try {
+        sessionStorage.setItem('gpDashboardFeedback', JSON.stringify({
+          title: 'Rascunho salvo',
+          message: 'As alterações foram salvas com sucesso.',
+          type: 'success'
+        }));
+      } catch (storageError) {}
+      location.hash = '#dashboard';
     } catch (error) {
       console.error('[purchaseContracting] Error saving draft:', error);
-      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Nao foi possivel salvar o rascunho.', 'error');
+      this.showToast('Erro ao salvar', error && error.message ? error.message : 'Não foi possível salvar o rascunho.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -2003,8 +2063,9 @@ const purchaseContractingController = {
 
   handleApprove: function () {
     this.submitAction({
-      actionLabel: 'Concluir Contratacao',
+      actionLabel: 'Concluir Contratação',
       modalId: 'approve-modal',
+      decisionField: 'decisaoCRC',
       decisionValue: 'aprovado',
       justification: '',
       category: '',
@@ -2030,36 +2091,10 @@ const purchaseContractingController = {
     }
 
     this.submitAction({
-      actionLabel: 'Devolver para Correcao',
+      actionLabel: 'Devolver para Correção',
       modalId: 'modal-return',
+      decisionField: 'decisaoCRC',
       decisionValue: 'correcao',
-      justification: justification,
-      category: category,
-      requireValidation: false
-    });
-  },
-
-  handleReject: function () {
-    const root = this.getContainer();
-    const category = this.asText(root.find('#purchase-reject-category').val());
-    const justification = this.asText(root.find('#purchase-justification-reject').val());
-
-    if (!category) {
-      this.showToast('Categoria', 'Selecione a categoria do cancelamento.', 'warning');
-      root.find('#purchase-reject-category').trigger('focus');
-      return;
-    }
-
-    if (!justification) {
-      this.showToast('Justificativa', 'Informe a justificativa do cancelamento.', 'warning');
-      root.find('#purchase-justification-reject').trigger('focus');
-      return;
-    }
-
-    this.submitAction({
-      actionLabel: 'Cancelar Processo',
-      modalId: 'modal-reject',
-      decisionValue: 'cancelado',
       justification: justification,
       category: category,
       requireValidation: false
@@ -2076,7 +2111,7 @@ const purchaseContractingController = {
       if (config && config.requireValidation) {
         const missing = this.validateRequiredForApproval();
         if (missing.length) {
-          this.showToast('Campos obrigatorios', `Preencha: ${missing.join(' | ')}`, 'warning');
+          this.showToast('Campos obrigatórios', `Preencha: ${missing.join(' | ')}`, 'warning');
           return;
         }
       }
@@ -2108,13 +2143,18 @@ const purchaseContractingController = {
         this.closeModal(config.modalId);
       }
 
-      this.showToast('Sucesso', `Acao registrada: ${this.asText(config && config.actionLabel)}.`, 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showActionSuccess === 'function') {
+        window.gpActionFeedback.showActionSuccess(this, config, {
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          message: `Acao registrada: ${this.asText(config && config.actionLabel)}.`
+        });
+      } else {
+        this.showToast('Sucesso', `Acao registrada: ${this.asText(config && config.actionLabel)}.`, 'success');
+      }
     } catch (error) {
       console.error('[purchaseContracting] Error moving task:', error);
-      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel movimentar a solicitacao.', 'error');
+      this.showToast('Erro ao enviar', error && error.message ? error.message : 'Não foi possível movimentar a solicitação.', 'error');
     } finally {
       this._state.isSubmitting = false;
       loading.hide();
@@ -2128,14 +2168,6 @@ const purchaseContractingController = {
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () { legacyLoading.hide(); },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {
@@ -2154,7 +2186,7 @@ const purchaseContractingController = {
     }
 
     if (!this._state.documentId) {
-      throw new Error('Nao foi possivel identificar a solicitacao atual');
+      throw new Error('Não foi possível identificar a solicitação atual');
     }
 
     const processInstanceId = await fluigService.resolveProcessInstanceIdByDocumentId(this._state.documentId);
@@ -2163,6 +2195,17 @@ const purchaseContractingController = {
   },
 
   showToast: function (title, message, type) {
+    const normalizedType = type || 'info';
+    if ((normalizedType === 'warning' || normalizedType === 'error') && window.gpActionFeedback) {
+      window.gpActionFeedback.showLegacy(this, title, message, normalizedType);
+      return;
+    }
+
+    const ui = $(document).data('gpUiComponents');
+    if (type === 'warning' && ui && ui.validation && typeof ui.validation.showValidationFromLegacy === 'function') {
+      if (ui.validation.showValidationFromLegacy(this.getContainer(), title, message)) return;
+    }
+
     const root = this.getContainer();
     const toast = root.find('#toast');
     const icon = root.find('#toast-icon');

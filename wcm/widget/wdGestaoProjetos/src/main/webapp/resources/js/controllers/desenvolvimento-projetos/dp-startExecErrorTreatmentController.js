@@ -11,6 +11,7 @@ const dpStartExecErrorTreatmentController = {
   _state: {
     documentId: null,
     processInstanceId: null,
+    currentActivity: null,
     isSubmitting: false
   },
 
@@ -20,17 +21,19 @@ const dpStartExecErrorTreatmentController = {
 
     this._state.documentId = params && params.documentId ? String(params.documentId) : null;
     this._state.processInstanceId = params && params.processInstanceId ? String(params.processInstanceId) : null;
+    this._state.currentActivity = this.resolveCurrentActivity(params);
 
     return $.get(this.getTemplateUrl())
       .done((html) => {
         container.html(html);
         this.backupAndSetHeader();
+        this.applyPageCopy();
         this.bindEvents();
         this.loadBaseContext();
       })
       .fail((error) => {
-        console.error('Start Exec error treatment template load error:', error);
-        container.html('<div class="p-6 text-red-600">Failed to load Start Exec error treatment page.</div>');
+        console.error('Start process error treatment template load error:', error);
+        container.html('<div class="p-6 text-red-600">Failed to load start process error treatment page.</div>');
       });
   },
 
@@ -45,6 +48,7 @@ const dpStartExecErrorTreatmentController = {
 
     this._state.documentId = null;
     this._state.processInstanceId = null;
+    this._state.currentActivity = null;
     this._state.isSubmitting = false;
   },
 
@@ -59,6 +63,7 @@ const dpStartExecErrorTreatmentController = {
   backupAndSetHeader: function () {
     const header = $('#header');
     if (!header.length) return;
+    const copy = this.getPageCopy();
 
     const titleEl = header.find('h1').first();
     const breadcrumbEl = header.find('nav').first();
@@ -71,14 +76,14 @@ const dpStartExecErrorTreatmentController = {
     }
 
     if (titleEl.length) {
-      titleEl.text('TI - Tratar Erro Iniciar Execução');
+      titleEl.text(copy.headerTitle);
     }
 
     if (breadcrumbEl.length) {
       breadcrumbEl.html(`
         <a href="#dashboard" class="text-gray-300 hover:text-white transition-colors">Home</a>
         <i class="fa-solid fa-chevron-right text-gray-400 text-xs"></i>
-        <span class="text-bevap-gold font-medium">Tratar Erro Iniciar Execução</span>
+        <span class="text-bevap-gold font-medium">${copy.breadcrumb}</span>
       `);
     }
   },
@@ -117,6 +122,45 @@ const dpStartExecErrorTreatmentController = {
 
   unbindEvents: function () {
     this.getContainer().off(this._eventNamespace);
+  },
+
+  applyPageCopy: function () {
+    const copy = this.getPageCopy();
+    const container = this.getContainer();
+
+    container.find('#start-error-title').text(copy.title);
+    container.find('#start-error-description').text(copy.description);
+    container.find('#start-error-idx-label').text(copy.idxLabel);
+    container.find('#start-error-help').text(copy.help);
+    container.find('#start-error-action-label').text(copy.buttonLabel);
+  },
+
+  getPageCopy: function () {
+    if (this.isDeliveryStartError()) {
+      return {
+        headerTitle: 'TI - Tratar Erro Iniciar Entrega Projeto',
+        breadcrumb: 'Tratar Erro Iniciar Entrega',
+        title: 'Tratar Erro - Iniciar Entrega Projeto',
+        description: 'Confira a mensagem de erro antes de retornar para tentar abrir o processo de entrega novamente.',
+        idxLabel: 'Referencia do Erro',
+        help: 'Depois de revisar a mensagem, clique em "Voltar para Iniciar Entrega" para retornar a atividade 55. A servicetask55 tentara abrir o processo de entrega novamente.',
+        buttonLabel: 'Voltar para Iniciar Entrega'
+      };
+    }
+
+    return {
+      headerTitle: 'TI - Tratar Erro Iniciar Execucao',
+      breadcrumb: 'Tratar Erro Iniciar Execucao',
+      title: 'Tratar Erro - Iniciar Execucao Atividades do Projeto',
+      description: 'Confira a mensagem de erro e qual tarefa falhou antes de retornar para tentar reiniciar apenas os itens nao iniciados.',
+      idxLabel: 'Indice da Tarefa com Erro',
+      help: 'Depois de revisar a mensagem, clique em "Voltar para Iniciar Execucao" para retornar a atividade 16. A servicetask16 tentara abrir novamente apenas as linhas com Started=false.',
+      buttonLabel: 'Voltar para Iniciar Execucao'
+    };
+  },
+
+  isDeliveryStartError: function () {
+    return this._state.currentActivity === 56;
   },
 
   loadBaseContext: async function () {
@@ -190,6 +234,50 @@ const dpStartExecErrorTreatmentController = {
     return this._state.processInstanceId;
   },
 
+  resolveCurrentActivity: function (params) {
+    const finalParams = params && typeof params === 'object' ? params : {};
+    const values = [
+      finalParams.activity,
+      finalParams.currentActivity,
+      finalParams.currentState,
+      finalParams.numState,
+      finalParams.state,
+      finalParams.estadoProcesso,
+      finalParams.processState
+    ];
+
+    for (let index = 0; index < values.length; index += 1) {
+      const parsed = this.parseActivity(values[index]);
+      if (parsed !== null) {
+        return parsed;
+      }
+    }
+
+    const rawHash = window && window.location ? String(window.location.hash || '') : '';
+    const match = rawHash.match(/(?:activity|currentActivity|currentState|numState|state|estadoProcesso|processState)=([^&]+)/i);
+    return match ? this.parseActivity(decodeURIComponent(match[1])) : null;
+  },
+
+  parseActivity: function (value) {
+    const text = this.asText(value);
+    if (!text) {
+      return null;
+    }
+
+    const matchDash = text.match(/^\s*(\d+)\s*-/);
+    const matchAny = matchDash || text.match(/(\d+)/);
+    if (!matchAny || !matchAny[1]) {
+      return null;
+    }
+
+    const parsed = parseInt(matchAny[1], 10);
+    return isNaN(parsed) ? null : parsed;
+  },
+
+  getNextState: function () {
+    return this.isDeliveryStartError() ? 55 : 16;
+  },
+
   collectTaskFields: function () {
     return [
       {
@@ -210,16 +298,6 @@ const dpStartExecErrorTreatmentController = {
         message: 'Aguarde enquanto a tarefa e enviada ao Fluig...'
       });
     }
-
-    const legacyLoading = FLUIGC.loading(this.getContainer());
-    legacyLoading.show();
-
-    return {
-      hide: function () {
-        legacyLoading.hide();
-      },
-      updateMessage: function () {}
-    };
   },
 
   waitForUiPaint: function () {
@@ -248,20 +326,31 @@ const dpStartExecErrorTreatmentController = {
       await this.waitForUiPaint();
       const processInstanceId = await this.resolveProcessInstanceId();
       const taskFields = this.collectTaskFields();
+      const nextState = this.getNextState();
 
-      loading.updateMessage('Enviando para a atividade 16...');
+      loading.updateMessage(`Enviando para a atividade ${nextState}...`);
       await this.waitForUiPaint();
       await fluigService.saveAndSendTask({
         id: processInstanceId,
-        numState: 16,
+        numState: nextState,
         documentId: this._state.documentId,
         datasetName: 'DSFormDesenvolvimentoProjetos'
       }, taskFields);
 
-      this.showToast('Sucesso', 'Projeto enviado para Iniciar Execução.', 'success');
-      setTimeout(() => {
-        location.hash = '#dashboard';
-      }, 600);
+      const successMessage = this.isDeliveryStartError() ? 'Projeto enviado para Iniciar Entrega.' : 'Projeto enviado para Iniciar Execucao.';
+      loading.hide();
+      if (window.gpActionFeedback && typeof window.gpActionFeedback.showProcessSuccess === 'function') {
+        window.gpActionFeedback.showProcessSuccess({
+          controller: this,
+          processInstanceId: processInstanceId,
+          documentId: this._state.documentId,
+          title: 'Acao concluida!',
+          message: successMessage,
+          nextStep: 'Acompanhe a proxima etapa pelo dashboard.'
+        });
+      } else {
+        this.showToast('Sucesso', successMessage, 'success');
+      }
     } catch (error) {
       console.error('[dpStartExecErrorTreatment] Error moving task:', error);
       this.showToast('Erro ao enviar', error && error.message ? error.message : 'Nao foi possivel movimentar o projeto.', 'error');
